@@ -25,13 +25,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.2a
+Version:	3.0.4
 Epoch:		1
 Release:	5
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-# Source0-md5:	72979a30ac450c8b0567c1ac9886884a
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
+# Source0-md5:	0156265c1e95ac662deef386f615504f
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -683,6 +683,7 @@ cd source
 	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}
 
+%{__make} proto
 %{__make} everything pam_smbpass bin/smbget
 %{__cc} %{rpmcflags} %{rpmldflags} client/mount.cifs.c -o client/mount.cifs
 
@@ -696,7 +697,7 @@ mv README{,.vfs}
 cd samba-vscan-%{vscan_version}
 cp /usr/share/automake/config.sub .
 %configure
-%{__make} oav sophos fprotd trend icap mksd kavp clamav
+%{__make} -j1 oav sophos fprotd trend icap mksd kavp clamav
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -879,7 +880,7 @@ fi
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbsh.1*
-%{_mandir}/man1/smbget.1*
+%{_mandir}/man1/smbget*.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
 %attr(755,root,root) %{_bindir}/wbinfo
@@ -890,7 +891,7 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc README Manifest WHATSNEW.txt
-%doc Roadmap docs/faq docs/Registry/*
+%doc Roadmap docs/registry/*
 %doc docs/htmldocs/*.* docs/{history,THANKS}
 %dir %{_libdir}/%{name}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smb.conf

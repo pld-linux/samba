@@ -1,16 +1,16 @@
 Summary:	SMB client and server
 Summary(pl):	Klient i serwer SMB
 Name:		samba
-Version:	2.0.0
-Release:	2d
+Version:	2.0.2
+Release:	3d
 Copyright:	GPL
-Group:		Networking
-Group(pl):	Sieciowe
+Group:		Daemons
+Group(pl):	Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	%{name}.PLD.tar.bz2
 Patch0:		%{name}.%{version}.patch
-Patch1:		%{name}-cap.patch
-Patch2:		%{name}-config.patch
+Patch1:		%{name}-config.patch
+Patch2:		%{name}-cap.patch
 Prereq:		/sbin/chkconfig 
 Prereq:		fileutils
 Requires:	pam >= 0.66 
@@ -164,7 +164,7 @@ rm -rf $RPM_BUILD_ROOT
 if [ $1 = 0 ]; then
     /etc/rc.d/init.d/smb stop >&2
     /sbin/chkconfig --del smb
-
+fi
 # Not for PLD 
 #    cd /etc
 #    tmpfile=/etc/tmp.$$
@@ -200,7 +200,15 @@ if [ $1 = 0 ]; then
 /etc/samba/codepages/*
 
 %dir /usr/share/swat
-/usr/share/swat/*
+
+%dir /usr/share/swat/help
+/usr/share/swat/help/*.html
+
+%dir /usr/share/swat/include
+/usr/share/swat/include/*.html
+
+%dir /usr/share/swat/images
+/usr/share/swat/images/*.gif
 
 %attr(750,root,root) %dir /var/lock/samba
 %attr(640,root,root) /var/lock/samba/*

@@ -560,7 +560,7 @@ fi
 %doc Roadmap docs/faq docs/Registry/*
 %doc docs/textdocs/* docs/htmldocs/*.* docs/{history,announce,THANKS}
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
+%config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
 %attr(755,root,root) %{_bindir}/make_smbcodepage
 %attr(755,root,root) %{_bindir}/make_unicodemap
 %attr(755,root,root) %{_bindir}/testparm

@@ -34,7 +34,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.7
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -50,8 +50,6 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 # Source7-md5:	5f173d549014985d681478897135915b
 Source8:	winbind.init
 Source9:	winbind.sysconfig
-Source10:	http://us1.samba.org/samba/ftp/samba.schema
-# Source10-md5:	bf268fdddc8ef677b6fa78661a094eac
 Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
 #Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
@@ -825,7 +823,6 @@ dost阷u do plik體 korzystaj眂 z oprogramowania antywirusowego Trend
 #%{?with_ipv6:%patch2 -p1}
 %patch3 -p1
 
-cp -f %{SOURCE10} examples/LDAP/
 cd examples/VFS
 tar xjf %{SOURCE7}
 

@@ -15,7 +15,6 @@
 %bcond_without	pgsql		# without PostgreSQL support
 %bcond_without	python		# without python libs/utils
 %bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
-#%bcond_with	ipv6		# with IPv6 support
 #
 # ADS requires krb5 and LDAP
 %if %{without krb5} || %{without ldap}
@@ -61,7 +60,6 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-case_insensitive_sql_operator.patch
-#Patch6:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -867,7 +865,6 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-#%{?with_ipv6:%patch6 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}

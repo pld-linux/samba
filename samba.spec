@@ -14,19 +14,22 @@ License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
-Source1:	samba.PLD.tar.bz2
+Source1:	smb.init
 Source2:	samba.pamd
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
+Patch3:		samba-DESTDIR.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
+Requires:	logrotate
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	readline-devel
-BuildRequires:	pam-devel
+BuildRequires:	pam-devel > 0.66
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %define		_sysconfdir	/etc/samba
-%define		_libdir		/etc/samba
+%define		_libdir		%{_sysconfdir}
+%define		_localstatedir	/var/log/samba
 
 %description
 Samba provides an SMB server which can be used to provide network services
@@ -114,17 +117,17 @@ swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy przegl±darki
 internetowej.
 
 %prep
-%setup -q -a1
+%setup -q
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 cd source
 autoconf
 LDFLAGS="-s" export LDFLAGS \
 %configure \
-	--with-privatedir=/etc/samba \
-	--localstatedir=/var/log/samba \
+	--with-privatedir=%{_sysconfdir} \
 	--with-lockdir=/var/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
@@ -139,34 +142,16 @@ make all
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/codepages/src
 
-install -d $RPM_BUILD_ROOT/etc/samba/codepages/src \
-	$RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,sysconfig} \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d \
-	$RPM_BUILD_ROOT/home/samba \
-	$RPM_BUILD_ROOT/lib/security \
-	$RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man{1,5,7,8},%{_sbindir}} \
-	$RPM_BUILD_ROOT/var/{lock,log,spool}/samba \
-	$RPM_BUILD_ROOT%{_datadir}/swat/{include,images,help}
+( cd source; make install DESTDIR=$RPM_BUILD_ROOT)
 
-( cd source;
-make install \
-	prefix=$RPM_BUILD_ROOT/usr \
-	BASEDIR=$RPM_BUILD_ROOT/usr \
-	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
-	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
-	SBINDIR=$RPM_BUILD_ROOT%{_sbindir} \
-	LIBDIR=$RPM_BUILD_ROOT/etc/samba \
-	PRIVATEDIR=$RPM_BUILD_ROOT/etc/samba \
-	SWATDIR=$RPM_BUILD_ROOT%{_datadir}/swat \
-	VARDIR=$RPM_BUILD_ROOT/var
-)
 
 install  source/codepages/codepage_def.* \
-	$RPM_BUILD_ROOT/etc/samba/codepages/src
+	$RPM_BUILD_ROOT%{_sysconfdir}/codepages/src
 
-install  packaging/PLD/smb.conf		$RPM_BUILD_ROOT/etc/samba
-install  packaging/PLD/smbusers		$RPM_BUILD_ROOT/etc/samba
+install  packaging/PLD/smb.conf		$RPM_BUILD_ROOT%{_sysconfdir}
+install  packaging/PLD/smbusers		$RPM_BUILD_ROOT%{_sysconfdir}
 install  packaging/PLD/smbprint		$RPM_BUILD_ROOT%{_bindir}
 install  packaging/PLD/smbadduser	$RPM_BUILD_ROOT%{_bindir}
 install  packaging/PLD/findsmb		$RPM_BUILD_ROOT%{_bindir}
@@ -178,16 +163,16 @@ strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
-echo 127.0.0.1 localhost > $RPM_BUILD_ROOT/etc/samba/lmhosts
+echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
 
 echo "NICELEVEL=+5" > $RPM_BUILD_ROOT/etc/sysconfig/samba
 
 for i in 437 737 850 852 861 866 932 949 950 936; do
 $RPM_BUILD_ROOT%{_bindir}/make_smbcodepage c $i \
-$RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
-$RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
+$RPM_BUILD_ROOT%{_sysconfdir}/codepages/src/codepage_def.$i \
+$RPM_BUILD_ROOT%{_sysconfdir}/codepages/codepage.$i; done
 
-gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man{1,5,7,8}/* \
+gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man?/* \
 	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
 	docs/textdocs/* docs/*.txt docs/{history,announce,THANKS}
 
@@ -195,7 +180,7 @@ rm -f docs/faq/*.{sgml,txt}
 
 %post
 /sbin/chkconfig --add smb
-if test -r /var/run/smb.pid; then
+if test -r ; then
 	/etc/rc.d/init.d/smb restart >&2
 else
 	echo "Run \"/etc/rc.d/init.d/smb start\" to start samba daemons."
@@ -220,10 +205,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 
-%dir /etc/samba
-%config(noreplace) %verify(not size mtime md5) /etc/samba/smb.conf
-%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) /etc/samba/smbusers
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/samba/lmhosts
+%dir %{_sysconfdir}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smb.conf
+%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smbusers
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lmhosts
 
 %attr(750,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config %verify(not size mtime md5) /etc/sysconfig/samba
@@ -241,7 +226,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/smbumount.8*
 
 %dir /home/samba
-/etc/samba/codepages
+%{_sysconfdir}/codepages
 
 %dir /var/lock/samba
 %ghost /var/lock/samba/*

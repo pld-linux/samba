@@ -8,6 +8,7 @@ Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	samba.PLD.tar.bz2
+Source2:	samba.pamd
 Patch0:		samba-glibc2.1.patch
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
@@ -112,6 +113,7 @@ install -d $RPM_BUILD_ROOT/etc/samba/codepages/src \
 make install \
 	prefix=$RPM_BUILD_ROOT/usr \
 	BASEDIR=$RPM_BUILD_ROOT/usr \
+	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
 	SBINDIR=$RPM_BUILD_ROOT%{_sbindir} \
 	LIBDIR=$RPM_BUILD_ROOT/etc/samba \
@@ -129,11 +131,12 @@ install  packaging/PLD/smbprint		$RPM_BUILD_ROOT%{_bindir}
 install  packaging/PLD/smbadduser	$RPM_BUILD_ROOT%{_bindir}
 install  packaging/PLD/findsmb		$RPM_BUILD_ROOT%{_bindir}
 install  packaging/PLD/smb.init		$RPM_BUILD_ROOT/etc/rc.d/init.d/smb
-install  packaging/PLD/samba.pam	$RPM_BUILD_ROOT/etc/pam.d/samba
 install  packaging/PLD/samba.log	$RPM_BUILD_ROOT/etc/logrotate.d/samba
+install  %{SOURCE2}			$RPM_BUILD_ROOT/etc/pam.d/samba
 
 install -s source/bin/*.so 	$RPM_BUILD_ROOT/lib/security
 install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT%{_bindir}
+
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -146,7 +149,7 @@ $RPM_BUILD_ROOT%{_bindir}/make_smbcodepage c $i \
 $RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
 $RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
-gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man[1578]/* \
+gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man{1,5,7,8}/* \
 	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README
 
 %post

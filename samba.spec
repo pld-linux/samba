@@ -22,7 +22,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8a
-Release:	1
+Release:	1.1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -60,6 +60,7 @@ Requires:	samba-common = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
+%define		_reallibdir	%{_libdir}
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
 %if 0%{!?_without_cups:1}
@@ -399,6 +400,18 @@ CUPS backend for printing to SMB printers.
 %description -n cups-backend-smb -l pl
 Backend CUPS-a drukuj眂y na drukarkach SMB.
 
+%package vfs-modules
+Summary:        Example VFS modules included with samba
+Summary(pl):    Przyk砤dowe modu硑 VFS do潮czone do samby
+Group:          Networking/Daemons
+Requires:       samba-client = %{version}
+
+%description vfs-modules
+Example VFS modules included with samba.
+
+%description vfs-modules -l pl
+Przyk砤dowe modu硑 VFS do潮czone do samby.
+
 %prep
 %setup -q
 %patch1 -p1
@@ -447,10 +460,17 @@ sed -e "s#-symbolic##g" Makefile.old > Makefile
 
 %{__make} everything pam_smbpass
 
+cd ../examples/VFS
+%{__autoconf}
+%configure
+%{__make}
+cd ../../source
+mv ../examples/VFS/recycle/README{,.recycle}
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home/services}/samba \
+	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home/services,%{_reallibdir}}/%{name} \
 	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_includedir}}
 
 cd source
@@ -476,6 +496,9 @@ install source/bin/libsmbclient.so $RPM_BUILD_ROOT/lib/libsmbclient.so.0
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/lib/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
+
+install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT/%{_reallibdir}/%{name}
+install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf  $RPM_BUILD_ROOT/%{_sysconfdir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -648,3 +671,10 @@ fi
 %attr(755,root,root) %{cups_serverbin}/backend/smb
 %{_mandir}/man8/smbspool.8*
 %endif
+
+%files vfs-modules
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/recycle.conf
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba-block.conf
+%attr(755,root,root) %{_reallibdir}/%{name}/*.so
+%doc examples/VFS/README examples/VFS/recycle/README.recycle

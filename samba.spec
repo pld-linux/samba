@@ -112,7 +112,7 @@ Summary(pl):	Narzêdzie administracyjne serwisu Samba
 Group:		Networking/Admin
 Group(pl):	Sieciowe/Administracyjne
 Requires:	%{name}
-Requires:	rc-inetd
+Requires:	rc-inetd >= 0.8.2
 Requires:	inetdaemon
 
 %description -n swat
@@ -206,14 +206,14 @@ fi
 
 %post -n swat
 if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd restart 1>&2
+	/etc/rc.d/init.d/rc-inetd reload 1>&2
 else
 	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet sever" 1>&2
 fi
 
 %postun -n swat
 if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd stop
+	/etc/rc.d/init.d/rc-inetd reload
 fi
 
 %triggerpostun -- samba < 1.9.18p7

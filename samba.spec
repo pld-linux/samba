@@ -22,12 +22,12 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	2.2.8a
-Release:	1.6
+Version:	3.0.0
+Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-# Source0-md5:	51466fdd7b7125a5bd41608a76e8e7c8
+Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc1.tar.bz2
+# Source0-md5:	c99b45cdb3f504915250ab0108a40bf6
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -38,6 +38,7 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 # Source7-md5:	cacc32f21812494993e32be558b91bdd
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
+Patch0:		samba3-smbtorture.patch
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-DESTDIR.patch
 Patch3:		%{name}-manpages_PLD_fixes.patch
@@ -68,7 +69,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
 %define		_vfsdir		/usr/lib/%{name}/vfs
-%define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
 %if 0%{!?_without_cups:1}
@@ -559,27 +559,29 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-#%patch6 -p2
-%patch7 -p1
-#%patch8 -p1
-#%patch9 -p1
-%{?_with_ipv6:%patch10 -p1}
-%patch11 -p1
-#%patch12 -p1
+%setup -q -n samba-3.0.0rc1
+%patch0 -p1
+#%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
+#%patch4 -p1
+#%patch5 -p1
+ #%patch6 -p2
+#%patch7 -p1
+  #%patch8 -p1
+  #%patch9 -p1
+##%{?_with_ipv6:%patch10 -p1}
+#%patch11 -p1
+ #%patch12 -p1
 
-cd examples/VFS
-tar xjf %{SOURCE7}
-cd %{name}-vscan-%{vscan_version}
-tar xjf %{SOURCE8}
+#cd examples/VFS
+#tar xjf %{SOURCE7}
+#cd %{name}-vscan-%{vscan_version}
+#tar xjf %{SOURCE8}
 
 %build
 cd source
+%{__libtoolize}
 %{__autoconf}
 %configure \
 	--with-acl-support \
@@ -587,43 +589,38 @@ cd source
 	--with-libsmbclient \
 	--with-lockdir=/var/lock/samba \
 	--with-mmap \
-	--with-msdfs \
 	--with-netatalk \
 	--without-smbwrapper \
 	--with-pam \
 	--with-piddir=/var/run \
-	--with-privatedir=%{_libdir} \
+	--with-privatedir=%{_sysconfdir} \
 	--with-quotas \
 	--with-readline \
 	--with-smbmount \
-	--with-ssl \
 	--with-sslinc=%{_prefix} \
 	--with-swatdir=%{_datadir}/swat \
 	--with-syslog \
 	--with-utmp \
 	--with-vfs \
+	--with-fhs \
 	%{?_with_ipv6:--with-ipv6} \
 	%{?_with_ldap:--with-ldapsam}
 
-#	--with-acl-support \
-mv Makefile Makefile.old
-sed -e "s#-symbolic##g" Makefile.old > Makefile
-
 %{__make} everything pam_smbpass
 
-cd ../examples/VFS
-%{__autoconf}
-%configure
-%{__make}
-mv README{,.vfs}
+#cd ../examples/VFS
+#%%{__autoconf}
+#%%configure
+#%%{__make}
+#mv README{,.vfs}
 
-cd samba-vscan-%{vscan_version}
+#cd samba-vscan-%{vscan_version}
 # note - kaspersky and mks don't compile yet - require additional libraries
-for i in fprot icap openantivirus sophos trend clamav; do
-cd $i
-%{__make} "LIBTOOL=libtool --tag=CC"
-cd ..
-done
+#for i in fprot icap openantivirus sophos trend clamav; do
+#cd $i
+#%%{__make} "LIBTOOL=libtool --tag=CC"
+#cd ..
+#done
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -632,7 +629,9 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
 
 cd source
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT 
+
 install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
 cd ..
 
@@ -656,12 +655,12 @@ ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/lib/libsmbclient.so
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # przyk³adowe modu³y VFS
-install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT/%{_vfsdir}/
-install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf  $RPM_BUILD_ROOT/%{_sysconfdir}
+#install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT/%{_vfsdir}/
+#install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf  $RPM_BUILD_ROOT/%{_sysconfdir}
 
 # modu³y vscan
-install examples/VFS/samba-vscan-%{vscan_version}/*/*.so $RPM_BUILD_ROOT/%{_vfsdir}/
-install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT/%{_sysconfdir}
+#install examples/VFS/samba-vscan-%{vscan_version}/*/*.so $RPM_BUILD_ROOT/%{_vfsdir}/
+#install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT/%{_sysconfdir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -722,7 +721,6 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc source/nsswitch/README examples/VFS/README.vfs
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/winbindd
@@ -745,11 +743,13 @@ fi
 %{_mandir}/man1/smbcontrol.1*
 %{_mandir}/man5/smbpasswd.5*
 %{_mandir}/man7/samba.7*
+%{_mandir}/man7/Samba.7*
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
+%{_mandir}/man8/tdbbackup.8*
 
 %dir %{_sambahome}
 %dir /var/lock/samba
@@ -765,6 +765,9 @@ fi
 %attr(755,root,root) %{_bindir}/smbmount
 %attr(755,root,root) %{_bindir}/smbmnt
 %attr(755,root,root) %{_bindir}/smbumount
+%attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/smbtree
+%{_mandir}/man8/net.8*
 %{_mandir}/man8/smbmnt.8*
 %{_mandir}/man8/smbmount.8*
 %{_mandir}/man8/smbumount.8*
@@ -773,6 +776,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbcacls
 %{_mandir}/man1/smbtar.1*
+%{_mandir}/man1/smbtree.1*
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
@@ -788,20 +792,30 @@ fi
 %defattr(644,root,root,755)
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/faq docs/Registry/*
-%doc docs/textdocs/* docs/htmldocs/*.* docs/{history,announce,THANKS}
-%dir %{_libdir}
+%doc docs/htmldocs/*.* docs/{history,THANKS}
+%dir %{_libdir}/%{name}
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
-%attr(755,root,root) %{_bindir}/make_smbcodepage
-%attr(755,root,root) %{_bindir}/make_unicodemap
+%{_libdir}/%{name}/*.dat
+#%attr(755,root,root) %{_bindir}/make_smbcodepage
+#%attr(755,root,root) %{_bindir}/make_unicodemap
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/testprns
-%attr(755,root,root) %{_bindir}/make_printerdef
-%{_libdir}/codepages
-%{_mandir}/man1/make_smbcodepage.1*
-%{_mandir}/man1/make_unicodemap.1*
+%attr(755,root,root) %{_bindir}/ntlm_auth
+%attr(755,root,root) %{_bindir}/smbcquotas
+%attr(755,root,root) %{_bindir}/profiles
+%attr(755,root,root) %{_bindir}/pdbedit
+#%attr(755,root,root) %{_bindir}/make_printerdef
+#%{_libdir}/codepages
+#%{_mandir}/man1/make_smbcodepage.1*
+#%{_mandir}/man1/make_unicodemap.1*
+%{_mandir}/man1/editreg.1*
 %{_mandir}/man1/testparm.1*
 %{_mandir}/man1/testprns.1*
+%{_mandir}/man1/ntlm_auth.1*
+%{_mandir}/man1/smbcquotas.1*
+%{_mandir}/man1/profiles.1*
+%{_mandir}/man1/vfstest.1*
 %{_mandir}/man5/smb.conf.5*
 %{_mandir}/man5/lmhosts.5*
 
@@ -837,51 +851,54 @@ fi
 
 %files vfs-block
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba-block.conf
-%attr(755,root,root) %{_vfsdir}/block.so
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba-block.conf
+#%attr(755,root,root) %{_vfsdir}/block.so
 
 %files vfs-audit
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/audit.so
+#te ni¿ej chwilowo tutaj
+%attr(755,root,root) %{_vfsdir}/[d-n]*.so
+%attr(755,root,root) %{_vfsdir}/readonly.so
 
 %files vfs-recycle
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/recycle.conf
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/recycle.conf
 %attr(755,root,root) %{_vfsdir}/recycle.so
-%doc examples/VFS/recycle/README
+#%doc examples/VFS/recycle/README
 
 %files vfs-vscan-clamav
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-clamav.conf
-%attr(755,root,root) %{_vfsdir}/vscan-clamav.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-clamav.conf
+#%attr(755,root,root) %{_vfsdir}/vscan-clamav.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-fprot
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fprotd.conf
-%attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fprotd.conf
+#%attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-openantivirus
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-oav.conf
-%attr(755,root,root) %{_vfsdir}/vscan-oav.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-oav.conf
+#%attr(755,root,root) %{_vfsdir}/vscan-oav.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-sophos
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-sophos.conf
-%attr(755,root,root) %{_vfsdir}/vscan-sophos.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-sophos.conf
+#%attr(755,root,root) %{_vfsdir}/vscan-sophos.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-symantec
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-icap.conf
-%attr(755,root,root) %{_vfsdir}/vscan-icap.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-icap.conf
+#%attr(755,root,root) %{_vfsdir}/vscan-icap.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-trend
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
-%attr(755,root,root) %{_vfsdir}/vscan-trend.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
+#%attr(755,root,root) %{_vfsdir}/vscan-trend.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}

@@ -40,10 +40,10 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/smb ]; then
 		msg_starting smbd
-		daemon $NICELEVEL smbd -D
+		daemon smbd -D
 		RETVAL=$?
 		msg_starting nmbd
-		daemon $NICELEVEL nmbd -D
+		daemon nmbd -D
 		[ $RETVAL -eq 0 ] && RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/smb
 	else

@@ -1,5 +1,12 @@
 Summary:	SMB client and server
 Summary(pl):	Klient i serwer SMB
+Summary(cs): 	Klient a server SMB
+Summary(da): 	SMB klient og server
+Summary(de): 	SMB-Client und -Server
+Summary(fi): 	SMB-asiakasohjelma ja palvelin
+Summary(fr): 	Client et serveur SMB
+Summary(it): 	Client e server SMB
+Summary(tr): 	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.5a
 Release:	1
@@ -12,8 +19,8 @@ Source2:	samba.pamd
 #Patch0:		samba-glibc2.1.patch
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
-Prereq:		/sbin/chkconfig 
-Requires:	pam >= 0.66 
+Prereq:		/sbin/chkconfig
+Requires:	pam >= 0.66
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	pam-devel
@@ -51,6 +58,49 @@ MS i zarzadzania baz± WINS.
 UWAGA: w przeciwieñstwie do wersji 2.0.2 aktualnie samba pozbawiona jest
 mozliwo¶ci kontrolowania domeny NT.
 
+%description -l cs
+Samba poskytuje server SMB, který lze pou¾ít pro poskytování sí»ových
+slu¾eb klientùm SMB (nìkdy nazývaných klienti "LAN mana¾er") vèetnì
+klientù rùzných verzí MS Windows, OS/2 a dal¹ích linuxových strojù.
+Samba té¾ poskytuje nìkteré klienty SMB, kteøí komplementují vestavìný
+souborový systém SMB v Linuxu. Samba pou¾ívá protokoly NetBIOS pøes
+TCP/IP (NetBT) a NEpotøebuje protokol NetBEUI (neformátovaný rámec
+NetBIOS od spoleènosti Microsoft.
+
+%description -l da
+Samba tilbyder en SMB server som kan bruges til at tilbyde netværk
+services til SMB (også kaldet "Lan Manager") klienter, incl.
+forskellige versioner af MS Windows, OS/2, og andre Linux maskiner.
+Samba tilbyder også SMB klienter, som udbygger det indbyggede
+SMB filsystem i Linux.
+Samba benytter NetBIOS over TCP/IP (NetBT) protocolen og kræver ikke
+NetBEUI (Microsoft Raw NetBIOS frame) protokollen.
+
+%description -l de
+Samba stellt einen SMB-Server zum Anbieten von Netzwerkdiensten für
+SMB-Clients (auch "Lan Manager" genannt) zur Verfügung, darunter
+verschiedenen Versionen von MS Windows-, OS/2- und anderen Linux-Rechnern.
+Samba enthält außerdem einige SMB-Clients, die das in Linux integrierte
+SMB-Dateisystem ergänzen. Samba benutzt NetBIOS-über-TCP/IP (NetBT)-Protokolle
+und benötigt KEIN NetBEUI (Microsoft Raw NetBIOS frame)-Protokoll.
+
+%description -l fi
+Samba on SMB-palvelin, jota voidaan käyttää SMB-asiakasohjelmien
+verkkopalvelujen tarjoajana. SMB-protokollaa kutsutaan joskus "Lan
+Manager" protokollaksi ja asiakasohjelmat toimivat dosissa, Windowseissa,
+OS/2:ssa ja toisissa Linux-koneissa. Samban mukana on myös joitakin
+SMB-asiakasohjelmia, jotka täydentävät Linuxin kernelissä olevaa
+SMB-tiedostojärjestelmän tukea.
+Samba vaatii NetBIOS over TCP/IP (NetBT) protokollaa eikä tarvitse tai pysty
+käyttämään NetBEUI-protokollaa.
+
+%description -l it
+Samba fornisce un server SMB che puo` essere usato per
+fornire servizi di rete ai client SMB, incluse le versioni
+MS Windows, OS/2 e per altre macchine Linux. Samba fornisce
+anche i client SMB. Samba usa NetBIOS sopra TCP/IP e non ha
+bisogno del protocollo NetBEUI.
+
 %package -n swat
 Summary:	Samba Web Administration Tool
 Summary(pl):	Narzêdzie administracyjne serwisu Samba
@@ -81,10 +131,7 @@ cd source
 autoconf
 LDFLAGS="-s" export LDFLAGS \
 %configure \
-	--prefix=/usr \
 	--sysconfdir=/etc/samba \
-	--sbindir=%{_sbindir} \
-	--bindir=%{_bindir} \
 	--with-privatedir=/etc/samba \
 	--libdir=/etc/samba \
 	--localstatedir=/var/log/samba \
@@ -94,6 +141,8 @@ LDFLAGS="-s" export LDFLAGS \
 	--with-smbwrapper \
 	--with-quotas \
 	--with-syslog \
+	--with-mmap \
+	--with-pam \
 	--with-automount
 	
 make all smbwrapper bin/smbrun bin/debug2html
@@ -175,7 +224,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.gz Manifest.gz WHATSNEW.txt.gz
-%doc Roadmap.gz docs/faq/*.html docs/*.reg.gz 
+%doc Roadmap.gz docs/faq/*.html docs/*.reg.gz
 
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/nmbd

@@ -33,7 +33,7 @@ TMPDIR="/tmp"; export TMPDIR
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0
 
-
+RETVAL=0
 # See how we were called.
 case "$1" in
   start)
@@ -48,12 +48,12 @@ case "$1" in
 		if [ "$WINBINDD" = "yes" ]; then
 			msg_starting winbindd
 			daemon $NICELEVEL winbindd
+			RET=$?
+			[ $RETVAL -eq 0 ] && RETVAL=$RET
 		fi
-		[ $RETVAL -eq 0 ] && RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/smb
 	else
 		msg_already_running smb
-		exit 1
 	fi
 	;;
   stop)
@@ -70,19 +70,23 @@ case "$1" in
 		rm -f /var/lock/subsys/smb >/dev/null 2>&1
 	else
 		msg_not_running smb
-		exit 1
 	fi
 	;;
   status)
 	status smbd
+	RETVAL=$?	
 	status nmbd
+	RET=$?
+	[ $RETVAL -eq 0 ] && RETVAL=$RET
 	status winbindd
+	RET=$?
+	[ $RETVAL -eq 0 ] && RETVAL=$RET
 	smbstatus
-	exit $?
 	;;
   restart)
 	$0 stop
 	$0 start
+	exit $?
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/smb ]; then
@@ -90,13 +94,13 @@ case "$1" in
 		killproc smbd -HUP
 		RETVAL=$?
 	else
-		msg_not_running smb
-		exit 1
+		msg_not_running smb >&2
+		exit 7
 	fi
 	;;
   *)
 	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
-	exit 1
+	exit 3
 esac
 
 exit $RETVAL

@@ -9,7 +9,7 @@ Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.6
-Release:	10
+Release:	11
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -190,7 +190,7 @@ rm -f docs/faq/*.{sgml,txt}
 
 %post
 /sbin/chkconfig --add smb
-if test -r ; then
+if test -r /var/lock/subsys/smb; then
 	/etc/rc.d/init.d/smb restart >&2
 else
 	echo "Run \"/etc/rc.d/init.d/smb start\" to start samba daemons."

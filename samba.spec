@@ -15,7 +15,7 @@ Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.4
-Release:	0.2
+Release:	0.3
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -188,6 +188,21 @@ password file.
 Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 (has³a Samby) zsynchronizowanego z has³ami unixowymi.
 
+%package libsmbclient
+Summary:	ChGW
+Group:		Libraries
+
+%description libsmbclient
+ChGW
+
+%package libsmbclient-devel
+Summary:	ChGW
+Group:		Libraries
+Requires:	libsmbclient
+
+%description libsmbclient-devel
+ChGW
+
 %prep
 %setup -q
 %patch1 -p1
@@ -221,7 +236,8 @@ autoconf
 	--with-ssl \
 	--with-sslinc=%{_prefix} \
 	%{?_with_ipv6:--with-ipv6} \
-	%{?_with_ldap:--with-ldapsam}
+	%{?_with_ldap:--with-ldapsam} \
+	--with-libsmbclient
 
 mv Makefile Makefile.old
 sed -e "s#-symbolic##g" Makefile.old > Makefile
@@ -232,7 +248,7 @@ sed -e "s#-symbolic##g" Makefile.old > Makefile
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
-	$RPM_BUILD_ROOT/{sbin,lib/security}
+	$RPM_BUILD_ROOT/{sbin,lib/security,%{_includedir}}
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
@@ -248,10 +264,14 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
 
-install source/nsswitch/libnss_wins.so $RPM_BUILD_ROOT/lib/libnss_wins.so.2
-install source/nsswitch/pam_winbind.so $RPM_BUILD_ROOT/lib/security/
+install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/lib/libnss_wins.so.2
+install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
+
+install source/bin/libsmbclient.so	$RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
+ln -s	libsmbclient.so.0		$RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+install source/include/libsmbclient.h	$RPM_BUILD_ROOT%{_includedir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -403,3 +423,12 @@ fi
 %defattr(644,root,root,755)
 %doc source/pam_smbpass/*.gz source/pam_smbpass/samples
 %attr(755,root,root) /lib/security/pam_smbpass.so
+
+%files libsmbclient
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libsmbclient.so.*
+
+%files libsmbclient-devel
+%defattr(644,root,root,755)
+%{_includedir}/libsmbclient.h
+%attr(755,root,root) %{_libdir}/libsmbclient.so

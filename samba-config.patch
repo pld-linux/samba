@@ -34,30 +34,6 @@ diff -urN samba-2.2.1.org/source/configure.in samba-2.2.1/source/configure.in
      with_pam_for_crypt=yes
      ;;
    *)
-@@ -1776,20 +1781,18 @@
-   yes)
-     AC_MSG_RESULT(yes)
-     AC_DEFINE(WITH_SSL)
--    withval="/usr/local/ssl"     # default
--
-+    withval="/usr"     # default
-     if test "${with_sslinc+set}" = set; then
- 
- 	withval="$with_sslinc"
- 	case "$withval" in
- 	yes|no)
- 	  echo "configure: warning: --with-sslinc called without argument - will use default" 1>&w
--	  CFLAGS="-I/usr/local/ssl/include $CFLAGS"
-+	 CFLAGS="-I/usr/include/openssl $CFLAGS"
- 	  LIBS="-lssl -lcrypto $LIBS"
--	  LDFLAGS="=L/usr/local/ssl/lib $LDFLAGS"
- 	;;
-         * )
--          CFLAGS="-I${withval} $CFLAGS"
-+	  CFLAGS="-I${withval}/include/openssl $CFLAGS"
- 	  LIBS="-lssl -lcrypto $LIBS"
-   	  LDFLAGS="-L${withval}/lib $LDFLAGS"
- 	;;
 diff -urN samba-2.2.1.org/source/smbwrapper/smbsh.in samba-2.2.1/source/smbwrapper/smbsh.in
 --- samba-2.2.1.org/source/smbwrapper/smbsh.in	Wed Oct  7 06:43:09 1998
 +++ samba-2.2.1/source/smbwrapper/smbsh.in	Wed Jul 11 20:00:35 2001

@@ -4,6 +4,7 @@
 # _with_ldap	- with LDAP-based auth (instead of smbpasswd)
 # _with_ipv6    - with IPv6 support
 #
+%define		vscan_version 0.3.2b
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -22,17 +23,19 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8a
-Release:	1.2
+Release:	1.3
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-# Source0-md5: 51466fdd7b7125a5bd41608a76e8e7c8
+# Source0-md5:	51466fdd7b7125a5bd41608a76e8e7c8
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
 Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
+Source7:	http://dl.sourceforge.net/openantivirus/samba-vscan-%{vscan_version}.tar.bz2
+# Source7-md5:	cacc32f21812494993e32be558b91bdd
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-DESTDIR.patch
 Patch3:		%{name}-manpages_PLD_fixes.patch
@@ -427,6 +430,9 @@ Przyk砤dowe modu硑 VFS do潮czone do samby.
 %patch11 -p1
 #%patch12 -p1
 
+cd examples/VFS
+tar xjf %{SOURCE6}
+
 %build
 cd source
 %{__autoconf}
@@ -464,8 +470,14 @@ cd ../examples/VFS
 %{__autoconf}
 %configure
 %{__make}
-cd ../../source
-mv ../examples/VFS/recycle/README{,.recycle}
+mv recycle/README{,.recycle}
+cd samba-vscan-%{vscan_version}
+# note - kaspersky mks don't compile yet
+for i in fprot icap openantivirus sophos trend; do
+cd $i;
+%{__make} "LIBTOOL=libtool --tag=CC"
+cd ..
+done;
 
 %install
 rm -rf $RPM_BUILD_ROOT

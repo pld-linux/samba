@@ -44,10 +44,12 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
 Patch0:		%{name}-statfs-workaround.patch
-#Patch1:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
+Patch1:		%{name}-lib64.patch
+#Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
+BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel}
 %{?with_krb5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool >= 2:1.4d
@@ -71,7 +73,7 @@ Requires:	pam >= 0.66
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
-%define		_vfsdir		/usr/lib/%{name}/vfs
+%define		_vfsdir		/usr/%{_lib}/%{name}/vfs
 %define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
 %if %{with cups}
@@ -638,7 +640,10 @@ modu³).
 %prep
 %setup -q
 %patch0 -p1
-#%{?with_ipv6:%patch1 -p1}
+%ifarch amd64
+%patch1 -p1
+%endif
+#%{?with_ipv6:%patch2 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}
@@ -681,11 +686,13 @@ cd source
 
 cd ../examples/VFS
 %{__autoconf}
-%configure
+%configure \
+	CFLAGS="%{rpmcflags} -fPIC"
 %{__make}
 mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
+cp /usr/share/automake/config.sub .
 %configure
 %{__make} oav sophos fprotd trend icap mksd kavp clamav
 
@@ -693,7 +700,7 @@ cd samba-vscan-%{vscan_version}
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/var/{lock,log,log/archiv,spool}/samba \
-	$RPM_BUILD_ROOT{/sbin,/lib/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
+	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
 
 cd source
 %{__make} install \
@@ -712,12 +719,12 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/smb.conf
 
-install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/lib/libnss_winbind.so.2
-install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security
-install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security
+install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
+install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
+install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
-#install source/bin/libsmbclient.so $RPM_BUILD_ROOT/lib/libsmbclient.so.0
+#install source/bin/libsmbclient.so $RPM_BUILD_ROOT/%{_lib}/libsmbclient.so.0
 mv $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
 
@@ -800,8 +807,8 @@ fi
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
 
-%attr(755,root,root) /lib/libnss_*
-%attr(755,root,root) /lib/security/pam_winbind.so
+%attr(755,root,root) /%{_lib}/libnss_*
+%attr(755,root,root) /%{_lib}/security/pam_winbind.so
 
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
@@ -928,7 +935,7 @@ fi
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)
 %doc source/pam_smbpass/{CHAN*,README,TODO} source/pam_smbpass/samples
-%attr(755,root,root) /lib/security/pam_smbpass.so
+%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
 
 %files -n libsmbclient
 %defattr(644,root,root,755)

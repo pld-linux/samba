@@ -1,6 +1,5 @@
-diff -uNr samba-2.2.3.orig/docs/manpages/nmbd.8 samba-2.2.3/docs/manpages/nmbd.8
---- samba-2.2.3.orig/docs/manpages/nmbd.8	Sun Feb  3 01:45:38 2002
-+++ samba-2.2.3/docs/manpages/nmbd.8	Sun Feb  3 13:18:53 2002
+--- samba-2.2.4/docs/manpages/nmbd.8	Fri May  3 03:02:05 2002
++++ samba-2.2.4/docs/manpages/nmbd.8.org	Mon May 20 10:31:37 2002
 @@ -91,7 +91,7 @@
  
  The default path to this file is compiled into 
@@ -10,15 +9,6 @@ diff -uNr samba-2.2.3.orig/docs/manpages/nmbd.8 samba-2.2.3/docs/manpages/nmbd.8
  \fI/usr/samba/lib/lmhosts\fR or
  \fI/etc/lmhosts\fR. See the  \fIlmhosts(5)\fRman page for details on the 
  contents of this file.
-@@ -129,7 +129,7 @@
- \fBnmbd\fR server.
- 
- The default log directory is compiled into Samba
--as part of the build process. Common defaults are \fI /usr/local/samba/var/log.nmb\fR, \fI /usr/samba/var/log.nmb\fR or
-+as part of the build process. Common defaults are \fI /var/log/samba/log.nmb\fR, \fI /usr/samba/var/log.nmb\fR or
- \fI/var/log/log.nmb\fR.
- .TP
- \fB-n <primary NetBIOS name>\fR
 @@ -149,7 +149,7 @@
  .TP
  \fB-s <configuration file>\fR
@@ -28,7 +18,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/nmbd.8 samba-2.2.3/docs/manpages/nmbd.8
  this may be changed when Samba is autoconfigured.
  
  The file specified contains the configuration details
-@@ -180,7 +180,7 @@
+@@ -180,12 +180,12 @@
  See the UNIX_INSTALL.html
  document for details.
  .TP
@@ -37,6 +27,12 @@ diff -uNr samba-2.2.3.orig/docs/manpages/nmbd.8 samba-2.2.3/docs/manpages/nmbd.8
  This is the default location of the
  \fIsmb.conf\fR
  server configuration file. Other common places that systems
+ install this file are \fI/usr/samba/lib/smb.conf\fR
+-and \fI/etc/smb.conf\fR.
++and \fI/etc/samba/smb.conf\fR.
+ 
+ When run as a WINS server (see the
+ wins support
 @@ -211,7 +211,7 @@
  .PP
  \fBnmbd\fR will accept SIGHUP, which will cause
@@ -46,10 +42,9 @@ diff -uNr samba-2.2.3.orig/docs/manpages/nmbd.8 samba-2.2.3/docs/manpages/nmbd.8
  directory (or the \fIvar/locks\fR directory configured
  under wherever Samba was configured to install itself). This will also
  cause \fBnmbd\fR to dump out its server database in
-diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/smb.conf.5
---- samba-2.2.3.orig/docs/manpages/smb.conf.5	Sun Feb  3 01:45:38 2002
-+++ samba-2.2.3/docs/manpages/smb.conf.5	Sun Feb  3 13:24:14 2002
-@@ -1522,7 +1522,7 @@
+--- samba-2.2.4/docs/manpages/smb.conf.5	Fri May  3 03:24:14 2002
++++ samba-2.2.4/docs/manpages/smb.conf.5.org	Mon May 20 10:28:07 2002
+@@ -1526,7 +1526,7 @@
  Default: \fBnone\fR
  .PP
  .PP
@@ -57,8 +52,8 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
 +Example: \fBadd share command = /usr/bin/addshare\fR
  .PP
  .TP
- \fBadd machine script (G)\fR
-@@ -1577,7 +1577,7 @@
+ \fBadd user script (G)\fR
+@@ -1569,7 +1569,7 @@
  
  Default: \fBadd user script = <empty string>
  \fR
@@ -67,7 +62,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  %u\fR
  .TP
  \fBadmin users (S)\fR
-@@ -1810,7 +1810,7 @@
+@@ -1802,7 +1802,7 @@
  Default: \fBnone\fR
  .PP
  .PP
@@ -76,7 +71,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  .PP
  .TP
  \fBcharacter set (G)\fR
-@@ -2045,7 +2045,7 @@
+@@ -2037,7 +2037,7 @@
  (allowing you to special case the config files of just a few 
  clients).
  
@@ -85,7 +80,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR.TP
  \fBcopy (S)\fR
  This parameter allows you to "clone" service 
-@@ -2312,7 +2312,7 @@
+@@ -2321,7 +2321,7 @@
  Default: \fBnone\fR
  .PP
  .PP
@@ -94,7 +89,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  .PP
  .TP
  \fBdelete user script (G)\fR
-@@ -2365,7 +2365,7 @@
+@@ -2367,7 +2367,7 @@
  
  Default: \fBdelete user script = <empty string>
  \fR
@@ -103,7 +98,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  %u\fR
  .TP
  \fBdelete veto files (S)\fR
-@@ -2423,7 +2423,7 @@
+@@ -2425,7 +2425,7 @@
  Default: \fBBy default internal routines for 
  determining the disk capacity and remaining space will be used.
  \fR
@@ -112,16 +107,16 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR
  Where the script dfree (which must be made executable) could be:
  
-@@ -3248,7 +3248,7 @@
+@@ -3250,7 +3250,7 @@
  
  Default: \fBno file included\fR
  
 -Example: \fBinclude = /usr/local/samba/lib/admin_smb.conf
 +Example: \fBinclude = /etc/samba/admin_smb.conf
  \fR.TP
- \fBinherit permissions (S)\fR
- The permissions on new files and directories 
-@@ -3647,7 +3647,7 @@
+ \fBinherit acls (S)\fR
+ This parameter can be used to ensure
+@@ -3680,7 +3680,7 @@
  This option takes the standard substitutions, allowing 
  you to have separate log files for each user or machine.
  
@@ -130,7 +125,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR.TP
  \fBlog level (G)\fR
  The value of the parameter (an integer) allows 
-@@ -3760,11 +3760,11 @@
+@@ -3793,11 +3793,11 @@
  file is recommended.
  
  The script must be a relative path to the [netlogon] 
@@ -144,7 +139,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  
  The contents of the batch file are entirely your choice. A 
  suggested command would be to add \fBNET TIME \\\\SERVER /SET 
-@@ -5126,7 +5126,7 @@
+@@ -5182,7 +5182,7 @@
  is an example:
  
  \fBpreexec = csh -c 'echo \\"Welcome to %S!\\" |
@@ -153,16 +148,16 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  
  Of course, this could get annoying after a while :-)
  
-@@ -5257,7 +5257,7 @@
- 
- \fBprint command = lp -d%p -s %s; rm %s\fR
+@@ -5332,7 +5332,7 @@
+ and if SAMBA is compiled against libcups, any manually 
+ set print command will be ignored.
  
 -Example: \fBprint command = /usr/local/samba/bin/myprintscript
 +Example: \fBprint command = /usr/bin/myprintscript
  %p %s\fR
  .TP
  \fBprint ok (S)\fR
-@@ -5380,7 +5380,7 @@
+@@ -5462,7 +5462,7 @@
  Default: \fBNone (set in compile).\fR
  
  Example: \fBprinter driver file = 
@@ -171,16 +166,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  .TP
  \fBprinter driver location (S)\fR
  \fBNote :\fRThis is a deprecated 
-@@ -6075,7 +6075,7 @@
- 
- Default: \fBNone\fR.
- 
--Example: \fBabort shutdown script = /usr/local/samba/sbin/shutdown %m %t %r %f\fR
-+Example: \fBabort shutdown script = /usr/sbin/shutdown %m %t %r %f\fR
- 
- Shutdown script example:
- .sp
-@@ -6233,7 +6233,7 @@
+@@ -6291,7 +6291,7 @@
  Examples: \fBsource environment = |/etc/smb.conf.sh
  \fR
  Example: \fBsource environment = 
@@ -189,7 +175,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  .TP
  \fBssl (G)\fR
  This variable is part of SSL-enabled Samba. This 
-@@ -6263,7 +6263,7 @@
+@@ -6321,7 +6321,7 @@
  directory that don't fit into this naming scheme are ignored. You 
  don't need this variable if you don't verify client certificates.
  
@@ -198,7 +184,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR.TP
  \fBssl CA certFile (G)\fR
  This variable is part of SSL-enabled Samba. This 
-@@ -6280,7 +6280,7 @@
+@@ -6338,7 +6338,7 @@
  simple (you won't need to create the hashed file names). You 
  don't need this variable if you don't verify client certificates.
  
@@ -207,7 +193,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR.TP
  \fBssl ciphers (G)\fR
  This variable is part of SSL-enabled Samba. This 
-@@ -6301,7 +6301,7 @@
+@@ -6359,7 +6359,7 @@
  The certificate in this file is used by  \fBsmbclient(1)\fRif it exists. It's needed 
  if the server requires a client certificate.
  
@@ -216,7 +202,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR.TP
  \fBssl client key (G)\fR
  This variable is part of SSL-enabled Samba. This 
-@@ -6312,7 +6312,7 @@
+@@ -6370,7 +6370,7 @@
  This is the private key for  \fBsmbclient(1)\fR. It's only needed if the 
  client should have a certificate. 
  
@@ -225,7 +211,7 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR.TP
  \fBssl compatibility (G)\fR
  This variable is part of SSL-enabled Samba. This 
-@@ -6931,7 +6931,7 @@
+@@ -6989,7 +6989,7 @@
  
  Default: \fBno username map\fR
  
@@ -234,22 +220,9 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/sm
  \fR.TP
  \fButmp (G)\fR
  This boolean parameter is only available if 
-diff -uNr samba-2.2.3.orig/docs/manpages/smbclient.1 samba-2.2.3/docs/manpages/smbclient.1
---- samba-2.2.3.orig/docs/manpages/smbclient.1	Sun Feb  3 01:45:39 2002
-+++ samba-2.2.3/docs/manpages/smbclient.1	Sun Feb  3 13:24:50 2002
-@@ -771,7 +771,7 @@
- suggestions only. 
- .PP
- It is recommended that the smbclient software be installed
--in the \fI/usr/local/samba/bin/\fR or \fI /usr/samba/bin/\fR directory, this directory readable 
-+in the \fI/usr/bin/\fR or \fI /usr/samba/bin/\fR directory, this directory readable 
- by all, writeable only by root. The client program itself should 
- be executable by all. The client should \fBNOT\fR be 
- setuid or setgid! 
-diff -uNr samba-2.2.3.orig/docs/manpages/smbd.8 samba-2.2.3/docs/manpages/smbd.8
---- samba-2.2.3.orig/docs/manpages/smbd.8	Sun Feb  3 01:45:39 2002
-+++ samba-2.2.3/docs/manpages/smbd.8	Sun Feb  3 13:25:14 2002
-@@ -188,7 +188,7 @@
+--- samba-2.2.4/docs/manpages/smbd.8	Fri May  3 03:02:07 2002
++++ samba-2.2.4/docs/manpages/smbd.8.org	Mon May 20 10:28:07 2002
+@@ -190,7 +190,7 @@
  See the UNIX_INSTALL.html
  document for details.
  .TP
@@ -258,9 +231,8 @@ diff -uNr samba-2.2.3.orig/docs/manpages/smbd.8 samba-2.2.3/docs/manpages/smbd.8
  This is the default location of the
  \fIsmb.conf\fR
  server configuration file. Other common places that systems
-diff -uNr samba-2.2.3.orig/docs/manpages/swat.8 samba-2.2.3/docs/manpages/swat.8
---- samba-2.2.3.orig/docs/manpages/swat.8	Sun Feb  3 01:45:39 2002
-+++ samba-2.2.3/docs/manpages/swat.8	Sun Feb  3 13:27:53 2002
+--- samba-2.2.4/docs/manpages/swat.8	Fri May  3 03:02:08 2002
++++ samba-2.2.4/docs/manpages/swat.8.org	Mon May 20 10:28:07 2002
 @@ -47,13 +47,13 @@
  these in: 
  .TP 0.2i
@@ -296,9 +268,8 @@ diff -uNr samba-2.2.3.orig/docs/manpages/swat.8 samba-2.2.3/docs/manpages/swat.8
  This is the default location of the \fIsmb.conf(5)
  \fRserver configuration file that swat edits. Other 
  common places that systems install this file are \fI /usr/samba/lib/smb.conf\fR and \fI/etc/smb.conf
-diff -uNr samba-2.2.3.orig/docs/manpages/winbindd.8 samba-2.2.3/docs/manpages/winbindd.8
---- samba-2.2.3.orig/docs/manpages/winbindd.8	Sun Feb  3 01:45:39 2002
-+++ samba-2.2.3/docs/manpages/winbindd.8	Sun Feb  3 13:28:29 2002
+--- samba-2.2.4/docs/manpages/winbindd.8	Fri May  3 03:02:08 2002
++++ samba-2.2.4/docs/manpages/winbindd.8.org	Mon May 20 10:28:07 2002
 @@ -364,7 +364,7 @@
  Storage for the Windows NT rid to UNIX user/group 
  id mapping. The lock directory is specified when Samba is initially 

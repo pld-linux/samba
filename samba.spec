@@ -60,7 +60,6 @@ Requires:	samba-common = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
-%define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
 %if 0%{!?_without_cups:1}
 %define		cups_serverbin	%(cups-config --serverbin)
@@ -428,7 +427,7 @@ cd source
 	--without-smbwrapper \
 	--with-pam \
 	--with-piddir=/var/run \
-	--with-privatedir=%{_libdir} \
+	--with-privatedir=%{_sysconfdir} \
 	--with-quotas \
 	--with-readline \
 	--with-smbmount \
@@ -447,11 +446,17 @@ sed -e "s#-symbolic##g" Makefile.old > Makefile
 
 %{__make} everything pam_smbpass
 
+cd ../examples/VFS
+%{__autoconf}
+%configure
+%{__make}
+cd ../../source
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home/services}/samba \
-	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_includedir}}
+	$RPM_BUILD_ROOT/{sbin,lib/security,%{_sysconfdir},%{_includedir}}
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
@@ -465,7 +470,7 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
-install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
+install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/smb.conf
 
 install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/lib/libnss_winbind.so.2
 install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
@@ -479,14 +484,14 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
-echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
+echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
 
 %if 0%{!?_without_cups:1}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
 ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 %endif
 
-> $RPM_BUILD_ROOT%{_libdir}/smbusers
+> $RPM_BUILD_ROOT%{_sysconfdir}/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 rm -f docs/faq/*.{sgml,txt}
@@ -549,7 +554,7 @@ fi
 %attr(755,root,root) /lib/libnss_*
 %attr(755,root,root) /lib/security/pam_winbind.so
 
-%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
+%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
 %attr(640,root,root) /etc/logrotate.d/samba
@@ -603,15 +608,15 @@ fi
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/faq docs/Registry/*
 %doc docs/textdocs/* docs/htmldocs/*.* docs/{history,announce,THANKS}
-%dir %{_libdir}
-%config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
-%config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
+%dir %{_sysconfdir}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smb.conf
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lmhosts
 %attr(755,root,root) %{_bindir}/make_smbcodepage
 %attr(755,root,root) %{_bindir}/make_unicodemap
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/testprns
 %attr(755,root,root) %{_bindir}/make_printerdef
-%{_libdir}/codepages
+%{_sysconfdir}/codepages
 %{_mandir}/man1/make_smbcodepage.1*
 %{_mandir}/man1/make_unicodemap.1*
 %{_mandir}/man1/testparm.1*

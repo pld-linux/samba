@@ -20,7 +20,7 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB кл╕╓нт та сервер
 Name:		samba
 Version:	2.2.4
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -42,6 +42,7 @@ Patch10:	%{name}-vfs.patch
 Patch11:	%{name}-quota.patch
 Patch12:	http://v6web.litech.org/samba/%{name}-2.2.3a+IPv6-20020419.diff
 Patch13:	%{name}-DESTDIR-fix.patch
+Patch14:	%{name}-CIFS-extensions.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -372,6 +373,7 @@ desenvolver aplicativos clientes para o samba.
 %patch11 -p1
 %{?_with_ipv6:%patch12 -p1}
 %patch13 -p1
+%patch14 -p1
 
 %build
 cd source

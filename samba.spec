@@ -15,7 +15,7 @@ Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.4
-Release:	0.4
+Release:	0.5
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -198,7 +198,7 @@ ChGW
 %package -n libsmbclient-devel
 Summary:	ChGW
 Group:		Libraries
-Requires:	%{name}-libsmbclient = %{version}
+Requires:	libsmbclient = %{version}
 
 %description -n libsmbclient-devel
 ChGW

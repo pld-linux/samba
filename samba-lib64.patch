@@ -1,23 +1,7 @@
-diff -durN samba-3.0.1.orig/source/Makefile.in samba-3.0.1/source/Makefile.in
---- samba-3.0.1.orig/source/Makefile.in	2003-12-10 22:59:18.000000000 +0100
-+++ samba-3.0.1/source/Makefile.in	2004-12-30 13:53:05.263072472 +0100
-@@ -1243,9 +1243,9 @@
- 	@$(SHELL) $(srcdir)/script/installswat.sh $(DESTDIR)$(SWATDIR) $(srcdir)
- 
- installclientlib: installdirs libsmbclient
--	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/lib
--	-$(INSTALLCLIENTCMD_SH) bin/libsmbclient.@SHLIBEXT@ $(DESTDIR)${prefix}/lib
--	-$(INSTALLCLIENTCMD_A) bin/libsmbclient.a $(DESTDIR)${prefix}/lib
-+	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/lib64
-+	-$(INSTALLCLIENTCMD_SH) bin/libsmbclient.@SHLIBEXT@ $(DESTDIR)${prefix}/lib64
-+	-$(INSTALLCLIENTCMD_A) bin/libsmbclient.a $(DESTDIR)${prefix}/lib64
- 	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/include
- 	-$(INSTALLCMD) $(srcdir)/include/libsmbclient.h $(DESTDIR)${prefix}/include
- 
-diff -durN samba-3.0.1.orig/source/aclocal.m4 samba-3.0.1/source/aclocal.m4
---- samba-3.0.1.orig/source/aclocal.m4	2003-11-07 18:37:32.000000000 +0100
-+++ samba-3.0.1/source/aclocal.m4	2004-12-30 13:54:05.767874344 +0100
-@@ -496,12 +496,12 @@
+diff -urN samba-3.0.4.org/source/aclocal.m4 samba-3.0.4/source/aclocal.m4
+--- samba-3.0.4.org/source/aclocal.m4	2004-05-13 02:29:15.224209664 +0200
++++ samba-3.0.4/source/aclocal.m4	2004-05-13 02:29:22.478106904 +0200
+@@ -541,12 +541,12 @@
    $1=[$]ac_new_flags
  ])
      
@@ -32,7 +16,7 @@ diff -durN samba-3.0.1.orig/source/aclocal.m4 samba-3.0.1/source/aclocal.m4
      *) ac_new_flags="[$]ac_new_flags [$]i" ;;
      esac
    done
-@@ -632,9 +632,9 @@
+@@ -677,9 +677,9 @@
  ])
  
  dnl LIB_ADD_DIR(LDFLAGS, $LIBDIR)
@@ -44,19 +28,43 @@ diff -durN samba-3.0.1.orig/source/aclocal.m4 samba-3.0.1/source/aclocal.m4
      $1="$$1 -L$2"
  fi
  ])
-diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
---- samba-3.0.2a.orig/source/configure.in	2003-12-15 04:36:25.000000000 +0100
-+++ samba-3.0.2a/source/configure.in	2004-12-30 13:56:21.871183496 +0100
-@@ -22,7 +22,7 @@
+diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
+--- samba-3.0.4.org/source/configure.in	2004-05-13 02:29:15.234208144 +0200
++++ samba-3.0.4/source/configure.in	2004-05-13 02:32:02.287812136 +0200
+@@ -19,7 +19,7 @@
+ mandir="\${prefix}/man"
+ logfilebase="\${VARDIR}"
+ privatedir="\${prefix}/private"
+-libdir="\${prefix}/lib"
++libdir="\${prefix}/lib64"
+ configdir="\${LIBDIR}"
+ swatdir="\${prefix}/swat"
+ 
+@@ -27,12 +27,12 @@
+ [  --with-fhs              Use FHS-compliant paths (default=no)],
+ [ case "$withval" in
+   yes)
+-    lockdir="\${VARDIR}/lib/samba"
++    lockdir="\${VARDIR}/lib64/samba"
+     piddir="\${VARDIR}/run"
      mandir="\${prefix}/share/man"
      logfilebase="\${VARDIR}/log/samba"
      privatedir="\${CONFIGDIR}/private"
 -    libdir="\${prefix}/lib/samba"
 +    libdir="\${prefix}/lib64/samba"
-     swatdir="\${DATADIR}/samba/swat",
-     configdir="\${LIBDIR}"
-     logfilebase="\${VARDIR}"
-@@ -825,7 +825,7 @@
+     configdir="${sysconfdir}/samba"
+     swatdir="\${DATADIR}/samba/swat"
+     ;;
+@@ -587,7 +587,7 @@
+ # Note: iconv does that explicitly below, but other packages
+ # don't.
+ 	CPPFLAGS="$CPPFLAGS -I/sw/include"
+-	LDFLAGS="$LDFLAGS -L/sw/lib"
++	LDFLAGS="$LDFLAGS -L/sw/lib64"
+ 
+ # If we have dlsym_prepend_underscore (from Fink's dlcompat),
+ # use that instead of plain dlsym.
+@@ -868,7 +868,7 @@
      _cppflags=${CPPFLAGS}
  
      # Add additional search path
@@ -65,7 +73,7 @@ diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
      CPPFLAGS="-I$with_readline/include $CPPFLAGS"
  
      AC_CHECK_HEADERS(readline.h history.h readline/readline.h)
-@@ -836,7 +836,7 @@
+@@ -879,7 +879,7 @@
         AC_CHECK_LIB(${termlib}, tgetent, [TERMLIBS="-l${termlib}"; break])
        done
        AC_CHECK_LIB(readline, rl_callback_handler_install,
@@ -74,34 +82,16 @@ diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
         TERMCPPFLAGS="-I$with_readline/include"
         CPPFLAGS="-I$with_readline/include $CPPFLAGS"
         TERMLIBS="-lreadline $TERMLIBS"
-@@ -1615,7 +1615,7 @@
+@@ -1658,7 +1658,7 @@
  ICONV_LOCATION=standard
- LOOK_DIRS="/usr /usr/local /sw"
+ LOOK_DIRS="/usr /usr/local /sw /opt"
  AC_ARG_WITH(libiconv,
 -[  --with-libiconv=BASEDIR Use libiconv in BASEDIR/lib and BASEDIR/include (default=auto) ],
 +[  --with-libiconv=BASEDIR Use libiconv in BASEDIR/lib64 and BASEDIR/include (default=auto) ],
  [
    if test "$withval" = "no" ; then
      AC_MSG_ERROR([argument to --with-libiconv must be a directory])
-@@ -1635,7 +1635,7 @@
-     CPPFLAGS="$CPPFLAGS -I$i/include"
- dnl This is here to handle -withval stuff for --with-libiconv
- dnl Perhaps we should always add a -L
--    LDFLAGS="$LDFLAGS -L$i/lib"
-+    LDFLAGS="$LDFLAGS -L$i/lib64"
-     LIBS=
-     export LDFLAGS LIBS CPPFLAGS
- dnl Try to find iconv(3)
-@@ -1643,7 +1643,7 @@
- 
-     if test "$ICONV_FOUND" = yes; then
- 	LDFLAGS=$save_LDFLAGS
--        LIB_ADD_DIR(LDFLAGS, "$i/lib")
-+        LIB_ADD_DIR(LDFLAGS, "$i/lib64")
-         CFLAGS_ADD_DIR(CPPFLAGS, "$i/include")
-         LIBS="$save_LIBS"
-         ICONV_LOCATION=$i
-@@ -1655,7 +1655,7 @@
+@@ -1708,7 +1708,7 @@
          # check for iconv in libc
          ic_save_LIBS="$LIBS"
          if test x"$ICONV_PATH_SPEC" = "xyes" ; then
@@ -110,16 +100,7 @@ diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
          fi
          if test x"$jm_cv_lib_iconv" != x; then
             LIBS="$LIBS -l$jm_cv_lib_iconv"
-@@ -1719,7 +1719,7 @@
-            fi
- 	   dnl Add the flags we need to CPPFLAGS and LDFLAGS
- 	   CFLAGS_ADD_DIR(CPPFLAGS, "$i/include")
--	   LIB_ADD_DIR(LDFLAGS, "$i/lib")
-+	   LIB_ADD_DIR(LDFLAGS, "$i/lib64")
- 	   export CPPFLAGS
-            AC_DEFINE(HAVE_NATIVE_ICONV,1,[Whether to use native iconv])
- 	   AC_DEFINE_UNQUOTED(DEFAULT_DOS_CHARSET,$default_dos_charset,[Default dos charset name])
-@@ -2468,7 +2468,7 @@
+@@ -2568,7 +2568,7 @@
          AC_MSG_RESULT($withval)
          KRB5_CFLAGS="-I$withval/include"
          KRB5_CPPFLAGS="-I$withval/include"
@@ -128,7 +109,7 @@ diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
          FOUND_KRB5=yes
          ;;
        esac ],
-@@ -2481,10 +2481,10 @@
+@@ -2581,10 +2581,10 @@
      # see if this box has the SuSE location for the heimdal krb implementation
      AC_MSG_CHECKING(for /usr/include/heimdal)
      if test -d /usr/include/heimdal; then
@@ -141,7 +122,7 @@ diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
            AC_MSG_RESULT(yes)
        else
            KRB5_CFLAGS="-I/usr/include/heimdal"
-@@ -4261,7 +4261,7 @@
+@@ -4372,7 +4372,7 @@
  builddir=`pwd`
  AC_SUBST(builddir)
  
@@ -150,9 +131,25 @@ diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
  LIB_REMOVE_USR_LIB(LDFLAGS)
  LIB_REMOVE_USR_LIB(LIBS)
  
-diff -durN samba-3.0.1.orig/source/torture/nsstest.c samba-3.0.1/source/torture/nsstest.c
---- samba-3.0.1.orig/source/torture/nsstest.c	2003-08-15 22:40:00.000000000 +0200
-+++ samba-3.0.1/source/torture/nsstest.c	2004-12-30 13:57:10.644768784 +0100
+diff -urN samba-3.0.4.org/source/Makefile.in samba-3.0.4/source/Makefile.in
+--- samba-3.0.4.org/source/Makefile.in	2004-05-13 02:29:15.223209816 +0200
++++ samba-3.0.4/source/Makefile.in	2004-05-13 02:29:22.474107512 +0200
+@@ -1278,9 +1278,9 @@
+ 	@$(SHELL) $(srcdir)/script/installswat.sh $(DESTDIR)$(SWATDIR) $(srcdir)
+ 
+ installclientlib: installdirs libsmbclient
+-	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/lib
+-	-$(INSTALLCLIENTCMD_SH) bin/libsmbclient.@SHLIBEXT@ $(DESTDIR)${prefix}/lib
+-	-$(INSTALLCLIENTCMD_A) bin/libsmbclient.a $(DESTDIR)${prefix}/lib
++	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/lib64
++	-$(INSTALLCLIENTCMD_SH) bin/libsmbclient.@SHLIBEXT@ $(DESTDIR)${prefix}/lib64
++	-$(INSTALLCLIENTCMD_A) bin/libsmbclient.a $(DESTDIR)${prefix}/lib64
+ 	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/include
+ 	-$(INSTALLCMD) $(srcdir)/include/libsmbclient.h $(DESTDIR)${prefix}/include
+ 
+diff -urN samba-3.0.4.org/source/torture/nsstest.c samba-3.0.4/source/torture/nsstest.c
+--- samba-3.0.4.org/source/torture/nsstest.c	2004-05-13 02:29:15.062234288 +0200
++++ samba-3.0.4/source/torture/nsstest.c	2004-05-13 02:29:22.503103104 +0200
 @@ -21,7 +21,7 @@
  
  #include "includes.h"

@@ -32,13 +32,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	3.0.2a
+Version:	3.0.3
 Epoch:		1
-Release:	4.1
+Release:	0.pre1.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-# Source0-md5:	72979a30ac450c8b0567c1ac9886884a
+Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}pre1.tar.bz2
+# 46e0c053154e88ab34b29f118a43e06b
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -679,7 +679,7 @@ Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}pre1
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1

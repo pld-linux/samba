@@ -750,6 +750,24 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego
 Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
+%package vfs-vscan-mcafee
+Summary:	On-access virus scanning for samba using mcafee
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy mcafee
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+#Requires:	mcafee
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
+Obsoletes:	vscan-mcafee
+
+%description vfs-vscan-mcafee
+A vfs-module for samba to implement on-access scanning using the mcafee
+antivirus software (which must be installed to use this).
+
+%description vfs-vscan-mcafee -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego mcafee
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
 %package vfs-vscan-mks
 Summary:	On-access virus scanning for samba using mks
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy mks
@@ -945,7 +963,7 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # vscan modules
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
-install examples/VFS/samba-vscan-%{vscan_version}/{clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
+install examples/VFS/samba-vscan-%{vscan_version}/{clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure,nai}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -1038,6 +1056,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
+%attr(755,root,root) %{_bindir}/tdbtool
 
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
@@ -1240,7 +1259,6 @@ fi
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
 %attr(755,root,root) %{_vfsdir}/full_audit.so
 
-
 %files vfs-cap
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/cap.so
@@ -1296,6 +1314,12 @@ fi
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-kavp.conf
 %attr(755,root,root) %{_vfsdir}/vscan-kavp.so
+
+%files vfs-vscan-mcafee
+%defattr(644,root,root,755)
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-mcdaemon.conf
+%attr(755,root,root) %{_vfsdir}/vscan-mcdaemon.so
 
 %ifarch %{ix86}
 %files vfs-vscan-mks

@@ -15,7 +15,7 @@ Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.4
-Release:	0.5
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -189,19 +189,27 @@ Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 (has³a Samby) zsynchronizowanego z has³ami unixowymi.
 
 %package -n libsmbclient
-Summary:	ChGW
+Summary:	libsmbclient - samba client library
+Summary(pl):	libsmbclient - biblioteka klienta samby
 Group:		Libraries
 
 %description -n libsmbclient
-ChGW
+libsmbclient - library that allows to use samba clients functions.
+
+%description -n libsmbclient -l pl
+libsmbclient - biblioteka pozwalaj±ca korzystaæ z funcji klienta samby.
 
 %package -n libsmbclient-devel
-Summary:	ChGW
-Group:		Libraries
+Summary:	libsmbclient - samba client library
+Summary(pl):	libsmbclient - biblioteka klienta samby
+Group:		Development/Libraries
 Requires:	libsmbclient = %{version}
 
 %description -n libsmbclient-devel
-ChGW
+Header files for libsmbclient.
+
+%description -n libsmbclient-devel
+Pliki nag³ówkowe dla libsmbclient.
 
 %prep
 %setup -q

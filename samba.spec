@@ -21,7 +21,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.7
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -386,7 +386,7 @@ Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj眂y na drukarkach SMB
 Group:		Application/Printing
 Requires:	cups
-Requires:	samba-clinet = %{version}
+Requires:	samba-client = %{version}
 
 %description -n cups-backend-smb
 CUPS backend for printing to SMB printers.

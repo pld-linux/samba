@@ -671,7 +671,7 @@ Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %prep
-%setup -q -n %{name}-%{version}rc1
+%setup -q -n %{name}-%{version}rc2
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1

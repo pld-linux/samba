@@ -33,12 +33,12 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	3.0.4
-Release:	1
+Version:	3.0.5
+Release:	0.pre1.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
+Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}pre1.tar.gz
 # Source0-md5:	0156265c1e95ac662deef386f615504f
 Source1:	smb.init
 Source2:	%{name}.pamd
@@ -65,7 +65,6 @@ BuildRequires:	libxml2-devel
 BuildRequires:	mysql-devel
 BuildRequires:	mysql-extras
 %endif
-BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel > 0.66
@@ -803,7 +802,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}pre1
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1
@@ -1174,6 +1173,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/audit.so
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
+%attr(755,root,root) %{_vfsdir}/full_audit.so
 
 %files vfs-cap
 %defattr(644,root,root,755)

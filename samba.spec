@@ -45,10 +45,6 @@ Patch10:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 Patch11:	%{name}-DESTDIR-fix.patch
 Patch12:	%{name}-CIFS-extensions.patch
 URL:		http://www.samba.org/
-Prereq:		/sbin/chkconfig
-Requires:	pam >= 0.66
-Requires:	logrotate
-Requires:	samba-common = %{version}
 BuildRequires:	autoconf
 %{!?_without_cups:BuildRequires:	cups-devel}
 BuildRequires:	ncurses-devel >= 5.2
@@ -56,6 +52,10 @@ BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
 %{?_with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7
+Requires(post,preun):	/sbin/chkconfig
+Requires:	logrotate
+Requires:	pam >= 0.66
+Requires:	samba-common = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba

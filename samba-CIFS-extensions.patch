@@ -1,0 +1,70 @@
+diff -Nur samba-2.2.4.orig/source/include/trans2.h samba-2.2.4/source/include/trans2.h
+--- samba-2.2.4.orig/source/include/trans2.h	Sun Feb  3 01:46:40 2002
++++ samba-2.2.4/source/include/trans2.h	Thu Jun 13 15:54:53 2002
+@@ -337,6 +337,15 @@
+ #define SMB_UID_NO_CHANGE                  0xFFFFFFFF
+ #define SMB_GID_NO_CHANGE                  0xFFFFFFFF
+ 
++#define SMB_SIZE_NO_CHANGE                 0xFFFFFFFFFFFFFFFF
++#define SMB_SIZE_NO_CHANGE_LO              0xFFFFFFFF
++#define SMB_SIZE_NO_CHANGE_HI              0xFFFFFFFF
++
++#define SMB_TIME_NO_CHANGE                 0xFFFFFFFFFFFFFFFF
++#define SMB_TIME_NO_CHANGE_LO              0xFFFFFFFF
++#define SMB_TIME_NO_CHANGE_HI              0xFFFFFFFF
++
++
+ /*
+ Offset Size         Name
+ 0      LARGE_INTEGER EndOfFile                File size
+diff -Nur samba-2.2.4.orig/source/smbd/trans2.c samba-2.2.4/source/smbd/trans2.c
+--- samba-2.2.4.orig/source/smbd/trans2.c	Fri May  3 03:03:49 2002
++++ samba-2.2.4/source/smbd/trans2.c	Thu Jun 13 15:54:53 2002
+@@ -417,6 +417,21 @@
+ }
+ 
+ /****************************************************************************
++checks for SMB_TIME_NO_CHANGE and if not found
++calls interpret_long_date
++****************************************************************************/
++time_t interpret_long_unix_date(char *p)
++{
++	DEBUG(1,("interpret_long_unix_date\n"));
++	if(IVAL(p,0) == SMB_TIME_NO_CHANGE_LO &&
++	   IVAL(p,4) == SMB_TIME_NO_CHANGE_HI) {
++		return -1;
++	} else {
++		return interpret_long_date(p);
++	}
++}
++
++/****************************************************************************
+  Get a level dependent lanman2 dir entry.
+ ****************************************************************************/
+ 
+@@ -2575,16 +2590,19 @@
+ 			if (total_data < 100)
+ 				return(ERROR_DOS(ERRDOS,ERRinvalidparam));
+ 
+-			size=IVAL(pdata,0); /* first 8 Bytes are size */
++			if(IVAL(pdata, 0) != SMB_SIZE_NO_CHANGE_LO &&
++			   IVAL(pdata, 4) != SMB_SIZE_NO_CHANGE_HI) {
++				size=IVAL(pdata,0); /* first 8 Bytes are size */
+ #ifdef LARGE_SMB_OFF_T
+-			size |= (((SMB_OFF_T)IVAL(pdata,4)) << 32);
++				size |= (((SMB_OFF_T)IVAL(pdata,4)) << 32);
+ #else /* LARGE_SMB_OFF_T */
+-			if (IVAL(pdata,4) != 0)	/* more than 32 bits? */
+-				return ERROR_DOS(ERRDOS,ERRunknownlevel);
++				if (IVAL(pdata,4) != 0)	/* more than 32 bits? */
++					return ERROR_DOS(ERRDOS,ERRunknownlevel);
+ #endif /* LARGE_SMB_OFF_T */
++			}
+ 			pdata+=24;          /* ctime & st_blocks are not changed */
+-			tvs.actime = interpret_long_date(pdata); /* access_time */
+-			tvs.modtime = interpret_long_date(pdata+8); /* modification_time */
++			tvs.actime = interpret_long_unix_date(pdata); /* access_time */
++			tvs.modtime = interpret_long_unix_date(pdata+8); /* modification_time */
+ 			pdata+=16;
+ 			set_owner = (uid_t)IVAL(pdata,0);
+ 			pdata += 8;

@@ -1,6 +1,6 @@
-diff -Nur samba-3.0.6.orig/source/aclocal.m4 samba-3.0.6/source/aclocal.m4
---- samba-3.0.6.orig/source/aclocal.m4	2004-04-04 09:37:42.000000000 +0200
-+++ samba-3.0.6/source/aclocal.m4	2004-08-20 12:40:42.859152168 +0200
+diff -Nur samba-3.0.7.orig/source/aclocal.m4 samba-3.0.7/source/aclocal.m4
+--- samba-3.0.7.orig/source/aclocal.m4	2004-04-04 09:37:42.000000000 +0200
++++ samba-3.0.7/source/aclocal.m4	2004-09-14 10:59:27.493878552 +0200
 @@ -511,7 +511,7 @@
    fi
  
@@ -37,9 +37,9 @@ diff -Nur samba-3.0.6.orig/source/aclocal.m4 samba-3.0.6/source/aclocal.m4
      $1="$$1 -L$2"
  fi
  ])
-diff -Nur samba-3.0.6.orig/source/configure.in samba-3.0.6/source/configure.in
---- samba-3.0.6.orig/source/configure.in	2004-08-06 23:38:21.000000000 +0200
-+++ samba-3.0.6/source/configure.in	2004-08-20 12:39:35.994317168 +0200
+diff -Nur samba-3.0.7.orig/source/configure.in samba-3.0.7/source/configure.in
+--- samba-3.0.7.orig/source/configure.in	2004-09-12 05:47:18.000000000 +0200
++++ samba-3.0.7/source/configure.in	2004-09-14 10:59:27.501877336 +0200
 @@ -27,7 +27,7 @@
  mandir="\${prefix}/man"
  logfilebase="\${VARDIR}"
@@ -91,7 +91,7 @@ diff -Nur samba-3.0.6.orig/source/configure.in samba-3.0.6/source/configure.in
         TERMCPPFLAGS="-I$with_readline/include"
         CPPFLAGS="-I$with_readline/include $CPPFLAGS"
         TERMLIBS="-lreadline $TERMLIBS"
-@@ -1680,7 +1680,7 @@
+@@ -1683,7 +1683,7 @@
  ICONV_LOCATION=standard
  LOOK_DIRS="/usr /usr/local /sw /opt"
  AC_ARG_WITH(libiconv,
@@ -100,7 +100,7 @@ diff -Nur samba-3.0.6.orig/source/configure.in samba-3.0.6/source/configure.in
  [
    if test "$withval" = "no" ; then
      AC_MSG_ERROR([argument to --with-libiconv must be a directory])
-@@ -2628,7 +2628,7 @@
+@@ -2630,7 +2630,7 @@
          AC_MSG_RESULT($withval)
          KRB5_CFLAGS="-I$withval/include"
          KRB5_CPPFLAGS="-I$withval/include"
@@ -109,7 +109,7 @@ diff -Nur samba-3.0.6.orig/source/configure.in samba-3.0.6/source/configure.in
          FOUND_KRB5=yes
          ;;
        esac ],
-@@ -2641,10 +2641,10 @@
+@@ -2643,10 +2643,10 @@
      # see if this box has the SuSE location for the heimdal krb implementation
      AC_MSG_CHECKING(for /usr/include/heimdal)
      if test -d /usr/include/heimdal; then
@@ -122,7 +122,7 @@ diff -Nur samba-3.0.6.orig/source/configure.in samba-3.0.6/source/configure.in
            AC_MSG_RESULT(yes)
        else
            KRB5_CFLAGS="-I/usr/include/heimdal"
-@@ -4489,7 +4489,7 @@
+@@ -4491,7 +4491,7 @@
  builddir=`pwd`
  AC_SUBST(builddir)
  
@@ -131,9 +131,9 @@ diff -Nur samba-3.0.6.orig/source/configure.in samba-3.0.6/source/configure.in
  LIB_REMOVE_USR_LIB(LDFLAGS)
  LIB_REMOVE_USR_LIB(LIBS)
  
-diff -Nur samba-3.0.6.orig/source/torture/nsstest.c samba-3.0.6/source/torture/nsstest.c
---- samba-3.0.6.orig/source/torture/nsstest.c	2004-04-04 09:37:39.000000000 +0200
-+++ samba-3.0.6/source/torture/nsstest.c	2004-08-20 12:39:36.065306376 +0200
+diff -Nur samba-3.0.7.orig/source/torture/nsstest.c samba-3.0.7/source/torture/nsstest.c
+--- samba-3.0.7.orig/source/torture/nsstest.c	2004-04-04 09:37:39.000000000 +0200
++++ samba-3.0.7/source/torture/nsstest.c	2004-09-14 10:59:27.503877032 +0200
 @@ -21,7 +21,7 @@
  
  #include "includes.h"

@@ -393,6 +393,19 @@ Pliki nag³ówkowe dla libsmbclient.
 Arquivos de inclusão, bibliotecas e documentação necessários para
 desenvolver aplicativos clientes para o samba.
 
+%package -n libsmbclient-static
+Summary:	libsmbclient - samba client library
+Summary(pl):	libsmbclient - biblioteka klienta samby
+Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
+Group:		Development/Libraries
+Requires:	libsmbclient = %{version}
+
+%description -n libsmbclient-static
+Static libraries for libsmbclient.
+
+%description -n libsmbclient-static -l pl
+Biblioteki statyczne dla libsmbclient.
+
 %package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
@@ -675,8 +688,9 @@ install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
-install source/bin/libsmbclient.so $RPM_BUILD_ROOT/lib/libsmbclient.so.0
-ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/lib/libsmbclient.so
+#install source/bin/libsmbclient.so $RPM_BUILD_ROOT/lib/libsmbclient.so.0
+mv $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
+ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
@@ -867,12 +881,16 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) /lib/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/libsmbclient.so.*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) /lib/libsmbclient.so
+%attr(755,root,root) %{_libdir}/libsmbclient.so
 %{_includedir}/libsmbclient.h
+
+%files -n libsmbclient-static
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libsmbclient.a
 
 %if 0%{!?_without_cups:1}
 %files -n cups-backend-smb

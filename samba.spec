@@ -1,15 +1,15 @@
-Summary:	SMB client and server
-Summary(pl):	Klient i serwer SMB
-Summary(cs):	Klient a server SMB
-Summary(da):	SMB klient og server
-Summary(de):	SMB-Client und -Server
-Summary(fi):	SMB-asiakasohjelma ja palvelin
-Summary(fr):	Client et serveur SMB
-Summary(it):	Client e server SMB
-Summary(tr):	SMB istemci ve sunucusu
+Summary:	SMB server
+Summary(pl):	Serwer SMB
+Summary(cs):	Server SMB
+Summary(da):	SMB server
+Summary(de):	SMB-Server
+Summary(fi):	SMB-palvelin
+Summary(fr):	Serveur SMB
+Summary(it):	Server SMB
+Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.0.7
-Release:	26
+Release:	27
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -36,6 +36,7 @@ Patch12:	%{name}-awk_path.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
+Requires:       samba-common = %{version} 
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	pam-devel > 0.66
@@ -137,6 +138,40 @@ swat is run from inet server.
 %description -n swat -l pl
 swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy
 przegl±darki www.
+
+%package client
+Summary:        Samba client programs.
+Summary(pl):    Klienci serwera Samba
+Group:          Networking/Other
+Group(de):      Netzwerkwesen/Unsere
+Group(pl):      Sieciowe/Inne
+Requires:       samba-common = %{version}
+Obsoletes:      smbfs
+
+%description client
+Samba-client provides some SMB clients, which complement the build-in
+SMB filesystem in Linux. These allow accessing of SMB shares and
+printing to SMB printers.
+
+%description client -l pl
+Klient-samby dostarcza pewne programy które uzupe³niaj± system
+plików SMB zawarty w j±drze. Pozwala na wspó³dzielenie i drukowanie
+w sieci SMB.
+
+%package common
+Summary:        Files used by both Samba servers and clients.
+Summary(pl):    Pliki u¿ywane przez serwer i klientów Samba.
+Group:          Networking/Daemons
+Group(de):      Netzwerkwesen/Server
+Group(pl):      Sieciowe/Serwery
+
+%description common
+Samba-common provides files necessary for both the server and client
+packages of Samba.
+
+%description common -l pl
+Samba-common dostarcza pliki niezbêdne zarówno dla serwera jak i
+klientów Samba.
 
 %prep
 %setup -q
@@ -251,41 +286,70 @@ rm -rf $RPM_BUILD_ROOT
 %doc Roadmap.gz docs/faq docs/*.reg.gz
 %doc docs/textdocs docs/*.txt.gz docs/{history,announce,THANKS}.gz
 
-%attr(755,root,root) /sbin/mount.smbfs
-%attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
+%attr(755,root,root) %{_bindir}/addtosmbpass
+%attr(755,root,root) %{_bindir}/smbstatus
+%attr(755,root,root) %{_bindir}/smbpasswd
+%attr(755,root,root) %{_bindir}/convert_smbpasswd
 
 %dir %{_sysconfdir}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smb.conf
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smbusers
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lmhosts
-
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
 %attr(640,root,root) /etc/logrotate.d/samba
 %attr(640,root,root) %config %verify(not size mtime md5) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/security/blacklist.samba
-
-%{_mandir}/man[157]/*
+%{_mandir}/man1/smbstatus.1*
+%{_mandir}/man5/smbpasswd.5*
+%{_mandir}/man7/samba.7*
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
-%{_mandir}/man8/smbmnt.8*
-%{_mandir}/man8/smbmount.8*
 %{_mandir}/man8/smbpasswd.8*
-%{_mandir}/man8/smbumount.8*
 
 %dir /home/samba
-%{_sysconfdir}/codepages
+#%{_sysconfdir}/codepages
 
 %dir /var/lock/samba
 %ghost /var/lock/samba/*
 
 %attr(0750,root,root) %dir /var/log/samba
 %attr(0750,root,root) %dir /var/log/archiv/samba
-
 %attr(1777,root,root) %dir /var/spool/samba
+
+%files client
+%attr(755,root,root) /sbin/mount.smbfs
+%attr(755,root,root) %{_bindir}/smbmount
+%attr(755,root,root) %{_bindir}/smbmnt
+%attr(755,root,root) %{_bindir}/smbumount
+%{_mandir}/man8/smbmnt.8*
+%{_mandir}/man8/smbmount.8*
+%{_mandir}/man8/smbumount.8*
+%attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/smbclient
+%attr(755,root,root) %{_bindir}/smbtar
+%attr(755,root,root) %{_bindir}/smbspool
+%{_mandir}/man1/smbtar.1*
+%{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/nmblookup.1*
+
+
+%files common
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smb.conf
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lmhosts
+%attr(755,root,root) %{_bindir}/make_smbcodepage
+%attr(755,root,root) %{_bindir}/make_unicodemap
+%attr(755,root,root) %{_bindir}/testparm
+%attr(755,root,root) %{_bindir}/testprns
+%attr(755,root,root) %{_bindir}/make_printerdef
+%{_sysconfdir}/codepages
+%{_mandir}/man1/make_smbcodepage.1*
+%{_mandir}/man1/make_unicodemap.1*
+%{_mandir}/man1/testparm.1*
+%{_mandir}/man1/testprns.1*
+%{_mandir}/man5/smb.conf.5*
+%{_mandir}/man5/lmhosts.5*
 
 %files -n swat
 %defattr(644,root,root,755)

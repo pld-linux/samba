@@ -27,7 +27,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.1
 Epoch:		1
-Release:	0.2
+Release:	1.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -245,7 +245,7 @@ Requires:	%{name} = %{epoch}:%{version}
 Requires:	inetdaemon
 Requires:	rc-inetd >= 0.8.2
 #Provides:	samba-swat
-#Obsoletes:	samba-swat
+Obsoletes:	swat
 
 %description swat
 swat allows a Samba administrator to configure the complex smb.conf

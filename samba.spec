@@ -1,11 +1,11 @@
 #
 # Conditional build:
-%bcond_without cups		# without CUPS support
-%bcond_without mysql		# without MySQL support
-%bcond_with ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
-#%bcond_with ipv6		# with IPv6 support
-%bcond_without ldap		# without LDAP support
-%bcond_without krb5		# without Kerberos5/Heimdal support
+%bcond_without	cups		# without CUPS support
+%bcond_without	mysql		# without MySQL support
+%bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
+#%bcond_with	ipv6		# with IPv6 support
+%bcond_without	ldap		# without LDAP support
+%bcond_without	krb5		# without Kerberos5/Heimdal support
 #
 %define		vscan_version 0.3.4
 Summary:	SMB server
@@ -25,13 +25,14 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	3.0.1
+Version:	3.0.2
 Epoch:		1
-Release:	1.3
+Release:	0.rc1.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-# Source0-md5:	2a3d494f139ab7402d8902b0e68c463f
+#Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
+Source0:	http://pl.samba.org/samba/ftp/rc/%{name}-%{version}rc1.tar.bz2
+# Source0-md5:	d7196d877882fbbec1df91a33d2530ea
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -44,10 +45,12 @@ Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
 Source9:	winbind.init
 Patch0:		%{name}-statfs-workaround.patch
-#Patch1:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
+Patch1:		%{name}-lib64.patch
+#Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
+BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel}
 %{?with_krb5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool >= 2:1.4d
@@ -71,7 +74,7 @@ Requires:	logrotate
 Requires:	pam >= 0.66
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_vfsdir		/usr/lib/%{name}/vfs
+%define		_vfsdir		%{_libdir}/%{name}/vfs
 %define		_sambahome	/home/services/samba
 %if %{with cups}
 %define		cups_serverbin	%(cups-config --serverbin)
@@ -656,9 +659,12 @@ Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}rc1
 %patch0 -p1
-#%{?with_ipv6:%patch1 -p1}
+%ifarch amd64
+%patch1 -p1
+%endif
+#%{?with_ipv6:%patch2 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}
@@ -705,11 +711,13 @@ cd source
 
 cd ../examples/VFS
 %{__autoconf}
-%configure
+%configure \
+	CFLAGS="%{rpmcflags} -fPIC"
 %{__make}
 mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
+cp /usr/share/automake/config.sub .
 %configure
 %{__make} oav sophos fprotd trend icap mksd kavp clamav
 
@@ -717,7 +725,7 @@ cd samba-vscan-%{vscan_version}
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/var/{lock,log,log/archiv,spool}/samba \
-	$RPM_BUILD_ROOT{/sbin,/lib/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
+	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
 
 cd source
 %{__make} install \
@@ -737,12 +745,12 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 
-install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/lib/libnss_winbind.so.2
-ln -s libnss_winbind.so.2 $RPM_BUILD_ROOT/lib/libnss_winbind.so
-install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/lib/libnss_wins.so.2
-ln -s libnss_wins.so.2 $RPM_BUILD_ROOT/lib/libnss_wins.so
-install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security
-install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security
+install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
+ln -s libnss_winbind.so.2 $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
+install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
+ln -s libnss_wins.so.2 $RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
+install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
+install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
 mv $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
@@ -843,8 +851,8 @@ fi
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
 
-#%attr(755,root,root) /lib/libnss_*
-#%attr(755,root,root) /lib/security/pam_winbind.so
+#%attr(755,root,root) /%{_lib}/libnss_*
+#%attr(755,root,root) /%{_lib}/security/pam_winbind.so
 #%attr(755,root,root) %{_libdir}/%{name}/pdb/*.so
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
@@ -969,24 +977,29 @@ fi
 #%doc swat/README* swat/help/*
 %doc swat/help/*
 %attr(755,root,root) %{_sbindir}/swat
-%{_datadir}/swat
-%{_mandir}/man8/swat.8*
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/swat
+%dir %{_datadir}/swat
+%{_datadir}/swat/help
+%{_datadir}/swat/images
+%{_datadir}/swat/include
+%dir %{_datadir}/swat/lang
 %lang(ja) %{_datadir}/swat/lang/ja
 %lang(tr) %{_datadir}/swat/lang/tr
+%{_datadir}/swat/using_samba
 %lang(de) %{_libdir}/%{name}/de.msg
-%lang(en) %{_libdir}/%{name}/en.msg
+%{_libdir}/%{name}/en.msg
 %lang(fr) %{_libdir}/%{name}/fr.msg
 %lang(it) %{_libdir}/%{name}/it.msg
 %lang(ja) %{_libdir}/%{name}/ja.msg
 %lang(nl) %{_libdir}/%{name}/nl.msg
 %lang(pl) %{_libdir}/%{name}/pl.msg
 %lang(tr) %{_libdir}/%{name}/tr.msg
+%{_mandir}/man8/swat.8*
 
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)
 %doc source/pam_smbpass/{CHAN*,README,TODO} source/pam_smbpass/samples
-%attr(755,root,root) /lib/security/pam_smbpass.so
+%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
 
 %files -n libsmbclient
 %defattr(644,root,root,755)

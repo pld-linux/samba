@@ -40,7 +40,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.11
-Release:	0.pre1.2
+Release:	0.pre1.3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -61,6 +61,7 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-case_insensitive_sql_operator.patch
+Patch5:		%{name}-printing_release.patch
 #Patch6:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
@@ -867,6 +868,7 @@ dost阷u do plik體 korzystaj眂 z oprogramowania antywirusowego Trend
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 #%{?with_ipv6:%patch6 -p1}
 
 cd examples/VFS

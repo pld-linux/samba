@@ -6,11 +6,11 @@
 
 #
 # Conditional build:
-# _without_cups	- without CUPS support
-# _with_ldapsam	- with LDAP SAM 2.2 based auth (instead of smbpasswd)
-# _with_ipv6	- with IPv6 support
-# _without_ldap - without LDAP support
-# _without_krb5	- without Kerberos5/Heimdal support
+%bcond_without cups		# without CUPS support
+%bcond_with ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
+%bcond_with ipv6		# with IPv6 support
+%bcond_without ldap		# without LDAP support
+%bcond_without krb5		# without Kerberos5/Heimdal support
 #
 %define		vscan_version 0.3.4
 Summary:	SMB server
@@ -51,14 +51,14 @@ Patch0:		%{name}-statfs-workaround.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
-%{!?_without_cups:BuildRequires:	cups-devel}
-%{!?_without_krb5:BuildRequires:	heimdal-devel}
+%{?with_cups:BuildRequires:	cups-devel}
+%{?with_krb5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	libxml2-devel
 BuildRequires:	mysql-devel
 BuildRequires:	mysql-extras
 BuildRequires:	ncurses-devel >= 5.2
-%{!?_without_ldap:BuildRequires:	openldap-devel}
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
@@ -75,7 +75,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_vfsdir		/usr/lib/%{name}/vfs
 %define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
-%if 0%{!?_without_cups:1}
+%if %{?with_cups}
 %define		cups_serverbin	%(cups-config --serverbin)
 %endif
 
@@ -615,7 +615,7 @@ modu³).
 %prep
 %setup -q
 %patch0 -p1
-#%{?_with_ipv6:%patch1 -p1}
+#%{?with_ipv6:%patch1 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}
@@ -648,11 +648,11 @@ cd source
 	--with-vfs \
 	--with-fhs \
 	--with-expsam \
-	%{?_with_ipv6:--with-ipv6} \
-        %{?_with_ldapsam:--with-ldapsam} \
-	%{?_without_ldap:--without-ldap} \
-	%{!?_without_krb5:--with-krb5} \
-	%{?_without_krb5:--without-krb5}
+	%{?with_ipv6:--with-ipv6} \
+        %{?with_ldapsam:--with-ldapsam} \
+	%{!?with_ldap:--without-ldap} \
+	%{?with_krb5:--with-krb5} \
+	%{!?with_krb5:--without-krb5}
 
 %{__make} everything pam_smbpass
 
@@ -712,7 +712,7 @@ touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
 
-%if 0%{!?_without_cups:1}
+%if %{?with_cups}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
 ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 %endif
@@ -910,7 +910,7 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/libsmbclient.a
 
-%if 0%{!?_without_cups:1}
+%if %{?with_cups}
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbspool

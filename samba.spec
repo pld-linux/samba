@@ -9,7 +9,7 @@ Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.6
-Release:	3
+Release:	10
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -26,11 +26,13 @@ Patch3:		samba-DESTDIR.patch
 Patch4:		samba-fix_link_libs.patch
 Patch5:		samba-glibc21.patch
 Patch6:		samba-manpages_PLD_fixes.patch
+Patch7:		samba-smbprint.patch
+Patch8:		samba-nsl.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	readline-devel
+BuildRequires:	readline-devel >= 4.1
 BuildRequires:	pam-devel > 0.66
 BuildRoot:	/tmp/%{name}-%{version}-root
 
@@ -123,7 +125,7 @@ swat is run from inet server.
 
 %description -n swat -l pl
 swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy przegl±darki
-internetowej.
+www.
 
 %prep
 %setup -q
@@ -133,11 +135,13 @@ internetowej.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 cd source
 autoconf
-LDFLAGS="-s" export LDFLAGS \
+LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--with-privatedir=%{_sysconfdir} \
 	--with-lockdir=/var/lock/samba \
@@ -168,8 +172,6 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/samba/smb.conf
-
-strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -210,6 +212,17 @@ fi
 %postun -n swat
 if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd stop
+fi
+
+%triggerpostun -- samba < 1.9.18p7
+if [ $1 != 0 ]; then
+	/sbin/chkconfig --add smb
+fi
+
+%triggerpostun -- samba < 2.0.5a-3
+if [ "$1" != "0" ]; then
+	[ ! -d /var/lock/samba ] && mkdir -m 0755 /var/lock/samba
+	[ ! -d /var/spool/samba ] && mkdir -m 1777 /var/spool/samba
 fi
 
 %clean

@@ -88,6 +88,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate
 Requires:	pam >= 0.66
+Requires:	setup >= 2.4.6-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_vfsdir		%{_libdir}/%{name}/vfs
@@ -1134,7 +1135,7 @@ fi
 %doc Roadmap docs/*.pdf docs/registry/*
 %doc docs/htmldocs/*.* docs/{history,THANKS}
 %dir %{_libdir}/%{name}
-%config(noreplace) %verify(not size mtime md5) %attr(660,root,samba) %{_sysconfdir}/samba/smb.conf
+%attr(660,root,samba) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
 %{_libdir}/%{name}/*.dat
 #%attr(755,root,root) %{_bindir}/make_smbcodepage

@@ -873,6 +873,16 @@ fi
 %{_datadir}/swat
 %{_mandir}/man8/swat.8*
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/swat
+%lang(ja) %{_datadir}/swat/lang/ja
+%lang(tr) %{_datadir}/swat/lang/tr
+%lang(de) %{_libdir}/%{name}/de.msg
+%lang(en) %{_libdir}/%{name}/en.msg
+%lang(fr) %{_libdir}/%{name}/fr.msg
+%lang(it) %{_libdir}/%{name}/it.msg
+%lang(ja) %{_libdir}/%{name}/ja.msg
+%lang(nl) %{_libdir}/%{name}/nl.msg
+%lang(pl) %{_libdir}/%{name}/pl.msg
+%lang(tr) %{_libdir}/%{name}/tr.msg
 
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)

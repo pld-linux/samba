@@ -1,0 +1,65 @@
+diff -Nru samba-2.0.6/source/Makefile.in samba-2.0.6.new/source/Makefile.in
+--- samba-2.0.6/source/Makefile.in	Thu Nov 25 07:53:50 1999
++++ samba-2.0.6.new/source/Makefile.in	Thu Nov 25 07:52:16 1999
+@@ -28,7 +28,6 @@
+ SBINDIR = @sbindir@
+ LIBDIR = @libdir@
+ VARDIR = @localstatedir@
+-MANDIR = @mandir@
+ 
+ # The permissions to give the executables
+ INSTALLPERMS = 0755
+@@ -448,27 +447,29 @@
+ 	@echo Linking $@
+ 	@$(CC) $(FLAGS) -o $@ $(SMBSH_OBJ) $(LDFLAGS) $(LIBS)
+ 
+-install: installbin installman installscripts installcp installswat
++install: installdirs installbin installman installscripts installcp installswat
+ 
+ installdirs:
+-	$(SHELL) $(srcdir)/install-sh -d -m $(INSTALLPERMS) \
+-	$(BASEDIR) $(SBINDIR) $(BINDIR) $(LIBDIR) $(VARDIR) $(CODEPAGEDIR)
++	mkdir -p \
++	$(DESTDIR)$(BASEDIR) $(DESTDIR)$(SBINDIR) $(DESTDIR)$(BINDIR) \
++	$(DESTDIR)$(LIBDIR) $(DESTDIR)$(VARDIR) $(DESTDIR)$(CODEPAGEDIR) \
++	$(DESTDIR)$(mandir)/man1 $(DESTDIR)$(mandir)/man5 $(DESTDIR)$(mandir)/man7 $(DESTDIR)$(mandir)/man8
+ 
+ installservers: all installdirs
+-	@$(SHELL) $(srcdir)/script/installbin.sh $(INSTALLPERMS) $(BASEDIR) $(SBINDIR) $(LIBDIR) $(VARDIR) $(SPROGS)
++	@$(SHELL) $(srcdir)/script/installbin.sh $(INSTALLPERMS) $(DESTDIR)$(BASEDIR) $(DESTDIR)$(SBINDIR) $(DESTDIR)$(LIBDIR) $(DESTDIR)$(VARDIR) $(DESTDIR)$(SPROGS)
+ 
+ installbin: all installdirs
+-	@$(SHELL) $(srcdir)/script/installbin.sh $(INSTALLPERMS) $(BASEDIR) $(SBINDIR) $(LIBDIR) $(VARDIR) $(SPROGS)
+-	@$(SHELL) $(srcdir)/script/installbin.sh $(INSTALLPERMS) $(BASEDIR) $(BINDIR) $(LIBDIR) $(VARDIR) $(PROGS)
++	@$(SHELL) $(srcdir)/script/installbin.sh $(INSTALLPERMS) $(DESTDIR)$(BASEDIR) $(DESTDIR)$(SBINDIR) $(DESTDIR)$(LIBDIR) $(DESTDIR)$(VARDIR) $(DESTDIR)$(SPROGS)
++	@$(SHELL) $(srcdir)/script/installbin.sh $(INSTALLPERMS) $(DESTDIR)$(BASEDIR) $(DESTDIR)$(BINDIR) $(DESTDIR)$(LIBDIR) $(DESTDIR)$(VARDIR) $(DESTDIR)$(PROGS)
+ 
+ installscripts: installdirs
+-	@$(SHELL) $(srcdir)/script/installscripts.sh $(INSTALLPERMS) $(BINDIR) $(SCRIPTS)
++	@$(SHELL) $(srcdir)/script/installscripts.sh $(INSTALLPERMS) $(DESTDIR)$(BINDIR) $(DESTDIR)$(SCRIPTS)
+ 
+ installcp: installdirs
+-	@$(SHELL) $(srcdir)/script/installcp.sh $(srcdir) $(LIBDIR) $(CODEPAGEDIR) $(BINDIR) $(CODEPAGELIST)
++	@$(SHELL) $(srcdir)/script/installcp.sh $(srcdir) $(DESTDIR)$(LIBDIR) $(DESTDIR)$(CODEPAGEDIR) $(DESTDIR)$(BINDIR) $(DESTDIR)$(CODEPAGELIST)
+ 
+ installswat: installdirs
+-	@$(SHELL) $(srcdir)/script/installswat.sh $(SWATDIR) $(srcdir)
++	@$(SHELL) $(srcdir)/script/installswat.sh $(DESTDIR)$(SWATDIR) $(srcdir)
+ 
+ # revert to the previously installed version
+ revert:
+@@ -476,12 +477,12 @@
+ 	@$(SHELL) $(srcdir)/script/revert.sh $(BINDIR) $(PROGS) $(SCRIPTS)
+ 
+ installman:
+-	@$(SHELL) $(srcdir)/script/installman.sh $(MANDIR) $(srcdir) "@ROFF@"
++	@$(SHELL) $(srcdir)/script/installman.sh $(DESTDIR)$(mandir) $(srcdir) "@ROFF@"
+ 
+ uninstall: uninstallman uninstallbin uninstallscripts uninstallcp
+ 
+ uninstallman:
+-	@$(SHELL) $(srcdir)/script/uninstallman.sh $(MANDIR) $(srcdir)
++	@$(SHELL) $(srcdir)/script/uninstallman.sh $(mandir) $(srcdir)
+ 
+ uninstallbin:
+ 	@$(SHELL) $(srcdir)/script/uninstallbin.sh $(INSTALLPERMS) $(BASEDIR) $(SBINDIR) $(LIBDIR) $(VARDIR) $(SPROGS)

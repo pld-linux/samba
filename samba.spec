@@ -8,7 +8,7 @@ Summary(fr): 	Client et serveur SMB
 Summary(it): 	Client e server SMB
 Summary(tr): 	SMB istemci ve sunucusu
 Name:		samba
-Version:	2.0.5a
+Version:	2.0.6
 Release:	1
 Copyright:	GPL
 Group:		Networking/Daemons
@@ -16,7 +16,7 @@ Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	samba.PLD.tar.bz2
 Source2:	samba.pamd
-#Patch0:		samba-glibc2.1.patch
+Patch0:		samba-glibc2.1.patch
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Prereq:		/sbin/chkconfig
@@ -138,14 +138,13 @@ LDFLAGS="-s" export LDFLAGS \
 	--with-lockdir=/var/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
-	--with-smbwrapper \
 	--with-quotas \
 	--with-syslog \
 	--with-mmap \
 	--with-pam \
 	--with-automount
 	
-make all smbwrapper bin/smbrun bin/debug2html
+make all 
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -184,8 +183,8 @@ install  packaging/PLD/smb.init		$RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install  packaging/PLD/samba.log	$RPM_BUILD_ROOT/etc/logrotate.d/samba
 install  %{SOURCE2}			$RPM_BUILD_ROOT/etc/pam.d/samba
 
-install -s source/bin/*.so 	$RPM_BUILD_ROOT/lib/security
-install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT%{_bindir}
+#install -s source/bin/*.so 	$RPM_BUILD_ROOT/lib/security
+#install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT%{_bindir}
 
 strip --strip-unneeded $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir},/lib/security}/* || :
 
@@ -240,7 +239,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(640,root,root) /etc/logrotate.d/samba
 %attr(640,root,root) /etc/pam.d/samba
 
-%attr(755,root,root) /lib/security/*.so
+#%attr(755,root,root) /lib/security/*.so
 
 %{_mandir}/man[157]/*
 %{_mandir}/man8/nmbd.8.gz

@@ -7,8 +7,8 @@ Copyright:	GPL
 Group:		Daemons
 Group(pl):	Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
-Source1:	%{name}.PLD.tar.gz
-Patch0:		%{name}.%{version}.patch
+Source1:	%{name}-PLD.tar.gz
+Patch0:		%{name}-glibc2.1.patch
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-cap.patch
 Prereq:		/sbin/chkconfig 
@@ -38,36 +38,16 @@ Please read the smb.conf file and ENCRYPTION.txt in the
 docs directory for implementation details.
 
 %description -l pl
-Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu 
-dostarczenia us³ug sieciowych (potocznie zwanych "Lan Manager"),
-dla klientów takich jak M$ Windows, OS/2 a tak¿e maszyn linuxowych. 
-W pakiecie znajduje siê równie¿ oprogramowanie klienckie. Samba u¿ywa 
-protoko³u NetBIOS po TCP/IP (NetBT) i nie wymaga ¶miesznego protoko³u 
-NetBEUI. Ta wersja ma pe³ne wsparcie dla blokowania plików, a tak¿e 
-wsparcie dla kodowania hase³ w standardzie MS i zarzadzania baz± WINS.
+Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia
+us³ug sieciowych (potocznie zwanych "Lan Manager"), dla klientów takich
+jak MS Windows, OS/2 a tak¿e maszyn linuxowych.  W pakiecie znajduje siê
+równie¿ oprogramowanie klienckie. Samba u¿ywa protoko³u NetBIOS po TCP/IP
+(NetBT) i nie wymaga protoko³u NetBEUI. Ta wersja ma pe³ne wsparcie dla
+blokowania plików, a tak¿e wsparcie dla kodowania hase³ w standardzie
+MS i zarzadzania baz± WINS.
 
-%package -n swat
-Summary:	Samba Web Administration Tool	
-Summary(pl):	SWAT - narzêdzie do konfiguracji Samby
-Group:		Networking/Admin
-Group(pl):	Sieciowe/Administacyjne
-Requires:	%{name} = %{version}
-
-%description -n swat
-swat allows a Samba administrator to configure the complex smb.conf
-file via a Web browser. In addition, a swat configuration page has
-help links to all the configurable options in the smb.conf file
-allowing an administrator to easily look up the effects of any change.
-
-swat is run from inetd.
-
-%description -n swat -l pl
-swat umo¿liwia konfigurowanie serwera Samba przy pomocy przegl±darki 
-internetowej. Dodatkowo strony z konfiguracj± zawieraj± odwo³ania 
-do opisów poszeczególnych opcji smb.conf, co pozwala na szybki do 
-nich dostêp.
-
-swat uruchamiany jest przez inetd
+UWAGA: w przeciwieñstwie do wersji 2.0.2 aktualnie samba pozbawiona jest
+mozliwo¶ci kontrolowania domeny NT.
 
 %prep
 %setup -q -a1
@@ -80,6 +60,7 @@ cd source
 autoconf
 CFLAGS=$RPM_OPT_FLAGS LDFLAGS=-s \
     ./configure \
+	%{buildarch}-`echo %{buildos} | tr A-Z a-z` \
 	--sysconfdir=/etc/samba \
 	--with-smbmount \
 	--with-smb-wrapper \
@@ -148,19 +129,19 @@ install swat/include/*.html $RPM_BUILD_ROOT/usr/share/swat/include
 mv swat/README swat/README.swat
 
 install -s source/bin/*.so $RPM_BUILD_ROOT/lib/security
+install -s source/bin/smbsh $RPM_BUILD_ROOT/usr/bin
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
-echo 127.0.0.1 localhost > $RPM_BUILD_ROOT/etc/samba/lmhosts
+echo 127.0.0.1 > $RPM_BUILD_ROOT/etc/samba/lmhosts
 
 for i in 437 737 850 852 861 866 932 949 950 936; do
-	$RPM_BUILD_ROOT/usr/bin/make_smbcodepage c $i \
-	$RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
-	$RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; 
-done
+$RPM_BUILD_ROOT/usr/bin/make_smbcodepage c $i \
+$RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
+$RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
-gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/* \
-	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README.swat
+gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/*
+gzip -9  README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README.swat
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -195,7 +176,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README.gz Manifest.gz WHATSNEW.txt.gz
+%doc README.gz Manifest.gz WHATSNEW.txt.gz swat/README.swat.gz
 %doc Roadmap.gz docs/faq/*.html docs/*.reg.gz 
 
 %attr(755,root,root) /usr/bin/*
@@ -214,30 +195,26 @@ fi
 
 %attr(644,root, man) /usr/man/man[1578]/*
 
+%dir /home/samba
+%dir /etc/samba/codepages
+/etc/samba/codepages/*
+
+%dir /usr/share/swat
+
+%dir /usr/share/swat/help
+/usr/share/swat/help/*.html
+
+%dir /usr/share/swat/include
+/usr/share/swat/include/*.html
+
+%dir /usr/share/swat/images
+/usr/share/swat/images/*.gif
+
 %attr(750,root,root) %dir /var/lock/samba
 %attr(640,root,root) /var/lock/samba/*
 
 %attr(0750,root, root) %dir /var/log/samba
 %attr(1777,root, root) %dir /var/spool/samba
-
-%dir /home/samba
-%dir /etc/samba/codepages
-/etc/samba/codepages/*
-
-%files -n swat
-%defattr(644,root,root,755)
-%doc swat/README.swat.gz
-
-/usr/share/swat
-
-#%dir /usr/share/swat/help
-#/usr/share/swat/help/*.html
-
-#%dir /usr/share/swat/include
-#/usr/share/swat/include/*.html
-
-#%dir /usr/share/swat/images
-#/usr/share/swat/images/*.gif
 
 %changelog
 * Sun Mar 28 1999 Ziemek Borowski <zmb@ziembor.waw.pl>

@@ -453,7 +453,7 @@ file.
 
 %description -n pam-pam_smbpass -l pl
 Modu³ PAM, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd (has³a
-Samby) zsynchronizowanego z has³ami unixowymi.
+Samby) zsynchronizowanego z has³ami uniksowymi.
 
 %package -n libsmbclient
 Summary:	libsmbclient - samba client library

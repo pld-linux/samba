@@ -8,14 +8,14 @@ Summary(fr):	Serveur SMB
 Summary(it):	Server SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
-Version:	2.0.7
-Release:	29
+Version:	2.2.0
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 URL:		http://www.samba.org/
-Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.samba.org/pub/samba/%{name}-%{version}.tar.gz
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -25,14 +25,12 @@ Source6:	smb.conf
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-cap.patch
 Patch3:		%{name}-DESTDIR.patch
-Patch5:		%{name}-glibc21.patch
 Patch6:		%{name}-manpages_PLD_fixes.patch
 Patch7:		%{name}-smbprint.patch
 Patch8:		%{name}-autoconf.patch
 Patch9:		%{name}-smbadduser.patch
 Patch10:	%{name}-nocups.patch
 Patch11:	%{name}-nmbd_socket.patch
-Patch12:	%{name}-awk_path.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -40,7 +38,6 @@ Requires:	samba-common = %{version}
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
-BuildRequires:	openssl-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
@@ -178,26 +175,30 @@ klientów Samba.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch5 -p1
-%patch6 -p1
+#update required
+#%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 
 %build
 cd source
 autoconf
 %configure \
+	--with-readline \
 	--with-privatedir=%{_libdir} \
 	--with-lockdir=%{_var}/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
 	--with-automount \
 	--without-smbwrapper \
+	--with-netatalk \
+	--with-msdfs \
 	--with-quotas \
+	--with-vfs \
+	--with-utmp \
 	--with-syslog \
 	--with-mmap \
 	--with-pam \
@@ -234,9 +235,10 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 gzip -9nf README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
-	docs/textdocs/* docs/*.txt docs/{history,announce,THANKS}
+	docs/textdocs/* docs/{history,announce,THANKS}
 
 rm -f docs/faq/*.{sgml,txt}
+rm -f docs/htmldocs/*.[0-9].*.html
 
 %post
 /sbin/chkconfig --add smb
@@ -285,10 +287,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
-%attr(755,root,root) %{_bindir}/addtosmbpass
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/convert_smbpasswd
+%attr(755,root,root) %{_bindir}/smbcontrol
 
 %dir %{_libdir}
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
@@ -298,6 +300,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(640,root,root) %config %verify(not size mtime md5) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/security/blacklist.samba
 %{_mandir}/man1/smbstatus.1*
+%{_mandir}/man1/smbcontrol.1*
 %{_mandir}/man5/smbpasswd.5*
 %{_mandir}/man7/samba.7*
 %{_mandir}/man8/nmbd.8*
@@ -325,15 +328,19 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbspool
+%attr(755,root,root) %{_bindir}/smbcacls
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
+%{_mandir}/man1/smbcacls.1*
+%attr(755,root,root) %{_bindir}/rpcclient
+%{_mandir}/man1/rpcclient.1*
 
 %files common
 %defattr(644,root,root,755)
 %doc README.gz Manifest.gz WHATSNEW.txt.gz
 %doc Roadmap.gz docs/faq docs/*.reg.gz
-%doc docs/textdocs docs/*.txt.gz docs/{history,announce,THANKS}.gz
+%doc docs/textdocs docs/htmldocs/*.* docs/{history,announce,THANKS}.gz
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
 %attr(755,root,root) %{_bindir}/make_smbcodepage

@@ -224,7 +224,7 @@ autoconf
 mv Makefile Makefile.old
 sed -e "s#-symbolic##g" Makefile.old > Makefile
 
-%{__make} all nsswitch pam_smbpass
+%{__make} everything
 
 %install
 rm -rf $RPM_BUILD_ROOT

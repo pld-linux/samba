@@ -672,6 +672,7 @@ cd source
 	--with-pam \
 	--with-pam_smbpass \
 	--with-ads \
+	--with-privatedir=%{_sysconfdir} \
 	--with-quotas \
 	--with-readline \
 	--with-smbmount \

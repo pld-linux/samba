@@ -1,0 +1,11 @@
+--- samba-2.2.1a/source/smbd/posix_acls.c~	Fri Jul  6 04:02:02 2001
++++ samba-2.2.1a/source/smbd/posix_acls.c	Wed Oct  3 03:20:47 2001
+@@ -418,7 +418,7 @@
+ 	*pgrp = (gid_t)-1;
+ 
+ 	if(security_info_sent == 0) {
+-		DEBUG(0,("unpack_nt_owners: no security info sent !\n"));
++		DEBUG(1,("unpack_nt_owners: no security info sent !\n"));
+ 		return False;
+ 	}
+ 

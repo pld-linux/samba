@@ -1,0 +1,134 @@
+diff -Nru samba-2.0.6/source/Makefile.in samba-2.0.6.new/source/Makefile.in
+--- samba-2.0.6/source/Makefile.in	Sat Nov 27 01:03:18 1999
++++ samba-2.0.6.new/source/Makefile.in	Sat Nov 27 01:07:16 1999
+@@ -349,103 +349,103 @@
+ 
+ bin/smbd: $(SMBD_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SMBD_OBJ) $(LDFLAGS) $(LIBS) 
++	@$(CC) $(FLAGS) -o $@ $(SMBD_OBJ) $(LDFLAGS) -lc -ldl -lpam
+ 
+ bin/nmbd: $(NMBD_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(NMBD_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(NMBD_OBJ) $(LDFLAGS) -lc
+ 
+ bin/swat: $(SWAT_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SWAT_OBJ) $(LDFLAGS) $(LIBS) 
++	@$(CC) $(FLAGS) -o $@ $(SWAT_OBJ) $(LDFLAGS) -lc -ldl -lpam
+ 
+ bin/smbrun: $(SMBRUN_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SMBRUN_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(SMBRUN_OBJ) $(LDFLAGS) -lc
+ 
+ bin/rpcclient: $(RPCCLIENT_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(RPCCLIENT_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(RPCCLIENT_OBJ) $(LDFLAGS) -lc -ldl -lpam
+ 
+ bin/smbclient: $(CLIENT_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(CLIENT_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(CLIENT_OBJ) $(LDFLAGS) -lc -lreadline
+ 
+ bin/smbspool: $(CUPS_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(CUPS_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(CUPS_OBJ) $(LDFLAGS) -lc
+ 
+ bin/smbmount: $(MOUNT_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(MOUNT_OBJ) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(MOUNT_OBJ) -lc
+ 
+ bin/smbmnt: $(MNT_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(MNT_OBJ) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(MNT_OBJ) -lc
+ 
+ bin/smbumount: $(UMOUNT_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(UMOUNT_OBJ) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(UMOUNT_OBJ) -lc
+ 
+ bin/testparm: $(TESTPARM_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(TESTPARM_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(TESTPARM_OBJ) $(LDFLAGS) -lc
+ 
+ bin/testprns: $(TESTPRNS_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(TESTPRNS_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(TESTPRNS_OBJ) $(LDFLAGS) -lc
+ 
+ bin/smbstatus: $(STATUS_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(STATUS_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(STATUS_OBJ) $(LDFLAGS) -lc
+ 
+ bin/smbpasswd: $(SMBPASSWD_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SMBPASSWD_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(SMBPASSWD_OBJ) $(LDFLAGS) -lc -ldl -lpam
+ 
+ bin/make_smbcodepage: $(MAKE_SMBCODEPAGE_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(MAKE_SMBCODEPAGE_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(MAKE_SMBCODEPAGE_OBJ) $(LDFLAGS) -lc
+ 
+ bin/nmblookup: $(NMBLOOKUP_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(NMBLOOKUP_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(NMBLOOKUP_OBJ) $(LDFLAGS) -lc
+ 
+ bin/make_printerdef: $(MAKE_PRINTERDEF_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(MAKE_PRINTERDEF_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(MAKE_PRINTERDEF_OBJ) $(LDFLAGS) -lc
+ 
+ bin/smbtorture: $(SMBTORTURE_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SMBTORTURE_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(SMBTORTURE_OBJ) $(LDFLAGS) -lc
+ 
+ bin/masktest: $(MASKTEST_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(MASKTEST_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(MASKTEST_OBJ) $(LDFLAGS) -lc
+ 
+ bin/rpctorture: $(RPCTORTURE_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(RPCTORTURE_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(RPCTORTURE_OBJ) $(LDFLAGS) -lc
+ 
+ bin/debug2html: $(DEBUG2HTML_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(DEBUG2HTML_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(DEBUG2HTML_OBJ) $(LDFLAGS) -lc
+ 
+ bin/smbfilter: $(SMBFILTER_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SMBFILTER_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(SMBFILTER_OBJ) $(LDFLAGS) -lc
+ 
+-bin/smbwrapper.@SHLIBEXT@: $(PICOBJS)
++bin/smbwrapper.so: $(PICOBJS)
+ 	@echo Linking shared library $@
+-	@$(LD) @LDSHFLAGS@ -o $@ $(PICOBJS) $(LIBS)
++	@$(LD) -shared -o $@ $(PICOBJS) $(LIBS)
+ 
+-bin/smbwrapper.32.@SHLIBEXT@: $(PICOBJS32)
++bin/smbwrapper.32.so: $(PICOBJS32)
+ 	@echo Linking shared library $@
+-	@$(LD) -32 @LDSHFLAGS@ -o $@ $(PICOBJS32) $(LIBS)
++	@$(LD) -32 -shared -o $@ $(PICOBJS32) $(LIBS)
+ 
+ bin/smbsh: $(SMBSH_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SMBSH_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(SMBSH_OBJ) $(LDFLAGS) -lc
+ 
+ install: installdirs installbin installman installscripts installcp installswat
+ 

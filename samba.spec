@@ -556,6 +556,66 @@ VFS module to make automatic copy of data in samba share.
 %description vfs-shadow-copy -l pl
 Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby.
 
+%package vfs-cap
+Summary:	VFS module
+Summary(pl):	Modu³ VFS
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-cap
+
+%description vfs-cap -l pl
+
+%package vfs-readonly
+Summary:	VFS module
+Summary(pl):	Modu³ VFS
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-readonly
+
+%description vfs-readonly -l pl
+
+%package vfs-default-quota
+Summary:	VFS module
+Summary(pl):	Modu³ VFS
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-default-quota
+
+%description vfs-default-quota -l pl
+
+%package vfs-expand-msdfs
+Summary:	VFS module
+Summary(pl):	Modu³ VFS
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-expand-msdfs
+
+%description vfs-expand-msdfs -l pl
+
+%package vfs-fake-perms
+Summary:	VFS module
+Summary(pl):	Modu³ VFS
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-fake-perms
+
+%description vfs-fake-perms -l pl
+
+%package vfs-netatalk
+Summary:	VFS module
+Summary(pl):	Modu³ VFS
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-netatalk
+
+%description vfs-netatalk -l pl
+
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
@@ -818,11 +878,7 @@ ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
-# przyk³adowe modu³y VFS
-#install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT%{_vfsdir}
-#install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf $RPM_BUILD_ROOT/%{_sysconfdir}/samba
-
-# modu³y vscan
+# vscan modules
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/samba-vscan-%{vscan_version}/{clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
 
@@ -906,17 +962,12 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
-#%attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
-#%attr(755,root,root) %{_bindir}/tdbdump
 
-#%attr(755,root,root) /%{_lib}/libnss_*
-#%attr(755,root,root) /%{_lib}/security/pam_winbind.so
-#%attr(755,root,root) %{_libdir}/%{name}/pdb/*.so
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
 
@@ -936,7 +987,6 @@ fi
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
 %{_mandir}/man8/tdbbackup.8*
-#%{_mandir}/man8/tdbdump.8*
 
 %dir %{_sambahome}
 %dir /var/lock/samba
@@ -1097,26 +1147,39 @@ fi
 %files vfs-audit
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/audit.so
-#te ni¿ej chwilowo tutaj
-
-%attr(755,root,root) %{_vfsdir}/[d-n]*.so
-%attr(755,root,root) %{_vfsdir}/cap.so
-%attr(755,root,root) %{_vfsdir}/readonly.so
+%attr(755,root,root) %{_vfsdir}/extd_audit.so
 
 %files vfs-shadow-copy
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/shadow_copy.so
 
-#%files vfs-block
-#%defattr(644,root,root,755)
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/samba-block.conf
-#%attr(755,root,root) %{_vfsdir}/block.so
+%files vfs-cap
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/cap.so
+
+%files vfs-readonly
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/readonly.so
 
 %files vfs-recycle
 %defattr(644,root,root,755)
-#%doc examples/VFS/recycle/README
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/recycle.conf
 %attr(755,root,root) %{_vfsdir}/recycle.so
+
+%files vfs-default-quota
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/default_quota.so
+
+%files vfs-expand-msdfs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/expand_msdfs.so
+
+%files vfs-fake-perms
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/fake_perms.so
+
+%files vfs-netatalk
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/netatalk.so
 
 %files vfs-vscan-clamav
 %defattr(644,root,root,755)

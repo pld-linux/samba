@@ -40,7 +40,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.8
-Release:	0.pre1.1
+Release:	0.pre1.2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -1134,7 +1134,7 @@ fi
 %doc Roadmap docs/*.pdf docs/registry/*
 %doc docs/htmldocs/*.* docs/{history,THANKS}
 %dir %{_libdir}/%{name}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
+%config(noreplace) %verify(not size mtime md5) %attr(660,root,samba) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
 %{_libdir}/%{name}/*.dat
 #%attr(755,root,root) %{_bindir}/make_smbcodepage

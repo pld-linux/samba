@@ -34,7 +34,7 @@ Requires:	logrotate
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	pam-devel > 0.66
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
 %define		_libdir		%{_sysconfdir}

@@ -4,7 +4,7 @@
 # _with_ldap	- with LDAP-based auth (instead of smbpasswd)
 # _with_ipv6	- with IPv6 support
 #
-%define		vscan_version 0.3.2b
+%define		vscan_version 0.3.4
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -23,7 +23,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8a
-Release:	1.6
+Release:	1.7
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -35,9 +35,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	cacc32f21812494993e32be558b91bdd
-Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
-# Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
+# Source7-md5:	acbcb28cff080dcf2ee732b7f2c0f949
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-DESTDIR.patch
 Patch3:		%{name}-manpages_PLD_fixes.patch
@@ -575,8 +573,6 @@ dost阷u do plik體 korzystaj眂 z oprogramowania antywirusowego Trend
 
 cd examples/VFS
 tar xjf %{SOURCE7}
-cd %{name}-vscan-%{vscan_version}
-tar xjf %{SOURCE8}
 
 %build
 cd source
@@ -618,12 +614,9 @@ cd ../examples/VFS
 mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
-# note - kaspersky and mks don't compile yet - require additional libraries
-for i in fprot icap openantivirus sophos trend clamav; do
-cd $i
-%{__make} "LIBTOOL=libtool --tag=CC"
-cd ..
-done
+# use autoconf?
+./configure
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -660,7 +653,7 @@ install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
 # modu硑 vscan
-install examples/VFS/samba-vscan-%{vscan_version}/*/*.so $RPM_BUILD_ROOT%{_vfsdir}
+install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}

@@ -27,7 +27,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.2
 Epoch:		1
-Release:	0.rc1.1
+Release:	0.rc1.0.1
 License:	GPL v2
 Group:		Networking/Daemons
 #Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -707,7 +707,7 @@ cd source
 	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}
 
-%{__make} everything pam_smbpass
+%{__make} everything pam_smbpass bin/smbget
 
 cd ../examples/VFS
 %{__autoconf}

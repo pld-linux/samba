@@ -40,12 +40,12 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.8
-Release:	0.pre2.1.1
+Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://us1.samba.org/samba/ftp/pre/%{name}-%{version}pre2.tar.gz
-# Source0-md5:	20ec3f498e2fc30bc6e9f540f8dac270
+Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
+# Source0-md5:	7088483c858ac362d302acc0c2a1d431
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -839,7 +839,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q -n %{name}-%{version}pre2
+%setup -q
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1

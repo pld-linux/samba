@@ -9,7 +9,7 @@ Summary(it):	Server SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.0
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -38,6 +38,7 @@ Requires:	samba-common = %{version}
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
+BuildRequires:	openssl-devel >= 0.9.6a
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba

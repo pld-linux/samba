@@ -383,12 +383,16 @@ desenvolver aplicativos clientes para o samba.
 
 %package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
+Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
 Group:		Application/Printing
 Requires:	cups
 Requires:	samba-clinet = %{version}
 
 %description -n cups-backend-smb
 CUPS backend for printing to SMB printers.
+
+%description -n cups-backend-smb -l pl
+Backend CUPS-a drukuj±cy na drukarkach SMB.
 
 %prep
 %setup -q

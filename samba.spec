@@ -590,10 +590,17 @@ higher availability, smoother storage expansion, load balancing, and
 so on.
 
 %description vfs-expand_msdfs -l pl
+Modu³ VFS do udostêpniania drzewa systemu plików Microsoft Distributed
+File System.
+
+Distributed File System (DFS) umo¿liwia rozdzielanie logicznego widoku
+plików i katalogów widocznych przez u¿ytkowników z fizycznego
+umiejscowienia tych zasobów w sieci. Pozwala to na wy¿sz± dostêpno¶æ,
+p³ynniejsze powiêkszanie przestrzeni, rozdzielanie obci±¿enia itp.
 
 %package vfs-fake_perms
-Summary:	VFS module
-Summary(pl):	Modu³ VFS
+Summary:	VFS module to report read-only fires as writable
+Summary(pl):	Modu³ VFS udaj±cy, ¿e pliki tylko do odczytu s± zapisywalne
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -606,6 +613,12 @@ though the files will never be overwritten as the client logs out or
 shuts down.
 
 %description vfs-fake_perms -l pl
+Ten modu³ pozwala na ustawienie plików i katalogów z wêdruj±cych
+profili (Roaming Profiles) jako tylko do odczytu. Modu³ ten w
+przypadku zainstalowania na udziale z profilami bêdzie zg³asza³
+klientom, ¿e pliki i katalogi z profilu s± zapisywane. To wystarczy
+klientom pomimo, ¿e pliki nie zostan± nigdy nadpisane przy logowaniu
+lub wylogowywaniu klienta.
 
 %package vfs-netatalk
 Summary:	VFS module for ease co-existence of samba and netatalk
@@ -614,12 +627,12 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-netatalk
-Package contain a netatalk VFS module for ease co-existence of Samba
+Package contains a netatalk VFS module for ease co-existence of Samba
 and netatalk file sharing services.
 
 %description vfs-netatalk -l pl
-Pakiet zawiera modu³ modui³ VFS netatalk umo¿liwiaj±cy wspó³pracê
-serwisów samba i netatalk przy serwowaniu zasobów.
+Pakiet zawiera modu³ VFS netatalk umo¿liwiaj±cy wspó³pracê us³ug samba
+i netatalk przy udostêpnianiu zasobów.
 
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV

@@ -1,9 +1,0 @@
-/var/log/samba/log.* {
-	notifempty
-	missingok
-	olddir /var/log/archiv/samba
-	postrotate
-		/bin/killall -HUP nmbd
-		/bin/killall -HUP smbd
-	endscript
-}

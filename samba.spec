@@ -21,7 +21,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器.
 Name:		samba
 Version:	2.2.5
-Release:	5
+Release:	6
 License:	GPL v2
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -431,8 +431,8 @@ install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
-install source/bin/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
-ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+install source/bin/libsmbclient.so $RPM_BUILD_ROOT/lib/libsmbclient.so.0
+ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/lib/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
@@ -585,9 +585,9 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%attr(755,root,root) /lib/libsmbclient.so.*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %{_includedir}/libsmbclient.h
-%attr(755,root,root) %{_libdir}/libsmbclient.so
+%attr(755,root,root) /lib/libsmbclient.so

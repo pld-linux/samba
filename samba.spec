@@ -495,8 +495,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc docs/nsswitch/README
-%doc source/nsswitch/README winbind.pam
+%doc source/nsswitch/README
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/winbindd

@@ -34,22 +34,9 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	cacc32f21812494993e32be558b91bdd
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
-####Patch0:		samba3-smbtorture.patch
-#Patch1:		%{name}-config.patch
-#Patch2:		%{name}-DESTDIR.patch
-#Patch3:		%{name}-manpages_PLD_fixes.patch
-#Patch4:		%{name}-smbprint.patch
-#Patch5:		%{name}-autoconf.patch
-#Patch6:		%{name}-smbadduser.patch
-#Patch7:		%{name}-nmbd_socket.patch
-#Patch8:		%{name}-vfs.patch
-#Patch9:		%{name}-quota.patch
-#Patch10:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
-#Patch11:	%{name}-DESTDIR-fix.patch
-#Patch12:	%{name}-CIFS-extensions.patch
+#Patch1:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	autoconf
 %{!?_without_cups:BuildRequires:	cups-devel}
@@ -559,24 +546,12 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 
 %prep
 %setup -q -n samba-3.0.0rc4
-##%patch0 -p1
-#%patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
-#%patch4 -p1
-#%patch5 -p1
- #%patch6 -p2
-#%patch7 -p1
-  #%patch8 -p1
-  #%patch9 -p1
-##%{?_with_ipv6:%patch10 -p1}
-#%patch11 -p1
- #%patch12 -p1
+#%{?_with_ipv6:%patch1 -p1}
 
-#cd examples/VFS
-#tar xjf %{SOURCE7}
-#cd %{name}-vscan-%{vscan_version}
-#tar xjf %{SOURCE8}
+cd examples/VFS
+tar xjf %{SOURCE7}
+cd %{name}-vscan-%{vscan_version}
+tar xjf %{SOURCE8}
 
 %build
 cd source
@@ -608,17 +583,17 @@ cd source
 
 %{__make} everything pam_smbpass
 
-#cd ../examples/VFS
-#%%{__autoconf}
-#%%configure
-#%%{__make}
-#mv README{,.vfs}
+cd ../examples/VFS
+%{__autoconf}
+%configure
+%{__make}
+mv README{,.vfs}
 
-#cd samba-vscan-%{vscan_version}
+cd samba-vscan-%{vscan_version}
 # note - kaspersky and mks don't compile yet - require additional libraries
 #for i in fprot icap openantivirus sophos trend clamav; do
 #cd $i
-#%%{__make} "LIBTOOL=libtool --tag=CC"
+#%%{__make} #"LIBTOOL=libtool --tag=CC"
 #cd ..
 #done
 
@@ -860,6 +835,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/audit.so
 #te ni¿ej chwilowo tutaj
+
 %attr(755,root,root) %{_vfsdir}/[d-n]*.so
 %attr(755,root,root) %{_vfsdir}/readonly.so
 

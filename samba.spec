@@ -228,7 +228,7 @@ cd source
 %configure \
 	--with-readline \
 	--with-privatedir=%{_libdir} \
-	--with-lockdir=%{_var}/lock/samba \
+	--with-lockdir=/var/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
 	--with-automount \

@@ -14,8 +14,8 @@ Summary(it):	Server SMB
 Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
-Version:	2.2.3a
-Release:	0.2
+Version:	2.2.4
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -34,9 +34,8 @@ Patch5:		%{name}-autoconf.patch
 Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
 Patch8:		%{name}-pam_smbpass.patch 
-Patch9:		%{name}-srv_spoolss_nt.patch
 # needed for external vfs modules to work.
-Patch10:	%{name}-vfs.patch
+#Patch10:	%{name}-vfs.patch
 Patch11:	%{name}-quota.patch
 Patch12:	http://v6web.litech.org/samba/samba-2.2.3a+IPv6-20020419.diff
 Prereq:		/sbin/chkconfig
@@ -198,11 +197,8 @@ Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-#%patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
 %patch11 -p1
 %{?_with_ipv6:%patch12 -p1}
 

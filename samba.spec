@@ -431,7 +431,7 @@ Przyk³adowe modu³y VFS do³±czone do samby.
 #%patch12 -p1
 
 cd examples/VFS
-tar xjf %{SOURCE6}
+tar xjf %{SOURCE7}
 
 %build
 cd source

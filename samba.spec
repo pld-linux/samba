@@ -25,7 +25,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.1pre3
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}.tar.bz2
@@ -769,9 +769,11 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
+%attr(755,root,root) %{_bindir}/tdbdump
 
 %attr(755,root,root) /lib/libnss_*
 %attr(755,root,root) /lib/security/pam_winbind.so
+%attr(755,root,root) %{_libdir}/%{name}/pdb/*.so
 
 %dir %{_vfsdir}
 

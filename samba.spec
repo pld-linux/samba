@@ -14,7 +14,7 @@ Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.3a
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -35,7 +35,8 @@ Patch7:		%{name}-nmbd_socket.patch
 Patch8:		%{name}-pam_smbpass.patch 
 Patch9:		%{name}-srv_spoolss_nt.patch
 # needed for external vfs modules to work.
-Patch10:     %{name}-2.2.3-vfs.dif
+Patch10:	%{name}-vfs.patch
+Patch11:	%{name}-quota.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -200,6 +201,7 @@ Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 cd source
@@ -214,7 +216,7 @@ autoconf
 	--without-smbwrapper \
 	--with-netatalk \
 	--with-msdfs \
-	--with-quotas \
+	--without-quotas \
 	--with-vfs \
 	--with-utmp \
 	--with-syslog \
@@ -227,7 +229,7 @@ autoconf
 mv Makefile Makefile.old
 sed -e "s#-symbolic##g" Makefile.old > Makefile
 
-%{__make} everything
+%{__make} everything pam_smbpass
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -249,10 +251,10 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
 
-install nsswitch/libnss_wins.so $RPM_BUILD_ROOT/lib/libnss_wins.so.2
-install nsswitch/pam_winbind.so $RPM_BUILD_ROOT/lib/security/
-install bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
-install bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
+install source/nsswitch/libnss_wins.so $RPM_BUILD_ROOT/lib/libnss_wins.so.2
+install source/nsswitch/pam_winbind.so $RPM_BUILD_ROOT/lib/security/
+install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
+install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -321,7 +323,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 
-%doc docs/nsswitch/README.gz winbind.pam*
+%doc source/nsswitch/README.gz winbind.pam*
 %attr(755,root,root) /lib/libnss_wins*
 %attr(755,root,root) /lib/security/pam_winbind.so
 

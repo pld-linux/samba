@@ -24,6 +24,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8a
 Release:	5
+Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2

@@ -27,7 +27,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.1
 Epoch:		1
-Release:	1.2
+Release:	1.3
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -388,6 +388,15 @@ Requires(post,preun):	/sbin/chkconfig
 Provides the winbind daemon and testing tools to allow authentication
 and group/user enumeration from a Windows or Samba domain controller.
 
+%package -n nss_wins
+URL:		http://www.samba.org
+Summary:	Name Service Switch service for WINS
+Group:		System/Servers
+Requires:	%{name}-common = %{epoch}:%{version}
+
+%description -n nss_wins
+Provides the libnss_wins shared library which resolves NetBIOS names to 
+IP addresses.
 
 %package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
@@ -885,6 +894,10 @@ fi
 #%attr(-,root,root) %config(noreplace) %{_sysconfdir}/pam.d/system-auth-winbind*
 %{_mandir}/man8/winbindd*.8*
 %{_mandir}/man1/wbinfo*.1*
+
+%files -n nss_wins
+%defattr(644,root,root,755)
+%attr(755,root,root) /%{_lib}/libnss_wins*
 
 %files client
 %defattr(644,root,root,755)

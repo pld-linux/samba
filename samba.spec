@@ -40,6 +40,7 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 # Source7-md5:	acbcb28cff080dcf2ee732b7f2c0f949
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
+Source9:	winbind.init
 Patch0:		%{name}-statfs-workaround.patch
 #Patch1:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
@@ -58,6 +59,7 @@ BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
+BuildRequires:  python-devel
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{version}
@@ -349,6 +351,18 @@ Samba-common содержит файлы, необходимые для работы как клиента, так и
 Samba-common м╕стить файли, необх╕дн╕ для роботи як кл╕╓нта, так ╕
 сервера Samba.
 
+%package winbind
+URL:    http://www.samba.org
+Summary: Samba-winbind daemon, utilities and documentation
+Group: System/Servers
+Requires: %{name}-common = %{version}
+Requires(post,preun):	/sbin/chkconfig
+
+%description winbind
+Provides the winbind daemon and testing tools to allow authentication
+and group/user enumeration from a Windows or Samba domain controller.
+
+
 %package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
 Summary(pl):	ModuЁ PAM smbpass
@@ -620,15 +634,21 @@ tar xjf %{SOURCE7}
 cd source
 %{__libtoolize}
 %{__autoconf}
+
+# do not use --with-fhs is not FHS compilant :)
 %configure \
 	--with-acl-support \
 	--with-automount \
 	--with-libsmbclient \
 	--with-lockdir=/var/lock/samba \
+	--with-logfilebase=/var/log/samba \
+	--libdir=/usr/lib/samba \
 	--with-mmap \
 	--with-netatalk \
 	--without-smbwrapper \
 	--with-pam \
+	--with-pam_smbpass \
+	--with-ads \
 	--with-piddir=/var/run \
 	--with-privatedir=%{_sysconfdir} \
 	--with-configdir=%{_sysconfdir} \
@@ -640,8 +660,9 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-vfs \
-	--with-fhs \
 	--with-expsam \
+	--with-tdbsam \
+	--with-python \
 	%{?_with_ipv6:--with-ipv6} \
         %{?_with_ldapsam:--with-ldapsam} \
 	%{?_without_ldap:--without-ldap} \
@@ -682,13 +703,16 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/smb.conf
+install %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 
-install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/lib/libnss_winbind.so.2
+install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/lib/libnss_winbind.so.2
+ln -s libnss_winbind.so.2 $RPM_BUILD_ROOT/lib/libnss_winbind.so
+install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/lib/libnss_wins.so.2
+ln -s libnss_wins.so.2 $RPM_BUILD_ROOT/lib/libnss_wins.so
 install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
-#install source/bin/libsmbclient.so $RPM_BUILD_ROOT/lib/libsmbclient.so.0
 mv $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
 
@@ -736,6 +760,22 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del smb
 fi
 
+%post winbind
+/sbin/chkconfig --add winbind
+if [ -r /var/lock/subsys/winbind ]; then
+	/etc/rc.d/init.d/winbind restart >&2
+else
+	echo "Run \"/etc/rc.d/init.d/winbind start\" to start Winbind daemon."
+fi
+
+%preun winbind
+if [ "$1" = "0" ]; then
+	if [ -r /var/lock/subsys/winbind ]; then
+		/etc/rc.d/init.d/winbind stop >&2
+	fi
+	/sbin/chkconfig --del winbind
+fi
+
 %post -n swat
 if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload 1>&2
@@ -763,7 +803,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
-%attr(755,root,root) %{_sbindir}/winbindd
+#%attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
@@ -771,8 +811,8 @@ fi
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
 
-%attr(755,root,root) /lib/libnss_*
-%attr(755,root,root) /lib/security/pam_winbind.so
+#%attr(755,root,root) /lib/libnss_*
+#%attr(755,root,root) /lib/security/pam_winbind.so
 %attr(755,root,root) %{_libdir}/%{name}/pdb/*.so
 
 %dir %{_vfsdir}
@@ -801,6 +841,17 @@ fi
 %attr(0750,root,root) %dir /var/log/samba
 %attr(0750,root,root) %dir /var/log/archiv/samba
 %attr(1777,root,root) %dir /var/spool/samba
+
+%files winbind
+%defattr(644,root,root,755)
+%{_sbindir}/winbindd
+%{_bindir}/wbinfo
+%attr(755,root,root) /%{_lib}/security/pam_winbind*
+%attr(755,root,root) /%{_lib}/libnss_winbind*
+%attr(754,root,root) /etc/rc.d/init.d/winbind
+#%attr(-,root,root) %config(noreplace) %{_sysconfdir}/pam.d/system-auth-winbind*
+%{_mandir}/man8/winbindd*.8*
+%{_mandir}/man1/wbinfo*.1*
 
 %files client
 %defattr(644,root,root,755)

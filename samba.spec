@@ -662,23 +662,16 @@ cd source
 %{__libtoolize}
 %{__autoconf}
 
-# do not use --with-fhs is not FHS compilant :)
 %configure \
 	--with-acl-support \
 	--with-automount \
 	--with-libsmbclient \
-	--with-lockdir=/var/lock/samba \
-	--with-logfilebase=/var/log/samba \
-	--libdir=%{_libdir}/samba \
 	--with-mmap \
 	--with-netatalk \
 	--without-smbwrapper \
 	--with-pam \
 	--with-pam_smbpass \
 	--with-ads \
-	--with-piddir=/var/run \
-	--with-privatedir=%{_sysconfdir} \
-	--with-configdir=%{_sysconfdir} \
 	--with-quotas \
 	--with-readline \
 	--with-smbmount \
@@ -687,8 +680,9 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-vfs \
+	--with-fhs \
+        --with-python \
 	--with-tdbsam \
-	--with-python \
 	--with-expsam=xml,%{?with_mysql:mysql} \
 	%{?with_ipv6:--with-ipv6} \
 	%{?with_ldapsam:--with-ldapsam} \

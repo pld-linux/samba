@@ -14,6 +14,9 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 # Source networking configuration.
 . /etc/sysconfig/network
 
+# Daemon specific configuration.
+. /etc/sysconfig/winbind
+
 # Check that networking is up.
 if is_yes "${NETWORKING}"; then
 	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then

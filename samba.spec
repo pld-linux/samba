@@ -238,7 +238,7 @@ gzip -9nf README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
 	docs/textdocs/* docs/{history,announce,THANKS}
 
 rm -f docs/faq/*.{sgml,txt}
-rm -f docs/htmldocs/*.[0-9].*.html
+rm -f docs/htmldocs/*.[0-9].html
 
 %post
 /sbin/chkconfig --add smb

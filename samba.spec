@@ -23,7 +23,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.0
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -550,8 +550,8 @@ dost阷u do plik體 korzystaj眂 z oprogramowania antywirusowego Trend
 
 cd examples/VFS
 tar xjf %{SOURCE7}
-cd %{name}-vscan-%{vscan_version}
-tar xjf %{SOURCE8}
+#cd %{name}-vscan-%{vscan_version}
+#tar xjf %{SOURCE8}
 
 %build
 cd source
@@ -590,12 +590,8 @@ cd ../examples/VFS
 mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
-# note - kaspersky and mks don't compile yet - require additional libraries
-#for i in fprot icap openantivirus sophos trend clamav; do
-#cd $i
-#%%{__make} #"LIBTOOL=libtool --tag=CC"
-#cd ..
-#done
+%configure
+%{__make} oav sophos fprotd trend icap mksd kavp clamav
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -635,8 +631,8 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 #install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf  $RPM_BUILD_ROOT/%{_sysconfdir}
 
 # modu硑 vscan
-#install examples/VFS/samba-vscan-%{vscan_version}/*/*.so $RPM_BUILD_ROOT/%{_vfsdir}/
-#install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT/%{_sysconfdir}
+install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT/%{_vfsdir}/
+install examples/VFS/samba-vscan-%{vscan_version}/{clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend}/*.conf $RPM_BUILD_ROOT/%{_sysconfdir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -792,6 +788,10 @@ fi
 %{_mandir}/man1/smbcquotas.1*
 %{_mandir}/man1/profiles.1*
 %{_mandir}/man1/vfstest.1*
+
+%{_mandir}/man1/log2pcap.1*
+%{_mandir}/man8/mount.c*.*
+
 %{_mandir}/man5/smb.conf.5*
 %{_mandir}/man5/lmhosts.5*
 %files -n swat
@@ -836,6 +836,7 @@ fi
 #te ni縠j chwilowo tutaj
 
 %attr(755,root,root) %{_vfsdir}/[d-n]*.so
+%attr(755,root,root) %{_vfsdir}/cap.so
 %attr(755,root,root) %{_vfsdir}/readonly.so
 
 %files vfs-recycle
@@ -846,36 +847,36 @@ fi
 
 %files vfs-vscan-clamav
 %defattr(644,root,root,755)
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-clamav.conf
-#%attr(755,root,root) %{_vfsdir}/vscan-clamav.so
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-clamav.conf
+%attr(755,root,root) %{_vfsdir}/vscan-clamav.so
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-fprot
 %defattr(644,root,root,755)
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fprotd.conf
-#%attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fprotd.conf
+%attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-openantivirus
 %defattr(644,root,root,755)
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-oav.conf
-#%attr(755,root,root) %{_vfsdir}/vscan-oav.so
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-oav.conf
+%attr(755,root,root) %{_vfsdir}/vscan-oav.so
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-sophos
 %defattr(644,root,root,755)
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-sophos.conf
-#%attr(755,root,root) %{_vfsdir}/vscan-sophos.so
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-sophos.conf
+%attr(755,root,root) %{_vfsdir}/vscan-sophos.so
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-symantec
 %defattr(644,root,root,755)
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-icap.conf
-#%attr(755,root,root) %{_vfsdir}/vscan-icap.so
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-icap.conf
+%attr(755,root,root) %{_vfsdir}/vscan-icap.so
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-trend
 %defattr(644,root,root,755)
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
-#%attr(755,root,root) %{_vfsdir}/vscan-trend.so
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
+%attr(755,root,root) %{_vfsdir}/vscan-trend.so
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}

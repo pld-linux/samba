@@ -1,10 +1,6 @@
 #
 # TODO:
-# - fix Summary and Description for python-samba package
 # - look into other distro specs for valid %descriptions for samba 3
-# - review configure options
-# - fix broken --without ldap, test functionality with other bconds
-# - check tdbtool (with tdb.spec)
 # - when pl for openldap-schema-samba done, rel up and STBR
 #
 # Conditional build:
@@ -860,12 +856,16 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
+Summary(pl):	Schemat LDAP dla samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
 
 %description -n openldap-schema-samba
 This package contains samba.schema for openldap.
+
+%description -n openldap-schema-samba -l pl
+Ten pakiet zawiera schemat samby dla openldap-a.
 
 %prep
 %setup -q

@@ -52,7 +52,7 @@ Patch13:	%{name}-allow-suid.patch
 URL:		http://www.samba.org/
 BuildRequires:	autoconf
 %{!?_without_cups:BuildRequires:	cups-devel}
-BuildRequires:	libtool >= 2:1.4d
+BuildRequires:	libtool >= 1.4.2
 BuildRequires:	ncurses-devel >= 5.2
 %{?_with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.6k
@@ -601,9 +601,9 @@ cd source
 	--with-utmp \
 	--with-vfs \
 	%{?_with_ipv6:--with-ipv6} \
-	%{?_with_ldap:--with-ldapsam}
+	%{?_with_ldap:--with-ldapsam} \
+	--with-acl-support 
 
-#	--with-acl-support \
 mv Makefile Makefile.old
 sed -e "s#-symbolic##g" Makefile.old > Makefile
 

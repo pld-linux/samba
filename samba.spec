@@ -9,7 +9,7 @@ Summary(it):	Server SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.1a
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -31,6 +31,7 @@ Patch8:		%{name}-autoconf.patch
 Patch9:		%{name}-smbadduser.patch
 Patch10:	%{name}-nocups.patch
 Patch11:	%{name}-nmbd_socket.patch
+Patch12:	%{name}-debug-0-suxorz.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -183,6 +184,7 @@ klientów Samba.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %build
 cd source

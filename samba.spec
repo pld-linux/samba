@@ -23,7 +23,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	2.2.8a
-Release:	1.3
+Release:	1.4
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -403,17 +403,49 @@ CUPS backend for printing to SMB printers.
 %description -n cups-backend-smb -l pl
 Backend CUPS-a drukuj±cy na drukarkach SMB.
 
-%package vfs-modules
-Summary:        Example VFS modules included with samba
-Summary(pl):    Przyk³adowe modu³y VFS do³±czone do samby
+%package vfs-audit
+Summary:        VFS module to audit file access
+Summary(pl):    Modu³ VFS do monitorowania operacji na plikach
 Group:          Networking/Daemons
 Requires:       samba-client = %{version}
 
-%description vfs-modules
-Example VFS modules included with samba.
+%description vfs-audit
+A simple module to audit file access to the syslog facility.  The following
+operations are logged: share connect/disconnect, directory opens/create/remove,
+file open/close/rename/unlink/chmod.
 
-%description vfs-modules -l pl
-Przyk³adowe modu³y VFS do³±czone do samby.
+%description vfs-audit -l pl
+Prosty modu³ do monitorowania dostêpu do plików do sysloga. Monitorowane s±
+nastêpuj±ce operacje: pod³±czone/od³±czenie do zasobu,
+otwarcie/utworzenie/zmiana nazwy katalogu, otwarcie/zamknêcie/zmiana
+nazwy/skasowania/zmiana praw plików.
+
+%package vfs-block
+Summary:        VFS module to block access to files
+Summary(pl):    Modu³y VFS do blokowania dostêpu do plików
+Group:          Networking/Daemons
+Requires:       samba-client = %{version}
+
+%description vfs-block
+Sample module by Ronald Kuetemeier <ronald@kuetemeier.com> to block named
+symbolic link following.  Note: Config file is in /etc/samba/samba-block.conf
+
+%description vfs-block -l pl
+Przyk³adowy modu³ stworzony przez Ronald Kuetemeier <ronald@kuetemeier.com> do
+blokowania dostêpu do plików wskazywanych przez linki symboliczne. Plik
+konfiguracyjny w /etc/samba/samba-block.conf
+
+%package vfs-recycle
+Summary:        VFS module to add recycle bin facility to a samba share
+Summary(pl):    Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
+Group:          Networking/Daemons
+Requires:       samba-client = %{version}
+
+%description vfs-recycle
+VFS module to add recycle bin facility to a samba share
+
+%description vfs-block -l pl
+Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
 
 %prep
 %setup -q
@@ -470,7 +502,8 @@ cd ../examples/VFS
 %{__autoconf}
 %configure
 %{__make}
-mv recycle/README{,.recycle}
+mv README{,.vfs}
+
 cd samba-vscan-%{vscan_version}
 # note - kaspersky mks don't compile yet
 for i in fprot icap openantivirus sophos trend; do
@@ -571,7 +604,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc source/nsswitch/README
+%doc source/nsswitch/README examples/VFS/README.vfs
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/winbindd
@@ -684,9 +717,17 @@ fi
 %{_mandir}/man8/smbspool.8*
 %endif
 
-%files vfs-modules
+%files vfs-block
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba-block.conf
+%attr(755,root,root) %{_reallibdir}/%{name}/block.so
+
+%files vfs-audit
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_reallibdir}/%{name}/audit.so
+
+%files vfs-recycle
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/recycle.conf
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba-block.conf
-%attr(755,root,root) %{_reallibdir}/%{name}/*.so
-%doc examples/VFS/README examples/VFS/recycle/README.recycle
+%attr(755,root,root) %{_reallibdir}/%{name}/recycle.so
+%doc examples/VFS/recycle/README

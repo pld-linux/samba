@@ -9,7 +9,7 @@ Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.6
-Release:	11
+Release:	12
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery

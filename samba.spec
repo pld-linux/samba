@@ -97,6 +97,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %if %{with cups}
 %define		cups_serverbin	%{_libdir}/cups
 %endif
+%define		schemadir	/usr/share/openldap/schema
 
 %description
 Samba provides an SMB server which can be used to provide network
@@ -856,6 +857,15 @@ Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
+%package -n openldap-schema-samba
+Summary:	Samba LDAP schema
+Group:		Networking/Daemons
+Requires(post,postun):	sed >= 4.0
+Requires:	openldap-servers
+
+%description -n openldap-schema-samba
+This package contains samba.schema for openldap.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -923,7 +933,7 @@ cp -f /usr/share/automake/config.sub .
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/var/{lock,log,log/archiv,spool}/samba \
-	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
+	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
 
 cd source
 %{__make} install \
@@ -991,6 +1001,8 @@ cp -R source/build/lib.*/samba $RPM_BUILD_ROOT%{py_sitedir}
 
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
 
+install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1036,6 +1048,32 @@ fi
 %postun swat
 if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload
+fi
+
+%post -n openldap-schema-samba
+if ! grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
+	sed -i -e '
+		/^include.*local.schema/{
+			i\
+include		%{schemadir}/samba.schema
+		}' /etc/openldap/slapd.conf
+fi
+
+if [ -f /var/lock/subsys/ldap ]; then
+    /etc/rc.d/init.d/ldap restart >&2
+fi
+
+%postun -n openldap-schema-samba
+if [ "$1" = "0" ]; then
+	if grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
+		sed -i -e '
+		/^include.*\/usr\/share\/openldap\/schema\/samba.schema/d
+		' /etc/openldap/slapd.conf
+	fi
+
+	if [ -f /var/lock/subsys/ldap ]; then
+		/etc/rc.d/init.d/ldap restart >&2 || :
+	fi
 fi
 
 %triggerpostun -- samba < 1.9.18p7
@@ -1348,3 +1386,7 @@ fi
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
+
+%files -n openldap-schema-samba
+%defattr(644,root,root,755)
+%{schemadir}/*.schema

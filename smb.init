@@ -19,7 +19,11 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 . /etc/sysconfig/samba
 
 # Check that networking is up.
-[ "${NETWORKING}" = "no" ] && exit 0
+if is_no "${NETWORKING}"; then
+        msg_Network_Down smb
+        exit 1
+fi
+			
 
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0
@@ -27,34 +31,54 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 # See how we were called.
 case "$1" in
   start)
-	show Starting smbd
-	daemon $NICELEVEL smbd -D 	
-	show Starting nmbd
-	daemon $NICELEVEL nmbd -D 
-	touch /var/lock/subsys/smb
+        # Check if the service is already running?
+        if [ ! -f /var/lock/subsys/smb ]; then
+                msg_starting smbd
+                daemon $NICELEVEL smbd -D
+                msg_starting nmbd
+                daemon $NICELEVEL nmbd -D
+                RETVAL=$?
+                [ $RETVAL -eq 0 ] && touch /var/lock/subsys/smb
+        else
+                msg_Already_Running smb
+                exit 1
+        fi
 	;;
   stop)
-	show Stopping smbd
-	killproc smbd
-	show Stopping nmbd
-	killproc nmbd
-	rm -f /var/lock/subsys/smb
+        # Stop daemons.
+        if [ -f /var/lock/subsys/smb ]; then
+                msg_stopping smbd
+                killproc smbd
+                msg_stopping nmbd
+		killproc nmbd
+                rm -f /var/lock/subsys/smb >/dev/null 2>&1
+        else
+                msg_Not_Running smb
+                exit 1
+        fi
 	;;
   status)
 	status smbd
 	status nmbd
 	smbstatus
+	exit $?
 	;;
   restart)
 	$0 stop
 	$0 start
 	;;
   reload)
-	Show Reloading smb.conf file
-	killproc smbd -HUP
+	if [ -f /var/lock/subsys/smb ]; then
+	        msg_reload smb
+	        killproc smbd -HUP
+	else
+	        msg_Not_Running smb
+	        exit 1
+        fi
 	;;
   *)
-	echo "Usage: $0 {start|stop|restart|reload|status}"
+	msg_Usage "$0 {start|stop|restart|reload|status}"
 	exit 1
 esac
 
+exit $RETVAL

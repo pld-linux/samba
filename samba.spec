@@ -2,7 +2,7 @@
 # Conditional build:
 # _without_cups	- without CUPS support
 # _with_ldap	- with LDAP-based auth (instead of smbpasswd)
-# _with_ipv6    - with IPv6 support
+# _with_ipv6	- with IPv6 support
 #
 %define		vscan_version 0.3.2b
 Summary:	SMB server
@@ -656,12 +656,12 @@ ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/lib/libsmbclient.so
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # przyk³adowe modu³y VFS
-install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT/%{_vfsdir}/
-install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf  $RPM_BUILD_ROOT/%{_sysconfdir}
+install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT%{_vfsdir}
+install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
 # modu³y vscan
-install examples/VFS/samba-vscan-%{vscan_version}/*/*.so $RPM_BUILD_ROOT/%{_vfsdir}/
-install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT/%{_sysconfdir}
+install examples/VFS/samba-vscan-%{vscan_version}/*/*.so $RPM_BUILD_ROOT%{_vfsdir}
+install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 

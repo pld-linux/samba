@@ -1,185 +1,310 @@
-diff -Nru samba-2.0.6/docs/manpages/nmbd.8 samba-2.0.6.new/docs/manpages/nmbd.8
---- samba-2.0.6/docs/manpages/nmbd.8	Thu Nov 11 03:52:15 1999
-+++ samba-2.0.6.new/docs/manpages/nmbd.8	Sun Nov 28 21:04:26 1999
-@@ -78,7 +78,7 @@
- \fIONLY\fP\&.
- .IP 
- The default path to this file is compiled into Samba as part of the
--build process\&. Common defaults are \fI/usr/local/samba/lib/lmhosts\fP,
-+build process\&. Common defaults are \fI/etc/samba/lmhosts\fP,
- \fI/usr/samba/lib/lmhosts\fP or \fI/etc/lmhosts\fP\&. See the 
- \fBlmhosts (5)\fP man page for details on the contents of this file\&.
- .IP 
-@@ -111,7 +111,7 @@
- data\&.
- .IP 
- The default log file path is compiled into Samba as part of the
--build process\&. Common defaults are \fI/usr/local/samba/var/log\&.nmb\fP,
-+build process\&. Common defaults are \fI/var/log/samba/log\&.nmb\fP,
- \fI/usr/samba/var/log\&.nmb\fP or \fI/var/log/log\&.nmb\fP\&.
- .IP 
- .IP "\fB-n primary NetBIOS name\fP" 
-@@ -130,7 +130,7 @@
- .IP 
- .IP "\fB-s configuration file\fP" 
- The default configuration file name is
--set at build time, typically as \fI/usr/local/samba/lib/smb\&.conf\fP, but
-+set at build time, typically as \fI/etc/samba/smb\&.conf\fP, but
- this may be changed when Samba is autoconfigured\&.
- .IP 
- The file specified contains the configuration details required by the
-@@ -159,7 +159,7 @@
- If running the server as a daemon at startup, this file will need to
- contain an appropriate startup sequence for the server\&.
- .PP 
--\fB/usr/local/samba/lib/smb\&.conf\fP
-+\fB/etc/samba/smb\&.conf\fP
- .PP 
- This is the default location of the 
- \fBsmb\&.conf\fP server configuration
-@@ -186,7 +186,7 @@
- .PP 
- \fBnmbd\fP will accept SIGHUP, which will cause it to dump out it\'s
- namelists into the file \f(CWnamelist\&.debug\fP in the
--\fI/usr/local/samba/var/locks\fP directory (or the \fIvar/locks\fP
-+\fI/car/lock/samba/\fP directory (or the \fIvar/locks\fP
- directory configured under wherever Samba was configured to install
- itself)\&. This will also cause \fBnmbd\fP to dump out it\'s server database in
- the log\&.nmb file\&. In addition, the debug log level of nmbd may be raised
-diff -Nru samba-2.0.6/docs/manpages/smb.conf.5 samba-2.0.6.new/docs/manpages/smb.conf.5
---- samba-2.0.6/docs/manpages/smb.conf.5	Thu Nov 11 03:52:15 1999
-+++ samba-2.0.6.new/docs/manpages/smb.conf.5	Sun Nov 28 21:02:43 1999
-@@ -1775,7 +1775,7 @@
- to special case the config files of just a few clients)\&.
- .IP 
- \fBExample:\fP
--\f(CW	config file = /usr/local/samba/lib/smb\&.conf\&.%m\fP
-+\f(CW	config file = /usr/etc/samba/smb\&.conf\&.%m\fP
- .IP 
- .IP "\fBcopy (S)\fP" 
- .IP 
-@@ -3224,7 +3224,7 @@
- \f(CW	lock directory = /tmp/samba\fP
- .IP 
- \fBExample:\fP
--\f(CW	lock directory = /usr/local/samba/var/locks\fP
-+\f(CW	lock directory = /var/lock/samba\fP
- .IP 
- .IP "\fBlocking (S)\fP" 
- .IP 
-@@ -3260,7 +3260,7 @@
- separate log files for each user or machine\&.
- .IP 
- \fBExample:\fP
--\f(CW	log file = /usr/local/samba/var/log\&.%m\fP
-+\f(CW	log file = /var/log/samba/log\&.%m\fP
- .IP 
- .IP "\fBlog level (G)\fP" 
- .IP 
-@@ -4647,7 +4647,7 @@
- .DS 
-  
+diff -uNr samba-2.2.3.orig/docs/manpages/nmbd.8 samba-2.2.3/docs/manpages/nmbd.8
+--- samba-2.2.3.orig/docs/manpages/nmbd.8	Sun Feb  3 01:45:38 2002
++++ samba-2.2.3/docs/manpages/nmbd.8	Sun Feb  3 13:18:53 2002
+@@ -91,7 +91,7 @@
  
--	preexec = csh -c \'echo \e"Welcome to %S!\e" | /usr/local/samba/bin/smbclient -M %m -I %I\' &
-+	preexec = csh -c \'echo \e"Welcome to %S!\e" | /usr/bin/smbclient -M %m -I %I\' &
+ The default path to this file is compiled into 
+ Samba as part of the build process. Common defaults 
+-are \fI/usr/local/samba/lib/lmhosts\fR,
++are \fI/etc/samba/lmhosts\fR,
+ \fI/usr/samba/lib/lmhosts\fR or
+ \fI/etc/lmhosts\fR. See the  \fIlmhosts(5)\fRman page for details on the 
+ contents of this file.
+@@ -129,7 +129,7 @@
+ \fBnmbd\fR server.
  
- .DE 
-  
-@@ -4778,7 +4778,7 @@
- \f(CW	print command = lp -d%p -s %s; rm %s\fP
- .IP 
- \fBExample:\fP
--\f(CW 	print command = /usr/local/samba/bin/myprintscript %p %s\fP
-+\f(CW 	print command = /usr/local/bin/myprintscript %p %s\fP
- .IP 
- .IP "\fBprint ok (S)\fP" 
- .IP 
-@@ -5676,7 +5676,7 @@
- \f(CW	smbrun=<compiled default>\fP
- .IP 
- \fBExample:\fP
--\f(CW	smbrun = /usr/local/samba/bin/smbrun\fP
-+\f(CW	smbrun = /usr/local/bin/smbrun\fP
- .IP 
- .IP "\fBsocket address (G)\fP" 
- .IP 
-diff -Nru samba-2.0.6/docs/manpages/swat.8 samba-2.0.6.new/docs/manpages/swat.8
---- samba-2.0.6/docs/manpages/swat.8	Thu Nov 11 03:52:16 1999
-+++ samba-2.0.6.new/docs/manpages/swat.8	Sun Nov 28 20:27:39 1999
-@@ -41,50 +41,6 @@
- .IP 
- Do NOT enable this option on a production server\&.
- .IP 
--.PP 
--.SH "INSTALLATION" 
--.PP 
--After you compile SWAT you need to run \f(CW"make install"\fP to install the
--swat binary and the various help files and images\&. A default install
--would put these in:
--.PP 
--
--.DS 
-- 
--
+ The default log directory is compiled into Samba
+-as part of the build process. Common defaults are \fI /usr/local/samba/var/log.nmb\fR, \fI /usr/samba/var/log.nmb\fR or
++as part of the build process. Common defaults are \fI /var/log/samba/log.nmb\fR, \fI /usr/samba/var/log.nmb\fR or
+ \fI/var/log/log.nmb\fR.
+ .TP
+ \fB-n <primary NetBIOS name>\fR
+@@ -149,7 +149,7 @@
+ .TP
+ \fB-s <configuration file>\fR
+ The default configuration file name
+-is set at build time, typically as \fI /usr/local/samba/lib/smb.conf\fR, but
++is set at build time, typically as \fI /etc/samba/smb.conf\fR, but
+ this may be changed when Samba is autoconfigured.
+ 
+ The file specified contains the configuration details
+@@ -180,7 +180,7 @@
+ See the UNIX_INSTALL.html
+ document for details.
+ .TP
+-\fB\fI/usr/local/samba/lib/smb.conf\fB\fR
++\fB\fI/etc/samba/smb.conf\fB\fR
+ This is the default location of the
+ \fIsmb.conf\fR
+ server configuration file. Other common places that systems
+@@ -211,7 +211,7 @@
+ .PP
+ \fBnmbd\fR will accept SIGHUP, which will cause
+ it to dump out its namelists into the file \fInamelist.debug
+-\fRin the \fI/usr/local/samba/var/locks\fR
++\fRin the \fI/var/lock/samba\fR
+ directory (or the \fIvar/locks\fR directory configured
+ under wherever Samba was configured to install itself). This will also
+ cause \fBnmbd\fR to dump out its server database in
+diff -uNr samba-2.2.3.orig/docs/manpages/smb.conf.5 samba-2.2.3/docs/manpages/smb.conf.5
+--- samba-2.2.3.orig/docs/manpages/smb.conf.5	Sun Feb  3 01:45:38 2002
++++ samba-2.2.3/docs/manpages/smb.conf.5	Sun Feb  3 13:24:14 2002
+@@ -1522,7 +1522,7 @@
+ Default: \fBnone\fR
+ .PP
+ .PP
+-Example: \fBadd share command = /usr/local/bin/addshare\fR
++Example: \fBadd share command = /usr/bin/addshare\fR
+ .PP
+ .TP
+ \fBadd machine script (G)\fR
+@@ -1577,7 +1577,7 @@
+ 
+ Default: \fBadd user script = <empty string>
+ \fR
+-Example: \fBadd user script = /usr/local/samba/bin/add_user 
++Example: \fBadd user script = /usr/bin/add_user 
+ %u\fR
+ .TP
+ \fBadmin users (S)\fR
+@@ -1810,7 +1810,7 @@
+ Default: \fBnone\fR
+ .PP
+ .PP
+-Example: \fBchange share command = /usr/local/bin/addshare\fR
++Example: \fBchange share command = /usr/bin/addshare\fR
+ .PP
+ .TP
+ \fBcharacter set (G)\fR
+@@ -2045,7 +2045,7 @@
+ (allowing you to special case the config files of just a few 
+ clients).
+ 
+-Example: \fBconfig file = /usr/local/samba/lib/smb.conf.%m
++Example: \fBconfig file = /etc/samba/smb.conf.%m
+ \fR.TP
+ \fBcopy (S)\fR
+ This parameter allows you to "clone" service 
+@@ -2312,7 +2312,7 @@
+ Default: \fBnone\fR
+ .PP
+ .PP
+-Example: \fBdelete share command = /usr/local/bin/delshare\fR
++Example: \fBdelete share command = /usr/bin/delshare\fR
+ .PP
+ .TP
+ \fBdelete user script (G)\fR
+@@ -2365,7 +2365,7 @@
+ 
+ Default: \fBdelete user script = <empty string>
+ \fR
+-Example: \fBdelete user script = /usr/local/samba/bin/del_user 
++Example: \fBdelete user script = /usr/bin/del_user 
+ %u\fR
+ .TP
+ \fBdelete veto files (S)\fR
+@@ -2423,7 +2423,7 @@
+ Default: \fBBy default internal routines for 
+ determining the disk capacity and remaining space will be used.
+ \fR
+-Example: \fBdfree command = /usr/local/samba/bin/dfree
++Example: \fBdfree command = /usr/bin/dfree
+ \fR
+ Where the script dfree (which must be made executable) could be:
+ 
+@@ -3248,7 +3248,7 @@
+ 
+ Default: \fBno file included\fR
+ 
+-Example: \fBinclude = /usr/local/samba/lib/admin_smb.conf
++Example: \fBinclude = /etc/samba/admin_smb.conf
+ \fR.TP
+ \fBinherit permissions (S)\fR
+ The permissions on new files and directories 
+@@ -3647,7 +3647,7 @@
+ This option takes the standard substitutions, allowing 
+ you to have separate log files for each user or machine.
+ 
+-Example: \fBlog file = /usr/local/samba/var/log.%m
++Example: \fBlog file = /var/log/samba/log.%m
+ \fR.TP
+ \fBlog level (G)\fR
+ The value of the parameter (an integer) allows 
+@@ -3760,11 +3760,11 @@
+ file is recommended.
+ 
+ The script must be a relative path to the [netlogon] 
+-service. If the [netlogon] service specifies a  \fIpath\fR of \fI/usr/local/samba/netlogon
++service. If the [netlogon] service specifies a  \fIpath\fR of \fI/etc/samba/netlogon
+ \fR, and \fBlogon script = STARTUP.BAT\fR, then 
+ the file that will be downloaded is:
+ 
+-\fI/usr/local/samba/netlogon/STARTUP.BAT\fR
++\fI/etc/samba/netlogon/STARTUP.BAT\fR
+ 
+ The contents of the batch file are entirely your choice. A 
+ suggested command would be to add \fBNET TIME \\\\SERVER /SET 
+@@ -5126,7 +5126,7 @@
+ is an example:
+ 
+ \fBpreexec = csh -c 'echo \\"Welcome to %S!\\" |
+-/usr/local/samba/bin/smbclient -M %m -I %I' & \fR
++/usr/bin/smbclient -M %m -I %I' & \fR
+ 
+ Of course, this could get annoying after a while :-)
+ 
+@@ -5257,7 +5257,7 @@
+ 
+ \fBprint command = lp -d%p -s %s; rm %s\fR
+ 
+-Example: \fBprint command = /usr/local/samba/bin/myprintscript
++Example: \fBprint command = /usr/bin/myprintscript
+ %p %s\fR
+ .TP
+ \fBprint ok (S)\fR
+@@ -5380,7 +5380,7 @@
+ Default: \fBNone (set in compile).\fR
+ 
+ Example: \fBprinter driver file = 
+-/usr/local/samba/printers/drivers.def\fR
++/etc/samba/drivers.def\fR
+ .TP
+ \fBprinter driver location (S)\fR
+ \fBNote :\fRThis is a deprecated 
+@@ -6075,7 +6075,7 @@
+ 
+ Default: \fBNone\fR.
+ 
+-Example: \fBabort shutdown script = /usr/local/samba/sbin/shutdown %m %t %r %f\fR
++Example: \fBabort shutdown script = /usr/sbin/shutdown %m %t %r %f\fR
+ 
+ Shutdown script example:
+ .sp
+@@ -6233,7 +6233,7 @@
+ Examples: \fBsource environment = |/etc/smb.conf.sh
+ \fR
+ Example: \fBsource environment = 
+-/usr/local/smb_env_vars\fR
++/etc/samba/smb_env_vars\fR
+ .TP
+ \fBssl (G)\fR
+ This variable is part of SSL-enabled Samba. This 
+@@ -6263,7 +6263,7 @@
+ directory that don't fit into this naming scheme are ignored. You 
+ don't need this variable if you don't verify client certificates.
+ 
+-Default: \fBssl CA certDir = /usr/local/ssl/certs
++Default: \fBssl CA certDir = /etc/samba/ssl/certs
+ \fR.TP
+ \fBssl CA certFile (G)\fR
+ This variable is part of SSL-enabled Samba. This 
+@@ -6280,7 +6280,7 @@
+ simple (you won't need to create the hashed file names). You 
+ don't need this variable if you don't verify client certificates.
+ 
+-Default: \fBssl CA certFile = /usr/local/ssl/certs/trustedCAs.pem
++Default: \fBssl CA certFile = /etc/samba/ssl/certs/trustedCAs.pem
+ \fR.TP
+ \fBssl ciphers (G)\fR
+ This variable is part of SSL-enabled Samba. This 
+@@ -6301,7 +6301,7 @@
+ The certificate in this file is used by  \fBsmbclient(1)\fRif it exists. It's needed 
+ if the server requires a client certificate.
+ 
+-Default: \fBssl client cert = /usr/local/ssl/certs/smbclient.pem
++Default: \fBssl client cert = /etc/samba/ssl/certs/smbclient.pem
+ \fR.TP
+ \fBssl client key (G)\fR
+ This variable is part of SSL-enabled Samba. This 
+@@ -6312,7 +6312,7 @@
+ This is the private key for  \fBsmbclient(1)\fR. It's only needed if the 
+ client should have a certificate. 
+ 
+-Default: \fBssl client key = /usr/local/ssl/private/smbclient.pem
++Default: \fBssl client key = /etc/samba/ssl/private/smbclient.pem
+ \fR.TP
+ \fBssl compatibility (G)\fR
+ This variable is part of SSL-enabled Samba. This 
+@@ -6931,7 +6931,7 @@
+ 
+ Default: \fBno username map\fR
+ 
+-Example: \fBusername map = /usr/local/samba/lib/users.map
++Example: \fBusername map = /etc/samba/users.map
+ \fR.TP
+ \fButmp (G)\fR
+ This boolean parameter is only available if 
+diff -uNr samba-2.2.3.orig/docs/manpages/smbclient.1 samba-2.2.3/docs/manpages/smbclient.1
+--- samba-2.2.3.orig/docs/manpages/smbclient.1	Sun Feb  3 01:45:39 2002
++++ samba-2.2.3/docs/manpages/smbclient.1	Sun Feb  3 13:24:50 2002
+@@ -771,7 +771,7 @@
+ suggestions only. 
+ .PP
+ It is recommended that the smbclient software be installed
+-in the \fI/usr/local/samba/bin/\fR or \fI /usr/samba/bin/\fR directory, this directory readable 
++in the \fI/usr/bin/\fR or \fI /usr/samba/bin/\fR directory, this directory readable 
+ by all, writeable only by root. The client program itself should 
+ be executable by all. The client should \fBNOT\fR be 
+ setuid or setgid! 
+diff -uNr samba-2.2.3.orig/docs/manpages/smbd.8 samba-2.2.3/docs/manpages/smbd.8
+--- samba-2.2.3.orig/docs/manpages/smbd.8	Sun Feb  3 01:45:39 2002
++++ samba-2.2.3/docs/manpages/smbd.8	Sun Feb  3 13:25:14 2002
+@@ -188,7 +188,7 @@
+ See the UNIX_INSTALL.html
+ document for details.
+ .TP
+-\fB\fI/usr/local/samba/lib/smb.conf\fB\fR
++\fB\fI/etc/samba/smb.conf\fB\fR
+ This is the default location of the
+ \fIsmb.conf\fR
+ server configuration file. Other common places that systems
+diff -uNr samba-2.2.3.orig/docs/manpages/swat.8 samba-2.2.3/docs/manpages/swat.8
+--- samba-2.2.3.orig/docs/manpages/swat.8	Sun Feb  3 01:45:39 2002
++++ samba-2.2.3/docs/manpages/swat.8	Sun Feb  3 13:27:53 2002
+@@ -47,13 +47,13 @@
+ these in: 
+ .TP 0.2i
+ \(bu
 -/usr/local/samba/bin/swat
++/usr/sbin/swat
+ .TP 0.2i
+ \(bu
 -/usr/local/samba/swat/images/*
++/usr/share/swat/images/*
+ .TP 0.2i
+ \(bu
 -/usr/local/samba/swat/help/*
--
--.DE 
-- 
--
--.PP 
--.SH "INETD INSTALLATION" 
--.PP 
--You need to edit your \f(CW/etc/inetd\&.conf\fP and \f(CW/etc/services\fP to
--enable \fBSWAT\fP to be launched via inetd\&. 
--.PP 
--In \f(CW/etc/services\fP you need to add a line like this:
--.PP 
--\f(CWswat            901/tcp\fP
--.PP 
--Note for NIS/YP users - you may need to rebuild the NIS service maps
--rather than alter your local \f(CW/etc/services\fP file\&.
--.PP 
--the choice of port number isn\'t really important except that it should
--be less than 1024 and not currently used (using a number above 1024
--presents an obscure security hole depending on the implementation
--details of your \fBinetd\fP daemon)\&.
--.PP 
--In \f(CW/etc/inetd\&.conf\fP you should add a line like this:
--.PP 
--\f(CWswat    stream  tcp     nowait\&.400  root    /usr/local/samba/bin/swat swat\fP
--.PP 
--One you have edited \f(CW/etc/services\fP and \f(CW/etc/inetd\&.conf\fP you need
--to send a HUP signal to inetd\&. To do this use \f(CW"kill -1 PID"\fP where
--PID is the process ID of the inetd daemon\&.
--.PP 
- .SH "LAUNCHING" 
- .PP 
- To launch \fBswat\fP just run your favorite web browser and point it at
-@@ -97,21 +53,19 @@
- .PP 
- .SH "FILES" 
- .PP 
--\fB/etc/inetd\&.conf\fP
-+\fB/etc/sysconfig/rc-inetd/swat\fP
- .PP 
--This file must contain suitable startup information for the
--meta-daemon\&. 
-+This is rc-inetd service description file\&. 
- .PP 
- \fB/etc/services\fP
- .PP 
- This file must contain a mapping of service name (e\&.g\&., swat) to
- service port (e\&.g\&., 901) and protocol type (e\&.g\&., tcp)\&. 
- .PP 
--\fB/usr/local/samba/lib/smb\&.conf\fP
-+\fB/etc/samba/smb\&.conf\fP
- .PP 
- This is the default location of the \fIsmb\&.conf\fP server configuration
--file that \fBswat\fP edits\&. Other common places that systems install
--this file are \fI/usr/samba/lib/smb\&.conf\fP and \fI/etc/smb\&.conf\fP\&.
-+file that \fBswat\fP edits\&.
- .PP 
- This file describes all the services the server is to make available
- to clients\&. See \fBsmb\&.conf (5)\fP for more information\&.
++/usr/share/swat/help/*
+ .SS "INETD INSTALLATION"
+ .PP
+ You need to edit your \fI/etc/inetd.conf
+@@ -78,7 +78,7 @@
+ add a line like this: 
+ .PP
+ \fBswat stream tcp nowait.400 root
+-/usr/local/samba/bin/swat swat\fR
++/usr/sbin/swat swat\fR
+ .PP
+ One you have edited \fI/etc/services\fR 
+ and \fI/etc/inetd.conf\fR you need to send a 
+@@ -104,7 +104,7 @@
+ (e.g., swat) to service port (e.g., 901) and protocol type 
+ (e.g., tcp). 
+ .TP
+-\fB\fI/usr/local/samba/lib/smb.conf\fB\fR
++\fB\fI/etc/samba/smb.conf\fB\fR
+ This is the default location of the \fIsmb.conf(5)
+ \fRserver configuration file that swat edits. Other 
+ common places that systems install this file are \fI /usr/samba/lib/smb.conf\fR and \fI/etc/smb.conf
+diff -uNr samba-2.2.3.orig/docs/manpages/winbindd.8 samba-2.2.3/docs/manpages/winbindd.8
+--- samba-2.2.3.orig/docs/manpages/winbindd.8	Sun Feb  3 01:45:39 2002
++++ samba-2.2.3/docs/manpages/winbindd.8	Sun Feb  3 13:28:29 2002
+@@ -364,7 +364,7 @@
+ Storage for the Windows NT rid to UNIX user/group 
+ id mapping. The lock directory is specified when Samba is initially 
+ compiled using the \fI--with-lockdir\fR option.
+-This directory is by default \fI/usr/local/samba/var/locks
++This directory is by default \fI/var/lock/samba
+ \fR\&. 
+ .TP
+ \fB$LOCKDIR/winbindd_cache.tdb\fR

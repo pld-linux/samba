@@ -1,0 +1,29 @@
+--- samba-2.0.5/source/include/includes.h.glibc21	Tue Jul 20 21:25:05 1999
++++ samba-2.0.5/source/include/includes.h	Wed Jul 21 10:42:47 1999
+@@ -647,11 +647,6 @@
+ #endif /* strcpy */
+ #define strcpy(dest,src) __ERROR__XX__NEVER_USE_STRCPY___;
+ 
+-#ifdef strcat
+-#undef strcat
+-#endif /* strcat */
+-#define strcat(dest,src) __ERROR__XX__NEVER_USE_STRCAT___;
+-
+ #ifdef sprintf
+ #undef sprintf
+ #endif /* sprintf */
+--- samba-2.0.5/source/client/smbmount.c.glibc21	Tue Jul 20 21:25:02 1999
++++ samba-2.0.5/source/client/smbmount.c	Wed Jul 21 10:49:28 1999
+@@ -96,8 +96,11 @@
+ 
+ static void close_our_files(int client_fd)
+ {
++	struct rlimit limits;
+ 	int i;
+-	for (i = 0; i < 256; i++) {
++
++	getrlimit(RLIMIT_NOFILE,&limits);
++	for (i = 0; i < limits.rlim_max; i++) {
+ 		if (i == client_fd) continue;
+ 		close(i);
+ 	}

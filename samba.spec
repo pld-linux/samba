@@ -22,13 +22,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	2.2.11
+Version:	2.2.12
 Release:	1
 Epoch:		0
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us4.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	3aa08a4821fd1ba03b603ac2ff4bf071
+# Source0-md5:	ffda6f5a93635d0b2afb2b2fb17e3bbf
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd

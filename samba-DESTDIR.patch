@@ -1,32 +1,32 @@
-diff -urN samba-2.0.7.org/source/Makefile.in samba-2.0.7/source/Makefile.in
---- samba-2.0.7.org/source/Makefile.in	Thu Oct 19 00:01:25 2000
-+++ samba-2.0.7/source/Makefile.in	Fri Oct 20 22:58:16 2000
-@@ -21,15 +21,16 @@
- builddir=@builddir@
+diff -urN samba-2.2.0.org/source/Makefile.in samba-2.2.0/source/Makefile.in
+--- samba-2.2.0.org/source/Makefile.in	Wed Apr 18 01:27:35 2001
++++ samba-2.2.0/source/Makefile.in	Wed Apr 18 01:38:13 2001
+@@ -30,15 +30,15 @@
+ top_builddir=.
  SHELL=/bin/sh
  
 -BASEDIR= @prefix@
 -BINDIR = @bindir@
+-DATADIR = @datadir@
 +BASEDIR= $(DESTDIR)@prefix@
 +BINDIR = $(DESTDIR)@bindir@
- # we don't use sbindir because we want full compatibility with
- # the previous releases of Samba
--SBINDIR = @bindir@
++DATADIR = $(DESTDIR)@datadir@
+ # sbindir is mapped to bindir when compiling SAMBA in 2.0.x compatibility mode.
+-SBINDIR = @sbindir@
 -LIBDIR = @libdir@
 -VARDIR = @localstatedir@
+-CONFIGDIR = @configdir@
 -MANDIR = @mandir@
--SAMBABOOK = @sambabook@
 +SBINDIR = $(DESTDIR)@sbindir@
 +LIBDIR = $(DESTDIR)@libdir@
 +VARDIR = $(DESTDIR)@localstatedir@
++CONFIGDIR = $(DESTDIR)@configdir@
 +MANDIR = $(DESTDIR)@mandir@
-+SYSCONFDIR = $(DESTDIR)@sysconfdir@
-+SAMBABOOK = $(DESTDIR)@sambabook@
  
  # The permissions to give the executables
  INSTALLPERMS = 0755
-@@ -49,7 +50,7 @@
- SMB_PASSWD_FILE = $(PRIVATEDIR)/smbpasswd
+@@ -58,7 +58,7 @@
+ TDB_PASSWD_FILE = $(PRIVATEDIR)/smbpasswd.tdb
  
  # This is where SWAT images and help files go
 -SWATDIR = @swatdir@
@@ -34,12 +34,12 @@ diff -urN samba-2.0.7.org/source/Makefile.in samba-2.0.7/source/Makefile.in
  
  # the directory where lock files go
  LOCKDIR = @lockdir@
-diff -urN samba-2.0.7.org/source/script/installbin.sh samba-2.0.7/source/script/installbin.sh
---- samba-2.0.7.org/source/script/installbin.sh	Thu Oct 19 00:01:26 2000
-+++ samba-2.0.7/source/script/installbin.sh	Fri Oct 20 23:12:27 2000
+diff -urN samba-2.2.0.org/source/script/installbin.sh samba-2.2.0/source/script/installbin.sh
+--- samba-2.2.0.org/source/script/installbin.sh	Wed Apr 18 01:27:39 2001
++++ samba-2.2.0/source/script/installbin.sh	Wed Apr 18 01:36:43 2001
 @@ -13,7 +13,7 @@
  
- for d in $BASEDIR $BINDIR $LIBDIR $VARDIR; do
+ for d in $BASEDIR $BINDIR $LIBDIR $VARDIR $BASEDIR/private; do
  if [ ! -d $d ]; then
 -mkdir $d
 +mkdir -p $d
@@ -55,9 +55,9 @@ diff -urN samba-2.0.7.org/source/script/installbin.sh samba-2.0.7/source/script/
   fi
  done
  
-diff -urN samba-2.0.7.org/source/script/installcp.sh samba-2.0.7/source/script/installcp.sh
---- samba-2.0.7.org/source/script/installcp.sh	Thu Oct 19 00:01:26 2000
-+++ samba-2.0.7/source/script/installcp.sh	Fri Oct 20 23:07:24 2000
+diff -urN samba-2.2.0.org/source/script/installcp.sh samba-2.2.0/source/script/installcp.sh
+--- samba-2.2.0.org/source/script/installcp.sh	Wed Apr 18 01:27:39 2001
++++ samba-2.2.0/source/script/installcp.sh	Wed Apr 18 01:36:43 2001
 @@ -12,7 +12,7 @@
  echo Installing codepage files in $CODEPAGEDIR
  for d in $LIBDIR $CODEPAGEDIR; do
@@ -81,9 +81,9 @@ diff -urN samba-2.0.7.org/source/script/installcp.sh samba-2.0.7/source/script/i
   fi
  done
  
-diff -urN samba-2.0.7.org/source/script/installman.sh samba-2.0.7/source/script/installman.sh
---- samba-2.0.7.org/source/script/installman.sh	Thu Oct 19 00:01:26 2000
-+++ samba-2.0.7/source/script/installman.sh	Fri Oct 20 22:57:52 2000
+diff -urN samba-2.2.0.org/source/script/installman.sh samba-2.2.0/source/script/installman.sh
+--- samba-2.2.0.org/source/script/installman.sh	Wed Apr 18 01:27:39 2001
++++ samba-2.2.0/source/script/installman.sh	Wed Apr 18 01:36:43 2001
 @@ -11,7 +11,7 @@
  
  for d in $MANDIR $MANDIR/man1 $MANDIR/man5 $MANDIR/man7 $MANDIR/man8; do
@@ -93,9 +93,9 @@ diff -urN samba-2.0.7.org/source/script/installman.sh samba-2.0.7/source/script/
  if [ ! -d $d ]; then
    echo Failed to make directory $d, does $USER have privileges?
    exit 1
-diff -urN samba-2.0.7.org/source/script/installscripts.sh samba-2.0.7/source/script/installscripts.sh
---- samba-2.0.7.org/source/script/installscripts.sh	Thu Oct 19 00:01:26 2000
-+++ samba-2.0.7/source/script/installscripts.sh	Fri Oct 20 22:57:52 2000
+diff -urN samba-2.2.0.org/source/script/installscripts.sh samba-2.2.0/source/script/installscripts.sh
+--- samba-2.2.0.org/source/script/installscripts.sh	Wed Apr 18 01:27:39 2001
++++ samba-2.2.0/source/script/installscripts.sh	Wed Apr 18 01:36:43 2001
 @@ -12,7 +12,7 @@
  
  for d in $BINDIR; do
@@ -105,18 +105,18 @@ diff -urN samba-2.0.7.org/source/script/installscripts.sh samba-2.0.7/source/scr
    if [ ! -d $d ]; then
      echo Failed to make directory $d
      echo Have you run installbin first?
-diff -urN samba-2.0.7.org/source/script/installswat.sh samba-2.0.7/source/script/installswat.sh
---- samba-2.0.7.org/source/script/installswat.sh	Thu Oct 19 00:01:26 2000
-+++ samba-2.0.7/source/script/installswat.sh	Fri Oct 20 23:00:27 2000
+diff -urN samba-2.2.0.org/source/script/installswat.sh samba-2.2.0/source/script/installswat.sh
+--- samba-2.2.0.org/source/script/installswat.sh	Wed Apr 18 01:27:39 2001
++++ samba-2.2.0/source/script/installswat.sh	Wed Apr 18 01:38:55 2001
 @@ -10,7 +10,7 @@
  
  for d in $SWATDIR $SWATDIR/help $SWATDIR/images $SWATDIR/include; do
      if [ ! -d $d ]; then
--        mkdir $d
-+        mkdir -p $d
-         if [ ! -d $d ]; then
-             echo Failed to make directory $d, does $USER have privileges?
-             exit 1
+-	mkdir $d
++	mkdir -p $d
+ 	if [ ! -d $d ]; then
+ 	    echo Failed to make directory $d, does $USER have privileges?
+ 	    exit 1
 @@ -69,7 +69,7 @@
  
      for d in $BOOKDIR $BOOKDIR/figs $BOOKDIR/gifs; do

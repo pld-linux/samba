@@ -1,27 +1,21 @@
-diff -urN samba-2.0.7/packaging/RedHat/smbadduser samba-2.0.7.new/packaging/RedHat/smbadduser
---- samba-2.0.7/packaging/RedHat/smbadduser	Fri Aug 21 16:20:38 1998
-+++ samba-2.0.7.new/packaging/RedHat/smbadduser	Tue Aug  8 10:23:42 2000
-@@ -2,11 +2,17 @@
- #
+diff -urN samba-2.2.0.org/source/smbadduser samba-2.2.0/source/smbadduser
+--- samba-2.2.0.org/source/smbadduser	Wed Apr 18 01:27:35 2001
++++ samba-2.2.0/source/smbadduser	Wed Apr 18 01:33:08 2001
+@@ -3,10 +3,10 @@
  # smbadduser - Written by Mike Zakharoff
  #
-+# * Sun Aug 6 2000 Philipp Knirsch <pknirsch@redhat.com>
-+# - Bugfix to change file location from /etc to /etc/samba and to use
-+#   smbpasswd -a to add the user entry to the smbpasswd file in case it didn't
-+#   exist before.
-+#
-+
  unalias *
- set path = ($path)
+-set path = ($path /usr/local/samba/bin)
++set path = ($path /usr/bin)
  
--set smbpasswd = /etc/smbpasswd
--set user_map  = /etc/smbusers
+-set smbpasswd = /usr/local/samba/private/smbpasswd
+-set user_map  = /usr/local/samba/lib/users.map
 +set smbpasswd = /etc/samba/smbpasswd
-+set user_map  = /etc/samba/smbusers
++set user_map  = /etc/samba/users.map
  #
  # Set to site specific passwd command
  #
-@@ -46,19 +52,23 @@
+@@ -46,19 +46,23 @@
  		echo "ERROR: $unix Not in passwd database SKIPPING..."
  		continue
  	endif
@@ -56,7 +50,7 @@ diff -urN samba-2.0.7/packaging/RedHat/smbadduser samba-2.0.7.new/packaging/RedH
  	endif
  	set new = ($new $unix)
  end
-@@ -69,5 +79,9 @@
+@@ -69,5 +73,9 @@
  foreach one ($new)
  	echo $line
  	echo "ENTER password for $one"

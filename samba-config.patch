@@ -1,7 +1,19 @@
-diff -urN samba-2.0.7.org/source/configure.in samba-2.0.7/source/configure.in
---- samba-2.0.7.org/source/configure.in	Thu Oct 19 00:01:24 2000
-+++ samba-2.0.7/source/configure.in	Fri Oct 20 21:17:32 2000
-@@ -444,6 +444,11 @@
+diff -urN samba-2.2.0.org/source/Makefile.in samba-2.2.0/source/Makefile.in
+--- samba-2.2.0.org/source/Makefile.in	Wed Apr 18 01:27:35 2001
++++ samba-2.2.0/source/Makefile.in	Wed Apr 18 01:48:43 2001
+@@ -50,7 +50,7 @@
+ CONFIGFILE = $(CONFIGDIR)/smb.conf
+ LMHOSTSFILE = $(CONFIGDIR)/lmhosts
+ DRIVERFILE = $(CONFIGDIR)/printers.def
+-PASSWD_PROGRAM = /bin/passwd
++PASSWD_PROGRAM = /usr/bin/passwd
+ # This is where smbpasswd et al go
+ PRIVATEDIR = @privatedir@
+ 
+diff -urN samba-2.2.0.org/source/configure.in samba-2.2.0/source/configure.in
+--- samba-2.2.0.org/source/configure.in	Wed Apr 18 01:27:35 2001
++++ samba-2.2.0/source/configure.in	Wed Apr 18 01:48:11 2001
+@@ -665,6 +665,11 @@
  fi
  
  #
@@ -13,7 +25,7 @@ diff -urN samba-2.0.7.org/source/configure.in samba-2.0.7/source/configure.in
  # Check for the functions putprpwnam, set_auth_parameters,
  # getspnam, bigcrypt and getprpwnam in -lsec and -lsecurity
  # Needed for OSF1 and HPUX.
-@@ -1292,7 +1297,7 @@
+@@ -1613,7 +1618,7 @@
    yes)
      AC_MSG_RESULT(yes)
      AC_DEFINE(WITH_PAM)
@@ -22,7 +34,7 @@ diff -urN samba-2.0.7.org/source/configure.in samba-2.0.7/source/configure.in
      ;;
    *)
      AC_MSG_RESULT(no)
-@@ -1368,7 +1374,7 @@
+@@ -1712,7 +1717,7 @@
    yes)
      AC_MSG_RESULT(yes)
      AC_DEFINE(WITH_SSL)
@@ -31,7 +43,7 @@ diff -urN samba-2.0.7.org/source/configure.in samba-2.0.7/source/configure.in
  
      if test "${with_sslinc+set}" = set; then
  
-@@ -1376,12 +1382,11 @@
+@@ -1720,12 +1725,11 @@
  	case "$withval" in
  	yes|no)
  	  echo "configure: warning: --with-sslinc called without argument - will use default" 1>&w
@@ -46,9 +58,9 @@ diff -urN samba-2.0.7.org/source/configure.in samba-2.0.7/source/configure.in
  	  LIBS="-lssl -lcrypto $LIBS"
    	  LDFLAGS="-L${withval}/lib $LDFLAGS"
  	;;
-diff -urN samba-2.0.7.org/source/smbwrapper/smbsh.in samba-2.0.7/source/smbwrapper/smbsh.in
---- samba-2.0.7.org/source/smbwrapper/smbsh.in	Thu Oct 19 00:01:27 2000
-+++ samba-2.0.7/source/smbwrapper/smbsh.in	Fri Oct 20 21:16:46 2000
+diff -urN samba-2.2.0.org/source/smbwrapper/smbsh.in samba-2.2.0/source/smbwrapper/smbsh.in
+--- samba-2.2.0.org/source/smbwrapper/smbsh.in	Wed Apr 18 01:27:40 2001
++++ samba-2.2.0/source/smbwrapper/smbsh.in	Wed Apr 18 01:48:11 2001
 @@ -1,6 +1,6 @@
  #! /bin/sh
  

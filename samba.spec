@@ -9,7 +9,7 @@ Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.7
-Release:	24
+Release:	25
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -31,6 +31,7 @@ Patch7:		%{name}-smbprint.patch
 Patch8:		%{name}-autoconf.patch
 Patch9:		%{name}-smbadduser.patch
 Patch10:	%{name}-nocups.patch
+Patch11:	%{name}-nmbd_socket.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -147,6 +148,7 @@ przegl±darki www.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 cd source

@@ -1,10 +1,7 @@
-/var/log/samba/log.nmb {
-    postrotate
-	/usr/bin/killall -HUP nmbd
-    endrotate
-}
-/var/log/samba/log.smb {
-    postrotate
-	/usr/bin/killall -HUP smbd
-    endrotate
+/var/log/samba/log.* {
+	olddir /var/log/archiv/samba
+	postrotate
+		/usr/bin/killall -HUP nmbd
+		/usr/bin/killall -HUP smbd
+	endrotate
 }

@@ -15,7 +15,7 @@ Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.4
-Release:	0.3
+Release:	0.4
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -188,19 +188,19 @@ password file.
 Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 (has³a Samby) zsynchronizowanego z has³ami unixowymi.
 
-%package libsmbclient
+%package -n libsmbclient
 Summary:	ChGW
 Group:		Libraries
 
-%description libsmbclient
+%description -n libsmbclient
 ChGW
 
-%package libsmbclient-devel
+%package -n libsmbclient-devel
 Summary:	ChGW
 Group:		Libraries
 Requires:	%{name}-libsmbclient = %{version}
 
-%description libsmbclient-devel
+%description -n libsmbclient-devel
 ChGW
 
 %prep
@@ -283,10 +283,6 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
-gzip -9nfr Manifest README Roadmap WHATSNEW.txt docs/{announce,history,THANKS} docs/textdocs/*.txt
-gzip -9nfr source/nsswitch/README source/pam_smbpass/{CHAN*,README,TODO}
-gzip -9nfr packaging/Mandrake/system-auth-winbind.pamd
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -331,7 +327,8 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc docs/nsswitch/README.gz packaging/Mandrake/*.gz
+%doc docs/nsswitch/README
+%doc source/nsswitch/README winbind.pam
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/winbindd
@@ -340,7 +337,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 
-%doc source/nsswitch/README.gz winbind.pam*
 %attr(755,root,root) /lib/libnss_wins*
 %attr(755,root,root) /lib/security/pam_winbind.so
 
@@ -393,9 +389,9 @@ fi
 
 %files common
 %defattr(644,root,root,755)
-%doc README.gz Manifest.gz WHATSNEW.txt.gz
-%doc Roadmap.gz docs/faq docs/Registry/*
-%doc docs/textdocs docs/htmldocs/*.* docs/{history,announce,THANKS}.gz
+%doc README Manifest WHATSNEW.txt
+%doc Roadmap docs/faq docs/Registry/*
+%doc docs/textdocs docs/htmldocs/*.* docs/{history,announce,THANKS}
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
 %attr(755,root,root) %{_bindir}/make_smbcodepage
@@ -421,14 +417,14 @@ fi
 
 %files -n pam_smbpass
 %defattr(644,root,root,755)
-%doc source/pam_smbpass/*.gz source/pam_smbpass/samples
+%doc source/pam_smbpass/{CHAN*,README,TODO} source/pam_smbpass/samples
 %attr(755,root,root) /lib/security/pam_smbpass.so
 
-%files libsmbclient
+%files -n libsmbclient
 %defattr(644,root,root,755)
 %attr(755,root,root) /usr/lib/libsmbclient.so.*
 
-%files libsmbclient-devel
+%files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %{_includedir}/libsmbclient.h
 %attr(755,root,root) /usr/lib/libsmbclient.so

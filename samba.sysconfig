@@ -2,6 +2,3 @@
 
 # Define nice level for samba & config 
 SERVICE_RUN_NICE_LEVEL="+5"
-
-# Define if you want to start winbindd
-WINBINDD="no"

@@ -9,7 +9,7 @@ Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.6
-Release:	12
+Release:	13
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -162,7 +162,12 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
 	$RPM_BUILD_ROOT/sbin 
 
-(cd source; make install DESTDIR=$RPM_BUILD_ROOT)
+(
+	cd source
+	make install DESTDIR=$RPM_BUILD_ROOT
+
+	install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
+)
 
 ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs 
 
@@ -238,6 +243,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
+%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 
 %dir %{_sysconfdir}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smb.conf

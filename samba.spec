@@ -82,7 +82,7 @@ LDFLAGS="-s" export LDFLAGS \
 %configure \
 	--prefix=/usr \
 	--sysconfdir=/etc/samba \
-	--sbindir=/usr/sbin \
+	--sbindir=%{_sbindir} \
 	--bindir=%{_bindir} \
 	--with-privatedir=/etc/samba \
 	--libdir=/etc/samba \
@@ -113,7 +113,7 @@ make install \
 	prefix=$RPM_BUILD_ROOT/usr \
 	BASEDIR=$RPM_BUILD_ROOT/usr \
 	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
-	SBINDIR=$RPM_BUILD_ROOT/usr/sbin \
+	SBINDIR=$RPM_BUILD_ROOT%{_sbindir} \
 	LIBDIR=$RPM_BUILD_ROOT/etc/samba \
 	PRIVATEDIR=$RPM_BUILD_ROOT/etc/samba \
 	SWATDIR=$RPM_BUILD_ROOT%{_datadir}/swat \
@@ -173,8 +173,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc Roadmap.gz docs/faq/*.html docs/*.reg.gz 
 
 %attr(755,root,root) %{_bindir}/*
-%attr(755,root,root) /usr/sbin/nmbd
-%attr(755,root,root) /usr/sbin/smbd
+%attr(755,root,root) %{_sbindir}/nmbd
+%attr(755,root,root) %{_sbindir}/smbd
 
 %dir /etc/samba
 %config(noreplace) %verify(not size mtime md5) /etc/samba/smb.conf
@@ -208,7 +208,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -n swat
 %defattr(644,root,root,755)
 %doc swat/README.gz
-%attr(755,root,root) /usr/sbin/swat
+%attr(755,root,root) %{_sbindir}/swat
 %{_datadir}/swat
 %{_mandir}/man8/swat.8.gz
 

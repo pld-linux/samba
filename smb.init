@@ -40,14 +40,14 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/smb ]; then
 		msg_starting smbd
-		daemon $NICELEVEL smbd -D
+		daemon smbd -D
 		RETVAL=$?
 		msg_starting nmbd
-		daemon $NICELEVEL nmbd -D
+		daemon nmbd -D
 		[ $RETVAL -eq 0 ] && RETVAL=$?
 		if [ "$WINBINDD" = "yes" ]; then
 			msg_starting winbindd
-			daemon $NICELEVEL winbindd
+			daemon winbindd
 			RET=$?
 			[ $RETVAL -eq 0 ] && RETVAL=$RET
 		fi

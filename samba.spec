@@ -32,13 +32,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.3
+Version:	3.0.4
 Epoch:		1
-Release:	0.2
+Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-# Source0-md5:	1f0be8e0bd09ade4f079dfbbba7c9eb9
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
+# Source0-md5:	0156265c1e95ac662deef386f615504f
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -739,7 +739,7 @@ cd source
 	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}
 
-%{__make} everything pam_smbpass bin/smbget client/mount.cifs
+%{__make} everything pam_smbpass bin/smbget client/mount.cifs proto
 
 cd ../examples/VFS
 %{__autoconf}
@@ -751,7 +751,7 @@ mv README{,.vfs}
 cd samba-vscan-%{vscan_version}
 cp /usr/share/automake/config.sub .
 %configure
-%{__make} oav sophos fprotd trend icap mksd kavp clamav
+%{__make} -j1 oav sophos fprotd trend icap mksd kavp clamav
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -1059,6 +1059,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbget
 %{_mandir}/man1/smbget.1*
+%{_mandir}/man5/smbgetrc.5*
 
 %if %{with cups}
 %files -n cups-backend-smb

@@ -1115,7 +1115,6 @@ fi
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/winbind
-#%attr(-,root,root) %config(noreplace) %{_sysconfdir}/pam.d/system-auth-winbind*
 %{_mandir}/man8/winbindd*.8*
 %{_mandir}/man1/wbinfo*.1*
 
@@ -1161,19 +1160,14 @@ fi
 %attr(664,root,fileshare) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
 %{_libdir}/%{name}/*.dat
-#%attr(755,root,root) %{_bindir}/make_smbcodepage
-#%attr(755,root,root) %{_bindir}/make_unicodemap
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/testprns
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/pdbedit
-#%attr(755,root,root) %{_bindir}/make_printerdef
 %dir %{_libdir}/%{name}/charset
 %attr(755,root,root) %{_libdir}/%{name}/charset/*.so
-#%{_mandir}/man1/make_smbcodepage.1*
-#%{_mandir}/man1/make_unicodemap.1*
 %{_mandir}/man1/editreg.1*
 %{_mandir}/man1/testparm.1*
 %{_mandir}/man1/testprns.1*

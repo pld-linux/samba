@@ -8,11 +8,16 @@ Summary(pl):	Serwer SMB
 Summary(cs):	Server SMB
 Summary(da):	SMB server
 Summary(de):	SMB-Server
+Summary(es):	El servidor SMB
 Summary(fi):	SMB-palvelin
 Summary(fr):	Serveur SMB
 Summary(it):	Server SMB
+Summary(ja):	Samba SMB ¥µ¡¼¥Ð¡¼
 Summary(pl):	Serwer SMB
+Summary(pt_BR):	Cliente e servidor SMB
+Summary(ru):	SMB ËÌÉÅÎÔ É ÓÅÒ×ÅÒ
 Summary(tr):	SMB sunucusu
+Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Name:		samba
 Version:	2.2.4
 Release:	1
@@ -35,7 +40,7 @@ Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
 Patch10:	%{name}-vfs.patch
 Patch11:	%{name}-quota.patch
-Patch12:	http://v6web.litech.org/samba/samba-2.2.3a+IPv6-20020419.diff
+Patch12:	http://v6web.litech.org/samba/%{name}-2.2.3a+IPv6-20020419.diff
 Patch13:	%{name}-DESTDIR-fix.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
@@ -98,6 +103,15 @@ Linux integrierte SMB-Dateisystem ergänzen. Samba benutzt
 NetBIOS-über-TCP/IP (NetBT)-Protokolle und benötigt KEIN NetBEUI
 (Microsoft Raw NetBIOS frame)-Protokoll.
 
+%description -l es
+Samba provee un servidor SMB que se puede usar para ofrecer servicios
+de red a clientes SMB (algunas veces se le llama de "Lan Manager"),
+incluyendo varias versiones de MS Windows, OS/2, y otras máquinas
+Linux. Samba también ofrece algunos clientes SMB, que complementan el
+sistema de archivos SMB de Linux. Samba usa el protocolo NetBIOS sobre
+TCP/IP (NetBT) y no necesita del protocolo NetBEUI (Microsoft Raw
+NetBIOS frame).
+
 %description -l fi
 Samba on SMB-palvelin, jota voidaan käyttää SMB-asiakasohjelmien
 verkkopalvelujen tarjoajana. SMB-protokollaa kutsutaan joskus "Lan
@@ -114,6 +128,19 @@ di rete ai client SMB, incluse le versioni MS Windows, OS/2 e per
 altre macchine Linux. Samba fornisce anche i client SMB. Samba usa
 NetBIOS sopra TCP/IP e non ha bisogno del protocollo NetBEUI.
 
+%description -l ja
+Samba ¤Ï MS Windows ¤ÎÍÍ¡¹¤Ê¥Ð¡¼¥¸¥ç¥ó¡¢OS/2 ¤½¤·¤ÆÂ¾¤Î Linux ¥Þ¥·¥ó
+¤ò´Þ¤à SMB (¤¿¤Þ¤Ë "Lan Manager" ¤È¸Æ¤Ð¤ì¤ë)
+¥¯¥é¥¤¥¢¥ó¥È¤Ë¥Í¥Ã¥È¥ï¡¼¥¯ ¥µ¡¼¥Ó¥¹¤òÄó¶¡¤¹¤ë¤¿¤á¤Ë»ÈÍÑ¤µ¤ì¤ë SMB
+¥µ¡¼¥Ð¤òÄó¶¡¤·¤Þ¤¹¡£Samba ¤Ï NetBIOS over TCP/IP (NetBT)
+¥×¥í¥È¥³¥ë¤ò»ÈÍÑ¤·¡¢ NetBEUI(Microsoft Raw NetBIOS frame)
+¥×¥í¥È¥³¥ë¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
+
+Samba ¤Û¤È¤ó¤ÉÆ°ºî¤¹¤ë NT ¥É¥á¥¤¥ó¥³¥ó¥È¥í¡¼¥ë¤Îµ¡Ç½¤òÆÃÄ§¤È¤·¡¢
+¹¥¤­¤Ê¥Ö¥é¥¦¥¶¤ò»È¤Ã¤Æ samba ¤Î smb.conf ¥Õ¥¡¥¤¥ë¤ò¥ê¥â¡¼¥È´ÉÍý¤¹¤ë
+¿·¤·¤¤ SWAT (Samba Web Administration Tool) ¤ò´Þ¤ß¤Þ¤¹¡£
+ÌÜ²¼¤Î¤È¤³¤í¤³¤ì¤Ï inetd ¤òÄÌ¤·¤Æ TCP ¥Ý¡¼¥È 901 ¤ÇÍ­¸ú¤Ë¤Ê¤ê¤Þ¤¹¡£
+
 %description -l pl
 Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia
 us³ug sieciowych (potocznie zwanych "Lan Manager"), dla klientów
@@ -123,9 +150,60 @@ NetBIOS po TCP/IP (NetBT) i nie wymaga protoko³u NetBEUI. Ta wersja ma
 pe³ne wsparcie dla blokowania plików, a tak¿e wsparcie dla kodowania
 hase³ w standardzie MS i zarzadzania baz± WINS.
 
+%description -l pt_BR
+O Samba provê um servidor SMB que pode ser usado para oferecer
+serviços de rede a clientes SMB (algumas vezes chamado de "Lan
+Manager"), incluindo várias versões de MS Windows, OS/2, e outras
+máquinas Linux. O Samba também fornece alguns clientes SMB, que
+complementam o sistema de arquivos SMB do Linux. O Samba usa o
+protocolo NetBIOS sobre TCP/IP (NetBT) e não necessita do protocolo
+NetBEUI (Microsoft Raw NetBIOS frame).
+
+O Samba inclui a maioria das características de um servidor de
+Controle de Domínios NT e o SWAT (Samba Web Administration Tool), que
+permite que o arquivo smb.conf seja gerenciado remotamente através de
+um navegador. Atualmente isto está sendo habilitado na porta TCP 901
+via inetd.
+
+%description -l ru
+Samba ÐÒÅÄÏÓÔÁ×ÌÑÅÔ SMB-ÓÅÒ×ÅÒ, ËÏÔÏÒÙÊ ÍÏÖÅÔ ÂÙÔØ ÉÓÐÏÌØÚÏ×ÁÎ ÄÌÑ
+ÐÒÅÄÏÓÔÁ×ÌÅÎÉÑ ÓÅÔÅ×ÙÈ ÓÅÒ×ÉÓÏ× SMB (ÉÎÏÇÄÁ ÎÁÚÙ×ÁÅÍÙÍ "Lan Manager")
+ËÌÉÅÎÔÁÍ, ×ËÌÀÞÁÑ ÒÁÚÎÏÏÂÒÁÚÎÙÅ ×ÅÒÓÉÉ MS Windows, OS/2, É ÄÒÕÇÉÅ
+Linux-ÍÁÛÉÎÙ. Samba ÔÁËÖÅ ÐÒÅÄÏÓÔÁ×ÌÑÅÔ SMB-ËÌÉÅÎÔÏ×, ËÏÔÏÒÙÅ ÒÁÂÏÔÁÀÔ
+ÓÏ ×ÓÔÒÏÅÎÎÏÊ × Linux ÆÁÊÌÏ×ÏÊ ÓÉÓÔÅÍÏÊ SMB.
+
+Samba ÉÓÐÏÌØÚÕÅÔ ÐÒÏÔÏËÏÌ NetBIOS over TCP/IP (NetBT) É ÎÅ ÎÕÖÄÁÅÔÓÑ ×
+ÐÒÏÔÏËÏÌÅ NetBEUI (Microsoft Raw NetBIOS frame).
+
+Samba ÓÏÄÅÒÖÉÔ ÐÒÁËÔÉÞÅÓËÉ ÒÁÂÏÔÁÀÝÕÀ ÒÅÁÌÉÚÁÃÉÀ NT Domain Control É
+×ËÌÀÞÁÅÔ ÎÏ×ÙÊ SWAT (Samba Web Administration Tool), ËÏÔÏÒÙÊ ÐÏÚ×ÏÌÑÅÔ
+ÕÄÁÌÅÎÎÏ ÕÐÒÁ×ÌÑÔØ ËÏÎÆÉÇÕÒÁÃÉÏÎÎÙÍ ÆÁÊÌÏÍ smb.conf ÐÒÉ ÐÏÍÏÝÉ ×ÁÛÅÇÏ
+ÌÀÂÉÍÏÇÏ WEB-ÂÒÏÕÚÅÒÁ. ðÏËÁ ÞÔÏ ÏÎ ÒÁÚÒÅÛÅÎ ÞÅÒÅÚ inetd ÎÁ TCP-ÐÏÒÔÕ
+901.
+
+%description -l uk
+Samba ÎÁÄÁ¤ SMB-ÓÅÒ×ÅÒ, ÝÏ ÍÏÖÅ ÂÕÔÉ ×ÉËÏÒÉÓÔÁÎÉÊ ÄÌÑ ÎÁÄÁÎÎÑ
+ÍÅÒÅÖÅ×ÉÈ ÓÅÒ×¦Ó¦× SMB (ÝÏ §È ¦ÎÏÄ¦ ÎÁÚÉ×ÁÀÔØ "Lan Manager") ËÌ¦¤ÎÔÁÍ,
+×ËÌÀÞÁÀÞÉ Ò¦ÚÎÏÍÁÎ¦ÔÎ¦ ×ÅÒÓ¦§ MS Windows, OS/2, ÔÁ ¦ÎÛ¦ Linux-ÍÁÛÉÎÉ.
+Samba ÔÁËÏÖ ÎÁÄÁ¤ SMB-ËÌ¦¤ÎÔ¦×, ÝÏ ÐÒÁÃÀÀÔØ Ú ×ÂÕÄÏ×ÁÎÏÀ × Linux
+ÆÁÊÌÏ×ÏÀ ÓÉÓÔÅÍÏÀ SMB.
+
+Samba ×ÉËÏÒÉÓÔÏ×Õ¤ ÐÒÏÔÏËÏÌ NetBIOS over TCP/IP (NetBT) ÔÁ ÎÅ ÐÏÔÒÅÂÕ¤
+ÐÒÏÔÏËÏÌÕ NetBEUI (Microsoft Raw NetBIOS frame).
+
+Samba Í¦ÓÔÉÔØ ÍÁÊÖÅ ÐÒÁÃÀÀÞÕ ÒÅÁÌÉÚÁÃ¦À NT Domain Control ÔÁ ÎÏ×ÙÊ
+SWAT (Samba Web Administration Tool), ËÏÔÒÉÊ ÄÏÚ×ÏÌÑ¤ ×¦ÄÄÁÌÅÎÏ
+ËÅÒÕ×ÁÔÉ ËÏÎÆ¦ÇÕÒÁÃ¦ÊÎÉÍ ÆÁÊÌÏÍ smb.conf ÚÁ ÄÏÐÏÍÏÇÏÀ ×ÁÛÏÇÏ
+ÕÌÀÂÌÅÎÏÇÏ WEB-ÂÒÏÕÚÅÒÁ. ðÏËÉ ÝÏ ×¦Î ÄÏÚ×ÏÌÅÎÉÊ ÞÅÒÅÚ inetd ÎÁ
+TCP-ÐÏÒÔÕ 901.
+
 %package -n swat
 Summary:	Samba Web Administration Tool
+Summary(es):	Samba SWAT and Web documentation
 Summary(pl):	Narzêdzie administracyjne serwisu Samba
+Summary(pt_BR):	Samba SWAT e documentação Web
+Summary(ru):	ðÒÏÇÒÁÍÍÁ ËÏÎÆÉÇÕÒÁÃÉÉ SMB-ÓÅÒ×ÅÒÁ Samba
+Summary(uk):	ðÒÏÇÒÁÍÁ ËÏÎÆÉÇÕÒÁÃ¦§ SMB-ÓÅÒ×ÅÒÁ Samba
 Group:		Networking/Admin
 Requires:	%{name}
 Requires:	rc-inetd >= 0.8.2
@@ -139,15 +217,31 @@ file via a Web browser. In addition, a swat configuration page has
 help links to all the configurable options in the smb.conf file
 allowing an administrator to easily look up the effects of any change.
 
-swat is run from inet server.
-
 %description -n swat -l pl
 swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy
 przegl±darki WWW.
 
+%description -n swat -l pt_BR
+SWAT - ferramentada Web de configuração do Samba.
+
+%description -n swat -l ru
+ðÁËÅÔ samba-swat ×ËÌÀÞÁÅÔ ÎÏ×ÙÊ SWAT (Samba Web Administration Tool),
+ÄÌÑ ÕÄÁÌÅÎÎÏÇÏ ÁÄÍÉÎÉÓÔÒÉÒÏ×ÁÎÉÑ ÆÁÊÌÁ smb.conf ÐÒÉ ÐÏÍÏÝÉ ×ÁÛÅÇÏ
+ÌÀÂÉÍÏÇÏ Web-ÂÒÁÕÚÅÒÁ.
+
+%description -n swat -l uk
+ðÁËÅÔ samba-swat Í¦ÓÔÉÔØ ÎÏ×ÉÊ SWAT (Samba Web Administration Tool),
+ÄÌÑ ÄÉÓÔÁÎÃ¦ÊÎÏÇÏ ÁÄÍ¦Î¦ÓÔÒÕ×ÁÎÎÑ ÆÁÊÌÕ smb.conf ÚÁ ÄÏÐÏÍÏÇÏÀ ×ÁÛÏÇÏ
+ÕÌÀÂÌÅÎÏÇÏ Web-ÂÒÁÕÚÅÒÕ.
+
 %package client
 Summary:	Samba client programs
+Summary(es):	Cliente SMB de Samba
+Summary(ja):	Samba (SMB) ¥¯¥é¥¤¥¢¥ó¥È¥×¥í¥°¥é¥à
 Summary(pl):	Klienci serwera Samba
+Summary(pt_BR):	Cliente SMB do samba
+Summary(ru):	ëÌÉÅÎÔÓËÉÅ ÐÒÏÇÒÁÍÍÙ Samba (SMB)
+Summary(uk):	ëÌ¦¤ÎÔÓØË¦ ÐÒÏÇÒÁÍÉ Samba (SMB)
 Group:		Applications/Networking
 Requires:	samba-common = %{version}
 Obsoletes:	smbfs
@@ -157,23 +251,71 @@ Samba-client provides some SMB clients, which complement the build-in
 SMB filesystem in Linux. These allow accessing of SMB shares and
 printing to SMB printers.
 
+%description client -l pt_BR
+O pacote samba-clientes prove alguns clientes SMB, que complementam o
+sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
+e também, à impressoras SMB.
+
+%description client -l es
+Cliente SMB de Samba.
+
+%description client -l ja
+Samba-client ¤Ï Linux ¾å¤Ë´Þ¤Þ¤ì¤Æ¤¤¤ë SMB ¥Õ¥¡¥¤¥ë¥·¥¹¥Æ¥à¤òÊä¤¦ SMB
+¥¯¥é¥¤¥¢¥ó¥È¤òÄó¶¡¤·¤Þ¤¹¡£¤³¤ì¤é¤Ï SMB ¶¦Í­¤Î¥¢¥¯¥»¥¹¤È SMB
+¥×¥ê¥ó¥¿¤Ø¤Î°õºþ¤òµö²Ä¤·¤Þ¤¹¡£
+
 %description client -l pl
 Samba-client dostarcza pewne programy które uzupe³niaj± system plików
 SMB zawarty w j±drze. Pozwala na wspó³dzielenie i drukowanie w sieci
 SMB.
 
+%description client -l pt_BR
+O pacote samba-clientes prove alguns clientes SMB, que complementam o
+sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
+e também, à impressoras SMB.
+
+%description client -l ru
+ðÁËÅÔ samba-client ÐÒÅÄÏÓÔÁ×ÌÑÅÔ ÎÅËÏÔÏÒÙÅ ËÌÉÅÎÔÙ SMB ÄÌÑ ÒÁÂÏÔÙ ÓÏ
+×ÓÔÒÏÅÎÎÏÊ ÆÁÊÌÏ×ÏÊ ÓÉÓÔÅÍÏÊ SMB × Linux. üÔÉ ËÌÉÅÎÔÙ ÐÏÚ×ÏÌÑÀÔ
+ÐÏÌÕÞÁÔØ ÄÏÓÔÕÐ Ë ÒÁÚÄÅÌÑÅÍÙÍ ËÁÔÁÌÏÇÁÍ SMB É ÐÅÞÁÔØ ÎÁ SMB-ÐÒÉÎÔÅÒÙ.
+
+%description client -l uk
+ðÁËÅÔ samba-client ÎÁÄÁ¤ ÄÅÑË¦ ËÌ¦¤ÎÔÉ SMB ÄÌÑ ÒÏÂÏÔÉ Ú¦ ×ÂÕÄÏ×ÁÎÏÀ
+ÆÁÊÌÏ×ÏÀ ÓÉÓÔÅÍÏÀ SMB × Linux. ã¦ ËÌ¦¤ÎÔÉ ÄÏÚ×ÏÌÑÀÔØ ÏÔÒÉÍÕ×ÁÔÉ ÄÏÓÔÕÐ
+ÄÏ ËÁÔÁÌÏÇ¦× ÓÐ¦ÌØÎÏÇÏ ×ÉËÏÒÉÓÔÁÎÎÑ SMB ÔÁ ÄÒÕË ÎÁ SMB-ÐÒ¦ÎÔÅÒÉ.
+
 %package common
 Summary:	Files used by both Samba servers and clients
+Summary(es):	Common files between samba and samba-clients
+Summary(ja):	Samba ¥µ¡¼¥Ð¡¼¤È¥¯¥é¥¤¥¢¥ó¥È¤Ç»ÈÍÑ¤µ¤ì¤ë¥×¥í¥°¥é¥à
 Summary(pl):	Pliki u¿ywane przez serwer i klientów Samba
+Summary(pt_BR):	Arquivos em comum entre samba e samba-clients
+Summary(ru):	æÁÊÌÙ, ÉÓÐÏÌØÚÕÅÍÙÅ ËÁË ÓÅÒ×ÅÒÏÍ, ÔÁË É ËÌÉÅÎÔÏÍ Samba
+Summary(uk):	æÁÊÌÉ, ÝÏ ×ÉËÏÒÉÓÔÏ×ÕÀÔØÓÑ ÑË ÓÅÒ×ÅÒÏÍ, ÔÁË ¦ ËÌ¦¤ÎÔÏÍ Samba
 Group:		Networking/Daemons
 
 %description common
 Samba-common provides files necessary for both the server and client
 packages of Samba.
 
+%description common -l ja
+Samba-common ¤Ï Samba ¤Î¥µ¡¼¥Ð¤È¥¯¥é¥¤¥¢¥ó¥È¤ÎÎ¾Êý¤Î¥Ñ¥Ã¥±¡¼¥¸¤Ç
+»ÈÍÑ¤µ¤ì¤ë¥Õ¥¡¥¤¥ë¤òÄó¶¡¤·¤Þ¤¹¡£
+
 %description common -l pl
 Samba-common dostarcza pliki niezbêdne zarówno dla serwera jak i
 klientów Samba.
+
+%description common -l pt_BR
+Arquivos em comum entre os pacotes samba e samba-clients.
+
+%description common -l ru
+Samba-common ÓÏÄÅÒÖÉÔ ÆÁÊÌÙ, ÎÅÏÂÈÏÄÉÍÙÅ ÄÌÑ ÒÁÂÏÔÙ ËÁË ËÌÉÅÎÔÁ, ÔÁË É
+ÓÅÒ×ÅÒÁ Samba.
+
+%description common -l uk
+Samba-common Í¦ÓÔÉÔØ ÆÁÊÌÉ, ÎÅÏÂÈ¦ÄÎ¦ ÄÌÑ ÒÏÂÏÔÉ ÑË ËÌ¦¤ÎÔÁ, ÔÁË ¦
+ÓÅÒ×ÅÒÁ Samba.
 
 %package -n pam_smbpass
 Summary:	PAM Samba Password Module
@@ -181,13 +323,13 @@ Summary(pl):	Modu³ PAM smbpass
 Group:		Base
 
 %description -n pam_smbpass
-PAM module which can be used on conforming systems to
-keep the smbpasswd (Samba password) database in sync with the unix
-password file.
+PAM module which can be used on conforming systems to keep the
+smbpasswd (Samba password) database in sync with the unix password
+file.
 
 %description -n pam_smbpass -l pl
-Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
-(has³a Samby) zsynchronizowanego z has³ami unixowymi.
+Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd (has³a
+Samby) zsynchronizowanego z has³ami unixowymi.
 
 %package -n libsmbclient
 Summary:	libsmbclient - samba client library
@@ -198,11 +340,13 @@ Group:		Libraries
 libsmbclient - library that allows to use samba clients functions.
 
 %description -n libsmbclient -l pl
-libsmbclient - biblioteka pozwalaj±ca korzystaæ z funcji klienta samby.
+libsmbclient - biblioteka pozwalaj±ca korzystaæ z funcji klienta
+samby.
 
 %package -n libsmbclient-devel
 Summary:	libsmbclient - samba client library
 Summary(pl):	libsmbclient - biblioteka klienta samby
+Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	libsmbclient = %{version}
 
@@ -211,6 +355,10 @@ Header files for libsmbclient.
 
 %description -n libsmbclient-devel
 Pliki nag³ówkowe dla libsmbclient.
+
+%description -n libsmbclient-devel -l pt_BR
+Arquivos de inclusão, bibliotecas e documentação necessários para
+desenvolver aplicativos clientes para o samba.
 
 %prep
 %setup -q
@@ -259,7 +407,7 @@ sed -e "s#-symbolic##g" Makefile.old > Makefile
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
-	$RPM_BUILD_ROOT/{sbin,lib/security,/usr/lib,%{_includedir}}
+	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_includedir}}
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
@@ -280,9 +428,10 @@ install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
-install source/bin/libsmbclient.so	$RPM_BUILD_ROOT/usr/lib/libsmbclient.so.0
-ln -s	libsmbclient.so.0		$RPM_BUILD_ROOT/usr/lib/libsmbclient.so
-install source/include/libsmbclient.h	$RPM_BUILD_ROOT%{_includedir}
+install source/bin/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
+ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+
+install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -433,9 +582,9 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) /usr/lib/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/libsmbclient.so.*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %{_includedir}/libsmbclient.h
-%attr(755,root,root) /usr/lib/libsmbclient.so
+%attr(755,root,root) %{_libdir}/libsmbclient.so

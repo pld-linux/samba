@@ -154,7 +154,7 @@ LDFLAGS="-s"; export LDFLAGS
 	--with-pam \
 	--with-automount
 	
-make all 
+%{__make} all 
 
 %install
 rm -rf $RPM_BUILD_ROOT

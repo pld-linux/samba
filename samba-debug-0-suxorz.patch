@@ -9,3 +9,14 @@
  		return False;
  	}
  
+--- samba-2.2.1a/source/smbd/oplock.c~	Fri Jul  6 04:02:01 2001
++++ samba-2.2.1a/source/smbd/oplock.c	Fri Oct  5 21:13:04 2001
+@@ -994,7 +994,7 @@
+     {
+       if(smb_read_error == READ_TIMEOUT)
+       {
+-        if( DEBUGLVL( 0 ) )
++        if( DEBUGLVL( 1 ) )
+         {
+           dbgtext( "request_oplock_break: no response received to oplock " );
+           dbgtext( "break request to pid %d ", (int)share_entry->pid );

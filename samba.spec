@@ -1,3 +1,7 @@
+#
+# Conditional build:
+# _with_ldap	- with LDAP support
+#
 Summary:	SMB server
 Summary(pl):	Serwer SMB
 Summary(cs):	Server SMB
@@ -42,6 +46,7 @@ BuildRequires:	autoconf
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
+%{?_with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.6a
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -220,7 +225,8 @@ autoconf
 	--with-mmap \
 	--with-pam \
 	--with-ssl \
-	--with-sslinc=%{_prefix}
+	--with-sslinc=%{_prefix} \
+	%{?_with_ldap:--with-ldapsam}
 	
 %{__make} all 
 

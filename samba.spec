@@ -1,20 +1,20 @@
 Summary:	SMB client and server
 Summary(pl):	Klient i serwer SMB
 Name:		samba
-Version:	2.0.2
-Release:	3d
+Version:	2.0.3
+Release:	1
 Copyright:	GPL
 Group:		Daemons
 Group(pl):	Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
-Source1:	%{name}.PLD.tar.bz2
+Source1:	%{name}.PLD.tar.gz
 Patch0:		%{name}.%{version}.patch
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-cap.patch
 Prereq:		/sbin/chkconfig 
 Prereq:		fileutils
 Requires:	pam >= 0.66 
-Requires:	krb5-lib >= 1.0.5
+#Requires:	krb5-lib >= 1.0.5
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -37,8 +37,6 @@ This binary release includes encrypted password support.
 Please read the smb.conf file and ENCRYPTION.txt in the
 docs directory for implementation details.
 
-WARNING! This version is designed for using with Kerberos V
-
 %description -l pl
 Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu 
 dostarczenia us³ug sieciowych (potocznie zwanych "Lan Manager"),
@@ -46,10 +44,7 @@ dla klientów takich jak M$ Windows, OS/2 a tak¿e maszyn linuxowych.
 W pakiecie znajduje siê równie¿ oprogramowanie klienckie. Samba u¿ywa 
 protoko³u NetBIOS po TCP/IP (NetBT) i nie wymaga ¶miesznego protoko³u 
 NetBEUI. Ta wersja ma pe³ne wsparcie dla blokowania plików, a tak¿e 
-wsparcie dla kodowania hase³ w standardzie M$ i zarzadzania komiczn± 
-baz± WINS.
-
-UWAGA! Ta wersja jest przeznaczona dla maszyn wyposa¿onych w Kerberos'a V
+wsparcie dla kodowania hase³ w standardzie MS i zarzadzania baz± WINS.
 
 %prep
 %setup -q -a1
@@ -63,7 +58,6 @@ autoconf
 CFLAGS=$RPM_OPT_FLAGS LDFLAGS=-s \
     ./configure \
 	--sysconfdir=/etc/samba \
-	--with-krb5=/usr \
 	--with-smbmount \
 	--with-smb-wrapper \
 	--with-quotas \
@@ -74,6 +68,7 @@ CFLAGS=$RPM_OPT_FLAGS LDFLAGS=-s \
 	--sbindir=/usr/sbin \
 	--bindir=/usr/bin \
 	--with-swatdir=/usr/share/swat
+#	--with-krb5=/usr \
 	
 make all smbwrapper
 
@@ -141,7 +136,7 @@ $RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
 $RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
 gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/*
-bzip2 -9  README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README.swat
+gzip -9  README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README.swat
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -176,8 +171,8 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README.bz2 Manifest.bz2 WHATSNEW.txt.bz2 swat/README.swat.bz2
-%doc Roadmap.bz2 docs/faq/*.html docs/*.reg.bz2 
+%doc README.gz Manifest.gz WHATSNEW.txt.gz swat/README.swat.gz
+%doc Roadmap.gz docs/faq/*.html docs/*.reg.gz 
 
 %attr(755,root,root) /usr/bin/*
 %attr(755,root,root) /usr/sbin/*
@@ -217,6 +212,11 @@ fi
 %attr(1777,root, root) %dir /var/spool/samba
 
 %changelog
+* Sun Mar 28 1999 Ziemek Borowski <zmb@ziembor.waw.pl>
+[2.0.3] 
+- updated to 2.0.3 (change in samba.2.0.3.patch file)
+- removed kerberos support
+
 * Tue Jan 26 1999 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
   [2.2.0-1d]
 - updated to new version,

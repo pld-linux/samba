@@ -1,4 +1,6 @@
 /var/log/samba/log.* {
+	notifempty
+	missingok
 	olddir /var/log/archiv/samba
 	postrotate
 		/usr/bin/killall -HUP nmbd

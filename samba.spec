@@ -542,7 +542,6 @@ fi
 %attr(755,root,root) /lib/libnss_wins*
 %attr(755,root,root) /lib/security/pam_winbind.so
 
-%dir %{_libdir}
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
@@ -597,6 +596,7 @@ fi
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/faq docs/Registry/*
 %doc docs/textdocs/* docs/htmldocs/*.* docs/{history,announce,THANKS}
+%dir %{_libdir}
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
 %attr(755,root,root) %{_bindir}/make_smbcodepage

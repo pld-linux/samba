@@ -73,6 +73,7 @@ BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
 %{?with_python:BuildRequires:	python-devel}
+Obsoletes:	samba-winbind
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}

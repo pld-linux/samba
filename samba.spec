@@ -1,7 +1,6 @@
 #
 # TODO:
 # - look into other distro specs for valid %descriptions for samba 3
-# - when pl for openldap-schema-samba done, rel up and STBR
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -12,7 +11,7 @@
 %bcond_without	pgsql		# without PostgreSQL support
 %bcond_without	python		# without python libs/utils
 %bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
-#
+
 # ADS requires krb5 and LDAP
 %if %{without krb5} || %{without ldap}
 %undefine	with_ads
@@ -36,7 +35,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.11
-Release:	2.3
+Release:	2.5
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -854,6 +853,7 @@ Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
+%if %{with ldap}
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
 Summary(pl):	Schemat LDAP dla samby
@@ -866,6 +866,7 @@ This package contains samba.schema for openldap.
 
 %description -n openldap-schema-samba -l pl
 Ten pakiet zawiera schemat samby dla openldap-a.
+%endif
 
 %prep
 %setup -q
@@ -1002,7 +1003,9 @@ cp -R source/build/lib.*/samba $RPM_BUILD_ROOT%{py_sitedir}
 
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
 
+%if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1051,6 +1054,7 @@ if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload
 fi
 
+%if %{with ldap}
 %post -n openldap-schema-samba
 if ! grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
 	sed -i -e '
@@ -1067,7 +1071,7 @@ include		%{schemadir}/samba.schema
 fi
 
 if [ -f /var/lock/subsys/ldap ]; then
-    /etc/rc.d/init.d/ldap restart >&2
+	/etc/rc.d/init.d/ldap restart >&2
 fi
 
 %postun -n openldap-schema-samba
@@ -1085,6 +1089,7 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/ldap restart >&2 || :
 	fi
 fi
+%endif
 
 %triggerpostun -- samba < 1.9.18p7
 if [ "$1" != "0" ]; then
@@ -1397,6 +1402,8 @@ fi
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
 
+%if %{with ldap}
 %files -n openldap-schema-samba
 %defattr(644,root,root,755)
 %{schemadir}/*.schema
+%endif

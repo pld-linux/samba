@@ -34,6 +34,8 @@ Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
 Patch8:		%{name}-pam_smbpass.patch 
 Patch9:		%{name}-srv_spoolss_nt.patch
+# needed for external vfs modules to work.
+Patch10:     %{name}-2.2.3-vfs.dif
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -197,6 +199,7 @@ Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 cd source

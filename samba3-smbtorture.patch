@@ -1,0 +1,11 @@
+--- samba-3.0.0rc1/source/Makefile.in~	2003-08-15 20:39:52.000000000 +0000
++++ samba-3.0.0rc1/source/Makefile.in	2003-08-20 14:08:25.000000000 +0000
+@@ -831,7 +831,7 @@
+ 
+ bin/smbtorture@EXEEXT@: $(SMBTORTURE_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(SMBTORTURE_OBJ) $(LDFLAGS) $(DYNEXP) $(LIBS) $(KRB5LIBS) $(LDAPLIBS) $(SECRETS_OBJ)
++	@$(CC) $(FLAGS) -o $@ $(SMBTORTURE_OBJ) $(LDFLAGS) $(DYNEXP) $(LIBS) $(KRB5LIBS) $(LDAPLIBS)
+ 
+ bin/talloctort@EXEEXT@: $(TALLOCTORT_OBJ) bin/.dummy
+ 	@echo Linking $@

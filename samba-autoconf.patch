@@ -1,0 +1,38 @@
+--- samba-2.0.6/source/configure.in.nsl	Wed Nov 10 21:35:56 1999
++++ samba-2.0.6/source/configure.in	Thu Mar 16 15:57:05 2000
+@@ -14,6 +14,7 @@
+ AC_SUBST(WRAP32)
+ AC_SUBST(PICFLAG)
+ AC_SUBST(SHLIBEXT)
++AC_SUBST(CLIENT_LIBS)
+ 
+ # compile with optimisation and without debugging by default
+ CFLAGS=${CFLAGS-"-O"}
+@@ -298,7 +299,7 @@
+ # test for where we get readline() from
+ if test "$ac_cv_header_readline_h" = "yes" ||
+    test "$ac_cv_header_readline_readline_h" = "yes"; then
+-  AC_CHECK_LIB(readline,readline)
++  AC_CHECK_LIB(readline, readline, [CLIENT_LIBS="$CLIENT_LIBS -lreadline"])
+ fi
+ 
+ 
+--- samba-2.0.6/source/Makefile.in.nsl	Thu Mar 16 17:24:31 2000
++++ samba-2.0.6/source/Makefile.in	Thu Mar 16 15:11:02 2000
+@@ -8,6 +8,7 @@
+ mandir=@mandir@
+ 
+ LIBS=@LIBS@
++CLIENT_LIBS=@CLIENT_LIBS@
+ CC=@CC@
+ CFLAGS=@CFLAGS@
+ CPPFLAGS=@CPPFLAGS@
+@@ -370,7 +371,7 @@
+ 
+ bin/smbclient: $(CLIENT_OBJ) bin/.dummy
+ 	@echo Linking $@
+-	@$(CC) $(FLAGS) -o $@ $(CLIENT_OBJ) $(LDFLAGS) $(LIBS)
++	@$(CC) $(FLAGS) -o $@ $(CLIENT_OBJ) $(LDFLAGS) $(LIBS) $(CLIENT_LIBS)
+ 
+ bin/smbspool: $(CUPS_OBJ) bin/.dummy
+ 	@echo Linking $@

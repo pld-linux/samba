@@ -278,7 +278,7 @@ Summary(pt_BR):	Cliente SMB do samba
 Summary(ru):	Клиентские программы Samba (SMB)
 Summary(uk):	Кл╕╓нтськ╕ програми Samba (SMB)
 Group:		Applications/Networking
-Requires:	samba-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Obsoletes:	smbfs
 
 %description client

@@ -23,7 +23,8 @@ if is_no "${NETWORKING}"; then
         msg_Network_Down smb
         exit 1
 fi
-			
+
+TMPDIR="/tmp"; export TMPDIR
 
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0

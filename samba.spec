@@ -83,7 +83,7 @@ LDFLAGS="-s" export LDFLAGS \
 	--prefix=/usr \
 	--sysconfdir=/etc/samba \
 	--sbindir=/usr/sbin \
-	--bindir=/usr/bin \
+	--bindir=%{_bindir} \
 	--with-privatedir=/etc/samba \
 	--libdir=/etc/samba \
 	--localstatedir=/var \
@@ -112,7 +112,7 @@ install -d $RPM_BUILD_ROOT/etc/samba/codepages/src \
 make install \
 	prefix=$RPM_BUILD_ROOT/usr \
 	BASEDIR=$RPM_BUILD_ROOT/usr \
-	BINDIR=$RPM_BUILD_ROOT/usr/bin \
+	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
 	SBINDIR=$RPM_BUILD_ROOT/usr/sbin \
 	LIBDIR=$RPM_BUILD_ROOT/etc/samba \
 	PRIVATEDIR=$RPM_BUILD_ROOT/etc/samba \
@@ -125,15 +125,15 @@ install  source/codepages/codepage_def.* \
 
 install  packaging/PLD/smb.conf		$RPM_BUILD_ROOT/etc/samba
 install  packaging/PLD/smbusers		$RPM_BUILD_ROOT/etc/samba
-install  packaging/PLD/smbprint		$RPM_BUILD_ROOT/usr/bin
-install  packaging/PLD/smbadduser	$RPM_BUILD_ROOT/usr/bin
-install  packaging/PLD/findsmb		$RPM_BUILD_ROOT/usr/bin
+install  packaging/PLD/smbprint		$RPM_BUILD_ROOT%{_bindir}
+install  packaging/PLD/smbadduser	$RPM_BUILD_ROOT%{_bindir}
+install  packaging/PLD/findsmb		$RPM_BUILD_ROOT%{_bindir}
 install  packaging/PLD/smb.init		$RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install  packaging/PLD/samba.pam	$RPM_BUILD_ROOT/etc/pam.d/samba
 install  packaging/PLD/samba.log	$RPM_BUILD_ROOT/etc/logrotate.d/samba
 
 install -s source/bin/*.so 	$RPM_BUILD_ROOT/lib/security
-install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT/usr/bin
+install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT%{_bindir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -142,7 +142,7 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT/etc/samba/lmhosts
 echo "NICELEVEL=+5" > $RPM_BUILD_ROOT/etc/sysconfig/samba
 
 for i in 437 737 850 852 861 866 932 949 950 936; do
-$RPM_BUILD_ROOT/usr/bin/make_smbcodepage c $i \
+$RPM_BUILD_ROOT%{_bindir}/make_smbcodepage c $i \
 $RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
 $RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
@@ -172,7 +172,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.gz Manifest.gz WHATSNEW.txt.gz
 %doc Roadmap.gz docs/faq/*.html docs/*.reg.gz 
 
-%attr(755,root,root) /usr/bin/*
+%attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) /usr/sbin/nmbd
 %attr(755,root,root) /usr/sbin/smbd
 

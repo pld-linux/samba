@@ -27,6 +27,7 @@ Release:	0.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
+# Source0-md5:	f54ba49f9a5ef6090272acf8db2e066d
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -34,6 +35,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
+# Source7-md5:	acbcb28cff080dcf2ee732b7f2c0f949
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
 #Patch1:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff

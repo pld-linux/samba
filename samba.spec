@@ -861,7 +861,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 %prep
 %setup -q
 %patch0 -p1
-%ifarch amd64
+%if "%{_lib}" == "lib64"
 %patch1 -p1
 %endif
 %patch2 -p1

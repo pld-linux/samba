@@ -1174,7 +1174,6 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/audit.so
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
-%attr(755,root,root) %{_vfsdir}/full_audit.so
 
 %files vfs-cap
 %defattr(644,root,root,755)

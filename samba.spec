@@ -1135,7 +1135,7 @@ fi
 %doc Roadmap docs/*.pdf docs/registry/*
 %doc docs/htmldocs/*.* docs/{history,THANKS}
 %dir %{_libdir}/%{name}
-%attr(660,root,samba) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
+%attr(664,root,samba) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
 %{_libdir}/%{name}/*.dat
 #%attr(755,root,root) %{_bindir}/make_smbcodepage

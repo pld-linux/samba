@@ -55,7 +55,7 @@ BuildRequires:	autoconf
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
 %{?_with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7
+BuildRequires:	openssl-devel >= 0.9.6j
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2

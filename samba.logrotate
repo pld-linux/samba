@@ -5,5 +5,5 @@
 	postrotate
 		/bin/killall -HUP nmbd
 		/bin/killall -HUP smbd
-	endrotate
+	endscript
 }

@@ -34,11 +34,11 @@ Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.3
 Epoch:		1
-Release:	0.pre1.1
+Release:	0.pre2.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}pre1.tar.bz2
-# 46e0c053154e88ab34b29f118a43e06b
+Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}pre2.tar.bz2
+# Source0-md5:	47464715c375bf4b17453dc534337111
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -679,7 +679,7 @@ Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %prep
-%setup -q -n %{name}-%{version}pre1
+%setup -q -n %{name}-%{version}pre2
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1

@@ -577,7 +577,6 @@ Requires:	%{name} = %{version}
 Requires:	mksd
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-mks
-ExclusiveArch:  %{ix86}
 
 %description vfs-vscan-mks
 A vfs-module for samba to implement on-access scanning using the mks
@@ -969,11 +968,13 @@ fi
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
 
+%ifarch %{ix86}
 %files vfs-vscan-mks
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-mks32.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mksd.so
+%endif 
 
 %files vfs-vscan-kavp
 %defattr(644,root,root,755)

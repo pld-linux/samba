@@ -1,5 +1,54 @@
---- samba-2.0.3/source/smbwrapper/smbsh.in.config	Wed Oct  7 06:43:09 1998
-+++ samba-2.0.3/source/smbwrapper/smbsh.in	Tue Apr 13 18:59:20 1999
+diff -urN samba-2.0.7.org/source/configure.in samba-2.0.7/source/configure.in
+--- samba-2.0.7.org/source/configure.in	Thu Oct 19 00:01:24 2000
++++ samba-2.0.7/source/configure.in	Fri Oct 20 21:17:32 2000
+@@ -444,6 +444,11 @@
+ fi
+ 
+ #
++# Check for yp_get_default_domain in -lnsl (linux glibc2.1)
++#
++AC_LIBTESTFUNC(nsl, yp_get_default_domain)
++
++#
+ # Check for the functions putprpwnam, set_auth_parameters,
+ # getspnam, bigcrypt and getprpwnam in -lsec and -lsecurity
+ # Needed for OSF1 and HPUX.
+@@ -1292,7 +1297,7 @@
+   yes)
+     AC_MSG_RESULT(yes)
+     AC_DEFINE(WITH_PAM)
+-    LIBS="$LIBS -lpam"
++    LIBS="$LIBS -ldl -lpam -lpamc"
+     ;;
+   *)
+     AC_MSG_RESULT(no)
+@@ -1368,7 +1374,7 @@
+   yes)
+     AC_MSG_RESULT(yes)
+     AC_DEFINE(WITH_SSL)
+-    withval="/usr/local/ssl"     # default
++    withval="/usr"     # default
+ 
+     if test "${with_sslinc+set}" = set; then
+ 
+@@ -1376,12 +1382,11 @@
+ 	case "$withval" in
+ 	yes|no)
+ 	  echo "configure: warning: --with-sslinc called without argument - will use default" 1>&w
+-	  CFLAGS="-I/usr/local/ssl/include $CFLAGS"
++	  CFLAGS="-I/usr/include/openssl $CFLAGS"
+ 	  LIBS="-lssl -lcrypto $LIBS"
+-	  LDFLAGS="=L/usr/local/ssl/lib $LDFLAGS"
+ 	;;
+         * )
+-          CFLAGS="-I${withval}/include $CFLAGS"
++          CFLAGS="-I${withval}/include/openssl $CFLAGS"
+ 	  LIBS="-lssl -lcrypto $LIBS"
+   	  LDFLAGS="-L${withval}/lib $LDFLAGS"
+ 	;;
+diff -urN samba-2.0.7.org/source/smbwrapper/smbsh.in samba-2.0.7/source/smbwrapper/smbsh.in
+--- samba-2.0.7.org/source/smbwrapper/smbsh.in	Thu Oct 19 00:01:27 2000
++++ samba-2.0.7/source/smbwrapper/smbsh.in	Fri Oct 20 21:16:46 2000
 @@ -1,6 +1,6 @@
  #! /bin/sh
  
@@ -8,14 +57,3 @@
  
  if [ ! -f ${SMBW_LIBDIR}/smbwrapper.so ]; then
      echo You need to set LIBDIR in smbsh
---- samba-2.0.3/source/Makefile.in.config	Sat Feb 27 23:08:47 1999
-+++ samba-2.0.3/source/Makefile.in	Tue Apr 13 19:09:43 1999
-@@ -25,7 +25,7 @@
- BINDIR = @bindir@
- # we don't use sbindir because we want full compatibility with
- # the previous releases of Samba
--SBINDIR = @bindir@
-+SBINDIR = @sbindir@
- LIBDIR = @libdir@
- VARDIR = @localstatedir@
- MANDIR = @mandir@

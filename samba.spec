@@ -1,7 +1,6 @@
 #
 # TODO:
 # - package python tools
-# - check out init scripts
 # - check winbindd package without samba server installed
 # - check if our swatdir is FHS compilant (--with fhs sets different swatdir)
 # - look into other distro specs for valid %descriptions for samba 3
@@ -35,7 +34,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.2
 Epoch:		1
-Release:	1.1
+Release:	1.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -51,6 +50,7 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
 Source9:	winbind.init
+Source10:	winbind.sysconfig
 Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
 #Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
@@ -763,6 +763,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
+install %{SOURCE10} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
 install source/client/mount.cifs	$RPM_BUILD_ROOT/sbin/mount.cifs
 install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
@@ -921,6 +922,7 @@ fi
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/winbind
 #%attr(-,root,root) %config(noreplace) %{_sysconfdir}/pam.d/system-auth-winbind*
 %{_mandir}/man8/winbindd*.8*
 %{_mandir}/man1/wbinfo*.1*

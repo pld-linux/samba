@@ -1,4 +1,12 @@
 #
+# TODO:
+# - package python tools
+# - check out init scripts
+# - check winbindd package without samba server installed
+# - check if our swatdir is FHS compilant (--with fhs sets different swatdir)
+# - look into other distro specs for valid %descriptions for samba 3
+# - review configure options
+#
 # Conditional build:
 %bcond_without	cups		# without CUPS support
 %bcond_without	mysql		# without MySQL support
@@ -27,12 +35,11 @@ Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.2
 Epoch:		1
-Release:	0.rc2.0.1
+Release:	1.1
 License:	GPL v2
 Group:		Networking/Daemons
-#Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-Source0:	http://pl.samba.org/samba/ftp/rc/%{name}-%{version}rc2.tar.bz2
-# Source0-md5:	dd375cd6c465d7d999ca1c2d83e45362
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
+# Source0-md5:	20d4bd08cfdc627d68a7112285caa1b2
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -671,7 +678,7 @@ Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %prep
-%setup -q -n %{name}-%{version}rc2
+%setup -q
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1

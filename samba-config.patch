@@ -1,0 +1,46 @@
+diff -Nur samba-2.0.0/source/Makefile.in samba-2.0.0.pld/source/Makefile.in
+--- samba-2.0.0/source/Makefile.in	Tue Jan 26 21:10:24 1999
++++ samba-2.0.0.pld/source/Makefile.in	Tue Jan 26 21:09:44 1999
+@@ -25,9 +25,9 @@
+ BINDIR = @bindir@
+ # we don't use sbindir because we want full compatibility with
+ # the previous releases of Samba
+-SBINDIR = @bindir@
++SBINDIR = @sbindir@
+ LIBDIR = @libdir@
+-VARDIR = @localstatedir@
++VARDIR = /var/log/samba
+ MANDIR = @mandir@
+ 
+ # The permissions to give the executables
+@@ -43,16 +43,16 @@
+ DRIVERFILE = $(LIBDIR)/printers.def
+ PASSWD_PROGRAM = /bin/passwd
+ # This is where smbpasswd et al go
+-PRIVATEDIR = @privatedir@
++PRIVATEDIR = $(LIBDIR)
+ 
+ SMB_PASSWD_FILE = $(PRIVATEDIR)/smbpasswd
+ SMB_PASSGRP_FILE = $(PRIVATEDIR)/smbpassgrp
+ 
+ # This is where SWAT images and help files go
+-SWATDIR = @swatdir@
++SWATDIR = /usr/share/swat
+ 
+ # the directory where lock files go
+-LOCKDIR = $(VARDIR)/locks
++LOCKDIR = /var/lock/samba
+ 
+ # The directory where code page definition files go
+ CODEPAGEDIR = $(LIBDIR)/codepages
+diff -Nur samba-2.0.0/source/smbwrapper/smbsh.in samba-2.0.0.pld/source/smbwrapper/smbsh.in
+--- samba-2.0.0/source/smbwrapper/smbsh.in	Wed Oct  7 06:43:09 1998
++++ samba-2.0.0.pld/source/smbwrapper/smbsh.in	Tue Jan 26 21:09:58 1999
+@@ -1,6 +1,6 @@
+ #! /bin/sh
+ 
+-SMBW_LIBDIR=${SMBW_LIBDIR-@builddir@/smbwrapper}
++SMBW_LIBDIR=${SMBW_LIBDIR-/lib/security}
+ 
+ if [ ! -f ${SMBW_LIBDIR}/smbwrapper.so ]; then
+     echo You need to set LIBDIR in smbsh

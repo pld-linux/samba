@@ -23,7 +23,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	2.2.11
-Release:	0.1
+Release:	1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us4.samba.org/samba/ftp/%{name}-%{version}.tar.gz
@@ -300,7 +300,7 @@ Samba-client ¤Ï Linux ¾å¤Ë´Þ¤Þ¤ì¤Æ¤¤¤ë SMB ¥Õ¥¡¥¤¥ë¥·¥¹¥Æ¥à¤òÊä¤¦ SMB
 
 %description client -l pl
 Samba-client dostarcza programy uzupe³niaj±ce obs³ugê systemu plików
-SMB zawarty w j±drze. Pozwalaj± one na wspó³dzielenie zasobów SMB i
+SMB zawart± w j±drze. Pozwalaj± one na wspó³dzielenie zasobów SMB i
 drukowanie w sieci SMB.
 
 %description client -l pt_BR
@@ -399,8 +399,8 @@ desenvolver aplicativos clientes para o samba.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
 Group:		Applications/Printing
-Requires:	cups
 Requires:	%{name}-client = %{epoch}:%{version}-%{release}
+Requires:	cups
 
 %description -n cups-backend-smb
 CUPS backend for printing to SMB printers.
@@ -458,8 +458,8 @@ Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 Summary:	On-access virus scanning for samba using ClamAV
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
 Group:		Networking/Daemons
-Requires:	clamav
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	clamav
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 
 %description vfs-vscan-clamav
@@ -494,7 +494,7 @@ Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Kaspersky AVP
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-fprot
+Obsoletes:	vscan-kavp
 
 %description vfs-vscan-kavp
 A vfs-module for samba to implement on-access scanning using the
@@ -514,7 +514,7 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	mksd
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-fprot
+Obsoletes:	vscan-mks
 
 %description vfs-vscan-mks
 A vfs-module for samba to implement on-access scanning using the mks
@@ -854,14 +854,14 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) /%{_lib}/libsmbclient.so.*
+%attr(755,root,root) /%{_libdir}/libsmbclient.so.*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
+%attr(755,root,root) /%{_libdir}/libsmbclient.so
 %{_includedir}/libsmbclient.h
-%attr(755,root,root) /%{_lib}/libsmbclient.so
 
-%if 0%{!?_without_cups:1}
+%if %{with_cups}
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbspool
@@ -880,54 +880,54 @@ fi
 
 %files vfs-recycle
 %defattr(644,root,root,755)
+%doc examples/VFS/recycle/README
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/recycle.conf
 %attr(755,root,root) %{_vfsdir}/recycle.so
-%doc examples/VFS/recycle/README
 
 %files vfs-vscan-clamav
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-clamav.conf
 %attr(755,root,root) %{_vfsdir}/vscan-clamav.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-fprot
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fprotd.conf
 %attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-kavp
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-kavp.conf
 %attr(755,root,root) %{_vfsdir}/vscan-kavp.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-mks
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-mks32.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mksd.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-openantivirus
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-oav.conf
 %attr(755,root,root) %{_vfsdir}/vscan-oav.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-sophos
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-sophos.conf
 %attr(755,root,root) %{_vfsdir}/vscan-sophos.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-symantec
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-icap.conf
 %attr(755,root,root) %{_vfsdir}/vscan-icap.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-trend
 %defattr(644,root,root,755)
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
-%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}

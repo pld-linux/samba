@@ -14,7 +14,7 @@ Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.3
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -287,7 +287,6 @@ fi
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
-%attr(755,root,root) %{_bindir}/make_*
 %attr(755,root,root) %{_bindir}/smbcontrol
 
 %dir %{_libdir}

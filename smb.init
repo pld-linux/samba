@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# chkconfig: 345 91 35
+# description: Starts and stops the Samba smbd and nmbd daemons \
+#	       used to provide SMB network services.
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Demon specified configuration.
+. /etc/sysconfig/samba
+
+# Check that networking is up.
+[ "${NETWORKING}" = "no" ] && exit 0
+
+# Check that smb.conf exists.
+[ -f /etc/samba/smb.conf ] || exit 0
+
+# See how we were called.
+case "$1" in
+  start)
+	show Starting smbd
+	daemon $NICELEVEL smbd -D 	
+	show Starting nmbd
+	daemon $NICELEVEL nmbd -D 
+	touch /var/lock/subsys/smb
+	;;
+  stop)
+	show Shutting down smbd
+	killproc smbd
+	show Shutting down nmbd
+	killproc nmbd
+	rm -f /var/lock/subsys/smb
+	;;
+  status)
+	status smbd
+	status nmbd
+	smbstatus
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart|status}"
+	exit 1
+esac
+

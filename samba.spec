@@ -4,7 +4,6 @@
 # _with_ipv6    - with IPv6 support
 #
 Summary:	SMB server
-Summary(pl):	Serwer SMB
 Summary(cs):	Server SMB
 Summary(da):	SMB server
 Summary(de):	SMB-Server

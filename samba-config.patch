@@ -1,15 +1,3 @@
-diff -urN samba-2.2.1.org/source/Makefile.in samba-2.2.1/source/Makefile.in
---- samba-2.2.1.org/source/Makefile.in	Sun Jul  8 22:29:34 2001
-+++ samba-2.2.1/source/Makefile.in	Wed Jul 11 19:56:04 2001
-@@ -49,7 +49,7 @@
- CONFIGFILE = $(CONFIGDIR)/smb.conf
- LMHOSTSFILE = $(CONFIGDIR)/lmhosts
- DRIVERFILE = $(CONFIGDIR)/printers.def
--PASSWD_PROGRAM = /bin/passwd
-+PASSWD_PROGRAM = /usr/bin/passwd
- # This is where smbpasswd et al go
- PRIVATEDIR = @privatedir@
- 
 diff -urN samba-2.2.1.org/source/configure.in samba-2.2.1/source/configure.in
 --- samba-2.2.1.org/source/configure.in	Tue Jul 10 02:12:50 2001
 +++ samba-2.2.1/source/configure.in	Wed Jul 11 20:00:03 2001

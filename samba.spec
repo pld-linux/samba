@@ -19,8 +19,8 @@ Summary(ru):	SMB клиент и сервер
 Summary(tr):	SMB sunucusu
 Summary(uk):	SMB кл╕╓нт та сервер
 Name:		samba
-Version:	2.2.4
-Release:	2
+Version:	2.2.5
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
@@ -39,10 +39,10 @@ Patch5:		%{name}-autoconf.patch
 Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
 Patch10:	%{name}-vfs.patch
-Patch11:	%{name}-quota.patch
-Patch12:	http://v6web.litech.org/samba/%{name}-2.2.3a+IPv6-20020419.diff
+#Patch11:	%{name}-quota.patch
+Patch12:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 Patch13:	%{name}-DESTDIR-fix.patch
-Patch14:	%{name}-CIFS-extensions.patch
+#Patch14:	%{name}-CIFS-extensions.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -370,10 +370,8 @@ desenvolver aplicativos clientes para o samba.
 %patch4 -p1
 %patch5 -p1
 %patch7 -p1
-%patch11 -p1
 %{?_with_ipv6:%patch12 -p1}
 %patch13 -p1
-%patch14 -p1
 
 %build
 cd source
@@ -409,7 +407,7 @@ sed -e "s#-symbolic##g" Makefile.old > Makefile
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
+	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home/services}/samba \
 	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_includedir}}
 
 cd source
@@ -519,7 +517,7 @@ fi
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/winbindd.8*
 
-%dir /home/samba
+%dir /home/services/samba
 %dir /var/lock/samba
 %ghost /var/lock/samba/*
 

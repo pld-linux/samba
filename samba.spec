@@ -236,6 +236,22 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Apr 14 1999 Artur Frysiak <wiget@pld.org.pl>
+  [2.0.3-2]
+- Changed group to Networking/Daemons
+- Changed name of source1
+- Added swat subpackage
+- Used %%configure macro
+- Correct one typo in configure args
+- Added --with-syslog and --with-automount to configure
+- Added /etc/sysconfig/samba (allow set nice level of [sn]mbd )
+- Removed %%config from /etc/rc.d/init.d/smb
+- Removed manuly install man and swat ( make install do it)
+- Install smbrun and debug2html
+- Fixed lmhosts files
+- Added noreplace to config files
+- Added %%ghost macro to state files 
+
 * Sun Mar 28 1999 Ziemek Borowski <zmb@ziembor.waw.pl>
 [2.0.3] 
 - updated to 2.0.3 (change in samba.2.0.3.patch file)

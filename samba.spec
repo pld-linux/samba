@@ -31,12 +31,12 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.1rc1
-Release:	0.2
+Version:	3.0.1rc2
+Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}.tar.bz2
-# Source0-md5:	59d3e736708e620ca34bd5136aab0fb7
+# Source0-md5:	b03fa2fb03dcaf020dfe27dd276d981b
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd

@@ -1,6 +1,7 @@
 #
 # Conditional build:
-# _with_ldap	- with LDAP support
+# _without_cups	- without CUPS support
+# _with_ldap	- with LDAP-based auth (instead of smbpasswd)
 # _with_ipv6    - with IPv6 support
 #
 Summary:	SMB server
@@ -49,7 +50,7 @@ Requires:	pam >= 0.66
 Requires:	logrotate
 Requires:	samba-common = %{version}
 BuildRequires:	autoconf
-BuildRequires:	cups-devel
+%{!?_without_cups:BuildRequires:	cups-devel}
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
@@ -60,6 +61,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sysconfdir	/etc/samba
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
+%if 0%{!?_without_cups:1}
+%define		cups_serverbin	%(cups-config --serverbin)
+%endif
 
 %description
 Samba provides an SMB server which can be used to provide network
@@ -476,8 +480,10 @@ touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 
-install -d $RPM_BUILD_ROOT%(cups-config --serverbin)/backend
-ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%(cups-config --serverbin)/backend/smb
+%if 0%{!?_without_cups:1}
+install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
+ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
+%endif
 
 > $RPM_BUILD_ROOT%{_libdir}/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
@@ -634,8 +640,10 @@ fi
 %{_includedir}/libsmbclient.h
 %attr(755,root,root) /lib/libsmbclient.so
 
+%if 0%{!?_without_cups:1}
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbspool
-%attr(755,root,root) %(cups-config --serverbin)/backend/smb
+%attr(755,root,root) %{cups_serverbin}/backend/smb
 %{_mandir}/man8/smbspool.8*
+%endif

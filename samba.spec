@@ -25,12 +25,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ÀÃ¶§Œ‘ ‘¡ ”≈“◊≈“
 Summary(zh_CN):	Samba øÕªß∂À∫Õ∑˛ŒÒ∆˜
 Name:		samba
-Version:	3.0.1rc2
+Version:	3.0.1
+Epoch:		1
 Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}.tar.bz2
-# Source0-md5:	b03fa2fb03dcaf020dfe27dd276d981b
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
+# Source0-md5:	2a3d494f139ab7402d8902b0e68c463f
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -65,7 +66,7 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	python-devel
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-common = %{version}
+Requires:	%{name}-common = %{epoch}:%{version}
 Requires:	logrotate
 Requires:	pam >= 0.66
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -242,7 +243,7 @@ Summary(pt_BR):	Samba SWAT e documentaÁ„o Web
 Summary(ru):	“œ«“¡ÕÕ¡ ÀœŒ∆…«’“¡√…… SMB-”≈“◊≈“¡ Samba
 Summary(uk):	“œ«“¡Õ¡ ÀœŒ∆…«’“¡√¶ß SMB-”≈“◊≈“¡ Samba
 Group:		Networking/Admin
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Requires:	inetdaemon
 Requires:	rc-inetd >= 0.8.2
 Provides:	samba-swat
@@ -275,7 +276,7 @@ SWAT - ferramentada Web de configuraÁ„o do Samba.
 Summary:	Samba MySQL password database plugin
 Summary(pl):	Wtyczka Samby do przechowywania hase≥ w bazie MySQL
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 
 %description pdb-mysql
 Samba MySQL password database plugin.
@@ -287,7 +288,7 @@ Wtyczka Samby do przechowywania hase≥ w bazie MySQL.
 Summary:	Samba XML password database plugin
 Summary(pl):	Wtyczka Samby do przechowywania hase≥ w bazie XML
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 
 %description pdb-xml
 Samba XML password database plugin.
@@ -304,7 +305,7 @@ Summary(pt_BR):	Cliente SMB do samba
 Summary(ru):	ÎÃ…≈Œ‘”À…≈ –“œ«“¡ÕÕŸ Samba (SMB)
 Summary(uk):	ÎÃ¶§Œ‘”ÿÀ¶ –“œ«“¡Õ… Samba (SMB)
 Group:		Applications/Networking
-Requires:	samba-common = %{version}
+Requires:	samba-common = %{epoch}:%{version}
 Obsoletes:	smbfs
 
 %description client
@@ -382,7 +383,7 @@ Samba-common Õ¶”‘…‘ÿ ∆¡ Ã…, Œ≈œ¬»¶ƒŒ¶ ƒÃ— “œ¬œ‘… —À ÀÃ¶§Œ‘¡, ‘¡À ¶
 URL:		http://www.samba.org
 Summary:	Samba-winbind daemon, utilities and documentation
 Group:		Networking/Daemons
-Requires:	%{name}-common = %{version}
+Requires:	%{name}-common = %{epoch}:%{version}
 Requires(post,preun):	/sbin/chkconfig
 
 %description winbind
@@ -422,7 +423,7 @@ Summary:	libsmbclient - samba client library
 Summary(pl):	libsmbclient - biblioteka klienta samby
 Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
-Requires:	libsmbclient = %{version}
+Requires:	libsmbclient = %{epoch}:%{version}
 
 %description -n libsmbclient-devel
 Header files for libsmbclient.
@@ -439,7 +440,7 @@ Summary:	Static version of libsmbclient - samba client library
 Summary(pl):	Statyczna wersja libsmbclient - biblioteki klienta samby
 Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
-Requires:	libsmbclient = %{version}
+Requires:	libsmbclient = %{epoch}:%{version}
 
 %description -n libsmbclient-static
 Static libsmbclient library.
@@ -451,7 +452,7 @@ Statyczna biblioteka libsmbclient.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
 Group:		Applications/Printing
-Requires:	%{name}-client = %{version}
+Requires:	%{name}-client = %{epoch}:%{version}
 Requires:	cups
 
 %description -n cups-backend-smb
@@ -464,7 +465,7 @@ Backend CUPS-a drukuj±cy na drukarkach SMB.
 Summary:	VFS module to audit file access
 Summary(pl):	Modu≥ VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 
 %description vfs-audit
 A simple module to audit file access to the syslog facility. The
@@ -481,7 +482,7 @@ nazwy/skasowania/zmiana praw plikÛw.
 Summary:	VFS module to block access to files
 Summary(pl):	Modu≥y VFS do blokowania dostÍpu do plikÛw
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 
 %description vfs-block
 Sample module by Ronald Kuetemeier <ronald@kuetemeier.com> to block
@@ -498,7 +499,7 @@ przez linki symboliczne. Plik konfiguracyjny w
 Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl):	Modu≥ VFS dodaj±cy moøliwo∂Ê kosza do zasobu samby
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 
 %description vfs-recycle
 VFS module to add recycle bin facility to a samba share.
@@ -510,7 +511,7 @@ Modu≥ VFS dodaj±cy moøliwo∂Ê kosza do zasobu samby.
 Summary:	On-access virus scanning for samba using ClamAV
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Requires:	clamav
 Provides:	%{name}-vscan = %{version}-%{release}
 
@@ -527,7 +528,7 @@ dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego ClamAV
 Summary:	On-access virus scanning for samba using FPROT
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy FPROT
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-fprot
 
@@ -544,7 +545,7 @@ dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego FPROT
 Summary:	On-access virus scanning for samba using OpenAntivirus
 Summary(pl):	Modu≥ VFS dodaj±cy obs≥ugÍ antywirusa OpenAntiVirus
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-openantivirus
 
@@ -563,7 +564,7 @@ modu≥).
 Summary:	On-access virus scanning for samba using Sophos
 Summary(pl):	Modu≥ VFS dodaj±cy obs≥ugÍ antywirusa Sophos
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-sophos
 
@@ -580,7 +581,7 @@ dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego Sophos
 Summary:	On-access virus scanning for samba using Symantec
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Symantec
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-symantec
 
@@ -597,7 +598,7 @@ Symantec (ktÛre musi byÊ zainstalowane, aby wykorzystaÊ ten modu≥).
 Summary:	On-access virus scanning for samba using Trend
 Summary(pl):	Modu≥ VFS dodaj±cy obs≥ugÍ antywirusa Trend
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-trend
 
@@ -614,7 +615,7 @@ dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego Trend
 Summary:	On-access virus scanning for samba using mks
 Summary(pl):	Modu≥ VFS dodaj±cy obs≥ugÍ antywirusa mks
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Requires:	mksd
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-mks
@@ -632,7 +633,7 @@ dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego mks
 Summary:	On-access virus scanning for samba using Kaspersky AVP
 Summary(pl):	Modu≥ VFS dodaj±cy obs≥ugÍ antywirusa Kaspersky AVP
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-kavp
 

@@ -1,9 +1,9 @@
 #
 # TODO:
 # - package python tools
-# - check winbindd package without samba server installed
 # - look into other distro specs for valid %descriptions for samba 3
 # - review configure options
+# - fix broken --without ldap, test functionality with other bconds
 #
 # Conditional build:
 %bcond_without	cups		# without CUPS support
@@ -14,7 +14,7 @@
 %bcond_without	krb5		# without Kerberos5/Heimdal support
 %bcond_with	python		# with python utils, not builds, not packaged now
 #
-%define		vscan_version 0.3.4
+%define		vscan_version 0.3.5
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -46,7 +46,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	acbcb28cff080dcf2ee732b7f2c0f949
+# Source7-md5:	5f173d549014985d681478897135915b
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
 Source9:	winbind.init

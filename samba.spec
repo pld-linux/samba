@@ -248,7 +248,7 @@ sed -e "s#-symbolic##g" Makefile.old > Makefile
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
-	$RPM_BUILD_ROOT/{sbin,lib/security,/usr/lib}
+	$RPM_BUILD_ROOT/{sbin,lib/security,/usr/lib,%{_includedir}}
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT

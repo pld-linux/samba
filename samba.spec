@@ -9,7 +9,7 @@
 # Conditional build:
 %bcond_without	cups		# without CUPS support
 %bcond_without	mysql		# without MySQL support
-%bcond_without	pgsql	# without PostgreSQL support
+%bcond_without	pgsql		# without PostgreSQL support
 %bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
 #%bcond_with	ipv6		# with IPv6 support
 %bcond_without	ldap		# without LDAP support
@@ -871,7 +871,7 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
-        %{?with_python:--with-python} \
+	%{?with_python:--with-python} \
 	--with-expsam=xml,%{?with_mysql:mysql}%{?with_pgsql:,pgsql} \
 	%{?with_ldapsam:--with-ldapsam} \
 	--with%{!?with_ldap:out}-ldap \

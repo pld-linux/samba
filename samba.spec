@@ -18,6 +18,7 @@ Summary(pt_BR):	Cliente e servidor SMB
 Summary(ru):	SMB клиент и сервер
 Summary(tr):	SMB sunucusu
 Summary(uk):	SMB кл╕╓нт та сервер
+Summary(zh_CN):	Samba ©м╩╖╤к╨м╥ЧнЯфВ.
 Name:		samba
 Version:	2.2.5
 Release:	1

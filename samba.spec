@@ -515,23 +515,6 @@ Monitorowane s± nastêpuj±ce operacje: pod³±czone/od³±czenie do zasobu,
 otwarcie/utworzenie/zmiana nazwy katalogu, otwarcie/zamknêcie/zmiana
 nazwy/skasowania/zmiana praw plików.
 
-%package vfs-block
-Summary:	VFS module to block access to files
-Summary(pl):	Modu³y VFS do blokowania dostêpu do plików
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description vfs-block
-Sample module by Ronald Kuetemeier <ronald@kuetemeier.com> to block
-named symbolic link following. Note: Config file is in
-/etc/samba/samba-block.conf .
-
-%description vfs-block -l pl
-Przyk³adowy modu³ stworzony przez Ronald Kuetemeier
-<ronald@kuetemeier.com> do blokowania dostêpu do plików wskazywanych
-przez linki symboliczne. Plik konfiguracyjny w
-/etc/samba/samba-block.conf .
-
 %package vfs-recycle
 Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl):	Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
@@ -544,27 +527,32 @@ VFS module to add recycle bin facility to a samba share.
 %description vfs-recycle -l pl
 Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 
-%package vfs-shadow-copy
+%package vfs-shadow_copy
 Summary:	VFS module to make automatic copy of data in samba share
-Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby
+Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
-%description vfs-shadow-copy
+%description vfs-shadow_copy
 VFS module to make automatic copy of data in samba share.
 
-%description vfs-shadow-copy -l pl
-Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby.
+%description vfs-shadow_copy -l pl
+Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby.
 
 %package vfs-cap
-Summary:	VFS module
-Summary(pl):	Modu³ VFS
+Summary:	VFS module for CAP and samba compatibility
+Summary(pl):	Modu³ VFS zgodno¶ci z CAP (Columbia AppleTalk Program)
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-cap
+Convert an incoming Shift-JIS character to the 3 byte hex representation
+used by the Columbia AppleTalk Program (CAP), i.e. :AB. This is used for
+compatibility between Samba and CAP.
 
 %description vfs-cap -l pl
+Zamienia znaki kodowane Shift-JIS do trzybajowej szestnastkowej
+reprezentacji u¿ywanej przez program Columbia AppleTalk Program (CAP).
 
 %package vfs-readonly
 Summary:	VFS module
@@ -576,45 +564,60 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-readonly -l pl
 
-%package vfs-default-quota
+%package vfs-default_quota
 Summary:	VFS module
 Summary(pl):	Modu³ VFS
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
-%description vfs-default-quota
+%description vfs-default_quota
 
 %description vfs-default-quota -l pl
 
-%package vfs-expand-msdfs
+%package vfs-expand_msdfs
+Summary:	VFS module for hosting a Microsoft Distributed File System Tree
+Summary(pl):	Modu³ VFS obs³ugi Microsoft Distributed File System
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-expand_msdfs
+A VFS module for hosting a Microsoft Distributed File System Tree.
+
+The Distributed File System (DFS) provides a means of separating the
+logical view of files and directories that users see from the actual
+physical locations of these resources on the network. It allows for higher
+availability, smoother storage expansion, load balancing, and so on.
+
+%description vfs-expand_msdfs -l pl
+
+%package vfs-fake_perms
 Summary:	VFS module
 Summary(pl):	Modu³ VFS
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
-%description vfs-expand-msdfs
+%description vfs-fake_perms
+This module allow Roaming Profile files and directories to be set (on the
+Samba server under UNIX) as read only. This module will, if installed on the
+Profiles share, report to the client that the Profile files and directories
+are writeable. This satisfies the client even though the files will never be
+overwritten as the client logs out or shuts down.
 
-%description vfs-expand-msdfs -l pl
-
-%package vfs-fake-perms
-Summary:	VFS module
-Summary(pl):	Modu³ VFS
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description vfs-fake-perms
-
-%description vfs-fake-perms -l pl
+%description vfs-fake_perms -l pl
 
 %package vfs-netatalk
-Summary:	VFS module
-Summary(pl):	Modu³ VFS
+Summary:	VFS module for ease co-existence of samba and netatalk
+Summary(pl):	Modu³ VFS u³atwiaj±cy wspó³pracê serwisów samba i netatalk
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-netatalk
+Package contain a netatalk VFS module for ease co-existence of Samba and
+netatalk file sharing services.
 
 %description vfs-netatalk -l pl
+Pakiet zawiera modu³ modui³ VFS netatalk umo¿liwiaj±cy wspó³pracê serwisów
+samba i netatalk przy serwowaniu zasobów.
 
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV
@@ -1149,7 +1152,7 @@ fi
 %attr(755,root,root) %{_vfsdir}/audit.so
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
 
-%files vfs-shadow-copy
+%files vfs-shadow_copy
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/shadow_copy.so
 
@@ -1165,15 +1168,15 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/recycle.so
 
-%files vfs-default-quota
+%files vfs-default_quota
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/default_quota.so
 
-%files vfs-expand-msdfs
+%files vfs-expand_msdfs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/expand_msdfs.so
 
-%files vfs-fake-perms
+%files vfs-fake_perms
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/fake_perms.so
 

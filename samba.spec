@@ -61,8 +61,8 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-case_insensitive_sql_operator.patch
-#Patch5:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
-Patch6:		%{name}-3_0_9-printing.patch
+Patch5:		%{name}-3_0_9-printing.patch
+#Patch6:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -867,8 +867,8 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch6 -p1
-#%{?with_ipv6:%patch5 -p1}
+%patch5 -p1
+#%{?with_ipv6:%patch6 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}

@@ -26,8 +26,8 @@ Version:	3.0.0
 Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc1.tar.bz2
-# Source0-md5:	c99b45cdb3f504915250ab0108a40bf6
+Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc2.tar.bz2
+# Source0-md5:	e9b80e8916c8058094c8192e5aacc21f
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -38,7 +38,7 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 # Source7-md5:	cacc32f21812494993e32be558b91bdd
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
-Patch0:		samba3-smbtorture.patch
+####Patch0:		samba3-smbtorture.patch
 #Patch1:		%{name}-config.patch
 #Patch2:		%{name}-DESTDIR.patch
 #Patch3:		%{name}-manpages_PLD_fixes.patch
@@ -559,8 +559,8 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q -n samba-3.0.0rc1
-%patch0 -p1
+%setup -q -n samba-3.0.0rc2
+##%patch0 -p1
 #%patch1 -p1
 #%patch2 -p1
 #%patch3 -p1
@@ -823,7 +823,8 @@ fi
 
 %files -n swat
 %defattr(644,root,root,755)
-%doc swat/README* swat/help/*
+#%doc swat/README* swat/help/*
+%doc swat/help/*
 %attr(755,root,root) %{_sbindir}/swat
 %{_datadir}/swat
 %{_mandir}/man8/swat.8*

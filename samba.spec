@@ -886,6 +886,7 @@ fi
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
 %{_mandir}/man8/tdbbackup.8*
+%{_mandir}/man8/tdbdump.8*
 
 %dir %{_sambahome}
 %dir /var/lock/samba

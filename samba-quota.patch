@@ -1,0 +1,47 @@
+diff -urN samba-2.2.3a.org/source/configure.in samba-2.2.3a/source/configure.in
+--- samba-2.2.3a.org/source/configure.in	Thu Apr 18 14:31:35 2002
++++ samba-2.2.3a/source/configure.in	Thu Apr 18 14:56:02 2002
+@@ -2152,7 +2152,15 @@
+         AC_TRY_COMPILE([#include <stdio.h>
+ #include <sys/types.h>
+ #include <asm/types.h>
++#define __KERNEL__
++#include <asm/types.h>
++#include <asm/semaphore.h>
++#include <linux/list.h>
++#include <linux/wait.h>
++#include <linux/kdev_t.h>
++#include <linux/sem.h>
+ #include <linux/quota.h>
++#undef __KERNEL__
+ #include <mntent.h>
+ #include <linux/unistd.h>],[struct mem_dqblk D;],
+ 	samba_cv_linux_2_4_quota_braindamage=yes,samba_cv_linux_2_4_quota_braindamage=no)])
+diff -urN samba-2.2.3a.org/source/smbd/quotas.c samba-2.2.3a/source/smbd/quotas.c
+--- samba-2.2.3a.org/source/smbd/quotas.c	Thu Apr 18 14:31:36 2002
++++ samba-2.2.3a/source/smbd/quotas.c	Thu Apr 18 16:50:28 2002
+@@ -54,6 +53,24 @@
+  * Linus synchronises with the AC patches. Sometimes I *hate* Linux :-). JRA.
+  */
+ 
++#ifndef LINUX_QUOTAS_1
++/*
++ *  Data for one user/group kept in memory
++ */
++typedef __u64 qsize_t;          /* Type in which we store sizes */
++
++struct mem_dqblk {
++        __u32 dqb_bhardlimit;   /* absolute limit on disk blks alloc */
++        __u32 dqb_bsoftlimit;   /* preferred limit on disk blks */
++        qsize_t dqb_curspace;   /* current used space */
++        __u32 dqb_ihardlimit;   /* absolute limit on allocated inodes */
++        __u32 dqb_isoftlimit;   /* preferred inode limit */
++        __u32 dqb_curinodes;    /* current # allocated inodes */
++        time_t dqb_btime;       /* time limit for excessive disk use */
++        time_t dqb_itime;       /* time limit for excessive inode use */
++};
++#endif
++
+ #include <linux/quota.h>
+ #ifdef HAVE_LINUX_XQM_H
+ #include <linux/xqm.h>

@@ -61,7 +61,6 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-case_insensitive_sql_operator.patch
-Patch5:		%{name}-3_0_9-printing.patch
 #Patch6:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
@@ -868,7 +867,6 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 #%{?with_ipv6:%patch6 -p1}
 
 cd examples/VFS
@@ -1119,6 +1117,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/winbind
 %{_mandir}/man8/winbindd*.8*
+%{_mandir}/man8/pam_winbind.8.gz
 %{_mandir}/man1/wbinfo*.1*
 
 %files -n nss_wins

@@ -110,8 +110,7 @@ WINS database management.
 
 Please refer to the WHATSNEW.txt document for fixup information. This
 binary release includes encrypted password support. Please read the
-smb.conf file and ENCRYPTION.txt in the docs directory for
-implementation details.
+smb.conf file for implementation details.
 
 %description -l cs
 Samba poskytuje server SMB, kterı lze pou¾ít pro poskytování sí»ovıch
@@ -191,9 +190,7 @@ SWAT(Samba Web Administration Tool)·Î À¥ºê¶ó¿ìÀú¸¦ »ç¿ëÇÏ¿© ¿ø°İÁö¿¡¼­
 TCP 901 Æ÷Æ®¸¦ »ç¿ëÇÏ°Ô µÈ´Ù.
 
 ÃÖ±Ù Á¤º¸·Î WHATSNEW.txt ÆÄÀÏÀÇ ¹®¼­¸¦ Âü°íÇÏµµ·Ï ÇÑ´Ù. ¹ÙÀÌ³Ê¸®ÀÇ
-¸±¸®Áî´Â ¾ÏÈ£È­µÈ ÆĞ½º¿öµå¸¦ Á¦°øÇÑ´Ù. ±¸Çö¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ Á¤º¸¸¦ ¾ò±â
-À§ÇØ docs µğ·ºÅä¸®³»¿¡ ÀÖ´Â smb.conf ÆÄÀÏ°ú ENCRYPTION.txt ÆÄÀÏÀ»
-ÀĞ¾îº»´Ù.
+¸±¸®Áî´Â ¾ÏÈ£È­µÈ ÆĞ½º¿öµå¸¦ Á¦°øÇÑ´Ù.
 
 %description -l pl
 Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia

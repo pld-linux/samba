@@ -55,6 +55,7 @@ Source10:	http://us1.samba.org/samba/ftp/samba.schema
 Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
 #Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
+Patch3:		%{name}-setup-python.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -822,6 +823,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 %patch1 -p1
 %endif
 #%{?with_ipv6:%patch2 -p1}
+%patch3 -p1
 
 cp -f %{SOURCE10} examples/LDAP/
 cd examples/VFS

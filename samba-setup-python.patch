@@ -1,0 +1,25 @@
+--- samba-3.0.6/source/python/setup.py.orig	2004-04-04 09:37:15.000000000 +0200
++++ samba-3.0.6/source/python/setup.py	2004-09-02 22:53:26.622271448 +0200
+@@ -49,8 +49,12 @@
+ 
+ libraries = []
+ library_dirs = []
++skip_next_keyword = 0
+ 
+ for lib in string.split(samba_libs):
++    if (skip_next_keyword):
++	skip_next_keyword = 0
++	continue
+     if lib[0:2] == "-l":
+         libraries.append(lib[2:])
+         continue
+@@ -60,6 +64,9 @@
+     if lib[0:2] == "-W":
+         # Skip linker flags
+         continue
++    if lib[0:2] == "-z":
++	skip_next_keyword = 1
++	continue
+     print "Unknown entry '%s' in $LIBS variable passed to setup.py" % lib
+     sys.exit(1)
+ 

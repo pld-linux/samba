@@ -36,6 +36,7 @@ Patch7:		%{name}-nmbd_socket.patch
 Patch10:	%{name}-vfs.patch
 Patch11:	%{name}-quota.patch
 Patch12:	http://v6web.litech.org/samba/samba-2.2.3a+IPv6-20020419.diff
+Patch13:	%{name}-DESTDIR-fix.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -221,6 +222,7 @@ Pliki nag³ówkowe dla libsmbclient.
 %patch7 -p1
 %patch11 -p1
 %{?_with_ipv6:%patch12 -p1}
+%patch13 -p1
 
 %build
 cd source

@@ -404,5 +404,5 @@ fi
 
 %files -n pam_smbpass
 %defattr(644,root,root,755)
-%doc docs/pam_smbpass/*.gz docs/pam_smbpass/samples
+%doc source/pam_smbpass/*.gz source/pam_smbpass/samples
 %attr(755,root,root) /lib/security/pam_smbpass.so

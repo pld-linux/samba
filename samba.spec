@@ -489,6 +489,24 @@ Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego FPROT
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
+%package vfs-vscan-fsav
+Summary:	On-access virus scanning for samba using F-Secure AntiVirus
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy F-Secure AntiVirus
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
+Obsoletes:	vscan-fsav
+
+%description vfs-vscan-fsav
+A vfs-module for samba to implement on-access scanning using the
+F-Secure AntiVirus antivirus software (which must be installed to use
+this).
+
+%description vfs-vscan-fsav -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego F-Secure
+AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
 %package vfs-vscan-kavp
 Summary:	On-access virus scanning for samba using Kaspersky AVP
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Kaspersky AVP
@@ -896,6 +914,12 @@ fi
 %doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fprotd.conf
 %attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
+
+%files vfs-vscan-fsav
+%defattr(644,root,root,755)
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fsav.conf
+%attr(755,root,root) %{_vfsdir}/vscan-fsav.so
 
 %files vfs-vscan-kavp
 %defattr(644,root,root,755)

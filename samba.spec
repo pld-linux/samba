@@ -30,9 +30,7 @@ Patch6:		%{name}-manpages_PLD_fixes.patch
 Patch7:		%{name}-smbprint.patch
 Patch8:		%{name}-autoconf.patch
 Patch9:		%{name}-smbadduser.patch
-Patch10:	%{name}-nocups.patch
-Patch11:	%{name}-nmbd_socket.patch
-Patch12:	%{name}-debug-0-suxorz.patch
+Patch10:	%{name}-nmbd_socket.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -188,7 +186,6 @@ klientów Samba.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 
 %build
 cd source
@@ -244,7 +241,7 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
-gzip -9nfr Manifest README Roadmap WHATSNEW.txt docs/*.reg docs/{announce,history,THANKS} docs/textdocs/*.txt
+gzip -9nfr Manifest README Roadmap WHATSNEW.txt docs/{announce,history,THANKS} docs/textdocs/*.txt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -345,7 +342,7 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc README.gz Manifest.gz WHATSNEW.txt.gz
-%doc Roadmap.gz docs/faq docs/*.reg.gz
+%doc Roadmap.gz docs/faq docs/Registry/*
 %doc docs/textdocs docs/htmldocs/*.* docs/{history,announce,THANKS}.gz
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts

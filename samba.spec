@@ -13,9 +13,9 @@ Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Prereq:		/sbin/chkconfig 
 Requires:	pam >= 0.66 
-BuildPrereq:	ncurses-devel
-BuildPrereq:	readline-devel
-BuildPrereq:	pam-devel
+BuildRequires:	ncurses-devel
+BuildRequires:	readline-devel
+BuildRequires:	pam-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description

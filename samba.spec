@@ -3,6 +3,8 @@
 # _without_cups	- without CUPS support
 # _with_ldapsam	- with LDAP SAM 2.2 based auth (instead of smbpasswd)
 # _with_ipv6	- with IPv6 support
+# _without_ldap - without LDAP support
+# _without_krb5	- without Kerberos5/Heimdal support
 #
 %define		vscan_version 0.3.4
 Summary:	SMB server
@@ -44,12 +46,12 @@ BuildRequires:	autoconf
 %{!?_without_cups:BuildRequires:	cups-devel}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
-BuildRequires:	openldap-devel
+%{!?_without_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	heimdal-devel
+%{!?_without_krb5:BuildRequires:	heimdal-devel}
 BuildRequires:	mysql-devel
 BuildRequires:	acl-devel
 BuildRequires:	libxml-devel
@@ -624,7 +626,9 @@ cd source
 	--with-expsam \
 	%{?_with_ipv6:--with-ipv6} \
         %{?_with_ldapsam:--with-ldapsam} \
-	--with-krb5
+	%{?_without_ldap:--without-ldap} \
+	%{!?_without_krb5:--with-krb5} \
+	%{?_without_krb5:--without-krb5}
 
 %{__make} everything pam_smbpass
 

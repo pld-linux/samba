@@ -23,7 +23,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	2.2.8a
-Release:	1.4
+Release:	1.5
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -34,7 +34,7 @@ Source3:	swat.inetd
 Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
-Source7:	http://dl.sourceforge.net/openantivirus/samba-vscan-%{vscan_version}.tar.bz2
+Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
 # Source7-md5:	cacc32f21812494993e32be558b91bdd
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-DESTDIR.patch
@@ -63,7 +63,7 @@ Requires:	samba-common = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
-%define		_reallibdir	/usr/lib
+%define		_vfsdir		/usr/lib/%{name}/vfs
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
 %if 0%{!?_without_cups:1}
@@ -404,48 +404,137 @@ CUPS backend for printing to SMB printers.
 Backend CUPS-a drukuj±cy na drukarkach SMB.
 
 %package vfs-audit
-Summary:        VFS module to audit file access
-Summary(pl):    Modu³ VFS do monitorowania operacji na plikach
-Group:          Networking/Daemons
-Requires:       samba-client = %{version}
+Summary:	VFS module to audit file access
+Summary(pl):	Modu³ VFS do monitorowania operacji na plikach
+Group:		Networking/Daemons
+Requires:	samba = %{version}
 
 %description vfs-audit
-A simple module to audit file access to the syslog facility.  The following
-operations are logged: share connect/disconnect, directory opens/create/remove,
-file open/close/rename/unlink/chmod.
+A simple module to audit file access to the syslog facility. The
+following operations are logged: share connect/disconnect, directory
+opens/create/remove, file open/close/rename/unlink/chmod.
 
 %description vfs-audit -l pl
-Prosty modu³ do monitorowania dostêpu do plików do sysloga. Monitorowane s±
-nastêpuj±ce operacje: pod³±czone/od³±czenie do zasobu,
+Prosty modu³ do monitorowania dostêpu do plików do sysloga.
+Monitorowane s± nastêpuj±ce operacje: pod³±czone/od³±czenie do zasobu,
 otwarcie/utworzenie/zmiana nazwy katalogu, otwarcie/zamknêcie/zmiana
 nazwy/skasowania/zmiana praw plików.
 
 %package vfs-block
-Summary:        VFS module to block access to files
-Summary(pl):    Modu³y VFS do blokowania dostêpu do plików
-Group:          Networking/Daemons
-Requires:       samba-client = %{version}
+Summary:	VFS module to block access to files
+Summary(pl):	Modu³y VFS do blokowania dostêpu do plików
+Group:		Networking/Daemons
+Requires:	samba = %{version}
 
 %description vfs-block
-Sample module by Ronald Kuetemeier <ronald@kuetemeier.com> to block named
-symbolic link following.  Note: Config file is in /etc/samba/samba-block.conf
+Sample module by Ronald Kuetemeier <ronald@kuetemeier.com> to block
+named symbolic link following. Note: Config file is in
+/etc/samba/samba-block.conf
 
 %description vfs-block -l pl
-Przyk³adowy modu³ stworzony przez Ronald Kuetemeier <ronald@kuetemeier.com> do
-blokowania dostêpu do plików wskazywanych przez linki symboliczne. Plik
-konfiguracyjny w /etc/samba/samba-block.conf
+Przyk³adowy modu³ stworzony przez Ronald Kuetemeier
+<ronald@kuetemeier.com> do blokowania dostêpu do plików wskazywanych
+przez linki symboliczne. Plik konfiguracyjny w
+/etc/samba/samba-block.conf
 
 %package vfs-recycle
-Summary:        VFS module to add recycle bin facility to a samba share
-Summary(pl):    Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
-Group:          Networking/Daemons
-Requires:       samba-client = %{version}
+Summary:	VFS module to add recycle bin facility to a samba share
+Summary(pl):	Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
+Group:		Networking/Daemons
+Requires:	samba = %{version}
 
 %description vfs-recycle
 VFS module to add recycle bin facility to a samba share
 
 %description vfs-block -l pl
 Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
+
+%package vfs-vscan-fprot
+Summary:	On-access virus scanning for samba using FPROT
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy FPROT
+Group:		Networking/Daemons
+Obsoletes:	vscan-fprot
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-fprot
+A vfs-module for samba to implement on-access scanning using the FPROT
+antivirus software (which must be installed to use this).
+
+%description vfs-vscan-fprot -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego
+FPROT(który musi byæ zainstalowany aby wykorzystaæ ten modu³).
+
+%package vfs-vscan-openantivirus
+Summary:	On-access virus scanning for samba using OpenAntivirus
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa OpenAntiVirus
+Group:		Networking/Daemons
+Obsoletes:	vscan-openantivirus
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-openantivirus
+A vfs-module for samba to implement on-access scanning using the
+OpenAntivirus antivirus software (which must be installed to use
+this).
+
+%description vfs-vscan-openantivirus -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego
+OpenAntiVirus.org (które musi byæ zainstalowany aby wykorzystaæ ten
+modu³).
+
+%package vfs-vscan-sophos
+Summary:	On-access virus scanning for samba using Sophos
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Sophos
+Group:		Networking/Daemons
+Obsoletes:	vscan-sophos
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-sophos
+A vfs-module for samba to implement on-access scanning using the
+Sophos antivirus software (which must be installed to use this).
+
+%description vfs-vscan-sophos -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego Sophos
+(które musi byæ zainstalowany aby wykorzystaæ ten modu³).
+
+%package vfs-vscan-symantec
+Summary:	On-access virus scanning for samba using Symantec
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Symantec
+Group:		Networking/Daemons
+Obsoletes:	vscan-symantec
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-symantec
+A vfs-module for samba to implement on-access scanning using the
+Symantec antivirus software (which must be installed to use this).
+
+%description vfs-vscan-symantec -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego firmy
+Symantec(który musi byæ zainstalowany aby wykorzystaæ ten modu³).
+
+%package vfs-vscan-trend
+Summary:	On-access virus scanning for samba using Trend
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Trend
+Group:		Networking/Daemons
+Obsoletes:	vscan-trend
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-trend
+A vfs-module for samba to implement on-access scanning using the Trend
+antivirus software (which must be installed to use this).
+
+%description vfs-vscan-trend -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
+(które musi byæ zainstalowany aby wykorzystaæ ten modu³).
 
 %prep
 %setup -q
@@ -515,8 +604,8 @@ done;
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home/services,%{_reallibdir}}/%{name} \
-	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_includedir}}
+	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home/services}/samba \
+	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_vfsdir},%{_includedir}}
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
@@ -542,8 +631,13 @@ ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/lib/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
-install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT/%{_reallibdir}/%{name}
+# przyk³adowe modu³y VFS
+install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT/%{_vfsdir}/
 install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf  $RPM_BUILD_ROOT/%{_sysconfdir}
+
+# modu³y vscan
+install examples/VFS/samba-vscan-%{vscan_version}/*/*.so $RPM_BUILD_ROOT/%{_vfsdir}/
+install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT/%{_sysconfdir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -720,14 +814,44 @@ fi
 %files vfs-block
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba-block.conf
-%attr(755,root,root) %{_reallibdir}/%{name}/block.so
+%attr(755,root,root) %{_vfsdir}/block.so
 
 %files vfs-audit
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_reallibdir}/%{name}/audit.so
+%attr(755,root,root) %{_vfsdir}/audit.so
 
 %files vfs-recycle
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/recycle.conf
-%attr(755,root,root) %{_reallibdir}/%{name}/recycle.so
+%attr(755,root,root) %{_vfsdir}/recycle.so
 %doc examples/VFS/recycle/README
+
+%files vfs-vscan-fprot
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fprotd.conf
+%attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+
+%files vfs-vscan-openantivirus
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-oav.conf
+%attr(755,root,root) %{_vfsdir}/vscan-oav.so
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+
+%files vfs-vscan-sophos
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-sophos.conf
+%attr(755,root,root) %{_vfsdir}/vscan-sophos.so
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+
+%files vfs-vscan-symantec
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-icap.conf
+%attr(755,root,root) %{_vfsdir}/vscan-icap.so
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+
+%files vfs-vscan-trend
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
+%attr(755,root,root) %{_vfsdir}/vscan-trend.so
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}

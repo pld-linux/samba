@@ -39,13 +39,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.8
-Release:	3
+Version:	3.0.9
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	7088483c858ac362d302acc0c2a1d431
+# Source0-md5:	9cf2bcef71509a81687dec8732545400
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -62,7 +62,6 @@ Patch1:		%{name}-lib64.patch
 Patch3:		%{name}-setup-python.patch
 Patch4:		%{name}-FHS.patch
 Patch5:		%{name}-case_insensitive_sql_operator.patch
-Patch6:		%{name}-libsmbclient_link.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -867,7 +866,6 @@ dost阷u do plik體 korzystaj眂 z oprogramowania antywirusowego Trend
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

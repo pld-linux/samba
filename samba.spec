@@ -26,8 +26,7 @@ Version:	3.0.0
 Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc2.tar.bz2
-# Source0-md5:	e9b80e8916c8058094c8192e5aacc21f
+Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc3.tar.bz2
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -559,7 +558,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q -n samba-3.0.0rc2
+%setup -q -n samba-3.0.0rc3
 ##%patch0 -p1
 #%patch1 -p1
 #%patch2 -p1

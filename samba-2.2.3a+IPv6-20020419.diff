@@ -1,0 +1,2988 @@
+Index: samba-2.2.3a+IPv6/source/acconfig.h
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/acconfig.h,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/acconfig.h	16 Apr 2002 03:34:34 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/acconfig.h	18 Apr 2002 04:53:04 -0000	1.2
+@@ -59,6 +59,7 @@
+ #undef WITH_SYSLOG
+ #undef WITH_PROFILE
+ #undef WITH_SSL
++#undef HAVE_INET6
+ #undef WITH_LDAP
+ #undef WITH_NISPLUS
+ #undef WITH_TDBPWD
+Index: samba-2.2.3a+IPv6/source/configure.in
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/configure.in,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/configure.in	16 Apr 2002 03:34:34 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/configure.in	18 Apr 2002 04:53:04 -0000	1.2
+@@ -2100,6 +2100,53 @@
+ )
+ 
+ #################################################
++# check for IPv6 support
++AC_MSG_CHECKING(whether to use IPv6)
++AC_ARG_WITH(ipv6,
++[  --with-ipv6             Include IPv6 support (default=no)],
++[ case "$withval" in
++  yes)
++    AC_MSG_RESULT(yes)
++    AC_DEFINE(HAVE_INET6)
++
++    AC_CACHE_CHECK(for struct sockaddr_in6,samba_cv_struct_sockaddr_in6,
++	AC_TRY_COMPILE(
++		[#include <sys/types.h>
++		#include <sys/socket.h>
++		#include <netinet/in.h>],
++		[struct sockaddr_in6 sin6;
++		sin6.sin6_port = 0;],
++		[samba_cv_struct_sockaddr_in6=yes],
++		[samba_cv_struct_sockaddr_in6=no]))
++    if test "$samba_cv_struct_sockaddr_in6" != yes ; then
++	AC_MSG_ERROR([This system does not have IPv6 support.  Reconfigure without the --with-ipv6 flag.])
++    fi
++
++    AC_CHECK_FUNC(getaddrinfo,,
++	AC_MSG_ERROR([IPv6 functionality requires getaddrinfo.  Reconfigure without the --with-ipv6 flag.]))
++
++    dnl This can't check for member names because we're not sure what they
++    dnl might be.  Doesn't matter - we only need it defined for sizeof.
++    AC_CACHE_CHECK(for struct sockaddr_storage,samba_cv_struct_sockaddr_storage,
++	AC_TRY_COMPILE(
++		[#include <sys/types.h>
++		#include <sys/socket.h>
++		#include <netinet/in.h>],
++		[struct sockaddr_storage ss;],
++		[samba_cv_struct_sockaddr_storage=yes],
++		[samba_cv_struct_sockaddr_storage=no]))
++    if test "$samba_cv_struct_sockaddr_storage" != yes ; then
++	AC_MSG_ERROR([IPv6 functionality requires the sockaddr_storage structure.  Reconfigure without the --with-ipv6 flag.])
++    fi
++    ;;
++  *)
++    AC_MSG_RESULT(no)
++    ;;
++  esac],
++  AC_MSG_RESULT(no)
++)
++
++#################################################
+ # check for syslog logging
+ AC_MSG_CHECKING(whether to use syslog logging)
+ AC_ARG_WITH(syslog,
+Index: samba-2.2.3a+IPv6/source/client/client.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/client/client.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/client/client.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/client/client.c	18 Apr 2002 04:53:04 -0000	1.2
+@@ -30,7 +30,7 @@
+ struct cli_state *cli;
+ extern BOOL in_client;
+ extern BOOL AllowDebugChange;
+-static int port = SMB_PORT;
++static int port = 0;
+ pstring cur_dir = "\\";
+ pstring cd_path = "";
+ static pstring service;
+@@ -81,7 +81,7 @@
+ static BOOL recurse = False;
+ BOOL lowercase = False;
+ 
+-struct in_addr dest_ip;
++char dest_ip[512];
+ 
+ #define SEPARATORS " \t\n\r"
+ 
+@@ -2146,8 +2146,7 @@
+ 	struct cli_state *c;
+ 	struct nmb_name called, calling;
+ 	char *server_n;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
++	struct sockaddr_list *salist;
+ 	fstring servicename;
+ 	char *sharename;
+ 	
+@@ -2164,19 +2163,16 @@
+ 
+ 	server_n = server;
+ 	
+-	ip = ipzero;
+-
+ 	make_nmb_name(&calling, global_myname, 0x0);
+ 	make_nmb_name(&called , server, name_type);
+ 
+  again:
+-	ip = ipzero;
+-	if (have_ip) ip = dest_ip;
++	salist = resolve_name_smb(have_ip ? dest_ip : server_n, port);
+ 
+ 	/* have to open a new connection */
+-	if (!(c=cli_initialise(NULL)) || (cli_set_port(c, port) == 0) ||
+-	    !cli_connect(c, server_n, &ip)) {
++	if (!(c=cli_initialise(NULL)) || !cli_connect(c, server_n, salist)) {
+ 		DEBUG(0,("Connection to %s failed\n", server_n));
++		free_sockaddr_list(salist);
+ 		return NULL;
+ 	}
+ 
+@@ -2416,19 +2412,17 @@
+ ****************************************************************************/
+ static int do_message_op(void)
+ {
+-	struct in_addr ip;
+ 	struct nmb_name called, calling;
+-
+-	ip = ipzero;
++	struct sockaddr_list *salist;
+ 
+ 	make_nmb_name(&calling, global_myname, 0x0);
+ 	make_nmb_name(&called , desthost, name_type);
+ 
+-	ip = ipzero;
+-	if (have_ip) ip = dest_ip;
++	salist = resolve_name_smb(have_ip ? dest_ip : desthost, port);
+ 
+-	if (!(cli=cli_initialise(NULL)) || (cli_set_port(cli, port) == 0) || !cli_connect(cli, desthost, &ip)) {
++	if (!(cli=cli_initialise(NULL)) || !cli_connect(cli, desthost, salist)) {
+ 		DEBUG(0,("Connection to %s failed\n", desthost));
++		free_sockaddr_list(salist);
+ 		return 1;
+ 	}
+ 
+@@ -2660,9 +2654,7 @@
+ 			break;
+ 		case 'I':
+ 			{
+-				dest_ip = *interpret_addr2(optarg);
+-				if (zero_ip(dest_ip))
+-					exit(1);
++				strncpy(dest_ip, optarg, sizeof(dest_ip));
+ 				have_ip = True;
+ 			}
+ 			break;
+Index: samba-2.2.3a+IPv6/source/client/smbmount.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/client/smbmount.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/client/smbmount.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/client/smbmount.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -43,9 +43,9 @@
+ static pstring service;
+ static pstring options;
+ 
+-static struct in_addr dest_ip;
++static char dest_ip[512];
+ static BOOL have_ip;
+-static int smb_port = 139;
++static int smb_port = 0;
+ static BOOL got_pass;
+ static uid_t mount_uid;
+ static gid_t mount_gid;
+@@ -118,9 +118,8 @@
+ {
+ 	struct cli_state *c;
+ 	struct nmb_name called, calling;
++	struct sockaddr_list *salist;
+ 	char *server_n;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
+ 	pstring server;
+ 	char *share;
+ 
+@@ -144,13 +143,12 @@
+ 	make_nmb_name(&called , server, 0x20);
+ 
+  again:
+-	ip = ipzero;
+-	if (have_ip) ip = dest_ip;
++	salist = resolve_name_smb(have_ip ? dest_ip : server_n, smb_port);
+ 
+ 	/* have to open a new connection */
+-	if (!(c=cli_initialise(NULL)) || (cli_set_port(c, smb_port) == 0) ||
+-	    !cli_connect(c, server_n, &ip)) {
++	if (!(c=cli_initialise(NULL)) || !cli_connect(c, server_n, salist)) {
+ 		DEBUG(0,("%d: Connection to %s failed\n", getpid(), server_n));
++		free_sockaddr_list(salist);
+ 		if (c) {
+ 			cli_shutdown(c);
+ 		}
+@@ -747,11 +745,7 @@
+ 			} else if(!strcmp(opts, "debug")) {
+ 				DEBUGLEVEL = val;
+ 			} else if(!strcmp(opts, "ip")) {
+-				dest_ip = *interpret_addr2(opteq+1);
+-				if (zero_ip(dest_ip)) {
+-					fprintf(stderr,"Can't resolve address %s\n", opteq+1);
+-					exit(1);
+-				}
++				strncpy(dest_ip, optarg, sizeof(dest_ip));
+ 				have_ip = True;
+ 			} else if(!strcmp(opts, "workgroup")) {
+ 				pstrcpy(workgroup,opteq+1);
+Index: samba-2.2.3a+IPv6/source/client/smbspool.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/client/smbspool.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/client/smbspool.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/client/smbspool.c	18 Apr 2002 04:53:04 -0000	1.2
+@@ -29,7 +29,6 @@
+  */
+ 
+ extern BOOL		in_client;	/* Boolean for client library */
+-extern struct in_addr	ipzero;		/* Any address */
+ 
+ 
+ /*
+@@ -280,7 +279,6 @@
+   struct cli_state	*c;		/* New connection */
+   struct nmb_name	called,		/* NMB name of server */
+ 			calling;	/* NMB name of client */
+-  struct in_addr	ip;		/* IP address of server */
+   pstring		myname;		/* Client name */
+ 
+ 
+@@ -290,8 +288,6 @@
+ 
+   get_myname(myname);  
+ 
+-  ip = ipzero;
+-
+   make_nmb_name(&calling, myname, 0x0);
+   make_nmb_name(&called, server, 0x20);
+ 
+@@ -305,13 +301,7 @@
+     return (NULL);
+   }
+ 
+-  if (!cli_set_port(c, SMB_PORT))
+-  {
+-    fputs("ERROR: cli_set_port() failed...\n", stderr);
+-    return (NULL);
+-  }
+-
+-  if (!cli_connect(c, server, &ip))
++  if (!cli_connect(c, server, NULL))
+   {
+     fputs("ERROR: cli_connect() failed...\n", stderr);
+     return (NULL);
+Index: samba-2.2.3a+IPv6/source/include/client.h
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/include/client.h,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/include/client.h	16 Apr 2002 03:34:39 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/include/client.h	18 Apr 2002 04:53:04 -0000	1.2
+@@ -58,7 +58,7 @@
+ };
+ 
+ struct cli_state {
+-	int port;
++	int default_port;
+ 	int fd;
+ 	uint16 cnum;
+ 	uint16 pid;
+@@ -88,7 +88,8 @@
+ 	struct nmb_name called;
+ 	struct nmb_name calling;
+ 	fstring full_dest_host_name;
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
++	struct sockaddr_list *connected_addr;
+ 
+ 	struct pwd_info pwd;
+ 	unsigned char cryptkey[8];
+Index: samba-2.2.3a+IPv6/source/include/config.h.in
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/include/config.h.in,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/include/config.h.in	16 Apr 2002 03:34:39 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/include/config.h.in	18 Apr 2002 04:53:04 -0000	1.2
+@@ -122,6 +122,7 @@
+ #undef WITH_SYSLOG
+ #undef WITH_PROFILE
+ #undef WITH_SSL
++#undef HAVE_INET6
+ #undef WITH_LDAP
+ #undef WITH_NISPLUS
+ #undef WITH_TDBPWD
+Index: samba-2.2.3a+IPv6/source/include/nameserv.h
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/include/nameserv.h,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/include/nameserv.h	16 Apr 2002 03:34:39 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/include/nameserv.h	18 Apr 2002 04:53:04 -0000	1.2
+@@ -129,6 +129,17 @@
+ #define FIND_SELF_NAME  1
+ 
+ /*
++ * Linked-list structure for storing resolved IP addresses.
++ */
++
++struct sockaddr_list {
++	struct sockaddr_list *next;
++	int pfamily;
++	int len;
++	struct sockaddr *addr;
++};
++
++/*
+  * The different name types that can be in namelists.
+  *
+  * SELF_NAME should only be on the broadcast and unicast subnets.
+Index: samba-2.2.3a+IPv6/source/include/proto.h
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/include/proto.h,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/include/proto.h	16 Apr 2002 03:34:39 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/include/proto.h	18 Apr 2002 04:53:04 -0000	1.2
+@@ -181,14 +181,15 @@
+ BOOL cli_negprot(struct cli_state *cli);
+ BOOL cli_session_request(struct cli_state *cli,
+ 			 struct nmb_name *calling, struct nmb_name *called);
+-BOOL cli_connect(struct cli_state *cli, const char *host, struct in_addr *ip);
++BOOL cli_connect(struct cli_state *cli, const char *host,
++		struct sockaddr_list *salist);
+ BOOL cli_establish_connection(struct cli_state *cli, 
+-				char *dest_host, struct in_addr *dest_ip,
++				char *dest_host, struct sockaddr_list *salist,
+ 				struct nmb_name *calling, struct nmb_name *called,
+ 				char *service, char *service_type,
+ 				BOOL do_shutdown, BOOL do_tcon);
+-BOOL attempt_netbios_session_request(struct cli_state *cli, char *srchost, char *desthost,
+-                                     struct in_addr *pdest_ip);
++BOOL attempt_netbios_session_request(struct cli_state *cli, char *srchost,
++		char *desthost);
+ 
+ /*The following definitions come from  libsmb/cli_dfs.c  */
+ 
+@@ -660,11 +661,14 @@
+ BOOL getlmhostsent( FILE *fp, pstring name, int *name_type, struct in_addr *ipaddr);
+ void endlmhosts(FILE *fp);
+ BOOL name_register_wins(const char *name, int name_type);
+-BOOL name_resolve_bcast(const char *name, int name_type,
+-			struct in_addr **return_ip_list, int *return_count);
+-BOOL resolve_name(const char *name, struct in_addr *return_ip, int name_type);
+-BOOL resolve_srv_name(const char* srv_name, fstring dest_host,
+-                                struct in_addr *ip);
++struct sockaddr_list *name_resolve_bcast(const char *name, int name_type);
++BOOL resolve_name_netbios(const char *name, struct in_addr *return_ip,
++		int name_type);
++struct sockaddr_list *resolve_name_smb(const char *name, int port);
++struct sockaddr_list *resolve_srv_name(const char* srv_name,
++		fstring dest_host, int port);
++//BOOL resolve_srv_name(const char* srv_name, fstring dest_host,
++//                                struct in_addr *ip);
+ BOOL find_master_ip(char *group, struct in_addr *master_ip);
+ BOOL lookup_dc_name(const char *srcname, const char *domain, 
+ 		    struct in_addr *dc_ip, char *ret_name);
+@@ -1076,9 +1080,23 @@
+ void safe_free(void *p);
+ BOOL get_myname(char *my_name);
+ int interpret_protocol(char *str,int def);
++BOOL is_ipv4address(const char *str);
+ BOOL is_ipaddress(const char *str);
+ uint32 interpret_addr(const char *str);
+ struct in_addr *interpret_addr2(const char *str);
++struct sockaddr *get_numeric_addr(const char *str);
++int get_sockaddr_port(struct sockaddr *sa);
++void set_sockaddr_port(struct sockaddr *sa, int port);
++struct sockaddr_list *set_default_ports(struct sockaddr_list *salist);
++BOOL is_directsmb(struct sockaddr *sa);
++char *print_sockaddr(struct sockaddr *sa);
++void make_sockaddr_in(struct sockaddr *sa, struct in_addr *addr);
++void free_sockaddr_list(struct sockaddr_list *salist);
++struct sockaddr_list *make_sin_list(struct in_addr *addr, int count);
++struct sockaddr_list *make_singlet_list(struct in_addr *addr, int port);
++#ifdef HAVE_INET6
++struct sockaddr_list *make_sa_list(struct addrinfo *ai);
++#endif
+ BOOL zero_ip(struct in_addr ip);
+ char *automount_lookup(char *user_name);
+ char *automount_lookup(char *user_name);
+@@ -1212,7 +1230,8 @@
+ BOOL send_smb(int fd,char *buffer);
+ BOOL send_one_packet(char *buf,int len,struct in_addr ip,int port,int type);
+ int open_socket_in( int type, int port, int dlevel, uint32 socket_addr, BOOL rebind );
+-int open_socket_out(int type, struct in_addr *addr, int port ,int timeout);
++int open_socket_out(struct sockaddr_list *addrs,
++		struct sockaddr_list **connected_addr, int timeout);
+ void client_setfd(int fd);
+ char *client_name(void);
+ char *client_addr(void);
+Index: samba-2.2.3a+IPv6/source/include/smb.h
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/include/smb.h,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/include/smb.h	16 Apr 2002 03:34:38 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/include/smb.h	18 Apr 2002 04:53:04 -0000	1.2
+@@ -463,7 +463,8 @@
+ 	char *user; /* name of user who *opened* this connection */
+ 	uid_t uid; /* uid of user who *opened* this connection */
+ 	gid_t gid; /* gid of user who *opened* this connection */
+-	char client_address[18]; /* String version of client IP address. */
++	char client_address[50]; /* String version of client IP address.
++				  * Nice and long for IPv6 addresses... */
+ 
+ 	uint16 vuid; /* vuid of user who *opened* this connection, or UID_FIELD_INVALID */
+ 
+Index: samba-2.2.3a+IPv6/source/lib/access.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/lib/access.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/lib/access.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/lib/access.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -16,7 +16,7 @@
+ #define	FAIL		(-1)
+ 
+ /* masked_match - match address against netnumber/netmask */
+-static int masked_match(char *tok, char *slash, char *s)
++static BOOL masked_match_ipv4(char *tok, char *slash, char *s)
+ {
+ 	uint32 net;
+ 	uint32 mask;
+@@ -35,6 +35,54 @@
+ 	return ((addr & mask) == net);
+ }
+ 
++#ifdef HAVE_INET6
++static BOOL masked_match_ipv6(char *tok, char *slash, char *s)
++{
++	struct in6_addr net, addr;
++	unsigned char *n = (unsigned char *)&net;
++	unsigned char *a = (unsigned char *)&addr;
++	int ret, len, i, mask;
++
++	if(inet_pton(AF_INET6, s, &addr) <= 0)
++	{
++		DEBUG(0,("access: unable to parse remote address: %s\n", s));
++		return False;
++	}
++	*slash = '\0';
++	ret = inet_pton(AF_INET6, tok, &net);
++	*slash = '/';
++	len = atoi(slash + 1);
++	if(ret <= 0 || len < 0 || len > 128
++			|| (len == 0 && strcmp(slash + 1, "0")))
++	{
++		DEBUG(0,("access: bad net/mask access control: %s\n", tok));
++		return False;
++	}
++	for(i = 0; i < len; i += 8)
++	{
++
++		if( len - i < 8 )
++			mask = ~((1 << (8 - (len - i))) - 1);
++		else
++			mask = ~0;
++		DEBUG(3,("len=%d i=%d mask=%02x *n=%02x *a=%02x *a&mask=%02x\n",
++					len, i, mask, *n, *a, *a & mask));
++		if(*(n++) != (*(a++) & mask)) return False;
++	}
++	return True;
++}
++#endif
++
++static BOOL masked_match(char *tok, char *slash, char *s)
++{
++	if(is_ipv4address(s)) return masked_match_ipv4(tok, slash, s);
++#ifdef HAVE_INET6
++	return masked_match_ipv6(tok, slash, s);
++#else
++	return False;
++#endif
++}
++
+ /* string_match - match string against token */
+ static int string_match(char *tok,char *s, char *invalid_char)
+ {
+@@ -105,8 +153,13 @@
+ 	} else if (tok[(tok_len = strlen(tok)) - 1] == '.') {	/* network */
+ 		if (strncmp(tok, s, tok_len) == 0)
+ 			return (True);
++#ifdef HAVE_INET6
++	} else if (tok[(tok_len = strlen(tok)) - 1] == ':') { /* IPv6 network */
++		if (strncasecmp(tok, s, tok_len) == 0)
++			return (True);
++#endif
+ 	} else if ((cut = strchr(tok, '/')) != 0) {	/* netnumber/netmask */
+-		if (isdigit((int)s[0]) && masked_match(tok, cut, s))
++		if (isxdigit((int)s[0]) && masked_match(tok, cut, s))
+ 			return (True);
+ 	} else if (strchr(tok, '*') != 0) {
+ 		*invalid_char = '*';
+@@ -200,9 +253,13 @@
+ 	client[1] = caddr;  
+ 
+ 	/* if it is loopback then always allow unless specifically denied */
++#ifdef HAVE_INET6
++	if (strcmp(caddr, "127.0.0.1") == 0 || strcmp(caddr, "::1") == 0) {
++#else
+ 	if (strcmp(caddr, "127.0.0.1") == 0) {
++#endif
+ 		/*
+-		 * If 127.0.0.1 matches both allow and deny then allow.
++		 * If 127.0.0.1 or ::1 matches both allow and deny then allow.
+ 		 * Patch from Steve Langasek vorlon@netexpress.net.
+ 		 */
+ 		if (deny_list && 
+Index: samba-2.2.3a+IPv6/source/lib/util.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/lib/util.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/lib/util.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/lib/util.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -732,11 +732,11 @@
+  Return true if a string could be a pure IP address.
+ ****************************************************************************/
+ 
+-BOOL is_ipaddress(const char *str)
++BOOL is_ipv4address(const char *str)
+ {
+   BOOL pure_address = True;
+   int i;
+-  
++
+   for (i=0; pure_address && str[i]; i++)
+     if (!(isdigit((int)str[i]) || str[i] == '.'))
+       pure_address = False;
+@@ -747,6 +747,26 @@
+   return pure_address;
+ }
+ 
++BOOL is_ipaddress(const char *str)
++{
++#ifdef HAVE_INET6
++  /* First we see if the address is an IPv6 address */
++  if (strchr(str, ':'))
++  {
++	int i;
++
++	/* It contains a colon; it probably is */
++	for (i=0; str[i]; i++)
++		if (!(isxdigit((int)str[i]) || str[i] == '.' || str[i] == ':'))
++			return False;
++
++	return True;
++  }
++#endif
++
++  return is_ipv4address(str);
++}
++
+ /****************************************************************************
+ interpret an internet address or name into an IP address in 4 byte form
+ ****************************************************************************/
+@@ -792,6 +812,186 @@
+   return(&ret);
+ }
+ 
++struct sockaddr *get_numeric_addr(const char *str)
++{
++#ifdef HAVE_INET6
++	struct sockaddr *sa;
++	struct addrinfo *ai, hints;
++
++	memset(&hints, 0, sizeof(hints));
++	hints.ai_socktype = SOCK_STREAM;
++	hints.ai_flags = AI_NUMERICHOST;
++	if(getaddrinfo(str, NULL, &hints, &ai) || ! ai) return NULL;
++	sa = (struct sockaddr *)malloc(ai->ai_addrlen);
++	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
++	freeaddrinfo(ai);
++	return sa;
++#else
++	struct sockaddr *sa;
++	struct in_addr addr;
++
++	if(inet_aton(str, &addr))
++	{
++		sa = (struct sockaddr *)malloc(sizeof(struct sockaddr_in));
++		make_sockaddr_in(sa, &addr);
++		return sa;
++	}
++	return NULL;
++#endif
++}
++
++int get_sockaddr_port(struct sockaddr *sa)
++{
++#ifdef HAVE_INET6
++	if(sa->sa_family==AF_INET6)
++		return ntohs(((struct sockaddr_in6 *)sa)->sin6_port);
++	else
++#endif
++	if(sa->sa_family==AF_INET)
++		return ntohs(((struct sockaddr_in *)sa)->sin_port);
++	else
++		return 0;
++}
++
++void set_sockaddr_port(struct sockaddr *sa, int port)
++{
++#ifdef HAVE_INET6
++	if(sa->sa_family==AF_INET6)
++		((struct sockaddr_in6 *)sa)->sin6_port = htons(port);
++	else
++#endif
++	if(sa->sa_family==AF_INET)
++		((struct sockaddr_in *)sa)->sin_port = htons(port);
++}
++
++struct sockaddr_list *set_default_ports(struct sockaddr_list *salist)
++{
++	struct sockaddr_list *cur;
++
++	for(cur = salist; cur; cur = cur->next)
++	{
++		set_sockaddr_port(cur->addr, 445);
++		if(cur->addr->sa_family == AF_INET)
++		{
++			struct sockaddr_list *sc;
++
++			sc = (struct sockaddr_list *)
++				malloc(sizeof(struct sockaddr_list));
++			sc->next = cur->next;
++			cur->next = sc;
++			sc->pfamily = cur->pfamily;
++			sc->len = cur->len;
++			sc->addr = (struct sockaddr *)malloc(sc->len);
++			memcpy(sc->addr, cur->addr, cur->len);
++			set_sockaddr_port(sc->addr, 139);
++			cur = sc;
++		}
++	}
++	return salist;
++}
++
++
++BOOL is_directsmb(struct sockaddr *sa)
++{
++	BOOL ret = sa->sa_family != AF_INET
++		|| ((struct sockaddr_in *)sa)->sin_port == htons(445);
++	DEBUG(4,("connection is%s direct SMB\n", ret ? "" : " not"));
++	return ret;
++}
++
++char *print_sockaddr(struct sockaddr *sa)
++{
++#ifdef HAVE_INET6
++	static char addr[64];
++
++	if(sa->sa_family == AF_INET6)
++	{
++		inet_ntop(AF_INET6, &((struct sockaddr_in6 *)sa)->sin6_addr,
++			       	addr, sizeof(addr));
++		return addr;
++	} else
++#endif
++	if(sa->sa_family == AF_INET)
++		return inet_ntoa(((struct sockaddr_in *)sa)->sin_addr);
++	else return NULL;
++}
++
++void make_sockaddr_in(struct sockaddr *sa, struct in_addr *addr)
++{
++	memset(sa, 0, sizeof(struct sockaddr_in));
++	((struct sockaddr_in *)sa)->sin_family = AF_INET;
++	((struct sockaddr_in *)sa)->sin_port = 0;
++	memcpy(&((struct sockaddr_in *)sa)->sin_addr, addr,
++			sizeof(struct in_addr));
++}
++
++void free_sockaddr_list(struct sockaddr_list *salist)
++{
++	struct sockaddr_list *next;
++
++	while(salist)
++	{
++		next = salist->next;
++		SAFE_FREE(salist->addr);
++		SAFE_FREE(salist);
++		salist = next;
++	}
++}
++
++struct sockaddr_list *make_sin_list(struct in_addr *addr, int count)
++{
++	int i;
++	struct sockaddr_list *top = NULL, *last = NULL, *sc;
++
++	for(i = 0; i<count; ++i)
++	{
++		sc = (struct sockaddr_list *)
++			malloc(sizeof(struct sockaddr_list));
++		if(i==0) top = sc;
++		else last->next = sc;
++		last = sc;
++		sc->next = NULL;
++		sc->pfamily = PF_INET;
++		sc->len = sizeof(struct sockaddr_in);
++		sc->addr = (struct sockaddr *)
++			malloc(sizeof(struct sockaddr_in));
++		make_sockaddr_in(sc->addr, &addr[i]);
++	}
++	return top;
++}
++
++struct sockaddr_list *make_singlet_list(struct in_addr *addr, int port)
++{
++	struct sockaddr_list *salist;
++
++	salist = make_sin_list(addr, 1);
++	if(port) set_sockaddr_port(salist->addr, port);
++	else salist = set_default_ports(salist);
++	return salist;
++}
++
++#ifdef HAVE_INET6
++struct sockaddr_list *make_sa_list(struct addrinfo *ai)
++{
++	struct sockaddr_list *top = NULL, *last = NULL, *sc;
++
++	for(; ai; ai = ai->ai_next)
++	{
++		sc = (struct sockaddr_list *)
++			malloc(sizeof(struct sockaddr_list));
++		if(top==NULL) top = sc;
++		else last->next = sc;
++		last = sc;
++		sc->next = NULL;
++		sc->pfamily = ai->ai_family;
++		sc->len = ai->ai_addrlen;
++		sc->addr = (struct sockaddr *)malloc(ai->ai_addrlen);
++		memcpy(sc->addr, ai->ai_addr, ai->ai_addrlen);
++	}
++	return top;
++}
++#endif
++
+ /*******************************************************************
+   check if an IP is the 0.0.0.0
+   ******************************************************************/
+@@ -1343,7 +1543,7 @@
+ 		return True;
+ 
+ 	/* maybe its an IP address? */
+-	if (is_ipaddress(s))
++	if (is_ipv4address(s))
+ 	{
+ 		struct iface_struct nics[MAX_INTERFACES];
+ 		int i, n;
+Index: samba-2.2.3a+IPv6/source/lib/util_sock.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/lib/util_sock.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/lib/util_sock.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/lib/util_sock.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -804,67 +804,94 @@
+   create an outgoing socket. timeout is in milliseconds.
+   **************************************************************************/
+ 
+-int open_socket_out(int type, struct in_addr *addr, int port ,int timeout)
++int open_socket_out(struct sockaddr_list *addrs,
++		struct sockaddr_list **connected_addr, int timeout)
+ {
+-  struct sockaddr_in sock_out;
+-  int res,ret;
+-  int connect_loop = 250; /* 250 milliseconds */
+-  int loops = (timeout) / connect_loop;
+-
+-  /* create a socket to write to */
+-  res = socket(PF_INET, type, 0);
+-  if (res == -1) 
+-    { DEBUG(0,("socket error\n")); return -1; }
+-
+-  if (type != SOCK_STREAM) return(res);
+-  
+-  memset((char *)&sock_out,'\0',sizeof(sock_out));
+-  putip((char *)&sock_out.sin_addr,(char *)addr);
+-  
+-  sock_out.sin_port = htons( port );
+-  sock_out.sin_family = PF_INET;
+-
+-  /* set it non-blocking */
+-  set_blocking(res,False);
+-
+-  DEBUG(3,("Connecting to %s at port %d\n",inet_ntoa(*addr),port));
+-  
+-  /* and connect it to the destination */
+-connect_again:
+-  ret = connect(res,(struct sockaddr *)&sock_out,sizeof(sock_out));
+-
+-  /* Some systems return EAGAIN when they mean EINPROGRESS */
+-  if (ret < 0 && (errno == EINPROGRESS || errno == EALREADY ||
+-        errno == EAGAIN) && loops--) {
+-    msleep(connect_loop);
+-    goto connect_again;
+-  }
+-
+-  if (ret < 0 && (errno == EINPROGRESS || errno == EALREADY ||
+-         errno == EAGAIN)) {
+-      DEBUG(1,("timeout connecting to %s:%d\n",inet_ntoa(*addr),port));
+-      close(res);
+-      return -1;
+-  }
++	struct sockaddr_list *sl;
++	int res,ret;
++	int connect_loop = 250; /* 250 milliseconds */
++	int loops = (timeout) / connect_loop;
++
++	if(connected_addr) *connected_addr = NULL;
++
++	for(sl = addrs; sl; sl = sl->next)
++	{
++		/* create a socket to write to */
++		res = socket(sl->pfamily, SOCK_STREAM, 0);
++		if (res == -1) 
++		{
++			/* If there are more addresses available, then we
++			 * are probably running on a platform without IPv6
++			 * support in the kernel, and we just tried
++			 * connecting to an IPv6 address.  Don't complain
++			 * until we're out of addresses. */
++
++			if(!sl->next) DEBUG(0,("socket error\n"));
++			continue;
++		}
++
++		/* set it non-blocking */
++		set_blocking(res,False);
++
++		DEBUG(3,("Connecting to %s at port %d\n",
++			print_sockaddr(sl->addr), get_sockaddr_port(sl->addr)));
++		
++		/* and connect it to the destination */
++	connect_again:
++		ret = connect(res,sl->addr,sl->len);
++
++		/* Some systems return EAGAIN when they mean EINPROGRESS */
++		if (ret < 0 && (errno == EINPROGRESS || errno == EALREADY ||
++					errno == EAGAIN) && loops--) {
++			msleep(connect_loop);
++			goto connect_again;
++		}
++
++		if (ret < 0 && (errno == EINPROGRESS || errno == EALREADY ||
++					 errno == EAGAIN)) {
++			DEBUG(1,("timeout connecting to [%s]:%d\n",
++				print_sockaddr(sl->addr),
++				get_sockaddr_port(sl->addr)));
++			close(res);
++			if(sl->next) {
++				DEBUG(1,("attempting next address...\n"));
++				continue;
++			} else return -1;
++		}
+ 
+ #ifdef EISCONN
+-  if (ret < 0 && errno == EISCONN) {
+-    errno = 0;
+-    ret = 0;
+-  }
+-#endif
+-
+-  if (ret < 0) {
+-    DEBUG(2,("error connecting to %s:%d (%s)\n",
+-	     inet_ntoa(*addr),port,strerror(errno)));
+-    close(res);
+-    return -1;
+-  }
++		if (ret < 0 && errno == EISCONN) {
++			errno = 0;
++			ret = 0;
++		}
++#endif
+ 
+-  /* set it blocking again */
+-  set_blocking(res,True);
++		if (ret < 0) {
++			/* If we got connection refused or host unreachable,
++			 * we may be trying to connect to an IPv6 host but
++			 * this system isn't configured for IPv6.  If we have
++			 * more addresses, don't complain about this one --
++			 * just try the next ones. */
++
++			BOOL can_ignore = sl->next &&
++				(errno == ECONNREFUSED || errno == ENETUNREACH);
++			DEBUG(can_ignore ? 3 : 2,
++				("error connecting to [%s]:%d (%s)\n",
++				print_sockaddr(sl->addr),
++				get_sockaddr_port(sl->addr),
++				strerror(errno)));
++			close(res);
++			continue;
++		}
+ 
+-  return res;
++		/* set it blocking again */
++		set_blocking(res,True);
++
++		if(connected_addr) *connected_addr = sl;
++
++		return res;
++	}
++	return -1;
+ }
+ 
+ /* the following 3 client_*() functions are nasty ways of allowing
+@@ -891,9 +918,63 @@
+  matchname - determine if host name matches IP address. Used to
+  confirm a hostname lookup to prevent spoof attacks
+  ******************************************************************/
+-static BOOL matchname(char *remotehost,struct in_addr  addr)
++#ifdef HAVE_INET6
++static BOOL addr_equal(struct sockaddr *a, struct sockaddr *b)
++{
++	if(a->sa_family == AF_INET6 && b->sa_family == AF_INET6)
++	{
++		struct sockaddr_in6 *a6 = (struct sockaddr_in6 *)a;
++		struct sockaddr_in6 *b6 = (struct sockaddr_in6 *)b;
++
++		return !memcmp(&a6->sin6_addr, &b6->sin6_addr, 16);
++	}
++	if(a->sa_family == AF_INET && b->sa_family == AF_INET)
++	{
++		struct sockaddr_in *a4 = (struct sockaddr_in *)a;
++		struct sockaddr_in *b4 = (struct sockaddr_in *)b;
++
++		return a4->sin_addr.s_addr == b4->sin_addr.s_addr;
++	}
++	return False;
++}
++#endif
++
++/*******************************************************************
++ matchname - determine if host name matches IP address. Used to
++ confirm a hostname lookup to prevent spoof attacks
++ ******************************************************************/
++static BOOL matchname(char *remotehost, struct sockaddr *can)
+ {
++#ifdef HAVE_INET6
++	struct addrinfo *ai, hints, *cur;
++
++	memset(&hints, 0, sizeof(hints));
++	hints.ai_socktype = SOCK_STREAM;
++	if(getaddrinfo(remotehost, NULL, &hints, &ai)){
++		DEBUG(0,("getaddrinfo(%s): lookup failure.\n", remotehost));
++		return False;
++	}
++	for( cur = ai; cur; cur = cur->ai_next )
++		if(addr_equal(cur->ai_addr, can))
++		{
++			freeaddrinfo(ai);
++			return True;
++		}
++
++	/*
++	 * The host name does not map to the original host address. Perhaps
++	 * someone has compromised a name server. More likely someone botched
++	 * it, but that could be dangerous, too.
++	 */
++	
++	DEBUG(0,("host name/address mismatch: %s != %s\n",
++		 print_sockaddr(can), remotehost));
++
++	freeaddrinfo(ai);
++	return False;
++#else
+ 	struct hostent *hp;
++	struct in_addr addr = ((struct sockaddr_in *)can)->sin_addr;
+ 	int     i;
+ 	
+ 	if ((hp = sys_gethostbyname(remotehost)) == 0) {
+@@ -931,6 +1012,56 @@
+ 	DEBUG(0,("host name/address mismatch: %s != %s\n",
+ 		 inet_ntoa(addr), hp->h_name));
+ 	return False;
++#endif
++}
++
++/*******************************************************************
++ return a sockaddr describing the remote endpoint
++ ******************************************************************/
++static BOOL get_socket_sa(int fd, struct sockaddr **sa, int *len)
++{
++	if (fd == -1) {
++		return False;
++	}
++
++#ifdef HAVE_INET6
++	*len = sizeof(struct sockaddr_storage);
++#else
++	*len = sizeof(struct sockaddr);
++#endif
++
++	*sa = (struct sockaddr *)malloc(*len);
++
++	if (getpeername(fd, *sa, len) < 0) {
++		DEBUG(0,("getpeername failed. Error was %s\n", strerror(errno) ));
++		SAFE_FREE(*sa);
++		*sa = NULL;
++		return False;
++	}
++
++#ifdef HAVE_INET6
++	if((*sa)->sa_family == AF_INET6 && IN6_IS_ADDR_V4MAPPED(
++				&((struct sockaddr_in6 *)(*sa))->sin6_addr))
++	{
++		struct sockaddr_in *newsin;
++		struct in_addr addr;
++		int port = ((struct sockaddr_in6 *)(*sa))->sin6_port;
++
++		DEBUG(5,("converting IPv6-mapped address %s\n",
++					print_sockaddr(*sa)));
++		memcpy(&addr, &((struct sockaddr_in6 *)
++					(*sa))->sin6_addr + 12, 4);
++		SAFE_FREE(*sa);
++		*len = sizeof(struct sockaddr_in);
++		*sa = (struct sockaddr *)malloc(*len);
++		newsin = (struct sockaddr_in *)(*sa);
++		newsin->sin_family = AF_INET;
++		newsin->sin_port = port;
++		newsin->sin_addr = addr;
++	}
++#endif
++
++	return True;
+ }
+ 
+  
+@@ -940,34 +1071,60 @@
+ char *get_socket_name(int fd)
+ {
+ 	static pstring name_buf;
+-	static fstring addr_buf;
+-	struct hostent *hp;
+-	struct in_addr addr;
++	struct sockaddr *sa;
+ 	char *p;
++	int len;
+ 	
+-	p = get_socket_addr(fd);
+-
+-	/* it might be the same as the last one - save some DNS work */
+-	if (strcmp(p, addr_buf) == 0) return name_buf;
+-
+ 	pstrcpy(name_buf,"UNKNOWN");
+ 	if (fd == -1) return name_buf;
+ 
+-	fstrcpy(addr_buf, p);
++	if(!get_socket_sa(fd, &sa, &len)) return name_buf;
++	p = print_sockaddr(sa);
+ 
+-	addr = *interpret_addr2(p);
+-	
+-	/* Look up the remote host name. */
+-	if ((hp = gethostbyaddr((char *)&addr.s_addr, sizeof(addr.s_addr), AF_INET)) == 0) {
+-		DEBUG(1,("Gethostbyaddr failed for %s\n",p));
+-		pstrcpy(name_buf, p);
+-	} else {
+-		pstrcpy(name_buf,(char *)hp->h_name);
+-		if (!matchname(name_buf, addr)) {
+-			DEBUG(0,("Matchname failed on %s %s\n",name_buf,p));
+-			pstrcpy(name_buf,"UNKNOWN");
++#ifdef HAVE_INET6
++	{
++		char hostbuf[NI_MAXHOST];
++
++		if(getnameinfo(sa, len, hostbuf, NI_MAXHOST, NULL, 0, 0)) {
++			DEBUG(1,("Getnameinfo failed for %s\n",p));
++			pstrcpy(name_buf, p);
++		} else {
++			if (matchname(hostbuf, sa))
++				pstrcpy(name_buf, hostbuf);
++			else {
++				DEBUG(0,("Matchname failed on %s %s\n",
++							name_buf, p));
++				pstrcpy(name_buf,p);
++			}
+ 		}
+ 	}
++#else
++	{
++		struct hostent *hp;
++		struct sockaddr_in *nsin = (struct sockaddr_in *)sa;
++
++		if(sa->sa_family != AF_INET)
++		{
++			SAFE_FREE(sa);
++			return name_buf;
++		}
++
++		/* Look up the remote host name. */
++		if ((hp = gethostbyaddr((char *)&nsin->sin_addr.s_addr,
++				sizeof(nsin->sin_addr.s_addr), AF_INET)) == 0) {
++			DEBUG(1,("Gethostbyaddr failed for %s\n",p));
++			pstrcpy(name_buf, p);
++		} else {
++			pstrcpy(name_buf,(char *)hp->h_name);
++			if (!matchname(name_buf, sa)) {
++				DEBUG(0,("Matchname failed on %s %s\n",
++							name_buf, p));
++				pstrcpy(name_buf,p);
++			}
++		}
++	}
++#endif
++	SAFE_FREE(sa);
+ 
+ 	alpha_strcpy(name_buf, name_buf, "_-.", sizeof(name_buf));
+ 	if (strstr(name_buf,"..")) {
+@@ -982,23 +1139,17 @@
+  ******************************************************************/
+ char *get_socket_addr(int fd)
+ {
+-	struct sockaddr sa;
+-	struct sockaddr_in *sockin = (struct sockaddr_in *) (&sa);
+-	int     length = sizeof(sa);
+ 	static fstring addr_buf;
++	struct sockaddr *sa;
++	int len;
+ 
+ 	fstrcpy(addr_buf,"0.0.0.0");
+ 
+-	if (fd == -1) {
+-		return addr_buf;
++	if(get_socket_sa(fd, &sa, &len))
++	{
++		fstrcpy(addr_buf,print_sockaddr(sa));
++		SAFE_FREE(sa);
+ 	}
+-	
+-	if (getpeername(fd, &sa, &length) < 0) {
+-		DEBUG(0,("getpeername failed. Error was %s\n", strerror(errno) ));
+-		return addr_buf;
+-	}
+-	
+-	fstrcpy(addr_buf,(char *)inet_ntoa(sockin->sin_addr));
+ 	
+ 	return addr_buf;
+ }
+Index: samba-2.2.3a+IPv6/source/lib/wins_srv.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/lib/wins_srv.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/lib/wins_srv.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/lib/wins_srv.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -155,7 +155,7 @@
+       else
+         {
+         /* Add server to list. */
+-        if( is_ipaddress( wins_id_bufr ) )
++        if( is_ipv4address( wins_id_bufr ) )
+           entry->ip_addr = *interpret_addr2( wins_id_bufr );
+         else
+           entry->ip_addr = *interpret_addr2( "0.0.0.0" );
+Index: samba-2.2.3a+IPv6/source/libsmb/cli_lsarpc.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/cli_lsarpc.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/libsmb/cli_lsarpc.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/cli_lsarpc.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -817,6 +817,7 @@
+ {
+ 	extern pstring global_myname;
+ 	struct cli_state cli;
++	struct sockaddr_list *dest_addrs;
+ 	NTSTATUS result;
+ 	POLICY_HND lsa_pol;
+ 	BOOL ret = False;
+@@ -827,20 +828,22 @@
+ 		return False;
+ 	}
+  
+-	if(!resolve_name( remote_machine, &cli.dest_ip, 0x20)) {
++	if(!(dest_addrs = resolve_name_smb(remote_machine, 0))) {
+ 		DEBUG(0,("fetch_domain_sid: Can't resolve address for %s\n", remote_machine));
+ 		goto done;
+ 	}
+  
+-	if (!cli_connect(&cli, remote_machine, &cli.dest_ip)) {
++	if (!cli_connect(&cli, remote_machine, dest_addrs)) {
+ 		DEBUG(0,("fetch_domain_sid: unable to connect to SMB server on \
+ machine %s. Error was : %s.\n", remote_machine, cli_errstr(&cli) ));
+ 		goto done;
+ 	}
+ 
+-	if (!attempt_netbios_session_request(&cli, global_myname, remote_machine, &cli.dest_ip)) {
++	if (!attempt_netbios_session_request(&cli, global_myname,
++				remote_machine)) {
+ 		DEBUG(0,("fetch_domain_sid: machine %s rejected the NetBIOS \
+ session request. Error was %s\n", remote_machine, cli_errstr(&cli) ));
++		free_sockaddr_list(dest_addrs);
+ 		goto done;
+ 	}
+  
+Index: samba-2.2.3a+IPv6/source/libsmb/cli_pipe_util.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/cli_pipe_util.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/libsmb/cli_pipe_util.c	16 Apr 2002 03:34:36 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/cli_pipe_util.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -27,7 +27,7 @@
+ 				      char *pipe_name, 
+                                       struct ntuser_creds *creds)
+ {
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
+ 	struct nmb_name calling, called;
+ 	fstring dest_host;
+ 	extern pstring global_myname;
+@@ -49,15 +49,18 @@
+ 
+ 	/* Establish a SMB connection */
+ 
+-	if (!resolve_srv_name(system_name, dest_host, &dest_ip)) {
++	if (!(dest_addrs = resolve_srv_name(system_name, dest_host,
++					cli->default_port))) {
+ 		return NULL;
+ 	}
+ 
+ 	make_nmb_name(&called, dns_to_netbios_name(dest_host), 0x20);
+ 	make_nmb_name(&calling, dns_to_netbios_name(global_myname), 0);
+ 
+-	if (!cli_establish_connection(cli, dest_host, &dest_ip, &calling, 
++	if (!cli_establish_connection(cli, dest_host, dest_addrs, &calling, 
+ 				      &called, "IPC$", "IPC", False, True)) {
++		cli_shutdown(cli);
++		free_sockaddr_list(dest_addrs);
+ 		return NULL;
+ 	}
+ 
+Index: samba-2.2.3a+IPv6/source/libsmb/cliconnect.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/cliconnect.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/libsmb/cliconnect.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/cliconnect.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -430,7 +430,7 @@
+ 		}
+ 	}
+ 
+-	if (cli->port == 445) {
++	if (is_directsmb(cli->connected_addr->addr)) {
+ 		slprintf(fullshare, sizeof(fullshare)-1,
+ 			 "%s", share);
+ 	} else {
+@@ -638,8 +638,8 @@
+ 	int len = 4;
+ 	extern pstring user_socket_options;
+ 
+-	/* 445 doesn't have session request */
+-	if (cli->port == 445) return True;
++	/* Direct SMB doesn't have session request */
++	if (is_directsmb(cli->connected_addr->addr)) return True;
+ 
+ 	/* send a session request (RFC 1002) */
+ 	memcpy(&(cli->calling), calling, sizeof(*calling));
+@@ -683,9 +683,12 @@
+ 		*/
+ 		int port = (CVAL(cli->inbuf,8)<<8)+CVAL(cli->inbuf,9);
+ 		/* SESSION RETARGET */
+-		putip((char *)&cli->dest_ip,cli->inbuf+4);
+-
+-		cli->fd = open_socket_out(SOCK_STREAM, &cli->dest_ip, port, LONG_CONNECT_TIMEOUT);
++		struct in_addr addr;
++		putip((char *)&addr,cli->inbuf+4);
++		if(cli->dest_addrs) free_sockaddr_list(cli->dest_addrs);
++		cli->dest_addrs = make_singlet_list(&addr, port);
++		cli->fd = open_socket_out(cli->dest_addrs,
++				&cli->connected_addr, LONG_CONNECT_TIMEOUT);
+ 		if (cli->fd == -1)
+ 			return False;
+ 
+@@ -728,11 +731,11 @@
+ /****************************************************************************
+ open the client sockets
+ ****************************************************************************/
+-BOOL cli_connect(struct cli_state *cli, const char *host, struct in_addr *ip)
++BOOL cli_connect(struct cli_state *cli, const char *host,
++		struct sockaddr_list *salist)
+ {
+-	extern struct in_addr ipzero;
+ 	extern pstring user_socket_options;
+-	int name_type = 0x20;
++	BOOL free_on_error = False;
+ 	char *p;
+ 
+ 	/* reasonable default hostname */
+@@ -740,45 +743,44 @@
+ 		host = "*SMBSERVER";
+ 
+ 	fstrcpy(cli->desthost, host);
+-	
+-	/* allow hostnames of the form NAME#xx and do a netbios lookup */
+-	if ((p = strchr(cli->desthost, '#'))) {
+-		name_type = strtol(p+1, NULL, 16);		
+-		*p = 0;
+-	}
+-	
+-	if (!ip || ip_equal(*ip, ipzero)) {
+-		if (!resolve_name(cli->desthost, &cli->dest_ip, name_type)) {
+-			return False;
++
++	/* At this point, cli->dest_addrs should be empty */
++	if(cli->dest_addrs) free_sockaddr_list(cli->dest_addrs);
++
++	if (!salist) {
++		free_on_error = True;
++		if ((p = strchr(cli->desthost, '#'))) {
++			struct in_addr ip;
++			int name_type = strtol(p+1, NULL, 16);		
++
++			*p = 0;
++			if(!resolve_name_netbios(cli->desthost, &ip, name_type))
++				return False;
++			salist = make_singlet_list(&ip, 139);
++		} else {
++			if(!(salist = resolve_name_smb(cli->desthost,
++							cli->default_port)))
++				return False;
+ 		}
+-		if (ip)
+-			*ip = cli->dest_ip;
+-	} else {
+-		cli->dest_ip = *ip;
+ 	}
+ 
+ 	if (getenv("LIBSMB_PROG")) {
+ 		cli->fd = sock_exec(getenv("LIBSMB_PROG"));
+ 	} else {
+-		/* try 445 first, then 139 */
+-		int port = cli->port?cli->port:445;
+-		cli->fd = open_socket_out(SOCK_STREAM, &cli->dest_ip, 
+-					  port, cli->timeout);
+-		if (cli->fd == -1 && cli->port == 0) {
+-			port = 139;
+-			cli->fd = open_socket_out(SOCK_STREAM, &cli->dest_ip, 
+-						  port, cli->timeout);
+-		}
+-		if (cli->fd != -1) cli->port = port;
++		cli->fd = open_socket_out(salist, &cli->connected_addr,
++				cli->timeout);
+ 	}
+ 	if (cli->fd == -1) {
+ 		DEBUG(1,("Error connecting to %s (%s)\n",
+-			 inet_ntoa(*ip),strerror(errno)));
++			print_sockaddr(salist->addr),strerror(errno)));
++		if(free_on_error) free_sockaddr_list(salist);
+ 		return False;
+ 	}
+ 
+ 	set_socket_options(cli->fd,user_socket_options);
+ 
++	cli->dest_addrs = salist;
++
+ 	return True;
+ }
+ 
+@@ -786,13 +788,14 @@
+ establishes a connection right up to doing tconX, reading in a password.
+ ****************************************************************************/
+ BOOL cli_establish_connection(struct cli_state *cli, 
+-				char *dest_host, struct in_addr *dest_ip,
++				char *dest_host, struct sockaddr_list *salist,
+ 				struct nmb_name *calling, struct nmb_name *called,
+ 				char *service, char *service_type,
+ 				BOOL do_shutdown, BOOL do_tcon)
+ {
+ 	DEBUG(5,("cli_establish_connection: %s connecting to %s (%s) - %s [%s]\n",
+-		          nmb_namestr(calling), nmb_namestr(called), inet_ntoa(*dest_ip),
++		          nmb_namestr(calling), nmb_namestr(called),
++			  salist ? print_sockaddr(salist->addr) : "unspecified",
+ 	              cli->user_name, cli->domain));
+ 
+ 	/* establish connection */
+@@ -804,10 +807,12 @@
+ 
+ 	if (cli->fd == -1)
+ 	{
+-		if (!cli_connect(cli, dest_host, dest_ip))
++		if (!cli_connect(cli, dest_host, salist))
+ 		{
+ 			DEBUG(1,("cli_establish_connection: failed to connect to %s (%s)\n",
+-					  nmb_namestr(called), inet_ntoa(*dest_ip)));
++				  nmb_namestr(called),
++				  salist ? print_sockaddr(salist->addr)
++				  	: "unknown"));
+ 			return False;
+ 		}
+ 	}
+@@ -929,9 +934,10 @@
+  Attempt a NetBIOS session request, falling back to *SMBSERVER if needed.
+ ****************************************************************************/
+ 
+-BOOL attempt_netbios_session_request(struct cli_state *cli, char *srchost, char *desthost,
+-                                     struct in_addr *pdest_ip)
++BOOL attempt_netbios_session_request(struct cli_state *cli, char *srchost,
++		char *desthost)
+ {
++  struct sockaddr_list *dest_addrs_cache = cli->dest_addrs;
+   struct nmb_name calling, called;
+ 
+   make_nmb_name(&calling, srchost, 0x0);
+@@ -968,10 +974,11 @@
+ 		return False;
+ 	}
+ 
++    cli->dest_addrs = NULL; /* we cached it, so it shouldn't get freed */
+     cli_shutdown(cli);
+ 
+     if (!cli_initialise(cli) ||
+-        !cli_connect(cli, desthost, pdest_ip) ||
++        !cli_connect(cli, desthost, dest_addrs_cache) ||
+         !cli_session_request(cli, &calling, &smbservername)) {
+           DEBUG(0,("attempt_netbios_session_request: %s rejected the session for \
+ name *SMBSERVER with error %s\n", desthost, cli_errstr(cli) ));
+Index: samba-2.2.3a+IPv6/source/libsmb/clidgram.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/clidgram.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/libsmb/clidgram.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/clidgram.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -147,7 +147,7 @@
+   struct sockaddr_in sock_out;
+   socklen_t name_size;
+ 
+-  if (!resolve_name(send_to_name, &sendto_ip, 0x1d)) {
++  if (!resolve_name_netbios(send_to_name, &sendto_ip, 0x1d)) {
+ 
+     DEBUG(0, ("Could not resolve name: %s<1D>\n", send_to_name));
+     return False;
+@@ -156,17 +156,15 @@
+ 
+   my_ip.s_addr = inet_addr("0.0.0.0");
+  
+-  if (!resolve_name(myname, &my_ip, 0x00)) { /* FIXME: Call others here */
++  if (!resolve_name_netbios(myname, &my_ip, 0x00)) { /* FIXME: Call others here */
+ 
+     DEBUG(0, ("Could not resolve name: %s<00>\n", myname));
+ 
+   }
+ 
+-  if ((dgram_sock = open_socket_out(SOCK_DGRAM, &sendto_ip, 138, LONG_CONNECT_TIMEOUT)) < 0) {
+-
+-    DEBUG(4, ("open_sock_out failed ..."));
++  if ((dgram_sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
++    DEBUG(0, ("socket failed (%s)", strerror(errno)));
+     return False;
+-
+   }
+ 
+   /* Make it a broadcast socket ... */
+Index: samba-2.2.3a+IPv6/source/libsmb/clientgen.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/clientgen.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/libsmb/clientgen.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/clientgen.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -24,11 +24,14 @@
+ #include "includes.h"
+ 
+ /*
+- * Change the port number used to call on 
++ * Change the default port number used to call on.
++ *
++ * This should only truly be used if we're operating on a non-standard
++ * port.  The default behavior is to first try port 445, then 139.
+  */
+ int cli_set_port(struct cli_state *cli, int port)
+ {
+-	cli->port = port;
++	cli->default_port = port;
+ 	return port;
+ }
+ 
+@@ -180,7 +183,9 @@
+ 
+ 	ZERO_STRUCTP(cli);
+ 
+-	cli->port = 0;
++	cli->default_port = 0;
++	cli->dest_addrs = NULL;
++	cli->connected_addr = NULL;
+ 	cli->fd = -1;
+ 	cli->cnum = -1;
+ 	cli->pid = (uint16)sys_getpid();
+@@ -237,6 +242,9 @@
+ 	BOOL allocated;
+ 	SAFE_FREE(cli->outbuf);
+ 	SAFE_FREE(cli->inbuf);
++
++	if (cli->dest_addrs)
++	       free_sockaddr_list(cli->dest_addrs);
+ 
+ 	if (cli->mem_ctx)
+ 		talloc_destroy(cli->mem_ctx);
+Index: samba-2.2.3a+IPv6/source/libsmb/domain_client_validate.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/domain_client_validate.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/libsmb/domain_client_validate.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/domain_client_validate.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -34,7 +34,7 @@
+ static BOOL connect_to_domain_password_server(struct cli_state *pcli, 
+ 					      char *server, unsigned char *trust_passwd)
+ {
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
+ 	fstring remote_machine;
+         NTSTATUS result;
+ 
+@@ -43,7 +43,7 @@
+ 		return False;
+ 	}
+ 
+-	if (is_ipaddress(server)) {
++	if (is_ipv4address(server)) {
+ 		struct in_addr to_ip;
+ 	  
+ 		/* we shouldn't have 255.255.255.255 forthe IP address of 
+@@ -65,27 +65,31 @@
+ 	standard_sub_basic(remote_machine);
+ 	strupper(remote_machine);
+ 
+-	if(!resolve_name( remote_machine, &dest_ip, 0x20)) {
++	if(!(dest_addrs = resolve_name_smb(remote_machine, pcli->default_port))) {
+ 		DEBUG(1,("connect_to_domain_password_server: Can't resolve address for %s\n", remote_machine));
+ 		cli_shutdown(pcli);
+ 		return False;
+ 	}
+   
++#if 0
+ 	if (ismyip(dest_ip)) {
+ 		DEBUG(1,("connect_to_domain_password_server: Password server loop - not using password server %s\n",
+ 			 remote_machine));
+ 		cli_shutdown(pcli);
+ 		return False;
+ 	}
++#endif
+   
+-	if (!cli_connect(pcli, remote_machine, &dest_ip)) {
++	if (!cli_connect(pcli, remote_machine, dest_addrs)) {
+ 		DEBUG(0,("connect_to_domain_password_server: unable to connect to SMB server on \
+ machine %s. Error was : %s.\n", remote_machine, cli_errstr(pcli) ));
++		free_sockaddr_list(dest_addrs);
+ 		cli_shutdown(pcli);
+ 		return False;
+ 	}
+   
+-	if (!attempt_netbios_session_request(pcli, global_myname, remote_machine, &dest_ip)) {
++	if (!attempt_netbios_session_request(pcli, global_myname,
++				remote_machine)) {
+ 		DEBUG(0,("connect_to_password_server: machine %s rejected the NetBIOS \
+ session request. Error was : %s.\n", remote_machine, cli_errstr(pcli) ));
+ 		return False;
+Index: samba-2.2.3a+IPv6/source/libsmb/libsmbclient.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/libsmbclient.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/libsmb/libsmbclient.c	16 Apr 2002 03:34:36 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/libsmbclient.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -244,10 +244,7 @@
+ 	char *p, *server_n = server;
+ 	fstring group;
+ 	pstring ipenv;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
+   
+-	ip = ipzero;
+ 	ZERO_STRUCT(c);
+ 
+ 	/* try to use an existing connection */
+@@ -305,10 +302,8 @@
+  again:
+ 	slprintf(ipenv,sizeof(ipenv)-1,"HOST_%s", server_n);
+ 
+-	ip = ipzero;
+-
+ 	/* have to open a new connection */
+-	if (!cli_initialise(&c) || !cli_connect(&c, server_n, &ip)) {
++	if (!cli_initialise(&c) || !cli_connect(&c, server_n, NULL)) {
+ 		if (c.initialised) cli_shutdown(&c);
+ 		errno = ENOENT;
+ 		return NULL;
+@@ -1591,7 +1586,7 @@
+ 
+ 		/* We have server and share and path empty ... so list the workgroups */
+ 
+-		if (!resolve_name(lp_workgroup(), &rem_ip, 0x1d)) {
++		if (!resolve_name_netbios(lp_workgroup(), &rem_ip, 0x1d)) {
+       
+ 			errno = EINVAL;  /* Something wrong with smb.conf? */
+ 			return -1;
+@@ -1662,8 +1657,8 @@
+ 			/* Check to see if <server><1D> translates, or <server><20> translates */
+ 			/* However, we check to see if <server> is an IP address first */
+ 
+-			if (!is_ipaddress(server) &&  /* Not an IP addr so check next */
+-			    resolve_name(server, &rem_ip, 0x1d)) { /* Found LMB */
++			if (!is_ipv4address(server) &&  /* Not an IP addr so check next */
++			    resolve_name_netbios(server, &rem_ip, 0x1d)) { /* Found LMB */
+ 				pstring buserver;
+ 
+ 				smbc_file_table[slot]->dir_type = SMBC_SERVER;
+@@ -1715,8 +1710,7 @@
+ 
+ 			}
+ 			else {
+-
+-				if (resolve_name(server, &rem_ip, 0x20)) {
++				if (resolve_name_netbios(server, &rem_ip, 0x20)) {
+ 
+ 					/* Now, list the shares ... */
+ 
+Index: samba-2.2.3a+IPv6/source/libsmb/namequery.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/namequery.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/libsmb/namequery.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/namequery.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -628,15 +628,11 @@
+  Resolve via "bcast" method.
+ *********************************************************/
+ 
+-BOOL name_resolve_bcast(const char *name, int name_type,
+-			struct in_addr **return_ip_list, int *return_count)
++struct sockaddr_list *name_resolve_bcast(const char *name, int name_type)
+ {
+ 	int sock, i;
+ 	int num_interfaces = iface_count();
+ 
+-	*return_ip_list = NULL;
+-	*return_count = 0;
+-	
+ 	/*
+ 	 * "bcast" means do a broadcast lookup on all the local interfaces.
+ 	 */
+@@ -646,7 +642,7 @@
+ 	sock = open_socket_in( SOCK_DGRAM, 0, 3,
+ 			       interpret_addr(lp_socket_address()), True );
+ 
+-	if (sock == -1) return False;
++	if (sock == -1) return NULL;
+ 
+ 	set_socket_options(sock,"SO_BROADCAST");
+ 	/*
+@@ -655,33 +651,36 @@
+ 	 */
+ 	for( i = num_interfaces-1; i >= 0; i--) {
+ 		struct in_addr sendto_ip;
++		struct in_addr *addr;
++		int return_count;
++
+ 		/* Done this way to fix compiler error on IRIX 5.x */
+ 		sendto_ip = *iface_bcast(*iface_n_ip(i));
+-		*return_ip_list = name_query(sock, name, name_type, True, 
+-				    True, sendto_ip, return_count);
+-		if(*return_ip_list != NULL) {
++		addr = name_query(sock, name, name_type, True, 
++				  True, sendto_ip, &return_count);
++		if(addr != NULL) {
++			struct sockaddr_list *salist;
++
+ 			close(sock);
+-			return True;
++			salist = make_sin_list(addr, return_count);
++			SAFE_FREE(addr);
++			return salist;
+ 		}
+ 	}
+ 
+ 	close(sock);
+-	return False;
++	return NULL;
+ }
+ 
+ /********************************************************
+  Resolve via "wins" method.
+ *********************************************************/
+ 
+-static BOOL resolve_wins(const char *name, int name_type,
+-                         struct in_addr **return_iplist, int *return_count)
++static struct sockaddr_list *resolve_wins(const char *name, int name_type)
+ {
+ 	int sock;
+ 	struct in_addr wins_ip;
+ 	BOOL wins_ismyip;
+-
+-	*return_iplist = NULL;
+-	*return_count = 0;
+ 	
+ 	/*
+ 	 * "wins" means do a unicast lookup to the WINS server.
+@@ -703,7 +702,7 @@
+ 		wins_ismyip = True;
+ 	} else if( wins_srv_count() < 1 ) {
+ 		DEBUG(3,("resolve_wins: WINS server resolution selected and no WINS servers listed.\n"));
+-		return False;
++		return NULL;
+ 	} else {
+ 		wins_ip     = wins_srv_ip();
+ 		wins_ismyip = ismyip(wins_ip);
+@@ -715,27 +714,32 @@
+ 					interpret_addr(lp_socket_address()),
+ 					True );
+ 		if (sock != -1) {
+-			*return_iplist = name_query( sock,      name,
+-						     name_type, False, 
+-						     True,      wins_ip,
+-						     return_count);
+-			if(*return_iplist != NULL) {
+-				close(sock);
+-				return True;
+-			}
++			struct in_addr *addr;
++			int return_count;
++
++			addr = name_query(sock,      name,
++					  name_type, False, 
++					  True,      wins_ip,
++					  &return_count);
+ 			close(sock);
++			if(addr != NULL) {
++				struct sockaddr_list *salist;
++
++				salist = make_sin_list(addr, return_count);
++				SAFE_FREE(addr);
++				return salist;
++			}
+ 		}
+ 	}
+ 
+-	return False;
++	return NULL;
+ }
+ 
+ /********************************************************
+  Resolve via "lmhosts" method.
+ *********************************************************/
+ 
+-static BOOL resolve_lmhosts(const char *name, int name_type,
+-                         struct in_addr **return_iplist, int *return_count)
++static struct sockaddr_list *resolve_lmhosts(const char *name, int name_type)
+ {
+ 	/*
+ 	 * "lmhosts" means parse the local lmhosts file.
+@@ -746,9 +750,6 @@
+ 	int name_type2;
+ 	struct in_addr return_ip;
+ 
+-	*return_iplist = NULL;
+-	*return_count = 0;
+-
+ 	DEBUG(3,("resolve_lmhosts: Attempting lmhosts lookup for name %s<0x%x>\n", name, name_type));
+ 
+ 	fp = startlmhosts( LMHOSTSFILE );
+@@ -758,19 +759,12 @@
+                 ((name_type2 == -1) || (name_type == name_type2))
+                ) {
+ 				endlmhosts(fp);
+-				*return_iplist = (struct in_addr *)malloc(sizeof(struct in_addr));
+-				if(*return_iplist == NULL) {
+-					DEBUG(3,("resolve_lmhosts: malloc fail !\n"));
+-					return False;
+-				}
+-				**return_iplist = return_ip;
+-				*return_count = 1;
+-				return True; 
++				return make_sin_list(&return_ip, 1);
+ 			}
+ 		}
+ 		endlmhosts(fp);
+ 	}
+-	return False;
++	return NULL;
+ }
+ 
+ 
+@@ -778,32 +772,35 @@
+  Resolve via "hosts" method.
+ *********************************************************/
+ 
+-static BOOL resolve_hosts(const char *name,
+-                         struct in_addr **return_iplist, int *return_count)
++static struct sockaddr_list *resolve_hosts(const char *name)
+ {
+ 	/*
+ 	 * "host" means do a localhost, or dns lookup.
+ 	 */
++#ifdef HAVE_INET6
++	struct addrinfo *ai, hints;
++	struct sockaddr_list *ret;
++
++	DEBUG(3,("resolve_hosts: Attempting getaddrinfo for name %s<0x20>\n", name));
++	memset(&hints, 0, sizeof(hints));
++	hints.ai_socktype = SOCK_STREAM;
++	if(getaddrinfo(name, NULL, &hints, &ai)) return NULL;
++	ret = make_sa_list(ai);
++	freeaddrinfo(ai);
++	return ret;
++#else
+ 	struct hostent *hp;
+ 
+-	*return_iplist = NULL;
+-	*return_count = 0;
+-
+ 	DEBUG(3,("resolve_hosts: Attempting host lookup for name %s<0x20>\n", name));
+ 	
+ 	if (((hp = sys_gethostbyname(name)) != NULL) && (hp->h_addr != NULL)) {
+-		struct in_addr return_ip;
+-		putip((char *)&return_ip,(char *)hp->h_addr);
+-		*return_iplist = (struct in_addr *)malloc(sizeof(struct in_addr));
+-		if(*return_iplist == NULL) {
+-			DEBUG(3,("resolve_hosts: malloc fail !\n"));
+-			return False;
+-		}
+-		**return_iplist = return_ip;
+-		*return_count = 1;
+-		return True;
++		struct in_addr addr;
++
++		memcpy(&addr.s_addr, hp->h_addr, sizeof(addr.s_addr));
++		return make_sin_list(&addr, 1);
+ 	}
+-	return False;
++	return NULL;
++#endif
+ }
+ 
+ /********************************************************
+@@ -811,34 +808,44 @@
+  Use this function if the string is either an IP address, DNS
+  or host name or NetBIOS name. This uses the name switch in the
+  smb.conf to determine the order of name resolution.
++
++ WARNING: This function returns sockaddrs without the port set!
++          Don't try to connect to these without first setting
++	  the port!
+ *********************************************************/
+ 
+-static BOOL internal_resolve_name(const char *name, int name_type,
+-                         		struct in_addr **return_iplist, int *return_count)
++static struct sockaddr_list *internal_resolve_name(const char *name, int name_type)
+ {
+   pstring name_resolve_list;
+   fstring tok;
+   char *ptr;
+-  BOOL allones = (strcmp(name,"255.255.255.255") == 0);
+-  BOOL allzeros = (strcmp(name,"0.0.0.0") == 0);
+-  BOOL is_address = is_ipaddress(name);
+-  *return_iplist = NULL;
+-  *return_count = 0;
+-
+-  if (allzeros || allones || is_address) {
+-	*return_iplist = (struct in_addr *)malloc(sizeof(struct in_addr));
+-	if(*return_iplist == NULL) {
+-		DEBUG(3,("internal_resolve_name: malloc fail !\n"));
+-		return False;
+-	}
+-	if(is_address) { 
+-		/* if it's in the form of an IP address then get the lib to interpret it */
+-		(*return_iplist)->s_addr = inet_addr(name);
+-    } else {
+-		(*return_iplist)->s_addr = allones ? 0xFFFFFFFF : 0;
+-		*return_count = 1;
++  struct sockaddr_list *salist = NULL;
++
++  if (is_ipaddress(name)) {
++	/* if it's in the form of an IP address then get
++	 * the lib to interpret it */
++	struct sockaddr *sa;
++
++	if(!(sa = get_numeric_addr(name))) return NULL;
++	salist = (struct sockaddr_list *)malloc(sizeof(struct sockaddr_list));
++	salist->next = NULL;
++	salist->addr = sa;
++
++	/* This isn't kosher, but it would take a lot to make Samba
++	 * be truly AF-independent. */
++#ifdef HAVE_INET6
++	if( sa->sa_family == AF_INET6 )
++	{
++		salist->pfamily = PF_INET6;
++		salist->len = sizeof(struct sockaddr_in6);
++	} else
++#endif
++	{
++		salist->pfamily = PF_INET;
++		salist->len = sizeof(struct sockaddr_in);
+ 	}
+-    return True;
++
++	return salist;
+   }
+   
+   pstrcpy(name_resolve_list, lp_name_resolve_order());
+@@ -848,78 +855,151 @@
+ 
+   while (next_token(&ptr, tok, LIST_SEP, sizeof(tok))) {
+ 	  if((strequal(tok, "host") || strequal(tok, "hosts"))) {
+-		  if (name_type == 0x20 && resolve_hosts(name, return_iplist, return_count)) {
+-			  return True;
++		  if (name_type == 0x20 && (salist = resolve_hosts(name)))
++		  {
++			  return salist;
+ 		  }
+ 	  } else if(strequal( tok, "lmhosts")) {
+-		  if (resolve_lmhosts(name, name_type, return_iplist, return_count)) {
+-			  return True;
++		  if ((salist=resolve_lmhosts(name, name_type))) {
++			  return salist;
+ 		  }
+ 	  } else if(strequal( tok, "wins")) {
+ 		  /* don't resolve 1D via WINS */
+ 		  if (name_type != 0x1D &&
+-		      resolve_wins(name, name_type, return_iplist, return_count)) {
+-			  return True;
++		      (salist=resolve_wins(name, name_type))) {
++			  return salist;
+ 		  }
+ 	  } else if(strequal( tok, "bcast")) {
+-		  if (name_resolve_bcast(name, name_type, return_iplist, return_count)) {
+-			  return True;
++		  if ((salist=name_resolve_bcast(name, name_type))) {
++			  return salist;
+ 		  }
+ 	  } else {
+ 		  DEBUG(0,("resolve_name: unknown name switch type %s\n", tok));
+ 	  }
+   }
+ 
+-  SAFE_FREE(*return_iplist);
+-  return False;
++  return NULL;
++}
++
++static BOOL internal_resolve_name_netbios(const char *name, int name_type,
++		struct in_addr **return_iplist, int *return_count)
++{
++	struct sockaddr_list *salist, *sl;
++	int i;
++
++	*return_iplist = NULL;
++	*return_count = 0;
++
++	salist = internal_resolve_name(name, name_type);
++	if(!salist) return False;
++
++	for(sl = salist; sl; sl = sl->next)
++		if(sl->addr->sa_family == AF_INET) ++*return_count;
++
++	*return_iplist = (struct in_addr *)
++		malloc(*return_count * sizeof(struct in_addr));
++
++	for(i = 0, sl = salist; i < *return_count; ++i)
++		if(sl->addr->sa_family == AF_INET)
++			*return_iplist[i] =
++				((struct sockaddr_in *)(sl->addr))->sin_addr;
++
++	free_sockaddr_list(salist);
++
++	return True;
+ }
+ 
+ /********************************************************
+- Internal interface to resolve a name into one IP address.
++ Internal interface to resolve a name into one IP address for NetBIOS.
+  Use this function if the string is either an IP address, DNS
+  or host name or NetBIOS name. This uses the name switch in the
+  smb.conf to determine the order of name resolution.
+ *********************************************************/
+ 
+-BOOL resolve_name(const char *name, struct in_addr *return_ip, int name_type)
++BOOL resolve_name_netbios(const char *name, struct in_addr *return_ip,
++		int name_type)
+ {
+-	struct in_addr *ip_list = NULL;
+-	int count = 0;
++	struct sockaddr_list *salist;
+ 
+ 	if (is_ipaddress(name)) {
+ 		*return_ip = *interpret_addr2(name);
+ 		return True;
+ 	}
+ 
+-	if(internal_resolve_name(name, name_type, &ip_list, &count)) {
+-		int i;
++	if((salist=internal_resolve_name(name, name_type))) {
++		struct sockaddr_list *sl;
++		char *ip_str;
++
+ 		/* only return valid addresses for TCP connections */
+-		for (i=0; i<count; i++) {
+-			char *ip_str = inet_ntoa(ip_list[i]);
+-			if (ip_str &&
++		for(sl = salist; sl; sl = sl->next)
++		{
++			if ( sl->addr->sa_family == AF_INET &&
++			       (ip_str = inet_ntoa(((struct sockaddr_in *)
++						   (sl->addr))->sin_addr)) &&
+ 				strcmp(ip_str, "255.255.255.255") != 0 &&
+ 				strcmp(ip_str, "0.0.0.0") != 0) {
+-				*return_ip = ip_list[i];
+-				SAFE_FREE(ip_list);
++				*return_ip = ((struct sockaddr_in *)
++						(sl->addr))->sin_addr;
++				free_sockaddr_list(salist);
+ 				return True;
+ 			}
+ 		}
++		free_sockaddr_list(salist);
+ 	}
+-	SAFE_FREE(ip_list);
+ 	return False;
+ }
+ 
++/********************************************************
++ Function to resolve a name into a list of addresses for
++ use with SMB. This uses the name switch in the smb.conf
++ to determine the order of name resolution.
++*********************************************************/
++
++struct sockaddr_list *resolve_name_smb(const char *name, int port)
++{
++	struct sockaddr_list *salist;
++
++	if((salist=internal_resolve_name(name, 0x20))) {
++		struct sockaddr_list *sl = salist, *old = NULL;
++		char *ip_str;
++
++		/* only return valid addresses for TCP connections */
++		while(sl)
++		{
++			if ( sl->addr->sa_family == AF_INET &&
++			       (ip_str = inet_ntoa(((struct sockaddr_in *)
++						   (sl->addr))->sin_addr)) &&
++				( strcmp(ip_str, "255.255.255.255") == 0 ||
++				  strcmp(ip_str, "0.0.0.0") == 0 ) )
++			{
++				struct sockaddr_list *next = sl->next;
++
++				SAFE_FREE(sl->addr);
++				SAFE_FREE(sl);
++				if(old == NULL) salist = next;
++				else old->next = next;
++				sl = next;
++			} else {
++				if(port) set_sockaddr_port(sl->addr, port);
++				old = sl;
++				sl = sl->next;
++			}
++		}
++	}
++	return port ? salist : set_default_ports(salist);
++}
+ 
+ /********************************************************
+  resolve a name of format \\server_name or \\ipaddress
+  into a name.  also, cut the \\ from the front for us.
+ *********************************************************/
+ 
+-BOOL resolve_srv_name(const char* srv_name, fstring dest_host,
+-                                struct in_addr *ip)
++struct sockaddr_list *resolve_srv_name(const char* srv_name,
++		fstring dest_host, int port)
+ {
+-        BOOL ret;
+         const char *sv_name = srv_name;
++	struct in_addr ip;
++	struct sockaddr_list *salist;
+ 
+         DEBUG(10,("resolve_srv_name: %s\n", srv_name));
+ 
+@@ -927,8 +1007,11 @@
+         {
+                 extern pstring global_myname;
+                 fstrcpy(dest_host, global_myname);
+-                ip = interpret_addr2("127.0.0.1");
+-                return True;
++		inet_aton("127.0.0.1", &ip);
++		salist = make_sin_list(&ip, 1);
++		if(port) set_sockaddr_port(salist->addr, port);
++		else salist = set_default_ports(salist);
++		return salist;
+         }
+ 
+         if (strnequal("\\\\", srv_name, 2))
+@@ -940,18 +1023,27 @@
+         /* treat the '*' name specially - it is a magic name for the PDC */
+         if (strcmp(dest_host,"*") == 0) {
+                 extern pstring global_myname;
+-                ret = resolve_name(lp_workgroup(), ip, 0x1B);
+-                lookup_dc_name(global_myname, lp_workgroup(), ip, dest_host);
+-        } else {
+-                ret = resolve_name(dest_host, ip, 0x20);
++
++		if(resolve_name_netbios(lp_workgroup(), &ip, 0x1B))
++		{
++			lookup_dc_name(global_myname, lp_workgroup(),
++					&ip, dest_host);
++			salist = make_sin_list(&ip, 1);
++			if(port) set_sockaddr_port(salist->addr, port);
++			else salist = set_default_ports(salist);
++			return salist;
++		}
++		return NULL;
+         }
++
++	salist = resolve_name_smb(dest_host, port);
+         
+         if (is_ipaddress(dest_host))
+         {
+                 fstrcpy(dest_host, "*SMBSERVER");
+         }
+         
+-        return ret;
++        return salist;
+ }
+ 
+ 
+@@ -964,12 +1056,12 @@
+ 	struct in_addr *ip_list = NULL;
+ 	int count = 0;
+ 
+-	if (internal_resolve_name(group, 0x1D, &ip_list, &count)) {
++	if (internal_resolve_name_netbios(group, 0x1D, &ip_list, &count)) {
+ 		*master_ip = ip_list[0];
+ 		SAFE_FREE(ip_list);
+ 		return True;
+ 	}
+-	if(internal_resolve_name(group, 0x1B, &ip_list, &count)) {
++	if(internal_resolve_name_netbios(group, 0x1B, &ip_list, &count)) {
+ 		*master_ip = ip_list[0];
+ 		SAFE_FREE(ip_list);
+ 		return True;
+@@ -1207,16 +1299,16 @@
+ 		struct in_addr *return_iplist = NULL;
+ 
+ 		if (! *pserver)
+-			return internal_resolve_name(group, name_type, ip_list, count);
++			return internal_resolve_name_netbios(group, name_type, ip_list, count);
+ 
+ 		p = pserver;
+ 		while (next_token(&p,name,LIST_SEP,sizeof(name))) {
+ 			if (strequal(name, "*"))
+-				return internal_resolve_name(group, name_type, ip_list, count);
++				return internal_resolve_name_netbios(group, name_type, ip_list, count);
+ 			num_adresses++;
+ 		}
+ 		if (num_adresses == 0)
+-			return internal_resolve_name(group, name_type, ip_list, count);
++			return internal_resolve_name_netbios(group, name_type, ip_list, count);
+ 
+ 		return_iplist = (struct in_addr *)malloc(num_adresses * sizeof(struct in_addr));
+ 		if(return_iplist == NULL) {
+@@ -1227,14 +1319,14 @@
+ 		*count = 0;
+ 		while (next_token(&p,name,LIST_SEP,sizeof(name))) {
+ 			struct in_addr name_ip;
+-			if (resolve_name( name, &name_ip, 0x20) == False)
++			if (resolve_name_netbios(name, &name_ip, 0x20) == False)
+ 				continue;
+ 			return_iplist[(*count)++] = name_ip;
+ 		}
+ 		*ip_list = return_iplist;
+ 		return (*count != 0);
+ 	} else
+-		return internal_resolve_name(group, name_type, ip_list, count);
++		return internal_resolve_name_netbios(group, name_type, ip_list, count);
+ }
+ 
+ /********************************************************
+@@ -1242,5 +1334,5 @@
+ ********************************************************/
+ BOOL get_lmb_list(struct in_addr **ip_list, int *count)
+ {
+-	return internal_resolve_name( MSBROWSE, 0x1, ip_list, count);
++	return internal_resolve_name_netbios( MSBROWSE, 0x1, ip_list, count);
+ }
+Index: samba-2.2.3a+IPv6/source/libsmb/passchange.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/libsmb/passchange.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/libsmb/passchange.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/libsmb/passchange.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -33,11 +33,11 @@
+ {
+ 	struct nmb_name calling, called;
+ 	struct cli_state cli;
+-	struct in_addr ip;
++	struct sockaddr_list *dest_addrs;
+ 
+ 	*err_str = '\0';
+ 
+-	if(!resolve_name( remote_machine, &ip, 0x20)) {
++	if(!(dest_addrs = resolve_name_smb(remote_machine, 0))) {
+ 		slprintf(err_str, err_str_len-1, "unable to find an IP address for machine %s.\n",
+ 			remote_machine );
+ 		return False;
+@@ -45,9 +45,11 @@
+  
+ 	ZERO_STRUCT(cli);
+  
+-	if (!cli_initialise(&cli) || !cli_connect(&cli, remote_machine, &ip)) {
++	if (!cli_initialise(&cli) ||
++			!cli_connect(&cli, remote_machine, dest_addrs)) {
+ 		slprintf(err_str, err_str_len-1, "unable to connect to SMB server on machine %s. Error was : %s.\n",
+ 			remote_machine, cli_errstr(&cli) );
++		free_sockaddr_list(dest_addrs);
+ 		return False;
+ 	}
+   
+Index: samba-2.2.3a+IPv6/source/nmbd/nmbd_synclists.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/nmbd/nmbd_synclists.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/nmbd/nmbd_synclists.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/nmbd/nmbd_synclists.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -68,10 +68,13 @@
+ 	extern fstring local_machine;
+ 	fstring unix_workgroup;
+ 	static struct cli_state cli;
++	struct sockaddr_list *dest_addrs;
+ 	uint32 local_type = local ? SV_TYPE_LOCAL_LIST_ONLY : 0;
+ 	struct nmb_name called, calling;
+ 
+-	if (!cli_initialise(&cli) || !cli_connect(&cli, name, &ip)) {
++	dest_addrs = make_singlet_list(&ip, 0);
++	if (!cli_initialise(&cli) || !cli_connect(&cli, name, dest_addrs)) {
++		free_sockaddr_list(dest_addrs);
+ 		return;
+ 	}
+ 
+Index: samba-2.2.3a+IPv6/source/nsswitch/winbindd_cm.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/nsswitch/winbindd_cm.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/nsswitch/winbindd_cm.c	16 Apr 2002 03:34:36 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/nsswitch/winbindd_cm.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -232,7 +232,7 @@
+ 	struct nmb_name calling, called;
+ 	extern pstring global_myname;
+ 	fstring dest_host;
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
+ 	BOOL result = False;
+ 	struct ntuser_creds creds;
+ 
+@@ -280,7 +280,8 @@
+ 	if (!(new_conn->cli = cli_initialise(NULL)))
+ 		goto done;
+ 
+-	if (!resolve_srv_name(new_conn->controller, dest_host, &dest_ip))
++	if (!(dest_addrs = resolve_srv_name(new_conn->controller, dest_host,
++					new_conn->cli->default_port)))
+ 		goto done;
+ 
+ 	make_nmb_name(&called, dns_to_netbios_name(new_conn->controller), 0x20);
+@@ -291,9 +292,12 @@
+ 	cli_init_creds(new_conn->cli, &creds);
+ 
+ 	if (!cli_establish_connection(new_conn->cli, new_conn->controller, 
+-				      &dest_ip, &calling, &called, "IPC$", 
++				      dest_addrs, &calling, &called, "IPC$", 
+ 				      "IPC", False, True))
++	{
++		free_sockaddr_list(dest_addrs);
+ 		goto done;
++	}
+ 
+ 	if (!cli_nt_session_open (new_conn->cli, pipe_name))
+ 		goto done;
+Index: samba-2.2.3a+IPv6/source/rpc_client/cli_spoolss_notify.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/rpc_client/cli_spoolss_notify.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/rpc_client/cli_spoolss_notify.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/rpc_client/cli_spoolss_notify.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -45,31 +45,37 @@
+ 
+ BOOL spoolss_connect_to_client( struct cli_state *cli, char *remote_machine)
+ {
++	struct sockaddr_list *dest_addrs;
++
+ 	ZERO_STRUCTP(cli);
+ 	if(cli_initialise(cli) == NULL) {
+ 		DEBUG(0,("connect_to_client: unable to initialize client connection.\n"));
+ 		return False;
+ 	}
+ 
+-	if(!resolve_name( remote_machine, &cli->dest_ip, 0x20)) {
++	if(!(dest_addrs = resolve_name_smb(remote_machine, cli->default_port))) {
+ 		DEBUG(0,("connect_to_client: Can't resolve address for %s\n", remote_machine));
+ 		cli_shutdown(cli);
+ 	return False;
+ 	}
+ 
++#if 0
+ 	if (ismyip(cli->dest_ip)) {
+ 		DEBUG(0,("connect_to_client: Machine %s is one of our addresses. Cannot add to ourselves.\n", remote_machine));
+ 		cli_shutdown(cli);
+ 		return False;
+ 	}
++#endif
+ 
+-	if (!cli_connect(cli, remote_machine, &cli->dest_ip)) {
++	if (!cli_connect(cli, remote_machine, dest_addrs)) {
+ 		DEBUG(0,("connect_to_client: unable to connect to SMB server on machine %s. Error was : %s.\n", remote_machine, cli_errstr(cli) ));
++		free_sockaddr_list(dest_addrs);
+ 		cli_shutdown(cli);
+ 		return False;
+ 	}
+   
+-	if (!attempt_netbios_session_request(cli, global_myname, remote_machine, &cli->dest_ip)) {
++	if (!attempt_netbios_session_request(cli, global_myname,
++				remote_machine)) {
+ 		DEBUG(0,("connect_to_client: machine %s rejected the NetBIOS session request. Error was %s\n", remote_machine, cli_errstr(cli) ));
+ 		cli_shutdown(cli);
+ 		return False;
+Index: samba-2.2.3a+IPv6/source/rpc_client/cli_trust.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/rpc_client/cli_trust.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/rpc_client/cli_trust.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/rpc_client/cli_trust.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -35,6 +35,7 @@
+                           unsigned char new_trust_passwd_hash[16])
+ {
+   struct cli_state cli;
++  struct sockaddr_list *dest_addrs;
+   NTSTATUS result;
+   DOM_SID domain_sid;
+ 
+@@ -53,27 +54,30 @@
+     return False;
+   }
+ 
+-  if(!resolve_name( remote_machine, &cli.dest_ip, 0x20)) {
++  if(!(dest_addrs = resolve_name_smb(remote_machine, 0))) {
+     DEBUG(0,("modify_trust_password: Can't resolve address for %s\n", remote_machine));
+     cli_shutdown(&cli);
+     return False;
+   }
+ 
++#if 0
+   if (ismyip(cli.dest_ip)) {
+     DEBUG(0,("modify_trust_password: Machine %s is one of our addresses. Cannot add \
+ to ourselves.\n", remote_machine));
+     cli_shutdown(&cli);
+     return False;
+   }
++#endif
+ 
+-  if (!cli_connect(&cli, remote_machine, &cli.dest_ip)) {
++  if (!cli_connect(&cli, remote_machine, dest_addrs)) {
+     DEBUG(0,("modify_trust_password: unable to connect to SMB server on \
+ machine %s. Error was : %s.\n", remote_machine, cli_errstr(&cli) ));
++    free_sockaddr_list(dest_addrs);
+     cli_shutdown(&cli);
+     return False;
+   }
+   
+-  if (!attempt_netbios_session_request(&cli, global_myname, remote_machine, &cli.dest_ip)) {
++  if (!attempt_netbios_session_request(&cli, global_myname, remote_machine)) {
+     DEBUG(0,("modify_trust_password: machine %s rejected the NetBIOS \
+ session request. Error was %s\n", remote_machine, cli_errstr(&cli) ));
+     cli_shutdown(&cli);
+Index: samba-2.2.3a+IPv6/source/rpcclient/rpcclient.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/rpcclient/rpcclient.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/rpcclient/rpcclient.c	16 Apr 2002 03:34:39 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/rpcclient/rpcclient.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -560,7 +560,7 @@
+ struct cli_state *setup_connection(struct cli_state *cli, char *system_name,
+ 				   struct ntuser_creds *creds)
+ {
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
+ 	struct nmb_name calling, called;
+ 	fstring dest_host;
+ 	extern pstring global_myname;
+@@ -580,7 +580,8 @@
+ 	cli_init_creds(cli, creds);
+ 
+ 	/* Establish a SMB connection */
+-	if (!resolve_srv_name(system_name, dest_host, &dest_ip)) {
++	if (!(dest_addrs = resolve_srv_name(system_name, dest_host,
++					cli->default_port))) {
+                 fprintf(stderr, "Could not resolve %s\n", dest_host);
+ 		return NULL;
+ 	}
+@@ -588,9 +589,11 @@
+ 	make_nmb_name(&called, dns_to_netbios_name(dest_host), 0x20);
+ 	make_nmb_name(&calling, dns_to_netbios_name(global_myname), 0);
+ 
+-	if (!cli_establish_connection(cli, dest_host, &dest_ip, &calling, 
++	if (!cli_establish_connection(cli, dest_host, dest_addrs, &calling, 
+ 				      &called, "IPC$", "IPC", False, True)) {
+                 fprintf(stderr, "Error establishing IPC$ connection\n");
++		cli_shutdown(cli);
++		free_sockaddr_list(dest_addrs);
+ 		return NULL;
+ 	}
+ 	
+Index: samba-2.2.3a+IPv6/source/smbd/password.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/smbd/password.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/smbd/password.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/smbd/password.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -1033,7 +1033,7 @@
+ {
+ 	struct cli_state *cli;
+ 	fstring desthost;
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
+ 	char *p, *pserver;
+ 	BOOL connected_ok = False;
+ 
+@@ -1049,21 +1049,23 @@
+ 		standard_sub_basic(desthost);
+ 		strupper(desthost);
+ 
+-		if(!resolve_name( desthost, &dest_ip, 0x20)) {
++		if(!(dest_addrs = resolve_name_smb(desthost, 0))) {
+ 			DEBUG(1,("server_cryptkey: Can't resolve address for %s\n",desthost));
+ 			continue;
+ 		}
+ 
++#if 0
+ 		if (ismyip(dest_ip)) {
+ 			DEBUG(1,("Password server loop - disabling password server %s\n",desthost));
+ 			continue;
+ 		}
++#endif
+ 
+-		if (cli_connect(cli, desthost, &dest_ip)) {
++		if (cli_connect(cli, desthost, dest_addrs)) {
+ 			DEBUG(3,("connected to password server %s\n",desthost));
+ 			connected_ok = True;
+ 			break;
+-		}
++		} else free_sockaddr_list(dest_addrs);
+ 	}
+ 
+ 	SAFE_FREE(pserver);
+@@ -1074,7 +1076,7 @@
+ 		return NULL;
+ 	}
+ 
+-	if (!attempt_netbios_session_request(cli, global_myname, desthost, &dest_ip))
++	if (!attempt_netbios_session_request(cli, global_myname, desthost))
+ 		return NULL;
+ 
+ 	DEBUG(3,("got session\n"));
+@@ -1212,7 +1214,7 @@
+ static BOOL connect_to_domain_password_server(struct cli_state *pcli, 
+ 								char *server, unsigned char *trust_passwd)
+ {
+-  struct in_addr dest_ip;
++  struct sockaddr_list *dest_addrs;
+   fstring remote_machine;
+ 
+   if(!cli_initialise(pcli)) {
+@@ -1220,7 +1222,7 @@
+     return False;
+   }
+ 
+-  if (is_ipaddress(server)) {
++  if (is_ipv4address(server)) {
+ 	  struct in_addr to_ip;
+ 
+ 	  /* we shouldn't have 255.255.255.255 forthe IP address of
+@@ -1242,27 +1244,30 @@
+   standard_sub_basic(remote_machine);
+   strupper(remote_machine);
+ 
+-  if(!resolve_name( remote_machine, &dest_ip, 0x20)) {
++  if(!(dest_addrs = resolve_name_smb(remote_machine, 0))) {
+     DEBUG(1,("connect_to_domain_password_server: Can't resolve address for %s\n", remote_machine));
+     cli_shutdown(pcli);
+     return False;
+   }
+   
++#if 0
+   if (ismyip(dest_ip)) {
+     DEBUG(1,("connect_to_domain_password_server: Password server loop - not using password server %s\n",
+          remote_machine));
+     cli_shutdown(pcli);
+     return False;
+   }
++#endif
+   
+-  if (!cli_connect(pcli, remote_machine, &dest_ip)) {
++  if (!cli_connect(pcli, remote_machine, dest_addrs)) {
+     DEBUG(0,("connect_to_domain_password_server: unable to connect to SMB server on \
+ machine %s. Error was : %s.\n", remote_machine, cli_errstr(pcli) ));
++    free_sockaddr_list(dest_addrs);
+     cli_shutdown(pcli);
+     return False;
+   }
+   
+-  if (!attempt_netbios_session_request(pcli, global_myname, remote_machine, &dest_ip)) {
++  if (!attempt_netbios_session_request(pcli, global_myname, remote_machine)) {
+     DEBUG(0,("connect_to_password_server: machine %s rejected the NetBIOS \
+ session request. Error was : %s.\n", remote_machine, cli_errstr(pcli) ));
+     return False;
+Index: samba-2.2.3a+IPv6/source/smbwrapper/smbw.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/smbwrapper/smbw.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/smbwrapper/smbw.c	16 Apr 2002 03:34:37 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/smbwrapper/smbw.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -261,9 +261,7 @@
+ {
+ 	fstring server;
+ 	char *p;
+-	struct in_addr *ip_list = NULL;
+-	int count = 0;
+-	int i;
++	struct sockaddr_list *wglist, *wg;
+ 
+ 	/* first off see if an existing workgroup name exists */
+ 	p = smbw_getshared("WORKGROUP");
+@@ -273,24 +271,29 @@
+ 	if (smbw_server(server, "IPC$")) return p;
+ 
+ 	/* go looking for workgroups */
+-	if (!name_resolve_bcast(MSBROWSE, 1, &ip_list, &count)) {
++	if (!(wglist = name_resolve_bcast(MSBROWSE, 1))) {
+ 		DEBUG(1,("No workgroups found!"));
+ 		return p;
+ 	}
+ 
+-	for (i=0;i<count;i++) {
++	for(wg = wglist; wg; wg = wg->next)
++	{
+ 		static fstring name;
+-		if (name_status_find("*", 0, 0x1d, ip_list[i], name)) {
++
++		if(wg->addr->sa_family != AF_INET) continue;
++		if (name_status_find("*", 0, 0x1d, ((struct sockaddr_in *)
++						(wg->addr))->sin_addr, name))
++		{
+ 			slprintf(server, sizeof(server), "%s#1D", name);
+ 			if (smbw_server(server, "IPC$")) {
+ 				smbw_setshared("WORKGROUP", name);
+-				SAFE_FREE(ip_list);
++				free_sockaddr_list(wglist);
+ 				return name;
+ 			}
+ 		}
+ 	}
+ 
+-	SAFE_FREE(ip_list);
++	free_sockaddr_list(wglist);
+ 
+ 	return p;
+ }
+@@ -448,10 +451,8 @@
+ 	char *p, *server_n = server;
+ 	fstring group;
+ 	pstring ipenv;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
++	struct sockaddr_list *salist;
+ 
+-	ip = ipzero;
+ 	ZERO_STRUCT(c);
+ 
+ 	get_auth_data_fn(server, share, &workgroup, &username, &password);
+@@ -502,13 +503,11 @@
+  again:
+ 	slprintf(ipenv,sizeof(ipenv)-1,"HOST_%s", server_n);
+ 
+-	ip = ipzero;
+-	if ((p=smbw_getshared(ipenv))) {
+-		ip = *(interpret_addr2(p));
+-	}
++	salist = resolve_name_smb((p=smbw_getshared(ipenv)) ? p : server_n, 0);
+ 
+ 	/* have to open a new connection */
+-	if (!cli_initialise(&c) || !cli_connect(&c, server_n, &ip)) {
++	if (!cli_initialise(&c) || !cli_connect(&c, server_n, salist)) {
++		free_sockaddr_list(salist);
+ 		errno = ENOENT;
+ 		return NULL;
+ 	}
+@@ -551,7 +550,7 @@
+ 		return NULL;
+ 	}
+ 
+-	smbw_setshared(ipenv,inet_ntoa(ip));
++	smbw_setshared(ipenv,print_sockaddr(c.connected_addr->addr));
+ 	
+ 	DEBUG(4,(" tconx ok\n"));
+ 
+Index: samba-2.2.3a+IPv6/source/utils/locktest.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/utils/locktest.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/utils/locktest.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/utils/locktest.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -112,8 +112,6 @@
+ 	struct nmb_name called, calling;
+ 	char *server_n;
+ 	fstring server;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
+ 	fstring myname;
+ 	static int count;
+ 
+@@ -125,19 +123,14 @@
+ 
+ 	server_n = server;
+ 	
+-	ip = ipzero;
+-
+ 	slprintf(myname,sizeof(myname), "lock-%u-%u", getpid(), count++);
+ 
+ 	make_nmb_name(&calling, myname, 0x0);
+ 	make_nmb_name(&called , server, 0x20);
+ 
+  again:
+-	ip = ipzero;
+-
+ 	/* have to open a new connection */
+-	if (!(c=cli_initialise(NULL)) || (cli_set_port(c, 139) == 0) ||
+-	    !cli_connect(c, server_n, &ip)) {
++	if (!(c=cli_initialise(NULL)) || !cli_connect(c, server_n, NULL)) {
+ 		DEBUG(0,("Connection to %s failed\n", server_n));
+ 		return NULL;
+ 	}
+Index: samba-2.2.3a+IPv6/source/utils/locktest2.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/utils/locktest2.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/utils/locktest2.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/utils/locktest2.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -156,8 +156,6 @@
+ 	struct nmb_name called, calling;
+ 	char *server_n;
+ 	fstring server;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
+ 	fstring myname;
+ 	static int count;
+ 
+@@ -169,19 +167,14 @@
+ 
+ 	server_n = server;
+ 	
+-	ip = ipzero;
+-
+ 	slprintf(myname,sizeof(myname), "lock-%u-%u", getpid(), count++);
+ 
+ 	make_nmb_name(&calling, myname, 0x0);
+ 	make_nmb_name(&called , server, 0x20);
+ 
+  again:
+-	ip = ipzero;
+-
+ 	/* have to open a new connection */
+-	if (!(c=cli_initialise(NULL)) || (cli_set_port(c, 139) == 0) ||
+-	    !cli_connect(c, server_n, &ip)) {
++	if (!(c=cli_initialise(NULL)) || !cli_connect(c, server_n, NULL)) {
+ 		DEBUG(0,("Connection to %s failed\n", server_n));
+ 		return NULL;
+ 	}
+Index: samba-2.2.3a+IPv6/source/utils/masktest.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/utils/masktest.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/utils/masktest.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/utils/masktest.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -164,8 +164,6 @@
+ 	struct nmb_name called, calling;
+ 	char *server_n;
+ 	char *server;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
+ 
+ 	server = share+2;
+ 	share = strchr(server,'\\');
+@@ -175,17 +173,12 @@
+ 
+ 	server_n = server;
+ 	
+-	ip = ipzero;
+-
+ 	make_nmb_name(&calling, "masktest", 0x0);
+ 	make_nmb_name(&called , server, 0x20);
+ 
+  again:
+-	ip = ipzero;
+-
+ 	/* have to open a new connection */
+-	if (!(c=cli_initialise(NULL)) || (cli_set_port(c, 139) == 0) ||
+-	    !cli_connect(c, server_n, &ip)) {
++	if (!(c=cli_initialise(NULL)) || !cli_connect(c, server_n, NULL)) {
+ 		DEBUG(0,("Connection to %s failed\n", server_n));
+ 		return NULL;
+ 	}
+Index: samba-2.2.3a+IPv6/source/utils/smbcacls.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/utils/smbcacls.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/utils/smbcacls.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/utils/smbcacls.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -690,8 +690,6 @@
+ 	struct cli_state *c;
+ 	struct nmb_name called, calling;
+ 	char *server_n;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
+ 	extern pstring global_myname;
+ 
+ 	fstrcpy(server,share+2);
+@@ -702,19 +700,13 @@
+ 
+ 	server_n = server;
+ 	
+-	ip = ipzero;
+-
+ 	make_nmb_name(&calling, global_myname, 0x0);
+ 	make_nmb_name(&called , server, 0x20);
+ 
+  again:
+-	ip = ipzero;
+-
+ 	/* have to open a new connection */
+-	if (!(c=cli_initialise(NULL)) || (cli_set_port(c, 139) == 0) ||
+-	    !cli_connect(c, server_n, &ip)) {
++	if (!(c=cli_initialise(NULL)) || !cli_connect(c, server_n, NULL)) {
+ 		DEBUG(0,("Connection to %s failed\n", server_n));
+-		cli_shutdown(c);
+ 		return NULL;
+ 	}
+ 
+Index: samba-2.2.3a+IPv6/source/utils/smbfilter.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/utils/smbfilter.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/utils/smbfilter.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/utils/smbfilter.c	19 Apr 2002 14:50:33 -0000	1.3
+@@ -98,15 +98,17 @@
+ }
+ 
+ 
+-static void filter_child(int c, struct in_addr dest_ip)
++static void filter_child(int c, struct sockaddr_list *dest_addrs)
+ {
+ 	int s;
+ 
+ 	/* we have a connection from a new client, now connect to the server */
+-	s = open_socket_out(SOCK_STREAM, &dest_ip, 139, LONG_CONNECT_TIMEOUT);
++	s = open_socket_out(dest_addrs, NULL, LONG_CONNECT_TIMEOUT);
++	free_sockaddr_list(dest_addrs);
+ 
+ 	if (s == -1) {
+-		DEBUG(0,("Unable to connect to %s\n", inet_ntoa(dest_ip)));
++		DEBUG(0,("Unable to connect to %s\n",
++					print_sockaddr(dest_addrs->addr)));
+ 		exit(1);
+ 	}
+ 
+@@ -152,7 +154,7 @@
+ static void start_filter(char *desthost)
+ {
+ 	int s, c;
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
+ 
+ 	CatchChild();
+ 
+@@ -168,7 +170,7 @@
+ 		DEBUG(0,("listen failed\n"));
+ 	}
+ 
+-	if (!resolve_name(desthost, &dest_ip, 0x20)) {
++	if (!(dest_addrs = resolve_name_smb(desthost, 0))) {
+ 		DEBUG(0,("Unable to resolve host %s\n", desthost));
+ 		exit(1);
+ 	}
+@@ -188,7 +190,7 @@
+ 			if (c != -1) {
+ 				if (fork() == 0) {
+ 					close(s);
+-					filter_child(c, dest_ip);
++					filter_child(c, dest_addrs);
+ 					exit(0);
+ 				} else {
+ 					close(c);
+Index: samba-2.2.3a+IPv6/source/utils/smbpasswd.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/utils/smbpasswd.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.3
+diff -u -r1.1.1.1 -r1.3
+--- samba-2.2.3a+IPv6/source/utils/smbpasswd.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/utils/smbpasswd.c	19 Apr 2002 14:50:34 -0000	1.3
+@@ -126,7 +126,7 @@
+ 	struct ntuser_creds creds;
+ 	struct cli_state cli;
+ 	fstring dest_host, acct_name;
+-	struct in_addr dest_ip;
++	struct sockaddr_list *dest_addrs;
+ 	TALLOC_CTX *mem_ctx;
+ 
+ 	/* rpc variables */
+@@ -167,7 +167,7 @@
+ 	init_rpcclient_creds(&creds, username, domain, password);
+ 	cli_init_creds(&cli, &creds);
+ 
+-	if (!resolve_srv_name(remote_machine, dest_host, &dest_ip)) {
++	if (!(dest_addrs = resolve_srv_name(remote_machine, dest_host, 0))) {
+ 		DEBUG(0, ("Could not resolve name %s\n", remote_machine));
+ 		goto done;
+ 	}
+@@ -175,9 +175,10 @@
+ 	make_nmb_name(&called, dns_to_netbios_name(dest_host), 0x20);
+ 	make_nmb_name(&calling, dns_to_netbios_name(global_myname), 0);
+ 
+-	if (!cli_establish_connection(&cli, dest_host, &dest_ip, &calling, 
++	if (!cli_establish_connection(&cli, dest_host, dest_addrs, &calling, 
+ 				      &called, "IPC$", "IPC", False, True)) {
+ 		DEBUG(0, ("Error connecting to %s\n", dest_host));
++		free_sockaddr_list(dest_addrs);
+ 		goto done;
+ 	}
+ 
+@@ -362,6 +363,9 @@
+ 
+ 	if (cli.nt_pipe_fnum)
+ 		cli_nt_session_close(&cli);
++
++	if (cli.dest_addrs)
++		free_sockaddr_list(cli.dest_addrs);
+ 
+ 	/* Display success or failure */
+ 
+Index: samba-2.2.3a+IPv6/source/utils/torture.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/utils/torture.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/utils/torture.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/utils/torture.c	18 Apr 2002 04:53:05 -0000	1.2
+@@ -134,17 +134,13 @@
+ static BOOL open_nbt_connection(struct cli_state *c)
+ {
+ 	struct nmb_name called, calling;
+-	struct in_addr ip;
+-	extern struct in_addr ipzero;
+ 
+ 	ZERO_STRUCTP(c);
+ 
+ 	make_nmb_name(&calling, myname, 0x0);
+ 	make_nmb_name(&called , host, 0x20);
+ 
+-	ip = ipzero;
+-
+-	if (!cli_initialise(c) || !cli_connect(c, host, &ip)) {
++	if (!cli_initialise(c) || !cli_connect(c, host, NULL)) {
+ 		printf("Failed to connect with %s\n", host);
+ 		return False;
+ 	}
+Index: samba-2.2.3a+IPv6/source/web/diagnose.c
+===================================================================
+RCS file: /home/lutchann/cvsroot/samba-2.2.3a+IPv6/source/web/diagnose.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -r1.1.1.1 -r1.2
+--- samba-2.2.3a+IPv6/source/web/diagnose.c	16 Apr 2002 03:34:35 -0000	1.1.1.1
++++ samba-2.2.3a+IPv6/source/web/diagnose.c	18 Apr 2002 04:53:06 -0000	1.2
+@@ -52,12 +52,16 @@
+ BOOL smbd_running(void)
+ {
+ 	static struct cli_state cli;
++	struct sockaddr_list *localaddrs;
+ 	extern struct in_addr loopback_ip;
+ 
+ 	if (!cli_initialise(&cli))
+ 		return False;
+ 
+-	if (!cli_connect(&cli, "localhost", &loopback_ip)) {
++	localaddrs = make_singlet_list(&loopback_ip, 0);
++	if (!cli_connect(&cli, "localhost", localaddrs))
++	{
++		free_sockaddr_list(localaddrs);
+ 		cli_shutdown(&cli);
+ 		return False;
+ 	}

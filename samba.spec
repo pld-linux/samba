@@ -392,7 +392,7 @@ smbpasswd (Samba password) database in sync with the unix password
 file.
 
 %description -n pam-pam_smbpass -l pl
-Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd (has³a
+Modu³ PAM, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd (has³a
 Samby) zsynchronizowanego z has³ami unixowymi.
 
 %package -n libsmbclient

@@ -34,9 +34,9 @@ case "$1" in
 	touch /var/lock/subsys/smb
 	;;
   stop)
-	show Shutting down smbd
+	show Stopping smbd
 	killproc smbd
-	show Shutting down nmbd
+	show Stopping nmbd
 	killproc nmbd
 	rm -f /var/lock/subsys/smb
 	;;
@@ -49,8 +49,12 @@ case "$1" in
 	$0 stop
 	$0 start
 	;;
+  reload)
+	Show Reloading smb.conf file
+	killproc smbd -HUP
+	;;
   *)
-	echo "Usage: $0 {start|stop|restart|status}"
+	echo "Usage: $0 {start|stop|restart|reload|status}"
 	exit 1
 esac
 

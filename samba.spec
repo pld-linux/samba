@@ -22,7 +22,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8a
-Release:	1.1
+Release:	1.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -60,7 +60,7 @@ Requires:	samba-common = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
-%define		_reallibdir	%{_libdir}
+%define		_reallibdir	/usr/lib
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
 %if 0%{!?_without_cups:1}

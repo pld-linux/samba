@@ -1,7 +1,7 @@
 #
 # Conditional build:
 # _without_cups	- without CUPS support
-# _with_ldap	- with LDAP-based auth (instead of smbpasswd)
+# _with_ldapsam	- with LDAP SAM 2.2 based auth (instead of smbpasswd)
 # _with_ipv6	- with IPv6 support
 #
 %define		vscan_version 0.3.4
@@ -44,11 +44,15 @@ BuildRequires:	autoconf
 %{!?_without_cups:BuildRequires:	cups-devel}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
-%{?_with_ldap:BuildRequires:	openldap-devel}
+BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
+BuildRequires:	heimdal-devel
+BuildRequires:	mysql-devel
+BuildRequires:	acl-devel
+BuildRequires:	libxml-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	logrotate
 Requires:	pam >= 0.66
@@ -616,8 +620,10 @@ cd source
 	--with-utmp \
 	--with-vfs \
 	--with-fhs \
+	--with-expsam \
 	%{?_with_ipv6:--with-ipv6} \
-	%{?_with_ldap:--with-ldapsam}
+        %{?_with_ldapsam:--with-ldapsam} \
+	--with-krb5
 
 %{__make} everything pam_smbpass
 
@@ -816,7 +822,8 @@ fi
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/pdbedit
 #%attr(755,root,root) %{_bindir}/make_printerdef
-#%{_libdir}/codepages
+%dir %{_libdir}/charset
+%attr(755,root,root) %{_libdir}/charset/*.so
 #%{_mandir}/man1/make_smbcodepage.1*
 #%{_mandir}/man1/make_unicodemap.1*
 %{_mandir}/man1/editreg.1*

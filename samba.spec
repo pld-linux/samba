@@ -34,7 +34,7 @@ Summary(zh_CN):	Samba øÕªß∂À∫Õ∑˛ŒÒ∆˜
 Name:		samba
 Version:	3.0.2a
 Epoch:		1
-Release:	1.1
+Release:	4.1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -68,7 +68,7 @@ BuildRequires:	mysql-extras
 %endif
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7
+BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
@@ -315,6 +315,7 @@ Summary(uk):	ÎÃ¶§Œ‘”ÿÀ¶ –“œ«“¡Õ… Samba (SMB)
 Group:		Applications/Networking
 Requires:	samba-common = %{epoch}:%{version}
 Obsoletes:	smbfs
+Obsoletes:	mount-cifs
 
 %description client
 Samba-client provides some SMB clients, which complement the build-in
@@ -420,7 +421,7 @@ smbpasswd (Samba password) database in sync with the unix password
 file.
 
 %description -n pam-pam_smbpass -l pl
-Modu≥ PAMa, ktÛry moøe byÊ uøywany do trzymania pliku smbpasswd (has≥a
+Modu≥ PAM, ktÛry moøe byÊ uøywany do trzymania pliku smbpasswd (has≥a
 Samby) zsynchronizowanego z has≥ami unixowymi.
 
 %package -n libsmbclient
@@ -803,6 +804,9 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
+# we have this utility in tdb package
+rm -f $RPM_BUILD_ROOT{%{_bindir}/tdbdump,%{_mandir}/man8/tdbdump.8*}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -871,7 +875,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
-%attr(755,root,root) %{_bindir}/tdbdump
+#%attr(755,root,root) %{_bindir}/tdbdump
 
 #%attr(755,root,root) /%{_lib}/libnss_*
 #%attr(755,root,root) /%{_lib}/security/pam_winbind.so

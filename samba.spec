@@ -28,7 +28,8 @@ Version:	3.0.1pre3
 Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
+Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}.tar.bz2
+# Source0-md5:  f36464e15d497e14e2223d8f9ae243c0
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -47,8 +48,9 @@ BuildRequires:	autoconf
 %{!?_without_cups:BuildRequires:	cups-devel}
 %{!?_without_krb5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool >= 2:1.4d
-BuildRequires:	libxml-devel
+BuildRequires:	libxml2-devel
 BuildRequires:	mysql-devel
+BuildRequires:	mysql-extras
 BuildRequires:	ncurses-devel >= 5.2
 %{!?_without_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7

@@ -7,14 +7,15 @@ Copyright:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
-Source1:	%{name}.PLD.tar.bz2
-Patch0:		%{name}-glibc2.1.patch
-Patch1:		%{name}-config.patch
-Patch2:		%{name}-cap.patch
+Source1:	samba.PLD.tar.bz2
+Patch0:		samba-glibc2.1.patch
+Patch1:		samba-config.patch
+Patch2:		samba-cap.patch
 Prereq:		/sbin/chkconfig 
-Prereq:		fileutils
 Requires:	pam >= 0.66 
-#Requires:	krb5-lib >= 1.0.5
+BuildPrereq:	ncurses-devel
+BuildPrereq:	readline-devel
+BuildPrereq:	pam-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -78,7 +79,7 @@ internetowej.
 cd source
 autoconf
 LDFLAGS="-s" export LDFLAGS \
-    %configure \
+%configure \
 	--prefix=/usr \
 	--sysconfdir=/etc/samba \
 	--sbindir=/usr/sbin \
@@ -91,41 +92,36 @@ LDFLAGS="-s" export LDFLAGS \
 	--with-smbwrapper \
 	--with-quotas \
 	--with-syslog \
-	--with-automount 
-#	--with-krb5=/usr \
+	--with-automount
 	
 make all smbwrapper bin/smbrun bin/debug2html
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/samba/codepages/src
-install -d $RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,sysconfig}
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install -d $RPM_BUILD_ROOT/home/samba
-install -d $RPM_BUILD_ROOT/lib/security
-install -d $RPM_BUILD_ROOT/usr/{bin,sbin}
-install -d $RPM_BUILD_ROOT/usr/man/{man1,man5,man7,man8}
-install -d $RPM_BUILD_ROOT/var/lock/samba
-install -d $RPM_BUILD_ROOT/var/log/samba
-install -d $RPM_BUILD_ROOT/var/spool/samba
-install -d $RPM_BUILD_ROOT/usr/share/swat/{include,images,help}
+install -d $RPM_BUILD_ROOT/etc/samba/codepages/src \
+	$RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,sysconfig} \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d \
+	$RPM_BUILD_ROOT/home/samba \
+	$RPM_BUILD_ROOT/lib/security \
+	$RPM_BUILD_ROOT/usr/{bin,man/man{1,5,7,8},sbin} \
+	$RPM_BUILD_ROOT/var/{lock,log,spool}/samba} \
+	$RPM_BUILD_ROOT/usr/share/swat/{include,images,help}
 
 ( cd source;
-make prefix=$RPM_BUILD_ROOT/usr \
-    BASEDIR=$RPM_BUILD_ROOT/usr \
-    BINDIR=$RPM_BUILD_ROOT/usr/bin \
-    SBINDIR=$RPM_BUILD_ROOT/usr/sbin \
-    LIBDIR=$RPM_BUILD_ROOT/etc/samba \
-    PRIVATEDIR=$RPM_BUILD_ROOT/etc/samba \
-    SWATDIR=$RPM_BUILD_ROOT/usr/share/swat \
-    VARDIR=$RPM_BUILD_ROOT/var \
-    install
+make install \
+	prefix=$RPM_BUILD_ROOT/usr \
+	BASEDIR=$RPM_BUILD_ROOT/usr \
+	BINDIR=$RPM_BUILD_ROOT/usr/bin \
+	SBINDIR=$RPM_BUILD_ROOT/usr/sbin \
+	LIBDIR=$RPM_BUILD_ROOT/etc/samba \
+	PRIVATEDIR=$RPM_BUILD_ROOT/etc/samba \
+	SWATDIR=$RPM_BUILD_ROOT/usr/share/swat \
+	VARDIR=$RPM_BUILD_ROOT/var
 )
 
 install  source/codepages/codepage_def.* \
-    $RPM_BUILD_ROOT/etc/samba/codepages/src
+	$RPM_BUILD_ROOT/etc/samba/codepages/src
 
 install  packaging/PLD/smb.conf		$RPM_BUILD_ROOT/etc/samba
 install  packaging/PLD/smbusers		$RPM_BUILD_ROOT/etc/samba
@@ -155,35 +151,18 @@ gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/* \
 
 %post
 /sbin/chkconfig --add smb
-
-%post -n swat
-# Not for PLD
-#if !( grep ^[:space:]*swat /etc/services > /dev/null ) then
-#echo 'swat	901/tcp		# Swat service used via inetd' >> /etc/services
-#fi
-
-# Not for PLD 
-#if !( grep ^[:space:]*swat /etc/inetd.conf > /dev/null ) then
-#echo 'swat	stream	tcp	nowait.400	root	/usr/sbin/swat swat' >> /etc/inetd.conf
-#killall -HUP inetd >&2
-#fi
-
-%preun
-if [ $1 = 0 ]; then
-    /etc/rc.d/init.d/smb stop >&2
-    /sbin/chkconfig --del smb
+if test -r /var/run/smb.pid; then
+	/etc/rc.d/init.d/smb stop >&2
+	/etc/rc.d/init.d/smb start >&2
+else
+	echo "Run \"/etc/rc.d/init.d/smb start\" to start samba daemons."
 fi
 
-%preun -n swat
-#if [ $1 = 0 ]; then
-# Not for PLD 
-#    cd /etc
-#    tmpfile=/etc/tmp.$$
-#    sed -e '/^[:space:]*swat.*$/d' /etc/inetd.conf > $tmpfile
-#    mv $tmpfile inetd.conf
-#    sed -e '/^[:space:]*swat.*$/d' /etc/services > $tmpfile
-#    mv $tmpfile services
-#fi
+%preun
+if [ "$1" = "0" ]; then
+	/etc/rc.d/init.d/smb stop >&2
+	/sbin/chkconfig --del smb
+fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -196,7 +175,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) /usr/bin/*
 %attr(755,root,root) /usr/sbin/nmbd
 %attr(755,root,root) /usr/sbin/smbd
-
 
 %dir /etc/samba
 %config(noreplace) %verify(not size mtime md5) /etc/samba/smb.conf
@@ -234,26 +212,30 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/swat
 /usr/man/man8/swat.8.gz
 
-
 %changelog
-* Wed Apr 14 1999 Artur Frysiak <wiget@pld.org.pl>
+* Wed Apr 28 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [2.0.3-2]
+- added BuildPrereq rules,
+- standarized %post{un} - now samba service is restarted automatically on   
+  upgrade and downed on uninstall).
+
+* Wed Apr 14 1999 Artur Frysiak <wiget@pld.org.pl>
 - Changed group to Networking/Daemons
 - Changed name of source1
 - Added swat subpackage
-- Used %%configure macro
+- Used %configure macro
 - Correct one typo in configure args
 - Added --with-syslog and --with-automount to configure
 - Added /etc/sysconfig/samba (allow set nice level of [sn]mbd )
-- Removed %%config from /etc/rc.d/init.d/smb
+- Removed %config from /etc/rc.d/init.d/smb
 - Removed manuly install man and swat ( make install do it)
 - Install smbrun and debug2html
 - Fixed lmhosts files
 - Added noreplace to config files
-- Added %%ghost macro to state files 
+- Added %ghost macro to state files 
 
 * Sun Mar 28 1999 Ziemek Borowski <zmb@ziembor.waw.pl>
-[2.0.3] 
+  [2.0.3] 
 - updated to 2.0.3 (change in samba.2.0.3.patch file)
 - removed kerberos support
 

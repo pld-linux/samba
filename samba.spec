@@ -65,7 +65,7 @@ BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-common = %{version}
+Requires:	%{name}-common = %{epoch}:%{version}
 Requires:	logrotate
 Requires:	pam >= 0.66
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

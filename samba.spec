@@ -45,7 +45,7 @@ Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
 Patch8:		%{name}-vfs.patch
 Patch9:		%{name}-quota.patch
-Patch10:	http://v6web.litech.org/samba/samba-2.2.8a+IPv6-20030712.diff
+Patch10:	http://v6web.litech.org/samba/%{name}-2.2.8a+IPv6-20030712.diff
 Patch11:	%{name}-DESTDIR-fix.patch
 Patch12:	%{name}-CIFS-extensions.patch
 Patch13:	%{name}-allow-suid.patch
@@ -627,7 +627,8 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
 
 cd source
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
 cd ..
 

@@ -1,6 +1,6 @@
 --- samba-3.0.0/source/include/includes.h.orig	2003-08-15 20:39:52.000000000 +0000
 +++ samba-3.0.0/source/include/includes.h	2003-11-09 16:02:50.000000000 +0000
-@@ -351,8 +351,11 @@
+@@ -351,8 +351,12 @@
  
  #ifdef HAVE_SYS_CAPABILITY_H
  
@@ -10,16 +10,18 @@
 +#define _ALPHA_STATFS_H
 +#define _PPC_STATFS_H
 +#define _SPARC_STATFS_H
++#define _SPARC_BITOPS_H
  #define BROKEN_REDHAT_7_STATFS_WORKAROUND
  #endif
  
-@@ -360,6 +363,9 @@
+@@ -360,6 +364,10 @@
  
  #ifdef BROKEN_REDHAT_7_STATFS_WORKAROUND
  #undef _I386_STATFS_H
 +#undef _ALPHA_STATFS_H
 +#undef _PPC_STATFS_H
 +#undef _SPARC_STATFS_H
++#undef _SPARC_BITOPS_H
  #undef BROKEN_REDHAT_7_STATFS_WORKAROUND
  #endif
  

@@ -9,7 +9,7 @@ Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.6
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
@@ -25,6 +25,7 @@ Patch2:		samba-cap.patch
 Patch3:		samba-DESTDIR.patch
 Patch4:		samba-fix_link_libs.patch
 Patch5:		samba-glibc21.patch
+Patch6:		samba-manpages_PLD_fixes.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -131,6 +132,7 @@ internetowej.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 cd source

@@ -36,6 +36,8 @@ Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
 # Source7-md5:	cacc32f21812494993e32be558b91bdd
+Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.1.tar.bz2
+# Source8-md5:	3dffc426e57a225c0fb07e559ad7e76f
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-DESTDIR.patch
 Patch3:		%{name}-manpages_PLD_fixes.patch
@@ -451,6 +453,22 @@ VFS module to add recycle bin facility to a samba share.
 %description vfs-block -l pl
 Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 
+%package vfs-vscan-clamav
+Summary:	On-access virus scanning for samba using ClamAV
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
+Group:		Networking/Daemons
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-clamav
+A vfs-module for samba to implement on-access scanning using the ClamAV
+antivirus software (which must be installed to use this).
+
+%description vfs-vscan-clamav -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego
+ClamAV (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
 %package vfs-vscan-fprot
 Summary:	On-access virus scanning for samba using FPROT
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy FPROT
@@ -555,6 +573,8 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 
 cd examples/VFS
 tar xjf %{SOURCE7}
+cd %{name}-vscan-%{vscan_version}
+tar xjf %{SOURCE8}
 
 %build
 cd source
@@ -596,8 +616,8 @@ cd ../examples/VFS
 mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
-# note - kaspersky mks don't compile yet
-for i in fprot icap openantivirus sophos trend; do
+# note - kaspersky and mks don't compile yet - require additional libraries
+for i in fprot icap openantivirus sophos trend clamav; do
 cd $i
 %{__make} "LIBTOOL=libtool --tag=CC"
 cd ..
@@ -827,6 +847,12 @@ fi
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/recycle.conf
 %attr(755,root,root) %{_vfsdir}/recycle.so
 %doc examples/VFS/recycle/README
+
+%files vfs-vscan-clamav
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-clamav.conf
+%attr(755,root,root) %{_vfsdir}/vscan-clamav.so
+%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 
 %files vfs-vscan-fprot
 %defattr(644,root,root,755)

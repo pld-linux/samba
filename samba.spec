@@ -1,10 +1,11 @@
 #
 # Conditional build:
-# _without_cups	- without CUPS support
-# _with_ldapsam	- with LDAP SAM 2.2 based auth (instead of smbpasswd)
-# _with_ipv6	- with IPv6 support
-# _without_ldap - without LDAP support
-# _without_krb5	- without Kerberos5/Heimdal support
+%bcond_without cups             # without CUPS support
+%bcond_without mysql            # without MySQL support
+%bcond_with ldapsam             # with LDAP SAM 2.2 based auth (instead of smbpasswd)
+%bcond_with ipv6                # with IPv6 support
+%bcond_without ldap             # without LDAP support
+%bcond_without krb5             # without Kerberos5/Heimdal support
 #
 %define		vscan_version 0.3.4
 Summary:	SMB server
@@ -24,12 +25,12 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	3.0.1rc1
+Version:	3.0.1rc2
 Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}.tar.bz2
-# Source0-md5:  59d3e736708e620ca34bd5136aab0fb7
+# Source0-md5:  b03fa2fb03dcaf020dfe27dd276d981b
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -46,14 +47,16 @@ Patch0:		%{name}-statfs-workaround.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
-%{!?_without_cups:BuildRequires:	cups-devel}
-%{!?_without_krb5:BuildRequires:	heimdal-devel}
+%{?with_cups:BuildRequires:     cups-devel}
+%{?with_krb5:BuildRequires:     heimdal-devel}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	libxml2-devel
+%if %{with mysql}
 BuildRequires:	mysql-devel
 BuildRequires:	mysql-extras
+%endif
 BuildRequires:	ncurses-devel >= 5.2
-%{!?_without_ldap:BuildRequires:	openldap-devel}
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
@@ -71,7 +74,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_vfsdir		/usr/lib/%{name}/vfs
 %define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
-%if 0%{!?_without_cups:1}
+%if %{with cups}
 %define		cups_serverbin	%(cups-config --serverbin)
 %endif
 
@@ -267,6 +270,30 @@ SWAT - ferramentada Web de configuração do Samba.
 ðÁËÅÔ samba-swat Í¦ÓÔÉÔØ ÎÏ×ÉÊ SWAT (Samba Web Administration Tool),
 ÄÌÑ ÄÉÓÔÁÎÃ¦ÊÎÏÇÏ ÁÄÍ¦Î¦ÓÔÒÕ×ÁÎÎÑ ÆÁÊÌÕ smb.conf ÚÁ ÄÏÐÏÍÏÇÏÀ ×ÁÛÏÇÏ
 ÕÌÀÂÌÅÎÏÇÏ Web-ÂÒÁÕÚÅÒÕ.
+
+%package pdb-mysql
+Summary:        Samba MySQL password database plugin
+Summary(pl):    Wtyczka Samby do przechowywania hase³ w bazie MySQL
+Group:          Networking/Daemons
+Requires:       %{name} = %{version}
+
+%description pdb-mysql
+Samba MySQL password database plugin.
+
+%description pdb-mysql -l pl
+Wtyczka Samby do przechowywania hase³ w bazie MySQL.
+
+%package pdb-xml
+Summary:        Samba XML password database plugin
+Summary(pl):    Wtyczka Samby do przechowywania hase³ w bazie XML
+Group:          Networking/Daemons
+Requires:       %{name} = %{version}
+
+%description pdb-xml
+Samba XML password database plugin.
+
+%description pdb-xml -l pl
+Wtyczka Samby do przechowywania hase³ w bazie XML.
 
 %package client
 Summary:	Samba client programs
@@ -623,7 +650,7 @@ modu³).
 %prep
 %setup -q
 %patch0 -p1
-#%{?_with_ipv6:%patch1 -p1}
+#%{?with_ipv6:%patch1 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}
@@ -660,14 +687,14 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-vfs \
-	--with-expsam \
 	--with-tdbsam \
 	--with-python \
-	%{?_with_ipv6:--with-ipv6} \
-        %{?_with_ldapsam:--with-ldapsam} \
-	%{?_without_ldap:--without-ldap} \
-	%{!?_without_krb5:--with-krb5} \
-	%{?_without_krb5:--without-krb5}
+	--with-expsam=xml,%{?with_mysql:mysql} \
+	%{?with_ipv6:--with-ipv6} \
+        %{?with_ldapsam:--with-ldapsam} \
+	%{!?with_ldap:--without-ldap} \
+        %{?with_krb5:--with-krb5} \
+	%{!?with_krb5:--without-krb5}
 
 %{__make} everything pam_smbpass
 
@@ -730,7 +757,7 @@ touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
 
-%if 0%{!?_without_cups:1}
+%if %{with cups}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
 ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 %endif
@@ -841,6 +868,16 @@ fi
 %attr(0750,root,root) %dir /var/log/samba
 %attr(0750,root,root) %dir /var/log/archiv/samba
 %attr(1777,root,root) %dir /var/spool/samba
+
+%if %{with mysql}
+%files pdb-mysql
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/pdb/mysql.so
+%endif
+
+%files pdb-xml
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/pdb/xml.so
 
 %files winbind
 %defattr(644,root,root,755)
@@ -955,7 +992,7 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/libsmbclient.a
 
-%if 0%{!?_without_cups:1}
+%if {with cups}
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbspool

@@ -237,9 +237,6 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 > $RPM_BUILD_ROOT%{_libdir}/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
-gzip -9nfr README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
-	docs/textdocs/ docs/{history,announce,THANKS}
-
 rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
@@ -292,7 +289,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
-#%attr(755,root,root) %{_bindir}/convert_smbpasswd
+%attr(755,root,root) %{_bindir}/make_*
 %attr(755,root,root) %{_bindir}/smbcontrol
 
 %dir %{_libdir}

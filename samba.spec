@@ -4,6 +4,7 @@
 # - look into other distro specs for valid %descriptions for samba 3
 # - review configure options
 # - fix broken --without ldap, test functionality with other bconds
+# - new package with McAfee vscan - I dunno what to do with daemon
 #
 # Conditional build:
 %bcond_without	cups		# without CUPS support
@@ -696,6 +697,25 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego
 Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
+%package vfs-vscan-fsav
+Summary:	On-access virus scanning for samba using F-Secure AntiVirus
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa F-Secure AntiVirus
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
+Obsoletes:	vscan-kavp
+
+%description vfs-vscan-fsav
+A vfs-module for samba to implement on-access scanning using the
+F-Secure AntiVirus antivirus software (which must be installed to
+use this).
+
+%description vfs-vscan-fsav -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego
+F-Secure AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ
+ten modu³).
+
 %prep
 %setup -q
 %patch0 -p1
@@ -756,7 +776,7 @@ mv README{,.vfs}
 cd samba-vscan-%{vscan_version}
 cp /usr/share/automake/config.sub .
 %configure
-%{__make} -j1 oav sophos fprotd trend icap mksd kavp clamav
+%{__make} -j1 all
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -804,7 +824,7 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # modu³y vscan
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
-install examples/VFS/samba-vscan-%{vscan_version}/{clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
+install examples/VFS/samba-vscan-%{vscan_version}/{clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -1147,3 +1167,9 @@ fi
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-kavp.conf
 %attr(755,root,root) %{_vfsdir}/vscan-kavp.so
+
+%files vfs-vscan-fsav
+%defattr(644,root,root,755)
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fsav.conf
+%attr(755,root,root) %{_vfsdir}/vscan-fsav.so

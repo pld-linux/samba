@@ -1,0 +1,21 @@
+diff -durN samba-2.0.7.orig/source/nmbd/nmbd_packets.c samba-2.0.7/source/nmbd/nmbd_packets.c
+--- samba-2.0.7.orig/source/nmbd/nmbd_packets.c	Wed Apr 26 01:06:58 2000
++++ samba-2.0.7/source/nmbd/nmbd_packets.c	Sun Dec 31 17:05:04 2000
+@@ -59,7 +59,7 @@
+     if(ip_equal(local_ip, subrec->myip))
+       return subrec->nmb_sock;
+ 
+-  return ClientNMB;
++  return FIRST_SUBNET->nmb_sock;
+ }
+ 
+ /***************************************************************************
+@@ -222,7 +222,7 @@
+ 
+   packet->ip = to_ip;
+   packet->port = NMB_PORT;
+-  packet->fd = ClientNMB;
++  packet->fd = FIRST_SUBNET->nmb_sock;
+   packet->timestamp = time(NULL);
+   packet->packet_type = NMB_PACKET;
+   packet->locked = False;

@@ -23,7 +23,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8a
-Release:	1.5
+Release:	1.6
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -36,8 +36,8 @@ Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
 # Source7-md5:	cacc32f21812494993e32be558b91bdd
-Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.1.tar.bz2
-# Source8-md5:	3dffc426e57a225c0fb07e559ad7e76f
+Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
+# Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-DESTDIR.patch
 Patch3:		%{name}-manpages_PLD_fixes.patch
@@ -458,6 +458,7 @@ Summary:	On-access virus scanning for samba using ClamAV
 Summary(pl):	Skaner antywirusowy online wykorzystuj眂y ClamAV
 Group:		Networking/Daemons
 Provides:	%{name}-vscan
+Requires:	clamav
 Requires:	samba = %{version}
 
 %description vfs-vscan-clamav

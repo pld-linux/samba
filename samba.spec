@@ -37,19 +37,18 @@ Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
 # Source7-md5:	5f173d549014985d681478897135915b
-Patch1:		%{name}-config.patch
-Patch2:		%{name}-DESTDIR.patch
-Patch3:		%{name}-manpages_PLD_fixes.patch
-Patch4:		%{name}-smbprint.patch
-Patch5:		%{name}-autoconf.patch
-Patch6:		%{name}-smbadduser.patch
-Patch7:		%{name}-nmbd_socket.patch
-Patch8:		%{name}-vfs.patch
-Patch9:		%{name}-quota.patch
-Patch10:	http://v6web.litech.org/samba/%{name}-2.2.8a+IPv6-20030712.diff
-Patch11:	%{name}-DESTDIR-fix.patch
-Patch12:	%{name}-CIFS-extensions.patch
-Patch13:	%{name}-allow-suid.patch
+Patch0:		%{name}-config.patch
+Patch1:		%{name}-DESTDIR.patch
+Patch2:		%{name}-manpages_PLD_fixes.patch
+Patch3:		%{name}-smbprint.patch
+Patch4:		%{name}-autoconf.patch
+Patch5:		%{name}-nmbd_socket.patch
+Patch6:		http://v6web.litech.org/samba/%{name}-2.2.8a+IPv6-20030712.diff
+Patch7:		%{name}-DESTDIR-fix.patch
+Patch8:		%{name}-allow-suid.patch
+Patch9:		%{name}-CAN-2004-1154.patch
+# smbadduser isn't packaged
+#Patch:		%{name}-smbadduser.patch
 URL:		http://www.samba.org/
 BuildRequires:	autoconf
 %{?with_cups:BuildRequires:	cups-devel}
@@ -617,19 +616,16 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-#%patch6 -p2
+%{?with_ipv6:%patch6 -p1}
 %patch7 -p1
-#%patch8 -p1
-#%patch9 -p1
-%{?with_ipv6:%patch10 -p1}
-%patch11 -p1
-#%patch12 -p1
-%patch13 -p1
+%patch8 -p1
+%patch9 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

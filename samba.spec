@@ -529,6 +529,7 @@ Backend CUPS-a drukuj±cy na drukarkach SMB.
 Summary:	Samba python tools and libraries
 Summary(pl):	Narzêdzia i biblioteki pythona do samby
 Group:		Applications/Networking
+%pyrequires_eq	libs
 
 %description -n python-samba
 Samba python tools and libraries.

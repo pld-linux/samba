@@ -1,6 +1,7 @@
 #
 # Conditional build:
 # _with_ldap	- with LDAP support
+# _with_ipv6    - with IPv6 support
 #
 Summary:	SMB server
 Summary(pl):	Serwer SMB
@@ -37,6 +38,7 @@ Patch9:		%{name}-srv_spoolss_nt.patch
 # needed for external vfs modules to work.
 Patch10:	%{name}-vfs.patch
 Patch11:	%{name}-quota.patch
+Patch12:	http://v6web.litech.org/samba/samba-2.2.3a+IPv6-20020419.diff
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -202,6 +204,7 @@ Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 %build
 cd source
@@ -224,6 +227,7 @@ autoconf
 	--with-pam \
 	--with-ssl \
 	--with-sslinc=%{_prefix} \
+	%{?_with_ipv6:--with-ipv6} \
 	%{?_with_ldap:--with-ldapsam}
 
 mv Makefile Makefile.old

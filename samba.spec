@@ -9,8 +9,8 @@ Summary(it):	Server SMB
 Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
-Version:	2.2.2
-Release:	2
+Version:	2.2.3
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -24,13 +24,12 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Patch1:		%{name}-config.patch
-Patch2:		%{name}-cap.patch
-Patch3:		%{name}-DESTDIR.patch
-Patch6:		%{name}-manpages_PLD_fixes.patch
-Patch7:		%{name}-smbprint.patch
-Patch8:		%{name}-autoconf.patch
-Patch9:		%{name}-smbadduser.patch
-Patch10:	%{name}-nmbd_socket.patch
+Patch2:		%{name}-DESTDIR.patch
+Patch3:		%{name}-manpages_PLD_fixes.patch
+Patch4:		%{name}-smbprint.patch
+Patch5:		%{name}-autoconf.patch
+Patch6:		%{name}-smbadduser.patch
+Patch7:		%{name}-nmbd_socket.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -179,12 +178,10 @@ klientów Samba.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-#update required
+%patch4 -p1
+%patch5 -p1
 #%patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
 
 %build
 cd source

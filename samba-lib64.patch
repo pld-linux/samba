@@ -1,6 +1,15 @@
-diff -urN samba-3.0.4.org/source/aclocal.m4 samba-3.0.4/source/aclocal.m4
---- samba-3.0.4.org/source/aclocal.m4	2004-05-13 02:29:15.224209664 +0200
-+++ samba-3.0.4/source/aclocal.m4	2004-05-13 02:29:22.478106904 +0200
+diff -Nur samba-3.0.6.orig/source/aclocal.m4 samba-3.0.6/source/aclocal.m4
+--- samba-3.0.6.orig/source/aclocal.m4	2004-04-04 09:37:42.000000000 +0200
++++ samba-3.0.6/source/aclocal.m4	2004-08-20 12:40:42.859152168 +0200
+@@ -511,7 +511,7 @@
+   fi
+ 
+   AC_REQUIRE([AC_CANONICAL_TARGET])
+-  AC_PATH_PROG(PGSQL_CONFIG, pg_config, no, [$PATH:/usr/lib/postgresql/bin])
++  AC_PATH_PROG(PGSQL_CONFIG, pg_config, no, [$PATH:/usr/lib64/postgresql/bin])
+   AC_MSG_CHECKING(for PGSQL)
+   no_pgsql=""
+   if test "$PGSQL_CONFIG" = "no" ; then
 @@ -541,12 +541,12 @@
    $1=[$]ac_new_flags
  ])
@@ -28,10 +37,10 @@ diff -urN samba-3.0.4.org/source/aclocal.m4 samba-3.0.4/source/aclocal.m4
      $1="$$1 -L$2"
  fi
  ])
-diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
---- samba-3.0.4.org/source/configure.in	2004-05-13 02:29:15.234208144 +0200
-+++ samba-3.0.4/source/configure.in	2004-05-13 02:32:02.287812136 +0200
-@@ -19,7 +19,7 @@
+diff -Nur samba-3.0.6.orig/source/configure.in samba-3.0.6/source/configure.in
+--- samba-3.0.6.orig/source/configure.in	2004-08-06 23:38:21.000000000 +0200
++++ samba-3.0.6/source/configure.in	2004-08-20 12:39:35.994317168 +0200
+@@ -27,7 +27,7 @@
  mandir="\${prefix}/man"
  logfilebase="\${VARDIR}"
  privatedir="\${prefix}/private"
@@ -40,7 +49,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
  configdir="\${LIBDIR}"
  swatdir="\${prefix}/swat"
  
-@@ -27,12 +27,12 @@
+@@ -35,12 +35,12 @@
  [  --with-fhs              Use FHS-compliant paths (default=no)],
  [ case "$withval" in
    yes)
@@ -55,7 +64,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
      configdir="${sysconfdir}/samba"
      swatdir="\${DATADIR}/samba/swat"
      ;;
-@@ -587,7 +587,7 @@
+@@ -595,7 +595,7 @@
  # Note: iconv does that explicitly below, but other packages
  # don't.
  	CPPFLAGS="$CPPFLAGS -I/sw/include"
@@ -64,7 +73,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
  
  # If we have dlsym_prepend_underscore (from Fink's dlcompat),
  # use that instead of plain dlsym.
-@@ -868,7 +868,7 @@
+@@ -878,7 +878,7 @@
      _cppflags=${CPPFLAGS}
  
      # Add additional search path
@@ -73,7 +82,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
      CPPFLAGS="-I$with_readline/include $CPPFLAGS"
  
      AC_CHECK_HEADERS(readline.h history.h readline/readline.h)
-@@ -879,7 +879,7 @@
+@@ -889,7 +889,7 @@
         AC_CHECK_LIB(${termlib}, tgetent, [TERMLIBS="-l${termlib}"; break])
        done
        AC_CHECK_LIB(readline, rl_callback_handler_install,
@@ -82,7 +91,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
         TERMCPPFLAGS="-I$with_readline/include"
         CPPFLAGS="-I$with_readline/include $CPPFLAGS"
         TERMLIBS="-lreadline $TERMLIBS"
-@@ -1658,7 +1658,7 @@
+@@ -1680,7 +1680,7 @@
  ICONV_LOCATION=standard
  LOOK_DIRS="/usr /usr/local /sw /opt"
  AC_ARG_WITH(libiconv,
@@ -91,16 +100,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
  [
    if test "$withval" = "no" ; then
      AC_MSG_ERROR([argument to --with-libiconv must be a directory])
-@@ -1708,7 +1708,7 @@
-         # check for iconv in libc
-         ic_save_LIBS="$LIBS"
-         if test x"$ICONV_PATH_SPEC" = "xyes" ; then
--           LIBS="$LIBS -L$ICONV_LOCATION/lib"
-+           LIBS="$LIBS -L$ICONV_LOCATION/lib64"
-         fi
-         if test x"$jm_cv_lib_iconv" != x; then
-            LIBS="$LIBS -l$jm_cv_lib_iconv"
-@@ -2568,7 +2568,7 @@
+@@ -2628,7 +2628,7 @@
          AC_MSG_RESULT($withval)
          KRB5_CFLAGS="-I$withval/include"
          KRB5_CPPFLAGS="-I$withval/include"
@@ -109,7 +109,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
          FOUND_KRB5=yes
          ;;
        esac ],
-@@ -2581,10 +2581,10 @@
+@@ -2641,10 +2641,10 @@
      # see if this box has the SuSE location for the heimdal krb implementation
      AC_MSG_CHECKING(for /usr/include/heimdal)
      if test -d /usr/include/heimdal; then
@@ -122,7 +122,7 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
            AC_MSG_RESULT(yes)
        else
            KRB5_CFLAGS="-I/usr/include/heimdal"
-@@ -4372,7 +4372,7 @@
+@@ -4489,7 +4489,7 @@
  builddir=`pwd`
  AC_SUBST(builddir)
  
@@ -131,25 +131,9 @@ diff -urN samba-3.0.4.org/source/configure.in samba-3.0.4/source/configure.in
  LIB_REMOVE_USR_LIB(LDFLAGS)
  LIB_REMOVE_USR_LIB(LIBS)
  
-diff -urN samba-3.0.4.org/source/Makefile.in samba-3.0.4/source/Makefile.in
---- samba-3.0.4.org/source/Makefile.in	2004-05-13 02:29:15.223209816 +0200
-+++ samba-3.0.4/source/Makefile.in	2004-05-13 02:29:22.474107512 +0200
-@@ -1278,9 +1278,9 @@
- 	@$(SHELL) $(srcdir)/script/installswat.sh $(DESTDIR)$(SWATDIR) $(srcdir)
- 
- installclientlib: installdirs libsmbclient
--	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/lib
--	-$(INSTALLCLIENTCMD_SH) bin/libsmbclient.@SHLIBEXT@ $(DESTDIR)${prefix}/lib
--	-$(INSTALLCLIENTCMD_A) bin/libsmbclient.a $(DESTDIR)${prefix}/lib
-+	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/lib64
-+	-$(INSTALLCLIENTCMD_SH) bin/libsmbclient.@SHLIBEXT@ $(DESTDIR)${prefix}/lib64
-+	-$(INSTALLCLIENTCMD_A) bin/libsmbclient.a $(DESTDIR)${prefix}/lib64
- 	@$(SHELL) $(srcdir)/script/installdirs.sh $(DESTDIR)${prefix}/include
- 	-$(INSTALLCMD) $(srcdir)/include/libsmbclient.h $(DESTDIR)${prefix}/include
- 
-diff -urN samba-3.0.4.org/source/torture/nsstest.c samba-3.0.4/source/torture/nsstest.c
---- samba-3.0.4.org/source/torture/nsstest.c	2004-05-13 02:29:15.062234288 +0200
-+++ samba-3.0.4/source/torture/nsstest.c	2004-05-13 02:29:22.503103104 +0200
+diff -Nur samba-3.0.6.orig/source/torture/nsstest.c samba-3.0.6/source/torture/nsstest.c
+--- samba-3.0.6.orig/source/torture/nsstest.c	2004-04-04 09:37:39.000000000 +0200
++++ samba-3.0.6/source/torture/nsstest.c	2004-08-20 12:39:36.065306376 +0200
 @@ -21,7 +21,7 @@
  
  #include "includes.h"

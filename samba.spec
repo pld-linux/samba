@@ -497,18 +497,6 @@ Summary(pl):	Modu³ VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}
 
-%package vfs-shadow-copy
-Summary:	VFS module to make automatic copy of data in samba share
-Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}
-
-%description vfs-shadow-copy
-VFS module to make automatic copy of data in samba share
-
-%description vfs-shadow-copy -l pl
-Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby
-
 %description vfs-audit
 A simple module to audit file access to the syslog facility. The
 following operations are logged: share connect/disconnect, directory
@@ -548,6 +536,18 @@ VFS module to add recycle bin facility to a samba share.
 
 %description vfs-recycle -l pl
 Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
+
+%package vfs-shadow-copy
+Summary:	VFS module to make automatic copy of data in samba share
+Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}
+
+%description vfs-shadow-copy
+VFS module to make automatic copy of data in samba share.
+
+%description vfs-shadow-copy -l pl
+Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby.
 
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV

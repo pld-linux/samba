@@ -394,17 +394,17 @@ Arquivos de inclusão, bibliotecas e documentação necessários para
 desenvolver aplicativos clientes para o samba.
 
 %package -n libsmbclient-static
-Summary:	libsmbclient - samba client library
-Summary(pl):	libsmbclient - biblioteka klienta samby
+Summary:	Static version of libsmbclient - samba client library
+Summary(pl):	Statyczna wersja libsmbclient - biblioteki klienta samby
 Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	libsmbclient = %{version}
 
 %description -n libsmbclient-static
-Static libraries for libsmbclient.
+Static libsmbclient library.
 
 %description -n libsmbclient-static -l pl
-Biblioteki statyczne dla libsmbclient.
+Statyczna biblioteka libsmbclient.
 
 %package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
@@ -890,7 +890,7 @@ fi
 
 %files -n libsmbclient-static
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsmbclient.a
+%{_libdir}/libsmbclient.a
 
 %if 0%{!?_without_cups:1}
 %files -n cups-backend-smb

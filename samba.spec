@@ -557,6 +557,7 @@ Group:		Networking/Daemons
 Obsoletes:	vscan-mks
 Provides:	%{name}-vscan
 Requires:	samba = %{version}
+Requires:	mksd
 
 %description vfs-vscan-mks
 A vfs-module for samba to implement on-access scanning using the mks

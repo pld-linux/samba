@@ -27,7 +27,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.2a
 Epoch:		1
-Release:	3
+Release:	4
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -757,6 +757,9 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
+# we have this utility in tdb package
+rm -f $RPM_BUILD_ROOT{%{_bindir}/tdbdump,%{_mandir}/man8/tdbdump.8*}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -809,7 +812,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
-%attr(755,root,root) %{_bindir}/tdbdump
 
 %attr(755,root,root) /%{_lib}/libnss_*
 %attr(755,root,root) /%{_lib}/security/pam_winbind.so

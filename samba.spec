@@ -240,6 +240,8 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
+gzip -9nfr Manifest README Roadmap WHATSNEW.txt docs/*.reg docs/{announce,history,THANKS} docs/textdocs/*.txt 
+
 %post
 /sbin/chkconfig --add smb
 if [ -r /var/lock/subsys/smb ]; then

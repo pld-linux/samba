@@ -21,8 +21,8 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器.
 Name:		samba
 Version:	2.2.5
-Release:	1
-License:	GPL
+Release:	5
+License:	GPL v2
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
 Source0:	ftp://ftp.samba.org/pub/samba/%{name}-%{version}.tar.bz2
@@ -378,28 +378,29 @@ desenvolver aplicativos clientes para o samba.
 cd source
 %{__autoconf}
 %configure \
-	--with-readline \
-	--with-privatedir=%{_libdir} \
-	--with-lockdir=/var/lock/samba \
-	--with-piddir=/var/run \
-	--with-swatdir=%{_datadir}/swat \
-	--with-smbmount \
 	--with-automount \
-	--without-smbwrapper \
-	--with-netatalk \
-	--with-msdfs \
-	--without-quotas \
-	--with-vfs \
-	--with-utmp \
-	--with-syslog \
+	--with-libsmbclient \
+	--with-lockdir=/var/lock/samba \
 	--with-mmap \
+	--with-msdfs \
+	--with-netatalk \
+	--without-smbwrapper \
 	--with-pam \
+	--with-piddir=/var/run \
+	--with-privatedir=%{_libdir} \
+	--with-quotas \
+	--with-readline \
+	--with-smbmount \
 	--with-ssl \
 	--with-sslinc=%{_prefix} \
+	--with-swatdir=%{_datadir}/swat \
+	--with-syslog \
+	--with-utmp \
+	--with-vfs \
 	%{?_with_ipv6:--with-ipv6} \
-	%{?_with_ldap:--with-ldapsam} \
-	--with-libsmbclient
+	%{?_with_ldap:--with-ldapsam}
 
+#	--with-acl-support \
 mv Makefile Makefile.old
 sed -e "s#-symbolic##g" Makefile.old > Makefile
 

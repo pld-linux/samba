@@ -47,10 +47,8 @@ Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
 # Source7-md5:	5f173d549014985d681478897135915b
-Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
-# Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
-Source9:	winbind.init
-Source10:	winbind.sysconfig
+Source8:	winbind.init
+Source9:	winbind.sysconfig
 Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
 #Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
@@ -708,8 +706,6 @@ modu³).
 
 cd examples/VFS
 tar xjf %{SOURCE7}
-#cd %{name}-vscan-%{vscan_version}
-#tar xjf %{SOURCE8}
 
 %build
 cd source
@@ -784,8 +780,8 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
-install %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
-install %{SOURCE10} $RPM_BUILD_ROOT/etc/sysconfig/winbind
+install %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
+install %{SOURCE9} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
 install source/client/mount.cifs	$RPM_BUILD_ROOT/sbin/mount.cifs
 install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2

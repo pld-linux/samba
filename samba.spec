@@ -8,11 +8,12 @@ Summary(fr):	Client et serveur SMB
 Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
-Version:	2.0.6
-Release:	13
+Version:	2.0.7
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
+URL:		http://www.samba.org/
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	smb.init
 Source2:	samba.pamd
@@ -23,22 +24,21 @@ Source6:	smb.conf
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Patch3:		samba-DESTDIR.patch
-Patch4:		samba-fix_link_libs.patch
 Patch5:		samba-glibc21.patch
 Patch6:		samba-manpages_PLD_fixes.patch
 Patch7:		samba-smbprint.patch
-Patch8:		samba-nsl.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	pam-devel > 0.66
+BuildRequires:	openssl-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
 %define		_libdir		%{_sysconfdir}
-%define		_localstatedir	/var/log/samba
+%define		_localstatedir	%{_var}/log/samba
 
 %description
 Samba provides an SMB server which can be used to provide network services
@@ -132,27 +132,26 @@ www.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 %build
 cd source
 autoconf
-LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--with-privatedir=%{_sysconfdir} \
-	--with-lockdir=/var/lock/samba \
+	--with-lockdir=%{_var}/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
+	--with-automount \
 	--without-smbwrapper \
 	--with-quotas \
 	--with-syslog \
 	--with-mmap \
 	--with-pam \
-	--with-automount
+	--with-ssl \
+	--with-sslinc=%{_prefix}
 	
 %{__make} all 
 
@@ -162,12 +161,10 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
 	$RPM_BUILD_ROOT/sbin 
 
-(
-	cd source
-	make install DESTDIR=$RPM_BUILD_ROOT
-
-	install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
-)
+cd source
+make install DESTDIR=$RPM_BUILD_ROOT
+install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
+cd ..
 
 ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs 
 

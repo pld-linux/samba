@@ -854,11 +854,11 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) /%{_libdir}/libsmbclient.so.*
+%attr(755,root,root) /%{_lib}/libsmbclient.so.*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) /%{_libdir}/libsmbclient.so
+%attr(755,root,root) /%{_lib}/libsmbclient.so
 %{_includedir}/libsmbclient.h
 
 %if %{with_cups}

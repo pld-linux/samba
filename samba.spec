@@ -2,7 +2,6 @@
 # TODO:
 # - package python tools
 # - check winbindd package without samba server installed
-# - check if our swatdir is FHS compilant (--with fhs sets different swatdir)
 # - look into other distro specs for valid %descriptions for samba 3
 # - review configure options
 #
@@ -35,11 +34,11 @@ Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.3
 Epoch:		1
-Release:	0.rc1.1
+Release:	1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc1.tar.bz2
-# Source0-md5:	40c90201667db61fdd5217ea728c7580
+Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}.tar.bz2
+# Source0-md5:	1f0be8e0bd09ade4f079dfbbba7c9eb9
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -680,7 +679,7 @@ Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %prep
-%setup -q -n %{name}-%{version}rc1
+%setup -q
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1

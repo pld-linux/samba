@@ -146,7 +146,7 @@ $RPM_BUILD_ROOT/usr/bin/make_smbcodepage c $i \
 $RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
 $RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
-gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/* \
+gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man[1578]/* \
 	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README
 
 %post
@@ -188,13 +188,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(755,root,root) /lib/security/*.so
 
-/usr/man/man[157]/*
-/usr/man/man8/nmbd.8.gz
-/usr/man/man8/smbd.8.gz
-/usr/man/man8/smbmnt.8.gz
-/usr/man/man8/smbmount.8.gz
-/usr/man/man8/smbpasswd.8.gz
-/usr/man/man8/smbumount.8.gz
+%{_mandir}/man[157]/*
+%{_mandir}/man8/nmbd.8.gz
+%{_mandir}/man8/smbd.8.gz
+%{_mandir}/man8/smbmnt.8.gz
+%{_mandir}/man8/smbmount.8.gz
+%{_mandir}/man8/smbpasswd.8.gz
+%{_mandir}/man8/smbumount.8.gz
 
 %dir /home/samba
 /etc/samba/codepages
@@ -210,7 +210,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc swat/README.gz
 %attr(755,root,root) /usr/sbin/swat
 /usr/share/swat
-/usr/man/man8/swat.8.gz
+%{_mandir}/man8/swat.8.gz
 
 %changelog
 * Wed Apr 28 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>

@@ -9,24 +9,28 @@ Summary(it):	Client e server SMB
 Summary(tr):	SMB istemci ve sunucusu
 Name:		samba
 Version:	2.0.7
-Release:	1
+Release:	23
 License:	GPL
 Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 URL:		http://www.samba.org/
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	smb.init
-Source2:	samba.pamd
+Source2:	%{name}.pamd
 Source3:	swat.inetd
-Source4:	samba.sysconfig
-Source5:	samba.logrotate
+Source4:	%{name}.sysconfig
+Source5:	%{name}.logrotate
 Source6:	smb.conf
-Patch1:		samba-config.patch
-Patch2:		samba-cap.patch
-Patch3:		samba-DESTDIR.patch
-Patch5:		samba-glibc21.patch
-Patch6:		samba-manpages_PLD_fixes.patch
-Patch7:		samba-smbprint.patch
+Patch1:		%{name}-config.patch
+Patch2:		%{name}-cap.patch
+Patch3:		%{name}-DESTDIR.patch
+Patch5:		%{name}-glibc21.patch
+Patch6:		%{name}-manpages_PLD_fixes.patch
+Patch7:		%{name}-smbprint.patch
+Patch8:		%{name}-autoconf.patch
+Patch9:		%{name}-smbadduser.patch
+Patch10:	%{name}-nocups.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -41,91 +45,96 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_localstatedir	%{_var}/log/samba
 
 %description
-Samba provides an SMB server which can be used to provide network services
-to SMB (sometimes called "Lan Manager") clients, including various versions
-of MS Windows, OS/2, and other Linux machines. Samba also provides some SMB
-clients, which complement the built-in SMB filesystem in Linux. Samba uses
-NetBIOS over TCP/IP (NetBT) protocols and does NOT need NetBEUI (Microsoft
-Raw NetBIOS frame) protocol.
+Samba provides an SMB server which can be used to provide network
+services to SMB (sometimes called "Lan Manager") clients, including
+various versions of MS Windows, OS/2, and other Linux machines. Samba
+also provides some SMB clients, which complement the built-in SMB
+filesystem in Linux. Samba uses NetBIOS over TCP/IP (NetBT) protocols
+and does NOT need NetBEUI (Microsoft Raw NetBIOS frame) protocol.
 
 This release is known as the "Locking Update" and has full support for
-Opportunistic File Locking. In addition this update includes native support
-for Microsoft encrypted passwords, improved browse list and WINS database
-management.
+Opportunistic File Locking. In addition this update includes native
+support for Microsoft encrypted passwords, improved browse list and
+WINS database management.
 
-Please refer to the WHATSNEW.txt document for fixup information. This binary
-release includes encrypted password support. Please read the smb.conf file
-and ENCRYPTION.txt in the docs directory for implementation details.
+Please refer to the WHATSNEW.txt document for fixup information. This
+binary release includes encrypted password support. Please read the
+smb.conf file and ENCRYPTION.txt in the docs directory for
+implementation details.
 
 %description -l cs
-Samba poskytuje server SMB, který lze pou¾ít pro poskytování sí»ových slu¾eb
-klientùm SMB (nìkdy nazývaných klienti "LAN mana¾er") vèetnì klientù rùzných
-verzí MS Windows, OS/2 a dal¹ích linuxových strojù. Samba té¾ poskytuje
-nìkteré klienty SMB, kteøí komplementují vestavìný souborový systém SMB v
-Linuxu. Samba pou¾ívá protokoly NetBIOS pøes TCP/IP (NetBT) a NEpotøebuje
-protokol NetBEUI (neformátovaný rámec NetBIOS od spoleènosti Microsoft.
+Samba poskytuje server SMB, který lze pou¾ít pro poskytování sí»ových
+slu¾eb klientùm SMB (nìkdy nazývaných klienti "LAN mana¾er") vèetnì
+klientù rùzných verzí MS Windows, OS/2 a dal¹ích linuxových strojù.
+Samba té¾ poskytuje nìkteré klienty SMB, kteøí komplementují vestavìný
+souborový systém SMB v Linuxu. Samba pou¾ívá protokoly NetBIOS pøes
+TCP/IP (NetBT) a NEpotøebuje protokol NetBEUI (neformátovaný rámec
+NetBIOS od spoleènosti Microsoft.
 
 %description -l da
-Samba tilbyder en SMB server som kan bruges til at tilbyde netværk services
-til SMB (også kaldet "Lan Manager") klienter, incl. forskellige versioner af
-MS Windows, OS/2, og andre Linux maskiner. Samba tilbyder også SMB klienter,
-som udbygger det indbyggede SMB filsystem i Linux. Samba benytter NetBIOS
-over TCP/IP (NetBT) protocolen og kræver ikke NetBEUI (Microsoft Raw NetBIOS
-frame) protokollen.
+Samba tilbyder en SMB server som kan bruges til at tilbyde netværk
+services til SMB (også kaldet "Lan Manager") klienter, incl.
+forskellige versioner af MS Windows, OS/2, og andre Linux maskiner.
+Samba tilbyder også SMB klienter, som udbygger det indbyggede SMB
+filsystem i Linux. Samba benytter NetBIOS over TCP/IP (NetBT)
+protocolen og kræver ikke NetBEUI (Microsoft Raw NetBIOS frame)
+protokollen.
 
 %description -l de
 Samba stellt einen SMB-Server zum Anbieten von Netzwerkdiensten für
 SMB-Clients (auch "Lan Manager" genannt) zur Verfügung, darunter
-verschiedenen Versionen von MS Windows-, OS/2- und anderen Linux-Rechnern.
-Samba enthält außerdem einige SMB-Clients, die das in Linux integrierte
-SMB-Dateisystem ergänzen. Samba benutzt NetBIOS-über-TCP/IP
-(NetBT)-Protokolle und benötigt KEIN NetBEUI (Microsoft Raw NetBIOS
-frame)-Protokoll.
+verschiedenen Versionen von MS Windows-, OS/2- und anderen
+Linux-Rechnern. Samba enthält außerdem einige SMB-Clients, die das in
+Linux integrierte SMB-Dateisystem ergänzen. Samba benutzt
+NetBIOS-über-TCP/IP (NetBT)-Protokolle und benötigt KEIN NetBEUI
+(Microsoft Raw NetBIOS frame)-Protokoll.
 
 %description -l fi
 Samba on SMB-palvelin, jota voidaan käyttää SMB-asiakasohjelmien
-verkkopalvelujen tarjoajana. SMB-protokollaa kutsutaan joskus "Lan Manager"
-protokollaksi ja asiakasohjelmat toimivat dosissa, Windowseissa, OS/2:ssa ja
-toisissa Linux-koneissa. Samban mukana on myös joitakin SMB-asiakasohjelmia,
-jotka täydentävät Linuxin kernelissä olevaa SMB-tiedostojärjestelmän tukea.
-Samba vaatii NetBIOS over TCP/IP (NetBT) protokollaa eikä tarvitse tai pysty
-käyttämään NetBEUI-protokollaa.
+verkkopalvelujen tarjoajana. SMB-protokollaa kutsutaan joskus "Lan
+Manager" protokollaksi ja asiakasohjelmat toimivat dosissa,
+Windowseissa, OS/2:ssa ja toisissa Linux-koneissa. Samban mukana on
+myös joitakin SMB-asiakasohjelmia, jotka täydentävät Linuxin
+kernelissä olevaa SMB-tiedostojärjestelmän tukea. Samba vaatii NetBIOS
+over TCP/IP (NetBT) protokollaa eikä tarvitse tai pysty käyttämään
+NetBEUI-protokollaa.
 
 %description -l it
-Samba fornisce un server SMB che puo` essere usato per fornire servizi di
-rete ai client SMB, incluse le versioni MS Windows, OS/2 e per altre
-macchine Linux. Samba fornisce anche i client SMB. Samba usa NetBIOS sopra
-TCP/IP e non ha bisogno del protocollo NetBEUI.
+Samba fornisce un server SMB che puo` essere usato per fornire servizi
+di rete ai client SMB, incluse le versioni MS Windows, OS/2 e per
+altre macchine Linux. Samba fornisce anche i client SMB. Samba usa
+NetBIOS sopra TCP/IP e non ha bisogno del protocollo NetBEUI.
 
 %description -l pl
-Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia us³ug
-sieciowych (potocznie zwanych "Lan Manager"), dla klientów takich jak MS
-Windows, OS/2 a tak¿e maszyn linuxowych.  W pakiecie znajduje siê równie¿
-oprogramowanie klienckie. Samba u¿ywa protoko³u NetBIOS po TCP/IP (NetBT) i
-nie wymaga protoko³u NetBEUI. Ta wersja ma pe³ne wsparcie dla blokowania
-plików, a tak¿e wsparcie dla kodowania hase³ w standardzie MS i zarzadzania
-baz± WINS.
+Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia
+us³ug sieciowych (potocznie zwanych "Lan Manager"), dla klientów
+takich jak MS Windows, OS/2 a tak¿e maszyn linuxowych. W pakiecie
+znajduje siê równie¿ oprogramowanie klienckie. Samba u¿ywa protoko³u
+NetBIOS po TCP/IP (NetBT) i nie wymaga protoko³u NetBEUI. Ta wersja ma
+pe³ne wsparcie dla blokowania plików, a tak¿e wsparcie dla kodowania
+hase³ w standardzie MS i zarzadzania baz± WINS.
 
 %package -n swat
 Summary:	Samba Web Administration Tool
 Summary(pl):	Narzêdzie administracyjne serwisu Samba
 Group:		Networking/Admin
-Group(pl):	Sieciowe/Administracyjne
+Group(de):	Netzwerkwesen/Administration
+Group(pl):	Sieciowe/Administacyjne
 Requires:	%{name}
 Requires:	rc-inetd >= 0.8.2
 Requires:	inetdaemon
 
 %description -n swat
-swat allows a Samba administrator to configure the complex smb.conf file via
-a Web browser. In addition, a swat configuration page has help links to all
-the configurable options in the smb.conf file allowing an administrator to
-easily look up the effects of any change.
+swat allows a Samba administrator to configure the complex smb.conf
+file via a Web browser. In addition, a swat configuration page has
+help links to all the configurable options in the smb.conf file
+allowing an administrator to easily look up the effects of any change.
 
 swat is run from inet server.
 
 %description -n swat -l pl
-swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy przegl±darki
-www.
+swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy
+przegl±darki www.
 
 %prep
 %setup -q
@@ -135,6 +144,9 @@ www.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 %build
 cd source
@@ -162,7 +174,7 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/sbin 
 
 cd source
-make install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
 install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
 cd ..
 
@@ -173,7 +185,7 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/samba/smb.conf
+install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/smb.conf
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -182,25 +194,24 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
 > $RPM_BUILD_ROOT%{_sysconfdir}/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
-strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
-
-gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man?/* \
-	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
+gzip -9nf README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
 	docs/textdocs/* docs/*.txt docs/{history,announce,THANKS}
 
 rm -f docs/faq/*.{sgml,txt}
 
 %post
 /sbin/chkconfig --add smb
-if test -r /var/lock/subsys/smb; then
+if [ -r /var/lock/subsys/smb ]; then
 	/etc/rc.d/init.d/smb restart >&2
 else
-	echo "Run \"/etc/rc.d/init.d/smb start\" to start samba daemons."
+	echo "Run \"/etc/rc.d/init.d/smb start\" to start Samba daemons."
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-	/etc/rc.d/init.d/smb stop >&2
+	if [ -r /var/lock/subsys/smb ]; then
+		/etc/rc.d/init.d/smb stop >&2
+	fi
 	/sbin/chkconfig --del smb
 fi
 
@@ -217,7 +228,7 @@ if [ -f /var/lock/subsys/rc-inetd ]; then
 fi
 
 %triggerpostun -- samba < 1.9.18p7
-if [ $1 != 0 ]; then
+if [ "$1" != "0" ]; then
 	/sbin/chkconfig --add smb
 fi
 

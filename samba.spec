@@ -149,9 +149,12 @@ make all
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT/{var/lock/,home/}samba
+	$RPM_BUILD_ROOT/{var/lock/,var/spool/,home/}samba \
+	$RPM_BUILD_ROOT/sbin 
 
 (cd source; make install DESTDIR=$RPM_BUILD_ROOT)
+
+ln -sf $RPM_BUILD_ROOT/%{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs 
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
@@ -165,6 +168,7 @@ strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
+>  $RPM_BUILD_ROOT%{_sysconfdir}/smbusers
 
 strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
@@ -209,6 +213,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc Roadmap.gz docs/faq docs/*.reg.gz
 %doc docs/textdocs docs/*.txt.gz docs/{history,announce,THANKS}.gz
 
+%attr(755,root,root) /sbin/mount.smbfs
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd

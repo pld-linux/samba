@@ -515,30 +515,6 @@ Monitorowane s± nastêpuj±ce operacje: pod³±czone/od³±czenie do zasobu,
 otwarcie/utworzenie/zmiana nazwy katalogu, otwarcie/zamknêcie/zmiana
 nazwy/skasowania/zmiana praw plików.
 
-%package vfs-recycle
-Summary:	VFS module to add recycle bin facility to a samba share
-Summary(pl):	Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description vfs-recycle
-VFS module to add recycle bin facility to a samba share.
-
-%description vfs-recycle -l pl
-Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
-
-%package vfs-shadow_copy
-Summary:	VFS module to make automatic copy of data in samba share
-Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description vfs-shadow_copy
-VFS module to make automatic copy of data in samba share.
-
-%description vfs-shadow_copy -l pl
-Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby.
-
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
 Summary(pl):	Modu³ VFS zgodno¶ci z CAP (Columbia AppleTalk Program)
@@ -554,25 +530,18 @@ This is used for compatibility between Samba and CAP.
 Zamienia znaki kodowane Shift-JIS do trzybajowej szestnastkowej
 reprezentacji u¿ywanej przez program Columbia AppleTalk Program (CAP).
 
-%package vfs-readonly
-Summary:	VFS module
-Summary(pl):	Modu³ VFS
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description vfs-readonly
-
-%description vfs-readonly -l pl
-
 %package vfs-default_quota
-Summary:	VFS module
-Summary(pl):	Modu³ VFS
+Summary:	VFS module to store default quotas in a specified quota record
+Summary(pl):	Modu³ VFS do zapisywania domy¶lnych limitów w okre¶lonym rekordzie
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-default_quota
+This VFS modules stores default quotas in a specified quota record.
 
 %description vfs-default_quota -l pl
+Ten modu³ VFS zapisuje domy¶lne limity (quoty) w okre¶lonym rekordzie
+limitów.
 
 %package vfs-expand_msdfs
 Summary:	VFS module for hosting a Microsoft Distributed File System Tree
@@ -634,6 +603,46 @@ and netatalk file sharing services.
 Pakiet zawiera modu³ VFS netatalk umo¿liwiaj±cy wspó³pracê us³ug samba
 i netatalk przy udostêpnianiu zasobów.
 
+%package vfs-recycle
+Summary:	VFS module to add recycle bin facility to a samba share
+Summary(pl):	Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-recycle
+VFS module to add recycle bin facility to a samba share.
+
+%description vfs-recycle -l pl
+Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
+
+%package vfs-readonly
+Summary:	VFS module for read-only limitation for specified share
+Summary(pl):	Modu³ VFS do ograniczania okre¶lonego udzia³u tylko do odczytu
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-readonly
+This module performs a read-only limitation for specified share (or
+all of them if it is loaded in a [global] section) based on period
+definition in smb.conf.
+
+%description vfs-readonly -l pl
+Ten modu³ wprowadza ograniczenie tylko do odczytu dla okre¶lonego
+udzia³u (lub wszystkich, je¶li jest wczytywany w sekcji [global]) w
+oparciu o definicje okresów w smb.conf.
+
+%package vfs-shadow_copy
+Summary:	VFS module to make automatic copy of data in samba share
+Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-shadow_copy
+VFS module to make automatic copy of data in samba share.
+
+%description vfs-shadow_copy -l pl
+Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby.
+
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
@@ -666,6 +675,61 @@ antivirus software (which must be installed to use this).
 %description vfs-vscan-fprot -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego FPROT
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
+%package vfs-vscan-fsav
+Summary:	On-access virus scanning for samba using F-Secure AntiVirus
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa F-Secure AntiVirus
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
+Obsoletes:	vscan-kavp
+
+%description vfs-vscan-fsav
+A vfs-module for samba to implement on-access scanning using the
+F-Secure AntiVirus antivirus software (which must be installed to use
+this).
+
+%description vfs-vscan-fsav -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego F-Secure
+AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
+%package vfs-vscan-kavp
+Summary:	On-access virus scanning for samba using Kaspersky AVP
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Kaspersky AVP
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
+Obsoletes:	vscan-kavp
+
+%description vfs-vscan-kavp
+A vfs-module for samba to implement on-access scanning using the
+Kaspersky AVP antivirus software (which must be installed to use
+this).
+
+%description vfs-vscan-kavp -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego
+Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
+modu³).
+
+%package vfs-vscan-mks
+Summary:	On-access virus scanning for samba using mks
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa mks
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	mksd
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
+Obsoletes:	vscan-mks
+
+%description vfs-vscan-mks
+A vfs-module for samba to implement on-access scanning using the mks
+antivirus software (which must be installed to use this).
+
+%description vfs-vscan-mks -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego mks
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-openantivirus
@@ -737,61 +801,6 @@ antivirus software (which must be installed to use this).
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
-
-%package vfs-vscan-mks
-Summary:	On-access virus scanning for samba using mks
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa mks
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	mksd
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-mks
-
-%description vfs-vscan-mks
-A vfs-module for samba to implement on-access scanning using the mks
-antivirus software (which must be installed to use this).
-
-%description vfs-vscan-mks -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego mks
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
-
-%package vfs-vscan-kavp
-Summary:	On-access virus scanning for samba using Kaspersky AVP
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Kaspersky AVP
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-kavp
-
-%description vfs-vscan-kavp
-A vfs-module for samba to implement on-access scanning using the
-Kaspersky AVP antivirus software (which must be installed to use
-this).
-
-%description vfs-vscan-kavp -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
-modu³).
-
-%package vfs-vscan-fsav
-Summary:	On-access virus scanning for samba using F-Secure AntiVirus
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa F-Secure AntiVirus
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-kavp
-
-%description vfs-vscan-fsav
-A vfs-module for samba to implement on-access scanning using the
-F-Secure AntiVirus antivirus software (which must be installed to use
-this).
-
-%description vfs-vscan-fsav -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego F-Secure
-AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
 %setup -q
@@ -1166,21 +1175,9 @@ fi
 %attr(755,root,root) %{_vfsdir}/audit.so
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
 
-%files vfs-shadow_copy
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/shadow_copy.so
-
 %files vfs-cap
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/cap.so
-
-%files vfs-readonly
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/readonly.so
-
-%files vfs-recycle
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/recycle.so
 
 %files vfs-default_quota
 %defattr(644,root,root,755)
@@ -1198,6 +1195,18 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/netatalk.so
 
+%files vfs-readonly
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/readonly.so
+
+%files vfs-recycle
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/recycle.so
+
+%files vfs-shadow_copy
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/shadow_copy.so
+
 %files vfs-vscan-clamav
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
@@ -1209,6 +1218,26 @@ fi
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fprotd.conf
 %attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
+
+%files vfs-vscan-fsav
+%defattr(644,root,root,755)
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fsav.conf
+%attr(755,root,root) %{_vfsdir}/vscan-fsav.so
+
+%files vfs-vscan-kavp
+%defattr(644,root,root,755)
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-kavp.conf
+%attr(755,root,root) %{_vfsdir}/vscan-kavp.so
+
+%ifarch %{ix86}
+%files vfs-vscan-mks
+%defattr(644,root,root,755)
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-mks32.conf
+%attr(755,root,root) %{_vfsdir}/vscan-mksd.so
+%endif
 
 %files vfs-vscan-openantivirus
 %defattr(644,root,root,755)
@@ -1233,23 +1262,3 @@ fi
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
-
-%ifarch %{ix86}
-%files vfs-vscan-mks
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-mks32.conf
-%attr(755,root,root) %{_vfsdir}/vscan-mksd.so
-%endif
-
-%files vfs-vscan-kavp
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-kavp.conf
-%attr(755,root,root) %{_vfsdir}/vscan-kavp.so
-
-%files vfs-vscan-fsav
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fsav.conf
-%attr(755,root,root) %{_vfsdir}/vscan-fsav.so

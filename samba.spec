@@ -25,7 +25,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.1pre3
-Release:	0.2
+Release:	0.3
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}.tar.bz2
@@ -577,6 +577,7 @@ Requires:	%{name} = %{version}
 Requires:	mksd
 Provides:	%{name}-vscan = %{version}-%{release}
 Obsoletes:	vscan-mks
+ExclusiveArch:  %{ix86}
 
 %description vfs-vscan-mks
 A vfs-module for samba to implement on-access scanning using the mks

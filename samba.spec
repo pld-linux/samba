@@ -1,3 +1,5 @@
+# TODO:
+# - SECURITY: http://securitytracker.com/alerts/2004/Aug/1011097.html (upgrade to 2.2.11)
 #
 # Conditional build:
 # _without_cups	- without CUPS support

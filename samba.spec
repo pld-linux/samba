@@ -39,11 +39,11 @@ Patch4:		%{name}-smbprint.patch
 Patch5:		%{name}-autoconf.patch
 Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
-Patch10:	%{name}-vfs.patch
-#Patch11:	%{name}-quota.patch
-Patch12:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
-Patch13:	%{name}-DESTDIR-fix.patch
-#Patch14:	%{name}-CIFS-extensions.patch
+Patch8:		%{name}-vfs.patch
+Patch9:		%{name}-quota.patch
+Patch10:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
+Patch11:	%{name}-DESTDIR-fix.patch
+Patch12:	%{name}-CIFS-extensions.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -370,14 +370,19 @@ desenvolver aplicativos clientes para o samba.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+#%patch6 -p2
 %patch7 -p1
-%{?_with_ipv6:%patch12 -p1}
-%patch13 -p1
+#%patch8 -p1
+#%patch9 -p1
+%{?_with_ipv6:%patch10 -p1}
+%patch11 -p1
+#%patch12 -p1
 
 %build
 cd source
 %{__autoconf}
 %configure \
+	--with-acl-support \
 	--with-automount \
 	--with-libsmbclient \
 	--with-lockdir=/var/lock/samba \

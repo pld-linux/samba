@@ -54,6 +54,7 @@ BuildRequires:	autoconf
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
+BuildRequires:	popt-devel
 %{?_with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7
 Requires(post,preun):	/sbin/chkconfig

@@ -9,7 +9,7 @@ Summary(it):	Server SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.0.7
-Release:	28
+Release:	29
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -37,8 +37,8 @@ Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
 Requires:	samba-common = %{version} 
-BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	readline-devel >= 4.1
+BuildRequires:	ncurses-devel >= 5.2
+BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	openssl-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

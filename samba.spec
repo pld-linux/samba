@@ -9,13 +9,13 @@
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
+%bcond_without	krb5		# without Kerberos5/Heimdal support
+%bcond_without	ldap		# without LDAP support
 %bcond_without	mysql		# without MySQL support
 %bcond_without	pgsql		# without PostgreSQL support
+%bcond_without	python		# without python libs/utils
 %bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
 #%bcond_with	ipv6		# with IPv6 support
-%bcond_without	ldap		# without LDAP support
-%bcond_without	krb5		# without Kerberos5/Heimdal support
-%bcond_without	python		# without python libs/utils
 #
 # ADS requires krb5 and LDAP
 %if %{without krb5} || %{without ldap}
@@ -58,10 +58,10 @@ Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
-#Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
-Patch3:		%{name}-setup-python.patch
-Patch4:		%{name}-FHS.patch
-Patch5:		%{name}-case_insensitive_sql_operator.patch
+Patch2:		%{name}-setup-python.patch
+Patch3:		%{name}-FHS.patch
+Patch4:		%{name}-case_insensitive_sql_operator.patch
+#Patch5:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -91,6 +91,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate
 Requires:	pam >= 0.66
+Obsoletes:	samba-vfs-block
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_vfsdir		%{_libdir}/%{name}/vfs
@@ -336,9 +337,9 @@ Summary(pt_BR):	Cliente SMB do samba
 Summary(ru):	ÎÃ…≈Œ‘”À…≈ –“œ«“¡ÕÕŸ Samba (SMB)
 Summary(uk):	ÎÃ¶§Œ‘”ÿÀ¶ –“œ«“¡Õ… Samba (SMB)
 Group:		Applications/Networking
-Requires:	samba-common = %{epoch}:%{version}-%{release}
-Obsoletes:	smbfs
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Obsoletes:	mount-cifs
+Obsoletes:	smbfs
 
 %description client
 Samba-client provides some SMB clients, which complement the build-in
@@ -862,10 +863,10 @@ dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego Trend
 %ifarch amd64
 %patch1 -p1
 %endif
-#%{?with_ipv6:%patch2 -p1}
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
+#%{?with_ipv6:%patch5 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}
@@ -916,7 +917,7 @@ cd ../examples/VFS
 mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
-cp %{_datadir}/automake/config.sub .
+cp -f /usr/share/automake/config.sub .
 %configure
 %{__make} -j1 all
 
@@ -1083,8 +1084,8 @@ fi
 %dir /var/lock/samba
 %ghost /var/lock/samba/*
 
-%attr(0750,root,root) %dir /var/log/samba
-%attr(0750,root,root) %dir /var/log/archiv/samba
+%attr(750,root,root) %dir /var/log/samba
+%attr(750,root,root) %dir /var/log/archiv/samba
 %attr(1777,root,root) %dir /var/spool/samba
 %if %{with ldap}
 %doc examples/LDAP

@@ -898,7 +898,8 @@ install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 
-mv $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
+mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
+mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}

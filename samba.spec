@@ -1,6 +1,6 @@
 #
 # TODO:
-# - package python tools
+# - fix Summary and Description for python-samba package
 # - look into other distro specs for valid %descriptions for samba 3
 # - review configure options
 # - fix broken --without ldap, test functionality with other bconds
@@ -13,7 +13,7 @@
 #%bcond_with	ipv6		# with IPv6 support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	krb5		# without Kerberos5/Heimdal support
-%bcond_with	python		# with python utils, not builds, not packaged now
+%bcond_without	python		# without python libs/utils
 #
 %define		vscan_version 0.3.5
 Summary:	SMB server
@@ -498,6 +498,17 @@ CUPS backend for printing to SMB printers.
 %description -n cups-backend-smb -l pl
 Backend CUPS-a drukuj±cy na drukarkach SMB.
 
+%package -n python-samba
+Summary:	Samba python tools and libraries
+Summary(pl):	Narzêdzia i biblioteki pythona do samby
+Group:		Applications/Networking
+
+%description -n python-samba
+Samba python tools and libraries
+
+%description -n python-samba -l pl
+Narzêdzia i biblioteki pythona do samby
+
 %package vfs-audit
 Summary:	VFS module to audit file access
 Summary(pl):	Modu³ VFS do monitorowania operacji na plikach
@@ -925,6 +936,12 @@ rm -f docs/htmldocs/*.[0-9].html
 # we have this utility in tdb package
 rm -f $RPM_BUILD_ROOT{%{_bindir}/tdbdump,%{_mandir}/man8/tdbdump.8*}
 
+# python stuff
+%if %{with python}
+install -d $RPM_BUILD_ROOT%{py_sitedir}
+cp -R source/build/lib.*/samba $RPM_BUILD_ROOT%{py_sitedir}
+%endif
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1136,6 +1153,16 @@ fi
 %lang(pl) %{_libdir}/%{name}/pl.msg
 %lang(tr) %{_libdir}/%{name}/tr.msg
 %{_mandir}/man8/swat.8*
+
+%if %{with python}
+%files -n python-samba
+%defattr(644,root,root,755)
+%dir %{py_sitedir}/samba
+%attr(755,root,root) %{py_sitedir}/samba/*.so
+%{py_sitedir}/samba/*.py
+%doc source/python/{README,gprinterdata,gtdbtool,gtkdictbrowser.py}
+%doc source/python/examples
+%endif
 
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)

@@ -17,12 +17,6 @@ Version:	2.2.3
 Release:	2
 License:	GPL
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(es):	Red/Servidores
-Group(fr):	Réseau/Serveurs
-Group(pl):	Sieciowe/Serwery
-Group(pt):	Rede/Server
-Group(ru):	óÅÔÅ×ÙÅ/äÅÍÏÎÙ
 URL:		http://www.samba.org/
 Source0:	ftp://ftp.samba.org/pub/samba/%{name}-%{version}.tar.gz
 Source1:	smb.init
@@ -128,12 +122,6 @@ hase³ w standardzie MS i zarzadzania baz± WINS.
 Summary:	Samba Web Administration Tool
 Summary(pl):	Narzêdzie administracyjne serwisu Samba
 Group:		Networking/Admin
-Group(de):	Netzwerkwesen/Administration
-Group(es):	Red/Administración
-Group(fr):	Réseau/Administration
-Group(pl):	Sieciowe/Administracyjne
-Group(pt):	Rede/Administração
-Group(ru):	óÅÔÅ×ÙÅ/õĞÒÁ×ÌÅÎÉÅ
 Requires:	%{name}
 Requires:	rc-inetd >= 0.8.2
 Requires:	inetdaemon
@@ -156,13 +144,6 @@ przegl±darki WWW.
 Summary:	Samba client programs
 Summary(pl):	Klienci serwera Samba
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(es):	Aplicaciones/Red
-Group(fr):	Applications/Réseau
-Group(pl):	Aplikacje/Sieciowe
-Group(pt):	Aplicações/Rede
-Group(pt_BR):	Aplicações/Rede
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/óÅÔÅ×ÙÅ
 Requires:	samba-common = %{version}
 Obsoletes:	smbfs
 
@@ -180,12 +161,6 @@ SMB.
 Summary:	Files used by both Samba servers and clients
 Summary(pl):	Pliki u¿ywane przez serwer i klientów Samba
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(es):	Red/Servidores
-Group(fr):	Réseau/Serveurs
-Group(pl):	Sieciowe/Serwery
-Group(pt):	Rede/Server
-Group(ru):	óÅÔÅ×ÙÅ/äÅÍÏÎÙ
 
 %description common
 Samba-common provides files necessary for both the server and client

@@ -27,7 +27,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.2
 Epoch:		1
-Release:	0.rc1.0.2
+Release:	0.rc1.0.3
 License:	GPL v2
 Group:		Networking/Daemons
 #Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -719,7 +719,7 @@ cd source
 	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}
 
-%{__make} everything pam_smbpass bin/smbget
+%{__make} everything pam_smbpass bin/smbget client/mount.cifs
 
 cd ../examples/VFS
 %{__autoconf}
@@ -757,10 +757,11 @@ install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 
+install source/client/mount.cifs	$RPM_BUILD_ROOT/sbin/mount.cifs
 install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
-ln -s libnss_winbind.so.2 $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
+ln -s libnss_winbind.so.2		$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
 install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
-ln -s libnss_wins.so.2 $RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
+ln -s libnss_wins.so.2			$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
 install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
@@ -924,6 +925,7 @@ fi
 %files client
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.smbfs
+%attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) %{_bindir}/smbmount
 %attr(755,root,root) %{_bindir}/smbmnt
 %attr(755,root,root) %{_bindir}/smbumount
@@ -933,6 +935,7 @@ fi
 %{_mandir}/man8/smbmnt.8*
 %{_mandir}/man8/smbmount.8*
 %{_mandir}/man8/smbumount.8*
+%{_mandir}/man8/mount.cifs.8*
 %attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
@@ -981,7 +984,6 @@ fi
 %{_mandir}/man1/vfstest.1*
 
 %{_mandir}/man1/log2pcap.1*
-%{_mandir}/man8/mount.c*.*
 
 %{_mandir}/man5/smb.conf.5*
 %{_mandir}/man5/lmhosts.5*

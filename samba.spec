@@ -27,7 +27,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.2
 Epoch:		1
-Release:	0.rc1.0.1
+Release:	0.rc1.0.2
 License:	GPL v2
 Group:		Networking/Daemons
 #Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -458,6 +458,18 @@ Static libsmbclient library.
 %description -n libsmbclient-static -l pl
 Statyczna biblioteka libsmbclient.
 
+%package -n smbget
+Summary:        A utility for retrieving files using the SMB protocol
+Summary(pl):    Narzedzie do pobierania plik體 protoko砮m SMB
+Group:          Applications/Networking
+
+%description -n smbget
+wget-like utility for download files over SMB.
+
+%description -n smbget -l pl
+Narz阣zie podobne do wgeta do pobierania plik體 protko硂em SMB u縴wanym
+w sieciach MS Windows.
+
 %package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj眂y na drukarkach SMB
@@ -752,6 +764,7 @@ ln -s libnss_wins.so.2 $RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
 install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
+install source/bin/smbget               $RPM_BUILD_ROOT%{_bindir}
 
 mv $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
@@ -1013,6 +1026,11 @@ fi
 %files -n libsmbclient-static
 %defattr(644,root,root,755)
 %{_libdir}/libsmbclient.a
+
+%files -n smbget
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/smbget
+%{_mandir}/man1/smbget.1*
 
 %if %{with cups}
 %files -n cups-backend-smb

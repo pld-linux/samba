@@ -14,7 +14,7 @@ Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.3
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/

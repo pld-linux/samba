@@ -42,7 +42,7 @@ case "$1" in
 			msg_starting winbindd
 			daemon winbindd
 			RETVAL=$?
-			[ $RETVAL -eq 0] && touch /var/lock/subsys/winbind || \
+			[ $RETVAL -eq 0 ] && touch /var/lock/subsys/winbind || \
 			RETVAL=1
 		else
 			nls "Winbind is not configured in /etc/samba/smb.conf, not starting"

@@ -989,7 +989,7 @@ install -d $RPM_BUILD_ROOT%{py_sitedir}
 cp -R source/build/lib.*/samba $RPM_BUILD_ROOT%{py_sitedir}
 %endif
 
-mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_libdir}/tdbtool_samba
+mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
 
 %clean
 rm -rf $RPM_BUILD_ROOT

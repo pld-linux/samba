@@ -918,7 +918,7 @@ fi
 %files vfs-vscan-fsav
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fsav.conf
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-fsav.conf
 %attr(755,root,root) %{_vfsdir}/vscan-fsav.so
 
 %files vfs-vscan-kavp

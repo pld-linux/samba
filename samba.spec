@@ -6,6 +6,7 @@ Summary(de):	SMB-Server
 Summary(fi):	SMB-palvelin
 Summary(fr):	Serveur SMB
 Summary(it):	Server SMB
+Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.1a
@@ -36,6 +37,7 @@ Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
 Requires:	samba-common = %{version} 
+BuildRequires:	autoconf
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
@@ -136,10 +138,10 @@ swat is run from inet server.
 
 %description -n swat -l pl
 swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy
-przegl±darki www.
+przegl±darki WWW.
 
 %package client
-Summary:	Samba client programs.
+Summary:	Samba client programs
 Summary(pl):	Klienci serwera Samba
 Group:		Applications/Networking
 Group(de):	Applikationen/Netzwerkwesen
@@ -153,13 +155,13 @@ SMB filesystem in Linux. These allow accessing of SMB shares and
 printing to SMB printers.
 
 %description client -l pl
-Klient-samby dostarcza pewne programy które uzupe³niaj± system plików
+Samba-client dostarcza pewne programy które uzupe³niaj± system plików
 SMB zawarty w j±drze. Pozwala na wspó³dzielenie i drukowanie w sieci
 SMB.
 
 %package common
-Summary:	Files used by both Samba servers and clients.
-Summary(pl):	Pliki u¿ywane przez serwer i klientów Samba.
+Summary:	Files used by both Samba servers and clients
+Summary(pl):	Pliki u¿ywane przez serwer i klientów Samba
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
@@ -240,7 +242,10 @@ echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
-gzip -9nfr Manifest README Roadmap WHATSNEW.txt docs/*.reg docs/{announce,history,THANKS} docs/textdocs/*.txt 
+gzip -9nfr Manifest README Roadmap WHATSNEW.txt docs/*.reg docs/{announce,history,THANKS} docs/textdocs/*.txt
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add smb
@@ -280,9 +285,6 @@ if [ "$1" != "0" ]; then
 	[ ! -d /var/lock/samba ] && mkdir -m 0755 /var/lock/samba
 	[ ! -d /var/spool/samba ] && mkdir -m 1777 /var/spool/samba
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)

@@ -20,12 +20,11 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器.
 Name:		samba
-Version:	2.2.5
-Release:	7
+Version:	2.2.6
+Release:	1
 License:	GPL v2
 Group:		Networking/Daemons
-URL:		http://www.samba.org/
-Source0:	ftp://ftp.samba.org/pub/samba/%{name}-%{version}.tar.bz2
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -44,6 +43,7 @@ Patch9:		%{name}-quota.patch
 Patch10:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 Patch11:	%{name}-DESTDIR-fix.patch
 Patch12:	%{name}-CIFS-extensions.patch
+URL:		http://www.samba.org/
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate

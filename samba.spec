@@ -51,12 +51,13 @@ Patch12:	%{name}-CIFS-extensions.patch
 URL:		http://www.samba.org/
 BuildRequires:	autoconf
 %{!?_without_cups:BuildRequires:	cups-devel}
+BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
-BuildRequires:	readline-devel >= 4.2
-BuildRequires:	pam-devel > 0.66
-BuildRequires:	popt-devel
 %{?_with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7
+BuildRequires:	pam-devel > 0.66
+BuildRequires:	popt-devel
+BuildRequires:	readline-devel >= 4.2
 Requires(post,preun):	/sbin/chkconfig
 Requires:	logrotate
 Requires:	pam >= 0.66
@@ -430,13 +431,13 @@ Requires:	samba = %{version}
 %description vfs-block
 Sample module by Ronald Kuetemeier <ronald@kuetemeier.com> to block
 named symbolic link following. Note: Config file is in
-/etc/samba/samba-block.conf
+/etc/samba/samba-block.conf .
 
 %description vfs-block -l pl
 Przyk³adowy modu³ stworzony przez Ronald Kuetemeier
 <ronald@kuetemeier.com> do blokowania dostêpu do plików wskazywanych
 przez linki symboliczne. Plik konfiguracyjny w
-/etc/samba/samba-block.conf
+/etc/samba/samba-block.conf .
 
 %package vfs-recycle
 Summary:	VFS module to add recycle bin facility to a samba share
@@ -445,10 +446,10 @@ Group:		Networking/Daemons
 Requires:	samba = %{version}
 
 %description vfs-recycle
-VFS module to add recycle bin facility to a samba share
+VFS module to add recycle bin facility to a samba share.
 
 %description vfs-block -l pl
-Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
+Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 
 %package vfs-vscan-fprot
 Summary:	On-access virus scanning for samba using FPROT
@@ -465,7 +466,7 @@ antivirus software (which must be installed to use this).
 %description vfs-vscan-fprot -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-FPROT(który musi byæ zainstalowany aby wykorzystaæ ten modu³).
+FPROT (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-openantivirus
 Summary:	On-access virus scanning for samba using OpenAntivirus
@@ -483,7 +484,7 @@ this).
 %description vfs-vscan-openantivirus -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-OpenAntiVirus.org (które musi byæ zainstalowany aby wykorzystaæ ten
+OpenAntiVirus.org (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %package vfs-vscan-sophos
@@ -501,7 +502,7 @@ Sophos antivirus software (which must be installed to use this).
 %description vfs-vscan-sophos -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego Sophos
-(które musi byæ zainstalowany aby wykorzystaæ ten modu³).
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-symantec
 Summary:	On-access virus scanning for samba using Symantec
@@ -518,7 +519,7 @@ Symantec antivirus software (which must be installed to use this).
 %description vfs-vscan-symantec -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego firmy
-Symantec(który musi byæ zainstalowany aby wykorzystaæ ten modu³).
+Symantec (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-trend
 Summary:	On-access virus scanning for samba using Trend
@@ -535,7 +536,7 @@ antivirus software (which must be installed to use this).
 %description vfs-vscan-trend -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
-(które musi byæ zainstalowany aby wykorzystaæ ten modu³).
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
 %setup -q
@@ -597,10 +598,10 @@ mv README{,.vfs}
 cd samba-vscan-%{vscan_version}
 # note - kaspersky mks don't compile yet
 for i in fprot icap openantivirus sophos trend; do
-cd $i;
+cd $i
 %{__make} "LIBTOOL=libtool --tag=CC"
 cd ..
-done;
+done
 
 %install
 rm -rf $RPM_BUILD_ROOT

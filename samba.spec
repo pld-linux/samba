@@ -21,7 +21,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.7
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -49,6 +49,7 @@ Requires:	pam >= 0.66
 Requires:	logrotate
 Requires:	samba-common = %{version}
 BuildRequires:	autoconf
+BuildRequires:	cups-devel
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
@@ -380,6 +381,15 @@ Pliki nag丑wkowe dla libsmbclient.
 Arquivos de inclus鉶, bibliotecas e documenta玢o necess醨ios para
 desenvolver aplicativos clientes para o samba.
 
+%package -n cups-backend-smb
+Summary:	CUPS backend for printing to SMB printers
+Group:		Application/Printing
+Requires:	cups
+Requires:	samba-clinet = %{version}
+
+%description -n cups-backend-smb
+CUPS backend for printing to SMB printers.
+
 %prep
 %setup -q
 %patch1 -p1
@@ -462,6 +472,9 @@ touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 
+install -d $RPM_BUILD_ROOT%(cups-config --serverbin)/backend
+ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%(cups-config --serverbin)/backend/smb
+
 > $RPM_BUILD_ROOT%{_libdir}/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
@@ -520,6 +533,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
+%attr(755,root,root) %{_bindir}/tdbbackup
 
 %attr(755,root,root) /lib/libnss_wins*
 %attr(755,root,root) /lib/security/pam_winbind.so
@@ -560,7 +574,6 @@ fi
 %attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
-%attr(755,root,root) %{_bindir}/smbspool
 %attr(755,root,root) %{_bindir}/smbcacls
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbclient.1*
@@ -570,6 +583,8 @@ fi
 %{_mandir}/man1/rpcclient.1*
 %attr(755,root,root) %{_bindir}/wbinfo
 %{_mandir}/man1/wbinfo.1*
+%attr(755,root,root) %{_bindir}/findsmb
+%{_mandir}/man1/findsmb.1*
 
 %files common
 %defattr(644,root,root,755)
@@ -612,3 +627,9 @@ fi
 %defattr(644,root,root,755)
 %{_includedir}/libsmbclient.h
 %attr(755,root,root) /lib/libsmbclient.so
+
+%files -n cups-backend-smb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/smbspool
+%attr(755,root,root) %(cups-config --serverbin)/backend/smb
+%{_mandir}/man8/smbspool.8*

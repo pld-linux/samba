@@ -676,7 +676,7 @@ cd source
 	--with-fhs \
 	--with-expsam=xml,%{?with_mysql:mysql} \
 	%{?with_ipv6:--with-ipv6} \
-        %{?with_ldapsam:--with-ldapsam} \
+	%{?with_ldapsam:--with-ldapsam} \
 	%{!?with_ldap:--without-ldap} \
 	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}

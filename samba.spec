@@ -20,7 +20,7 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB кл╕╓нт та сервер
 Name:		samba
 Version:	2.2.5
-Release:	0.1
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/

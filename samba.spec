@@ -572,7 +572,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-default_quota
 
-%description vfs-default-quota -l pl
+%description vfs-default_quota -l pl
 
 %package vfs-expand_msdfs
 Summary:	VFS module for hosting a Microsoft Distributed File System Tree

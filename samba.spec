@@ -137,6 +137,7 @@ install  %{SOURCE2}			$RPM_BUILD_ROOT/etc/pam.d/samba
 install -s source/bin/*.so 	$RPM_BUILD_ROOT/lib/security
 install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT%{_bindir}
 
+strip --strip-unneeded $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir},/lib/security}/* || :
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 

@@ -1,11 +1,11 @@
 #
 # Conditional build:
-%bcond_without cups             # without CUPS support
-%bcond_without mysql            # without MySQL support
-%bcond_with ldapsam             # with LDAP SAM 2.2 based auth (instead of smbpasswd)
-%bcond_with ipv6                # with IPv6 support
-%bcond_without ldap             # without LDAP support
-%bcond_without krb5             # without Kerberos5/Heimdal support
+%bcond_without cups		# without CUPS support
+%bcond_without mysql		# without MySQL support
+%bcond_with ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
+%bcond_with ipv6		# with IPv6 support
+%bcond_without ldap		# without LDAP support
+%bcond_without krb5		# without Kerberos5/Heimdal support
 #
 %define		vscan_version 0.3.4
 Summary:	SMB server
@@ -30,7 +30,7 @@ Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}.tar.bz2
-# Source0-md5:  b03fa2fb03dcaf020dfe27dd276d981b
+# Source0-md5:	b03fa2fb03dcaf020dfe27dd276d981b
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -47,8 +47,8 @@ Patch0:		%{name}-statfs-workaround.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
-%{?with_cups:BuildRequires:     cups-devel}
-%{?with_krb5:BuildRequires:     heimdal-devel}
+%{?with_cups:BuildRequires:	cups-devel}
+%{?with_krb5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	libxml2-devel
 %if %{with mysql}
@@ -381,8 +381,7 @@ Samba-common м╕стить файли, необх╕дн╕ для роботи як кл╕╓нта, так ╕
 %package winbind
 URL:		http://www.samba.org
 Summary:	Samba-winbind daemon, utilities and documentation
-Group:		System/Servers
-######		Unknown group!
+Group:		Networking/Daemons
 Requires:	%{name}-common = %{version}
 Requires(post,preun):	/sbin/chkconfig
 
@@ -692,9 +691,9 @@ cd source
 	--with-python \
 	--with-expsam=xml,%{?with_mysql:mysql} \
 	%{?with_ipv6:--with-ipv6} \
-        %{?with_ldapsam:--with-ldapsam} \
+	%{?with_ldapsam:--with-ldapsam} \
 	%{!?with_ldap:--without-ldap} \
-        %{?with_krb5:--with-krb5} \
+	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}
 
 %{__make} everything pam_smbpass
@@ -841,8 +840,8 @@ fi
 
 #%attr(755,root,root) /lib/libnss_*
 #%attr(755,root,root) /lib/security/pam_winbind.so
-%attr(755,root,root) %{_libdir}/%{name}/pdb/*.so
-
+#%attr(755,root,root) %{_libdir}/%{name}/pdb/*.so
+%dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
 
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
@@ -993,7 +992,7 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/libsmbclient.a
 
-%if {with cups}
+%if %{with cups}
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbspool

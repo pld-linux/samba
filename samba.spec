@@ -5,6 +5,7 @@
 # - review configure options
 # - fix broken --without ldap, test functionality with other bconds
 # - check tdbtool (with tdb.spec)
+# - when pl for openldap-schema-samba done, rel up and STBR
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -39,7 +40,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.11
-Release:	2
+Release:	2.3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -1056,7 +1057,13 @@ if ! grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
 		/^include.*local.schema/{
 			i\
 include		%{schemadir}/samba.schema
-		}' /etc/openldap/slapd.conf
+		}
+
+		# enable dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
+		/^#include.*\(cosine\|inetorgperson\|nis\)\.schema/{
+			s/^#//
+		}
+	' /etc/openldap/slapd.conf
 fi
 
 if [ -f /var/lock/subsys/ldap ]; then
@@ -1068,6 +1075,9 @@ if [ "$1" = "0" ]; then
 	if grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
 		sed -i -e '
 		/^include.*\/usr\/share\/openldap\/schema\/samba.schema/d
+
+		# for symmetry it would be nice if we disable enabled schemas in post,
+		# but we really can not do that, it would break something else.
 		' /etc/openldap/slapd.conf
 	fi
 

@@ -168,7 +168,9 @@ strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
->  $RPM_BUILD_ROOT%{_sysconfdir}/smbusers
+
+> $RPM_BUILD_ROOT%{_sysconfdir}/smbusers
+> $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
@@ -201,7 +203,7 @@ fi
 
 %postun -n swat
 if [ -f /var/lock/subsys/rc-inetd ]; then
-   /etc/rc.d/init.d/rc-inetd stop
+	/etc/rc.d/init.d/rc-inetd stop
 fi
 
 %clean
@@ -227,8 +229,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
 %attr(640,root,root) /etc/logrotate.d/samba
 %attr(640,root,root) /etc/pam.d/samba
-
-#%attr(755,root,root) /lib/security/*.so
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/security/blacklist.samba
 
 %{_mandir}/man[157]/*
 %{_mandir}/man8/nmbd.8*

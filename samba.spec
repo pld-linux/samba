@@ -504,10 +504,10 @@ Summary(pl):	Narzêdzia i biblioteki pythona do samby
 Group:		Applications/Networking
 
 %description -n python-samba
-Samba python tools and libraries
+Samba python tools and libraries.
 
 %description -n python-samba -l pl
-Narzêdzia i biblioteki pythona do samby
+Narzêdzia i biblioteki pythona do samby.
 
 %package vfs-audit
 Summary:	VFS module to audit file access

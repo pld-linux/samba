@@ -229,6 +229,7 @@ cd source
 	--with-readline \
 	--with-privatedir=%{_libdir} \
 	--with-lockdir=/var/lock/samba \
+	--with-piddir=/var/run \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
 	--with-automount \

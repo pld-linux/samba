@@ -486,7 +486,7 @@ przez linki symboliczne. Plik konfiguracyjny w
 Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl):	Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
 Group:		Networking/Daemons
-Requires:	%{name} = %%{epoch}:{version}
+Requires:	%{name} = %{epoch}:%{version}
 
 %description vfs-recycle
 VFS module to add recycle bin facility to a samba share.

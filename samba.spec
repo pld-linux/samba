@@ -35,11 +35,11 @@ Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.3
 Epoch:		1
-Release:	0.pre2.1
+Release:	0.rc1.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}pre2.tar.bz2
-# Source0-md5:	47464715c375bf4b17453dc534337111
+Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc1.tar.bz2
+# Source0-md5:	6040f102cdc52fc00ae4e6b5028395ce
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -47,7 +47,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	acbcb28cff080dcf2ee732b7f2c0f949
+# Source7-md5:	40c90201667db61fdd5217ea728c7580
 Source8:	http://aramin.net/~undefine/%{name}-vscan-clamav-0.2.tar.bz2
 # Source8-md5:	8d425d1e287bdf9d343b6ae4b1c9e842
 Source9:	winbind.init
@@ -680,7 +680,7 @@ Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
 modu³).
 
 %prep
-%setup -q -n %{name}-%{version}pre2
+%setup -q -n %{name}-%{version}rc1
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1
@@ -970,7 +970,7 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc README Manifest WHATSNEW.txt
-%doc Roadmap docs/faq docs/Registry/*
+%doc Roadmap docs/*.pdf docs/registry/*
 %doc docs/htmldocs/*.* docs/{history,THANKS}
 %dir %{_libdir}/%{name}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf

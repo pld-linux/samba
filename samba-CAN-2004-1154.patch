@@ -1,0 +1,2846 @@
+--- samba-2.2.12/source/aparser/parser.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/aparser/parser.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1,4 +1,6 @@
+ #include "parser.h"
++#include <limits.h>
++
+ 
+ /*******************************************************************
+  Attempt, if needed, to grow a data buffer.
+@@ -44,6 +46,17 @@
+ 		 * If the current buffer size is bigger than the space needed, just 
+ 		 * double it, else add extra_space.
+ 		 */
++		if(ps->buffer_size >= UINT_MAX/2)
++		{
++			DEBUG(0,("io_grow: integer overflow detected.\n"));
++			return False;
++		}
++		if(ps->buffer_size >= UINT_MAX - extra_space)
++		{
++			DEBUG(0,("io_grow: integer overflow detected.\n"));
++			return False;
++		}
++
+ 		new_size = MAX(ps->buffer_size*2, ps->buffer_size + extra_space);		
+ 
+ 		if ((new_data = Realloc(ps->data_p, new_size)) == NULL) {
+--- samba-2.2.12/source/auth/pampass.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/auth/pampass.c	2004-12-17 11:17:04.000000000 -0200
+@@ -126,7 +126,7 @@
+ 		return PAM_CONV_ERR;
+ 	}
+ 
+-	reply = malloc(sizeof(struct pam_response) * num_msg);
++	reply = malloc_array(sizeof(struct pam_response), num_msg);
+ 	if (!reply)
+ 		return PAM_CONV_ERR;
+ 
+@@ -286,7 +286,7 @@
+ 		return PAM_CONV_ERR;
+ 	}
+ 
+-	reply = malloc(sizeof(struct pam_response) * num_msg);
++	reply = malloc_array(sizeof(struct pam_response), num_msg);
+ 	if (!reply) {
+ 		DEBUG(0,("smb_pam_passchange_conv: malloc for reply failed!\n"));
+ 		free_pw_chat(pw_chat);
+--- samba-2.2.12/source/client/client.c.CAN-2004-1154	2004-08-12 15:24:36.000000000 -0300
++++ samba-2.2.12/source/client/client.c	2004-12-17 11:17:04.875793248 -0200
+@@ -421,6 +421,12 @@
+ 	long new_end = do_list_queue_end + ((long)strlen(entry)) + 1;
+ 	while (new_end > do_list_queue_size)
+ 	{
++		if(do_list_queue_size >= UINT_MAX/2)
++		{
++			DEBUG(0,("add_to_do_list_queue: integer overflow detected.\n"));
++			reset_do_list_queue();
++			return;
++		}
+ 		do_list_queue_size *= 2;
+ 		DEBUG(4,("enlarging do_list_queue to %d\n",
+ 			 (int)do_list_queue_size));
+@@ -2045,7 +2051,7 @@
+ 	/* for words not at the start of the line fallback to filename completion */
+ 	if (start) return NULL;
+ 
+-	matches = (char **)malloc(sizeof(matches[0])*MAX_COMPLETIONS);
++	matches = (char **)malloc_array(sizeof(matches[0]), MAX_COMPLETIONS);
+ 	if (!matches) return NULL;
+ 
+ 	matches[count++] = strdup(text);
+--- samba-2.2.12/source/client/clitar.c.CAN-2004-1154	2004-08-12 15:24:36.000000000 -0300
++++ samba-2.2.12/source/client/clitar.c	2004-12-17 11:24:17.848971320 -0200
+@@ -109,7 +109,7 @@
+ 
+ char tar_type='\0';
+ static char **cliplist=NULL;
+-static int clipn=0;
++static unsigned int clipn=0;
+ static BOOL must_free_cliplist = False;
+ 
+ extern file_info def_finfo;
+@@ -153,6 +153,12 @@
+ {
+   char *tmp;
+ 
++  if(size >= INT_MAX-1)
++  {
++	DEBUG(0, ("string_create_s: integer overflow detected."));
++	return NULL;
++  }
++
+   tmp = (char *)malloc(size+1);
+ 
+   if (tmp == NULL) {
+@@ -183,6 +189,12 @@
+   if (l >= NAMSIZ - 1) {
+ 	  /* write a GNU tar style long header */
+ 	  char *b;
++	
++	  if(l >= (INT_MAX - TBLOCK - 100))
++	  {
++		DEBUG(0,("writetarheader: integer overflow detected.\n"));
++		exit(1);
++	  }
+ 	  b = (char *)malloc(l+TBLOCK+100);
+ 	  if (!b) {
+ 		  DEBUG(0,("out of memory\n"));
+@@ -384,7 +396,13 @@
+ {
+   /* initialize tar buffer */
+   tbufsiz=blocksize*TBLOCK;
+-  tarbuf=malloc(tbufsiz);      /* FIXME: We might not get the buffer */
++  tarbuf=malloc(tbufsiz);
++
++  if(tarbuf == NULL)
++  {
++	DEBUG(0,("initarbuf: out of memory.\n"));
++	exit(-1);
++  }
+ 
+   /* reset tar buffer pointer and tar file counter and total dumped */
+   tp=0; ntarf=0; ttarf=0;
+@@ -1124,11 +1142,19 @@
+ */
+ static char * get_longfilename(file_info2 finfo)
+ {
+-  int namesize = strlen(finfo.name) + strlen(cur_dir) + 2;
++  size_t namesize = strlen(finfo.name) + strlen(cur_dir) + 2;
+   char *longname = malloc(namesize);
+   SMB_BIG_INT offset = 0, left = finfo.size;
+   BOOL first = True;
+ 
++  if(strlen(finfo.name) >= (UINT_MAX - strlen(cur_dir) - 2))
++  {
++    DEBUG(0,("get_longfilename: integer overflow detected.\n"));
++    return NULL;
++  }
++  namesize = strlen(finfo.name) + strlen(cur_dir) + 2;
++  longname = malloc(namesize);
++
+   DEBUG(5, ("Restoring a long file name: %s\n", finfo.name));
+   DEBUG(5, ("Len = %.0f\n", (double)finfo.size));
+ 
+@@ -1576,7 +1602,7 @@
+   FILE *inclusion = NULL;
+   char buf[MAXPATHLEN + 1];
+   char *inclusion_buffer = NULL;
+-  int inclusion_buffer_size = 0;
++  size_t inclusion_buffer_size = 0;
+   int inclusion_buffer_sofar = 0;
+   char *p;
+   char *tmpstr;
+@@ -1609,6 +1635,11 @@
+     
+     if ((strlen(buf) + 1 + inclusion_buffer_sofar) >= inclusion_buffer_size) {
+       char *ib;
++      if(inclusion_buffer_size >= UINT_MAX/2)
++      {
++        DEBUG(0,("read_inclusion_file: integer overflow detected.\n"));
++        return 0;
++      }
+       inclusion_buffer_size *= 2;
+       ib = Realloc(inclusion_buffer,inclusion_buffer_size);
+       if (! ib) {
+@@ -1621,13 +1652,24 @@
+     
+     safe_strcpy(inclusion_buffer + inclusion_buffer_sofar, buf, inclusion_buffer_size - inclusion_buffer_sofar);
+     inclusion_buffer_sofar += strlen(buf) + 1;
++
++    if(clipn > (UINT_MAX-1))
++    {
++      DEBUG(0,("read_inclusion_file: integer overflow detected.\n"));
++      abort();
++    }
+     clipn++;
+   }
+   fclose(inclusion);
+ 
+   if (! error) {
+     /* Allocate an array of clipn + 1 char*'s for cliplist */
+-    cliplist = malloc((clipn + 1) * sizeof(char *));
++    if(clipn > (UINT_MAX-1))
++    {
++      DEBUG(0,("read_inclusion_file: integer overflow detected.\n"));
++      abort();
++    }
++    cliplist = malloc_array((clipn + 1), sizeof(char *));
+     if (cliplist == NULL) {
+       DEBUG(0,("failure allocating memory for cliplist\n"));
+       error = 1;
+@@ -1797,13 +1839,13 @@
+   } else if (Optind+1<argc && !tar_re_search) { /* For backwards compatibility */
+     char *tmpstr;
+     char **tmplist;
+-    int clipcount;
++    unsigned int clipcount;
+ 
+     cliplist=argv+Optind+1;
+     clipn=argc-Optind-1;
+     clipcount = clipn;
+ 
+-    if ((tmplist=malloc(clipn*sizeof(char *))) == NULL) {
++    if ((tmplist=malloc_array(clipn, sizeof(char *))) == NULL) {
+       DEBUG(0, ("Could not allocate space to process cliplist, count = %i\n", 
+                clipn)
+            );
+@@ -1837,18 +1879,18 @@
+     if ((preg = (regex_t *)malloc(65536)) == NULL) {
+ 
+       DEBUG(0, ("Could not allocate buffer for regular expression search\n"));
+-      return;
++      return 0;
+ 
+     }
+ 
+-    if (errcode = regcomp(preg, argv[Optind + 1], REG_EXTENDED)) {
++    if ((errcode = regcomp(preg, argv[Optind + 1], REG_EXTENDED))) {
+       char errstr[1024];
+       size_t errlen;
+ 
+       errlen = regerror(errcode, preg, errstr, sizeof(errstr) - 1);
+       
+       DEBUG(0, ("Could not compile pattern buffer for re search: %s\n%s\n", argv[Optind + 1], errstr));
+-      return;
++      return 0;
+ 
+     }
+ #endif
+--- samba-2.2.12/source/groupdb/aliasdb.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/groupdb/aliasdb.c	2004-12-17 11:17:04.000000000 -0200
+@@ -143,6 +143,13 @@
+ 	if (alss == NULL || num_alss == NULL || als == NULL)
+ 		return False;
+ 
++	if( (*num_alss) == INT_MAX || ((*num_alss)+1) >= UINT_MAX/sizeof(LOCAL_GRP))
++	{
++		DEBUG(0,("add_domain_alias: integer overflow detected.\n"));
++		if (*alss)
++			 free(*alss);
++		return False;
++	}
+ 	talss = (LOCAL_GRP *)Realloc((*alss), ((*num_alss)+1) * sizeof(LOCAL_GRP));
+     if (talss == NULL) {
+ 		if (*alss)
+--- samba-2.2.12/source/groupdb/aliasfile.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/groupdb/aliasfile.c	2004-12-17 11:17:04.000000000 -0200
+@@ -128,6 +128,14 @@
+ 		DOM_SID sid;
+ 		uint8 type;
+ 
++		if((*num_mem) == INT_MAX || ((*num_mem)+1) >= UINT_MAX/sizeof(LOCAL_GRP_MEMBER))
++		{
++			DEBUG(0,("get_alias_memebers: integer overflow detected.\n"));
++			if (*members)
++				free(*members);
++			return NULL;
++		}
++
+ 		if (lookup_sid(name, &sid, &type)) {
+ 			mbrs = Realloc((*members), ((*num_mem)+1) * sizeof(LOCAL_GRP_MEMBER));
+ 			(*num_mem)++;
+--- samba-2.2.12/source/groupdb/groupdb.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/groupdb/groupdb.c	2004-12-17 11:17:04.000000000 -0200
+@@ -141,6 +141,14 @@
+ 	if (grps == NULL || num_grps == NULL || grp == NULL)
+ 		return False;
+ 
++	if((*num_grps) == INT_MAX || (*num_grps)+1 >= UINT_MAX/sizeof(DOMAIN_GRP))
++	{
++		DEBUG(0,("add_domain_group: integer overflow detected.\n"));
++		if (*grps)
++			free(*grps);
++		return False;
++	}
++
+ 	tgrps = (DOMAIN_GRP *)Realloc((*grps), ((*num_grps)+1) * sizeof(DOMAIN_GRP));
+ 	if (tgrps == NULL) {
+ 		if (*grps)
+--- samba-2.2.12/source/groupdb/groupfile.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/groupdb/groupfile.c	2004-12-17 11:17:04.000000000 -0200
+@@ -129,6 +129,14 @@
+ 	{
+ 		DOMAIN_GRP_MEMBER *mbrs;
+ 
++		if((*num_mem) == INT_MAX || (*num_mem)+1 >= UINT_MAX/sizeof(DOMAIN_GRP_MEMBER))
++		{
++			DEBUG(0,("get_group_members: integer overflow detected.\n"));
++			if (*members)
++				free(*members);
++			return False;
++		}
++
+ 		mbrs = (DOMAIN_GRP_MEMBER *)Realloc((*members), ((*num_mem)+1) * sizeof(DOMAIN_GRP_MEMBER));
+ 		if (mbrs == NULL) {
+ 			if (*members)
+--- samba-2.2.12/source/include/includes.h.CAN-2004-1154	2004-08-12 15:24:29.000000000 -0300
++++ samba-2.2.12/source/include/includes.h	2004-12-17 11:17:04.000000000 -0200
+@@ -145,6 +145,9 @@
+ 
+ #ifdef HAVE_LIMITS_H
+ #include <limits.h>
++#else
++#define UINT_MAX	4294967295U
++#define INT_MAX		2147483647
+ #endif
+ 
+ #ifdef HAVE_SYS_IOCTL_H
+--- samba-2.2.12/source/include/proto.h.CAN-2004-1154	2004-08-12 15:25:49.000000000 -0300
++++ samba-2.2.12/source/include/proto.h	2004-12-17 11:17:04.000000000 -0200
+@@ -1069,12 +1069,14 @@
+ 
+ TALLOC_CTX *talloc_init(void);
+ void *talloc(TALLOC_CTX *t, size_t size);
++void *talloc_array(TALLOC_CTX *ctx, size_t el_size, unsigned int count);
+ void *talloc_realloc(TALLOC_CTX *t, void *ptr, size_t size);
+ void talloc_destroy_pool(TALLOC_CTX *t);
+ void talloc_destroy(TALLOC_CTX *t);
+ size_t talloc_pool_size(TALLOC_CTX *t);
+ const char * talloc_pool_name(TALLOC_CTX const *t);
+ void *talloc_zero(TALLOC_CTX *t, size_t size);
++void *talloc_zero_array(TALLOC_CTX *t, size_t el_size, unsigned int count);
+ void *talloc_memdup(TALLOC_CTX *t, const void *p, size_t size);
+ char *talloc_strdup(TALLOC_CTX *t, const char *p);
+ char *talloc_describe_all(TALLOC_CTX *rt);
+@@ -1126,6 +1128,9 @@
+ 
+ /* The following definitions come from lib/util.c  */
+ 
++void *malloc_array(size_t el_size, unsigned int count);
++void *calloc_array(size_t size, size_t nmemb);
++void *realloc_array(void *p,size_t el_size, unsigned int count);
+ const char *tmpdir(void);
+ BOOL in_group(gid_t group, gid_t current_gid, int ngroups, gid_t *groups);
+ const char *Atoic(const char *p, int *n, const char *c);
+--- samba-2.2.12/source/lib/bitmap.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/lib/bitmap.c	2004-12-17 11:17:04.000000000 -0200
+@@ -37,7 +37,7 @@
+ 	if (!bm) return NULL;
+ 	
+ 	bm->n = n;
+-	bm->b = (uint32 *)malloc(sizeof(bm->b[0])*(n+31)/32);
++	bm->b = (uint32 *)malloc_array(sizeof(bm->b[0]), (n+31)/32);
+ 	if (!bm->b) {
+ 		SAFE_FREE(bm);
+ 		return NULL;
+--- samba-2.2.12/source/lib/hash.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/hash.c	2004-12-17 11:17:04.000000000 -0200
+@@ -67,7 +67,7 @@
+ 
+ 	DEBUG(5, ("Hash size = %d.\n", table->size));
+ 
+-	if(!(table->buckets = (ubi_dlList *) malloc(sizeof(ubi_dlList) * table->size))) {
++	if(!(table->buckets = (ubi_dlList *) malloc_array(sizeof(ubi_dlList), table->size))) {
+ 		DEBUG(0,("hash_table_init: malloc fail !\n"));
+ 		return False;
+ 	}
+--- samba-2.2.12/source/lib/messages.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/lib/messages.c	2004-12-17 11:17:04.000000000 -0200
+@@ -221,6 +221,11 @@
+ 	}
+ 
+ 	/* we're adding to an existing entry */
++	if(dbuf.dsize >= (UINT_MAX-len) || (dbuf.dsize+len) > (UINT_MAX-sizeof(rec)))
++	{
++		DEBUG(0,("message_send_pid: integer overflow detected.\n"));
++		goto failed;
++	}
+ 	p = (void *)malloc(dbuf.dsize + len + sizeof(rec));
+ 	if (!p) goto failed;
+ 
+--- samba-2.2.12/source/lib/replace.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/lib/replace.c	2004-12-17 11:17:04.000000000 -0200
+@@ -202,7 +202,7 @@
+ 	struct group *g;
+ 	char   *gr;
+ 	
+-	if((grouplst = (gid_t *)malloc(sizeof(gid_t) * max_gr)) == NULL) {
++	if((grouplst = (gid_t *)malloc_array(sizeof(gid_t), max_gr)) == NULL) {
+ 		DEBUG(0,("initgroups: malloc fail !\n"));
+ 		return -1;
+ 	}
+--- samba-2.2.12/source/lib/sysacls.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/sysacls.c	2004-12-17 11:17:04.000000000 -0200
+@@ -729,7 +729,7 @@
+ 	 * acl[] array, this actually allocates an ACL with room
+ 	 * for (count+1) entries
+ 	 */
+-	if ((a = malloc(sizeof(*a) + count * sizeof(struct acl))) == NULL) {
++	if ((a = malloc_array(sizeof(*a) + count, sizeof(struct acl))) == NULL) {
+ 		errno = ENOMEM;
+ 		return NULL;
+ 	}
+@@ -893,7 +893,7 @@
+ 		 * allocate a temporary buffer for the complete ACL
+ 		 */
+ 		acl_count = acc_acl->count + def_acl->count;
+-		acl_p = acl_buf = malloc(acl_count * sizeof(acl_buf[0]));
++		acl_p = acl_buf = malloc_array(acl_count, sizeof(acl_buf[0]));
+ 
+ 		if (acl_buf == NULL) {
+ 			sys_acl_free_acl(tmp_acl);
+@@ -1355,7 +1355,7 @@
+ {
+ 	SMB_ACL_T	a;
+ 
+-	if (count < 0) {
++	if (count < 0 || count > INT_MAX-sizeof(*a)) {
+ 		errno = EINVAL;
+ 		return NULL;
+ 	}
+@@ -1832,7 +1832,7 @@
+ 		 * allocate a temporary buffer for the complete ACL
+ 		 */
+ 		acl_count = acc_acl->count + def_acl->count;
+-		acl_p = acl_buf = malloc(acl_count * sizeof(acl_buf[0]));
++		acl_p = acl_buf = malloc_array(acl_count, sizeof(acl_buf[0]));
+ 
+ 		if (acl_buf == NULL) {
+ 			sys_acl_free_acl(tmp_acl);
+--- samba-2.2.12/source/lib/system.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/system.c	2004-12-17 11:17:04.000000000 -0200
+@@ -674,7 +674,7 @@
+ 	if (setlen == 0)
+ 		setlen = groups_max();
+ 
+-	if((group_list = (GID_T *)malloc(setlen * sizeof(GID_T))) == NULL) {
++	if((group_list = (GID_T *)malloc_array(setlen, sizeof(GID_T))) == NULL) {
+ 		DEBUG(0,("sys_getgroups: Malloc fail.\n"));
+ 		return -1;
+ 	}
+@@ -723,7 +723,7 @@
+ 	 * GID_T array of size setlen.
+ 	 */
+ 
+-	if((group_list = (GID_T *)malloc(setlen * sizeof(GID_T))) == NULL) {
++	if((group_list = (GID_T *)malloc_array(setlen, sizeof(GID_T))) == NULL) {
+ 		DEBUG(0,("sys_setgroups: Malloc fail.\n"));
+ 		return -1;    
+ 	}
+@@ -1071,7 +1071,7 @@
+ 	for( argcl = 1; ptr; ptr = strtok(NULL, " \t"))
+ 		argcl++;
+ 
+-	if((argl = (char **)malloc((argcl + 1) * sizeof(char *))) == NULL)
++	if((argl = (char **)malloc_array((argcl + 1), sizeof(char *))) == NULL)
+ 		return NULL;
+ 
+ 	/*
+--- samba-2.2.12/source/lib/talloc.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/lib/talloc.c	2004-12-17 11:17:04.000000000 -0200
+@@ -179,6 +179,26 @@
+ 	return p;
+ }
+ 
++#define MAX_TALLOC_SIZE INT_MAX
++void *talloc_array(TALLOC_CTX *ctx, size_t el_size, unsigned int count)
++{
++	if (count >= MAX_TALLOC_SIZE/el_size) {
++		return NULL;
++	}
++	return talloc(ctx, el_size * count);
++}
++
++void *talloc_zero_array(TALLOC_CTX *t, size_t el_size, unsigned int count)
++{
++	void *p = talloc_array(t, el_size, count);
++
++	if (p)
++		memset(p, '\0', el_size*count);
++
++	return p;
++}
++
++
+ /** A talloc version of realloc */
+ void *talloc_realloc(TALLOC_CTX *t, void *ptr, size_t size)
+ {
+--- samba-2.2.12/source/lib/username.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/username.c	2004-12-17 11:17:04.000000000 -0200
+@@ -336,7 +336,7 @@
+  		return False;
+  	}
+  
+- 	if ((groups = (gid_t *)malloc(sizeof(gid_t) * num_groups )) == NULL) {
++ 	if ((groups = (gid_t *)malloc_array(sizeof(gid_t), num_groups )) == NULL) {
+  		DEBUG(0,("user_in_winbind_group_list: malloc fail.\n"));
+  		goto err;
+  	}
+--- samba-2.2.12/source/lib/util.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/util.c	2004-12-17 11:17:04.000000000 -0200
+@@ -86,6 +86,41 @@
+ fstring global_myworkgroup = "";
+ char **my_netbios_names;
+ 
++/* a but huge but well... */
++#define MAX_ALLOC_SIZE INT_MAX
++
++/****************************************************************************
++ Type-safe malloc.
++****************************************************************************/
++
++void *malloc_array(size_t el_size, unsigned int count)
++{
++	if (count >= MAX_ALLOC_SIZE/el_size) {
++		return NULL;
++	}
++	return malloc(el_size*count);
++}
++
++/****************************************************************************
++ Type-safe calloc.
++****************************************************************************/
++
++void *calloc_array(size_t size, size_t nmemb)
++{
++	if (nmemb >= MAX_ALLOC_SIZE/size) {
++		return NULL;
++	}
++	return calloc(nmemb, size);
++}
++
++void *realloc_array(void *p,size_t el_size, unsigned int count)
++{
++	if (count >= MAX_ALLOC_SIZE/el_size) {
++ 		return NULL;
++	}
++	return Realloc(p,el_size*count);
++}
++
+ 
+ /****************************************************************************
+  Find a suitable temporary directory. The result should be copied immediately
+@@ -159,6 +194,12 @@
+ 	while ((p = Atoic(p, &val, ":,")) != NULL && (*p) != ':') {
+ 		uint32 *tn;
+ 
++		if((*count) == INT_MAX || ((*count)+1) >= INT_MAX/sizeof(uint32))
++		{
++			DEBUG(0,("get_numlist: integer overflow detected.\n"));
++			SAFE_FREE(*num);
++			return NULL;
++		}
+ 		tn = Realloc((*num), ((*count)+1) * sizeof(uint32));
+ 		if (tn == NULL)
+ 		{
+--- samba-2.2.12/source/lib/util_file.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/util_file.c	2004-12-17 11:17:04.000000000 -0200
+@@ -367,6 +367,13 @@
+ 	total = 0;
+ 
+ 	while ((n = read(fd, buf, sizeof(buf))) > 0) {
++		if(total >= UINT_MAX-n)
++		{
++			DEBUG(0,("file_pload: integer overflow detected.\n"));
++			close(fd);
++			SAFE_FREE(p);
++			return NULL;
++		}
+ 		tp = Realloc(p, total + n + 1);
+ 		if (!tp) {
+ 			DEBUG(0,("file_pload: failed to exand buffer!\n"));
+@@ -398,6 +405,9 @@
+ 
+ 	if (sys_fstat(fd, &sbuf) != 0) return NULL;
+ 
++	if(sbuf.st_size == UINT_MAX) /* very large file */
++		return NULL;
++
+ 	p = (char *)malloc(sbuf.st_size+1);
+ 	if (!p) return NULL;
+ 
+@@ -447,7 +457,7 @@
+ 		if (s[0] == '\n') i++;
+ 	}
+ 
+-	ret = (char **)malloc(sizeof(ret[0])*(i+2));
++	ret = (char **)malloc_array(sizeof(ret[0]), (i+2));
+ 	if (!ret) {
+ 		SAFE_FREE(p);
+ 		return NULL;
+--- samba-2.2.12/source/lib/util_getent.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/util_getent.c	2004-12-17 11:17:04.000000000 -0200
+@@ -89,7 +89,7 @@
+ 			;
+ 		
+ 		/* alloc space for gr_mem string pointers */
+-		if ((gent->gr_mem = (char **) malloc((num+1) * sizeof(char *))) == NULL)
++		if ((gent->gr_mem = (char **) malloc_array((num+1), sizeof(char *))) == NULL)
+ 			goto err;
+ 
+ 		memset(gent->gr_mem, '\0', (num+1) * sizeof(char *));
+--- samba-2.2.12/source/lib/util_seaccess.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/lib/util_seaccess.c	2004-12-17 11:17:04.000000000 -0200
+@@ -352,7 +352,7 @@
+ 
+ 	the_acl = parent_ctr->dacl;
+ 
+-	if (!(new_ace_list = talloc(ctx, sizeof(SEC_ACE) * the_acl->num_aces))) 
++	if (!(new_ace_list = talloc_array(ctx, sizeof(SEC_ACE), the_acl->num_aces))) 
+ 		return NULL;
+ 
+ 	for (i = 0; the_acl && i < the_acl->num_aces; i++) {
+--- samba-2.2.12/source/lib/util_sid.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/lib/util_sid.c	2004-12-17 11:17:04.000000000 -0200
+@@ -715,7 +715,7 @@
+ char *sid_binstring(DOM_SID *sid)
+ {
+ 	char *buf, *s;
+-	int len = sid_size(sid);
++	unsigned int len = sid_size(sid);
+ 	buf = malloc(len);
+ 	if (!buf) return NULL;
+ 	sid_linearize(buf, len, sid);
+--- samba-2.2.12/source/lib/util_str.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/lib/util_str.c	2004-12-17 11:17:04.000000000 -0200
+@@ -103,7 +103,7 @@
+   *ctok=ictok;
+   s=last_ptr;
+ 
+-  if (!(ret=iret=malloc(ictok*sizeof(char *)))) return NULL;
++  if (!(ret=iret=malloc_array(ictok, sizeof(char *)))) return NULL;
+   
+   while(ictok--) {    
+     *iret++=s;
+@@ -1360,6 +1360,8 @@
+ 	char *s;
+ 	int i, j;
+ 	const char *hex = "0123456789ABCDEF";
++	if(len <= 0 || len >= INT_MAX/3)
++		return NULL;
+ 	s = malloc(len * 3 + 1);
+ 	if (!s) return NULL;
+ 	for (j=i=0;i<len;i++) {
+--- samba-2.2.12/source/lib/util_unistr.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/lib/util_unistr.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1150,10 +1150,12 @@
+ 
+ smb_ucs2_t *strdup_w(const smb_ucs2_t *s)
+ {
+-	size_t newlen = (strlen_w(s)+1)*sizeof(smb_ucs2_t);
+-	smb_ucs2_t *newstr = (smb_ucs2_t *)malloc(newlen);
++	size_t newlen;
++	smb_ucs2_t *newstr = (smb_ucs2_t *)malloc_array((strlen_w(s)+1), sizeof(smb_ucs2_t));
++	
+     if (newstr == NULL)
+         return NULL;
++	newlen = (strlen_w(s)+1)*sizeof(smb_ucs2_t);
+     safe_strcpy_w(newstr, s, newlen);
+     return newstr;
+ }
+@@ -1382,7 +1384,7 @@
+ 	*ctok = ictok;
+ 	s = last_ptr;
+ 
+-	if (!(ret=iret=malloc(ictok*sizeof(smb_ucs2_t *))))
++	if (!(ret=iret=malloc_array(ictok, sizeof(smb_ucs2_t *))))
+ 		return NULL;
+   
+ 	while(ictok--) {
+@@ -1870,7 +1872,7 @@
+ 	if (l == 0)
+ 		*dest = null_string;
+ 	else {
+-		(*dest) = (smb_ucs2_t *)malloc(sizeof(smb_ucs2_t)*(l+1));
++		(*dest) = (smb_ucs2_t *)malloc_array(sizeof(smb_ucs2_t), (l+1));
+ 		if ((*dest) == NULL) {
+ 			DEBUG(0,("Out of memory in string_init_w\n"));
+ 			return False;
+--- samba-2.2.12/source/libsmb/clilist.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/libsmb/clilist.c	2004-12-17 11:17:04.000000000 -0200
+@@ -263,6 +263,11 @@
+ 		}
+  
+ 		/* and add them to the dirlist pool */
++		if(dirlist_len >= UINT_MAX - data_len)
++		{
++			DEBUG(0,("cli_list_new: integer overflow detected.\n"));
++			break;
++		}
+ 		tdl = Realloc(dirlist,dirlist_len + data_len);
+ 
+ 		if (!tdl) {
+--- samba-2.2.12/source/libsmb/cli_lsarpc.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/libsmb/cli_lsarpc.c	2004-12-17 11:17:04.000000000 -0200
+@@ -282,21 +282,21 @@
+ 		goto done;
+ 	}
+ 
+-	if (!((*domains) = (char **)talloc(mem_ctx, sizeof(char *) *
++	if (!((*domains) = (char **)talloc_array(mem_ctx, sizeof(char *),
+ 					   num_sids))) {
+ 		DEBUG(0, ("cli_lsa_lookup_sids(): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+ 
+-	if (!((*names) = (char **)talloc(mem_ctx, sizeof(char *) *
++	if (!((*names) = (char **)talloc_array(mem_ctx, sizeof(char *),
+ 					 num_sids))) {
+ 		DEBUG(0, ("cli_lsa_lookup_sids(): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+ 
+-	if (!((*types) = (uint32 *)talloc(mem_ctx, sizeof(uint32) *
++	if (!((*types) = (uint32 *)talloc_array(mem_ctx, sizeof(uint32),
+ 					  num_sids))) {
+ 		DEBUG(0, ("cli_lsa_lookup_sids(): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+@@ -400,14 +400,14 @@
+ 		goto done;
+ 	}
+ 
+-	if (!((*sids = (DOM_SID *)talloc(mem_ctx, sizeof(DOM_SID) *
++	if (!((*sids = (DOM_SID *)talloc_array(mem_ctx, sizeof(DOM_SID),
+ 					 num_names)))) {
+ 		DEBUG(0, ("cli_lsa_lookup_sids(): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+ 
+-	if (!((*types = (uint32 *)talloc(mem_ctx, sizeof(uint32) *
++	if (!((*types = (uint32 *)talloc_array(mem_ctx, sizeof(uint32),
+ 					 num_names)))) {
+ 		DEBUG(0, ("cli_lsa_lookup_sids(): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+@@ -589,7 +589,7 @@
+ 
+ 		/* Allocate memory for trusted domain names and sids */
+ 
+-		*domain_names = (char **)talloc(mem_ctx, sizeof(char *) *
++		*domain_names = (char **)talloc_array(mem_ctx, sizeof(char *),
+ 						r.num_domains);
+ 
+ 		if (!*domain_names) {
+@@ -598,7 +598,7 @@
+ 			goto done;
+ 		}
+ 
+-		*domain_sids = (DOM_SID *)talloc(mem_ctx, sizeof(DOM_SID) *
++		*domain_sids = (DOM_SID *)talloc_array(mem_ctx, sizeof(DOM_SID),
+ 						 r.num_domains);
+ 		if (!domain_sids) {
+ 			DEBUG(0, ("cli_lsa_enum_trust_dom(): out of memory\n"));
+@@ -674,19 +674,19 @@
+ 	*enum_context = r.enum_context;
+ 	*count = r.count;
+ 
+-	if (!((*privs_name = (char **)talloc(mem_ctx, sizeof(char *) * r.count)))) {
++	if (!((*privs_name = (char **)talloc_array(mem_ctx, sizeof(char *), r.count)))) {
+ 		DEBUG(0, ("(cli_lsa_enum_privilege): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+ 
+-	if (!((*privs_high = (uint32 *)talloc(mem_ctx, sizeof(uint32) * r.count)))) {
++	if (!((*privs_high = (uint32 *)talloc_array(mem_ctx, sizeof(uint32), r.count)))) {
+ 		DEBUG(0, ("(cli_lsa_enum_privilege): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+ 
+-	if (!((*privs_low = (uint32 *)talloc(mem_ctx, sizeof(uint32) * r.count)))) {
++	if (!((*privs_low = (uint32 *)talloc_array(mem_ctx, sizeof(uint32), r.count)))) {
+ 		DEBUG(0, ("(cli_lsa_enum_privilege): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+@@ -810,7 +810,7 @@
+ 
+ 	/* Return output parameters */
+ 
+-	*sids = (DOM_SID *)talloc(mem_ctx, sizeof(DOM_SID) * r.sids.num_entries);
++	*sids = (DOM_SID *)talloc_array(mem_ctx, sizeof(DOM_SID), r.sids.num_entries);
+ 	if (!*sids) {
+ 		DEBUG(0, ("(cli_lsa_enum_sids): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+@@ -935,7 +935,7 @@
+ 	if (r.count == 0)
+ 		goto done;
+ 
+-	if (!((*set = (LUID_ATTR *)talloc(mem_ctx, sizeof(LUID_ATTR) * r.count)))) {
++	if (!((*set = (LUID_ATTR *)talloc_array(mem_ctx, sizeof(LUID_ATTR), r.count)))) {
+ 		DEBUG(0, ("(cli_lsa_enum_privsaccount): out of memory\n"));
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+--- samba-2.2.12/source/libsmb/clireadwrite.c.CAN-2004-1154	2004-08-12 15:24:26.000000000 -0300
++++ samba-2.2.12/source/libsmb/clireadwrite.c	2004-12-17 11:17:04.000000000 -0200
+@@ -241,6 +241,8 @@
+ 	BOOL bigoffset = False;
+ 
+ 	if (size > cli->bufsize) {
++		if(size >= (UINT_MAX-1024))
++			return False;
+ 		cli->outbuf = realloc(cli->outbuf, size + 1024);
+ 		cli->inbuf = realloc(cli->inbuf, size + 1024);
+ 		if (cli->outbuf == NULL || cli->inbuf == NULL)
+--- samba-2.2.12/source/libsmb/cli_samr.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/libsmb/cli_samr.c	2004-12-17 11:17:04.000000000 -0200
+@@ -552,7 +552,7 @@
+ 	*num_dom_groups = r.num_entries2;
+ 
+ 	if (!((*dom_groups) = (struct acct_info *)
+-	      talloc(mem_ctx, sizeof(struct acct_info) * *num_dom_groups))) {
++	      talloc_array(mem_ctx, sizeof(struct acct_info), *num_dom_groups))) {
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+@@ -630,7 +630,7 @@
+ 	*num_dom_groups = r.num_entries2;
+ 
+ 	if (!((*dom_groups) = (struct acct_info *)
+-	      talloc(mem_ctx, sizeof(struct acct_info) * *num_dom_groups))) {
++	      talloc_array(mem_ctx, sizeof(struct acct_info), *num_dom_groups))) {
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+@@ -703,7 +703,7 @@
+ 
+ 	*num_mem = r.num_sids;
+ 
+-	if (!(*sids = talloc(mem_ctx, sizeof(DOM_SID) * *num_mem))) {
++	if (!(*sids = talloc_array(mem_ctx, sizeof(DOM_SID), *num_mem))) {
+ 		result = NT_STATUS_UNSUCCESSFUL;
+ 		goto done;
+ 	}
+@@ -972,8 +972,8 @@
+ 	}
+ 
+ 	*num_names = r.num_names1;
+-	*names = talloc(mem_ctx, sizeof(char *) * r.num_names1);
+-	*name_types = talloc(mem_ctx, sizeof(uint32) * r.num_names1);
++	*names = talloc_array(mem_ctx, sizeof(char *), r.num_names1);
++	*name_types = talloc_array(mem_ctx, sizeof(uint32), r.num_names1);
+ 
+ 	for (i = 0; i < r.num_names1; i++) {
+ 		fstring tmp;
+@@ -1040,8 +1040,8 @@
+ 	}
+ 
+ 	*num_rids = r.num_rids1;
+-	*rids = talloc(mem_ctx, sizeof(uint32) * r.num_rids1);
+-	*rid_types = talloc(mem_ctx, sizeof(uint32) * r.num_rids1);
++	*rids = talloc_array(mem_ctx, sizeof(uint32), r.num_rids1);
++	*rid_types = talloc_array(mem_ctx, sizeof(uint32), r.num_rids1);
+ 
+ 	for (i = 0; i < r.num_rids1; i++) {
+ 		(*rids)[i] = r.rids[i];
+--- samba-2.2.12/source/libsmb/cli_spoolss.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/libsmb/cli_spoolss.c	2004-12-17 11:17:04.000000000 -0200
+@@ -70,7 +70,7 @@
+         uint32 i;
+         PRINTER_INFO_0  *inf;
+ 
+-        inf=(PRINTER_INFO_0 *)talloc(mem_ctx, returned*sizeof(PRINTER_INFO_0));
++        inf=(PRINTER_INFO_0 *)talloc_array(mem_ctx, returned, sizeof(PRINTER_INFO_0));
+ 
+         buffer->prs.data_offset=0;
+ 
+@@ -89,7 +89,7 @@
+         uint32 i;
+         PRINTER_INFO_1  *inf;
+ 
+-        inf=(PRINTER_INFO_1 *)talloc(mem_ctx, returned*sizeof(PRINTER_INFO_1));
++        inf=(PRINTER_INFO_1 *)talloc_array(mem_ctx, returned, sizeof(PRINTER_INFO_1));
+ 
+         buffer->prs.data_offset=0;
+ 
+@@ -108,7 +108,7 @@
+         uint32 i;
+         PRINTER_INFO_2  *inf;
+ 
+-        inf=(PRINTER_INFO_2 *)talloc(mem_ctx, returned*sizeof(PRINTER_INFO_2));
++        inf=(PRINTER_INFO_2 *)talloc_array(mem_ctx, returned, sizeof(PRINTER_INFO_2));
+ 
+         buffer->prs.data_offset=0;
+ 
+@@ -129,7 +129,7 @@
+         uint32 i;
+         PRINTER_INFO_3  *inf;
+ 
+-        inf=(PRINTER_INFO_3 *)talloc(mem_ctx, returned*sizeof(PRINTER_INFO_3));
++        inf=(PRINTER_INFO_3 *)talloc_array(mem_ctx, returned, sizeof(PRINTER_INFO_3));
+ 
+         buffer->prs.data_offset=0;
+ 
+@@ -149,7 +149,7 @@
+         uint32 i;
+         PORT_INFO_1 *inf;
+ 
+-        inf=(PORT_INFO_1*)talloc(mem_ctx, returned*sizeof(PORT_INFO_1));
++        inf=(PORT_INFO_1*)talloc_array(mem_ctx, returned, sizeof(PORT_INFO_1));
+ 
+         prs_set_offset(&buffer->prs, 0);
+ 
+@@ -168,7 +168,7 @@
+         uint32 i;
+         PORT_INFO_2 *inf;
+ 
+-        inf=(PORT_INFO_2*)talloc(mem_ctx, returned*sizeof(PORT_INFO_2));
++        inf=(PORT_INFO_2*)talloc_array(mem_ctx, returned, sizeof(PORT_INFO_2));
+ 
+         prs_set_offset(&buffer->prs, 0);
+ 
+@@ -187,7 +187,7 @@
+         uint32 i;
+         DRIVER_INFO_1 *inf;
+ 
+-        inf=(DRIVER_INFO_1 *)talloc(mem_ctx, returned*sizeof(DRIVER_INFO_1));
++        inf=(DRIVER_INFO_1 *)talloc_array(mem_ctx, returned, sizeof(DRIVER_INFO_1));
+ 
+         buffer->prs.data_offset=0;
+ 
+@@ -206,7 +206,7 @@
+         uint32 i;
+         DRIVER_INFO_2 *inf;
+ 
+-        inf=(DRIVER_INFO_2 *)talloc(mem_ctx, returned*sizeof(DRIVER_INFO_2));
++        inf=(DRIVER_INFO_2 *)talloc_array(mem_ctx, returned, sizeof(DRIVER_INFO_2));
+ 
+         buffer->prs.data_offset=0;
+ 
+@@ -225,7 +225,7 @@
+         uint32 i;
+         DRIVER_INFO_3 *inf;
+ 
+-        inf=(DRIVER_INFO_3 *)talloc(mem_ctx, returned*sizeof(DRIVER_INFO_3));
++        inf=(DRIVER_INFO_3 *)talloc_array(mem_ctx, returned, sizeof(DRIVER_INFO_3));
+ 
+         buffer->prs.data_offset=0;
+ 
+@@ -1415,7 +1415,7 @@
+ {
+ 	int i;
+ 
+-	*forms = (FORM_1 *)talloc(mem_ctx, num_forms * sizeof(FORM_1));
++	*forms = (FORM_1 *)talloc_array(mem_ctx, num_forms, sizeof(FORM_1));
+ 	buffer->prs.data_offset = 0;
+ 
+ 	for (i = 0; i < num_forms; i++)
+--- samba-2.2.12/source/libsmb/libsmbclient.c.CAN-2004-1154	2004-08-12 15:24:26.000000000 -0300
++++ samba-2.2.12/source/libsmb/libsmbclient.c	2004-12-17 11:17:04.000000000 -0200
+@@ -585,7 +585,7 @@
+ 
+ #endif
+ 
+-	smbc_file_table = malloc(SMBC_MAX_FD * sizeof(struct smbc_file *));
++	smbc_file_table = malloc_array(SMBC_MAX_FD, sizeof(struct smbc_file *));
+ 	if (!smbc_file_table)
+ 		return ENOMEM;
+ 
+@@ -645,7 +645,7 @@
+ 	}
+ 	else {
+ 	  
+-		int slot = 0;
++		unsigned int slot = 0;
+ 
+ 		/* Find a free slot first */
+ 
+--- samba-2.2.12/source/libsmb/namecache.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/libsmb/namecache.c	2004-12-17 11:17:04.000000000 -0200
+@@ -224,8 +224,8 @@
+ 
+ 	if (data->count) {
+ 
+-		*ip_list = (struct in_addr *)malloc(
+-			sizeof(struct in_addr) * data->count);
++		*ip_list = (struct in_addr *)malloc_array(
++			sizeof(struct in_addr), data->count);
+ 		
+ 		memcpy(*ip_list, data->ip_list, sizeof(struct in_addr) * data->count);
+ 		
+--- samba-2.2.12/source/libsmb/namequery.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/libsmb/namequery.c	2004-12-17 11:17:04.000000000 -0200
+@@ -54,7 +54,7 @@
+ 
+ 	if (*num_names == 0) return NULL;
+ 
+-	ret = (struct node_status *)malloc(sizeof(struct node_status)* (*num_names));
++	ret = (struct node_status *)malloc_array(sizeof(struct node_status), (*num_names));
+ 	if (!ret) return NULL;
+ 
+ 	p++;
+@@ -406,7 +406,16 @@
+ 				free_packet(p2);
+ 				continue;
+ 			}
+-
++			if(
++				nmb2->answers->rdlength >= INT_MAX/6 ||
++				(*count) >= INT_MAX-(nmb2->answers->rdlength/6) ||
++				sizeof( ip_list[0] ) >= UINT_MAX/( (*count) + nmb2->answers->rdlength/6 )
++			)
++			{
++				DEBUG(0,("name_query: integer overflow detected.\n"));
++				free_packet(p2);
++				return NULL;
++			}
+ 			tmp_ip_list = (struct in_addr *)Realloc( ip_list, sizeof( ip_list[0] )
+ 												* ( (*count) + nmb2->answers->rdlength/6 ) );
+ 
+@@ -812,7 +821,7 @@
+ 		int i = 0, j;
+ 		while (hp->h_addr_list[i]) i++;
+ 		DEBUG(10, ("%d addresses returned\n", i));
+-		*return_iplist = (struct in_addr *)malloc(i*sizeof(struct in_addr));
++		*return_iplist = (struct in_addr *)malloc_array(i, sizeof(struct in_addr));
+ 		if(*return_iplist == NULL) {
+ 			DEBUG(3,("resolve_hosts: malloc fail !\n"));
+ 			return False;
+@@ -920,7 +929,7 @@
+      the iplist when the PDC is down will cause two sets of timeouts. */
+ 
+   if (*return_count && (nodupes_iplist =
+-			(struct in_addr *)malloc(sizeof(struct in_addr) * (*return_count)))) {
++			(struct in_addr *)malloc_array(sizeof(struct in_addr), (*return_count)))) {
+       int nodupes_count = 0;
+  
+       /* Iterate over return_iplist looking for duplicates */
+@@ -1327,7 +1336,7 @@
+ 		if (num_addresses == 0)
+ 			return internal_resolve_name(group, name_type, ip_list, count);
+ 
+-		return_iplist = (struct in_addr *)malloc(num_addresses * sizeof(struct in_addr));
++		return_iplist = (struct in_addr *)malloc_array(num_addresses, sizeof(struct in_addr));
+ 		if(return_iplist == NULL) {
+ 			DEBUG(3,("get_dc_list: malloc fail !\n"));
+ 			return False;
+@@ -1339,6 +1348,14 @@
+ 			int count_more;
+ 			if (resolve_name_2( name, &more_ip, &count_more, 0x20) == False)
+ 				continue;
++
++			if(num_addresses >= INT_MAX-count_more || (num_addresses + count_more) >= INT_MAX/sizeof(struct in_addr))
++			{
++				DEBUG(0,("get_dc_list: integer overflow detected.\n"));
++				SAFE_FREE(return_iplist);
++				SAFE_FREE(more_ip);
++				return False;
++			}
+ 			tmp = (struct in_addr *)realloc(return_iplist,(num_addresses + count_more) * sizeof(struct in_addr));
+ 			if (return_iplist == NULL) {
+ 				DEBUG(3, ("realloc failed with %d addresses\n", num_addresses + count_more));
+--- samba-2.2.12/source/libsmb/nmblib.c.CAN-2004-1154	2004-08-12 15:24:25.000000000 -0300
++++ samba-2.2.12/source/libsmb/nmblib.c	2004-12-17 11:17:04.000000000 -0200
+@@ -335,7 +335,7 @@
+ 				struct res_rec **recs, int count)
+ {
+   int i;
+-  *recs = (struct res_rec *)malloc(sizeof(**recs)*count);
++  *recs = (struct res_rec *)malloc_array(sizeof(**recs), count);
+   if (!*recs) return(False);
+ 
+   memset((char *)*recs,'\0',sizeof(**recs)*count);
+@@ -551,7 +551,7 @@
+   if (nmb->answers)
+   {
+     if((copy_nmb->answers = (struct res_rec *)
+-                  malloc(nmb->header.ancount * sizeof(struct res_rec))) == NULL)
++                  malloc_array(nmb->header.ancount, sizeof(struct res_rec))) == NULL)
+       goto free_and_exit;
+     memcpy((char *)copy_nmb->answers, (char *)nmb->answers, 
+            nmb->header.ancount * sizeof(struct res_rec));
+@@ -559,7 +559,7 @@
+   if (nmb->nsrecs)
+   {
+     if((copy_nmb->nsrecs = (struct res_rec *)
+-                  malloc(nmb->header.nscount * sizeof(struct res_rec))) == NULL)
++                  malloc_array(nmb->header.nscount, sizeof(struct res_rec))) == NULL)
+       goto free_and_exit;
+     memcpy((char *)copy_nmb->nsrecs, (char *)nmb->nsrecs, 
+            nmb->header.nscount * sizeof(struct res_rec));
+@@ -567,7 +567,7 @@
+   if (nmb->additional)
+   {
+     if((copy_nmb->additional = (struct res_rec *)
+-                  malloc(nmb->header.arcount * sizeof(struct res_rec))) == NULL)
++                  malloc_array(nmb->header.arcount, sizeof(struct res_rec))) == NULL)
+       goto free_and_exit;
+     memcpy((char *)copy_nmb->additional, (char *)nmb->additional, 
+            nmb->header.arcount * sizeof(struct res_rec));
+--- samba-2.2.12/source/locking/brlock.c.CAN-2004-1154	2004-08-12 15:24:31.000000000 -0300
++++ samba-2.2.12/source/locking/brlock.c	2004-12-17 11:17:04.000000000 -0200
+@@ -355,6 +355,11 @@
+ 	}
+ 
+ 	/* no conflicts - add it to the list of locks */
++	if(dbuf.dsize >= UINT_MAX-sizeof(*locks))
++	{
++		DEBUG(0,("brl_lock: integer overflow detected.\n"));
++		goto fail;
++	}
+ 	tp = Realloc(dbuf.dptr, dbuf.dsize + sizeof(*locks));
+ 	if (!tp) {
+ 		status = NT_STATUS_NO_MEMORY;
+--- samba-2.2.12/source/locking/posix.c.CAN-2004-1154	2004-08-12 15:24:31.000000000 -0300
++++ samba-2.2.12/source/locking/posix.c	2004-12-17 11:17:04.000000000 -0200
+@@ -370,6 +370,11 @@
+ 	pl.size = size;
+ 	pl.lock_type = lock_type;
+ 
++	if(dbuf.dsize >= UINT_MAX - sizeof(pl))
++	{
++		DEBUG(0,("add_posix_lock_entry: integer overflow detected.\n"));
++		goto fail;
++	}
+ 	tp = Realloc(dbuf.dptr, dbuf.dsize + sizeof(pl));
+ 	if (!tp) {
+ 		DEBUG(0,("add_posix_lock_entry: Realloc fail !\n"));
+--- samba-2.2.12/source/msdfs/msdfs.c.CAN-2004-1154	2004-08-12 15:24:35.000000000 -0300
++++ samba-2.2.12/source/msdfs/msdfs.c	2004-12-17 11:17:04.000000000 -0200
+@@ -128,7 +128,7 @@
+ 
+ 	DEBUG(10,("parse_symlink: count=%d\n", count));
+ 
+-	reflist = *preflist = (struct referral*) malloc(count * sizeof(struct referral));
++	reflist = *preflist = (struct referral*) malloc_array(count, sizeof(struct referral));
+ 	if(reflist == NULL) {
+ 		DEBUG(0,("parse_symlink: Malloc failed!\n"));
+ 		return False;
+--- samba-2.2.12/source/nmbd/nmbd_browsesync.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd_browsesync.c	2004-12-17 11:17:04.000000000 -0200
+@@ -293,7 +293,7 @@
+   struct work_record *work;
+   struct nmb_name nmbname;
+   struct userdata_struct *userdata;
+-  int size = sizeof(struct userdata_struct) + sizeof(fstring)+1;
++  size_t size = sizeof(struct userdata_struct) + sizeof(fstring)+1;
+ 
+   if( !(work = find_workgroup_on_subnet(subrec, q_name->name)) )
+   {
+--- samba-2.2.12/source/nmbd/nmbd.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd.c	2004-12-17 11:17:04.000000000 -0200
+@@ -585,7 +585,7 @@
+     namecount++;
+ 
+   /* Allocate space for the netbios aliases */
+-  my_netbios_names = (char **)malloc( sizeof(char *) * (namecount+1) );
++  my_netbios_names = (char **)malloc_array( sizeof(char *), (namecount+1) );
+   if( NULL == my_netbios_names )
+   {
+      DEBUG( 0, ( "init_structs: malloc fail.\n" ) );
+--- samba-2.2.12/source/nmbd/nmbd_incomingrequests.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd_incomingrequests.c	2004-12-17 11:17:04.000000000 -0200
+@@ -558,7 +558,7 @@
+         prdata = rdata;
+       else
+       {
+-        if((prdata = (char *)malloc( namerec->data.num_ips * 6 )) == NULL)
++        if((prdata = (char *)malloc_array( namerec->data.num_ips, 6 )) == NULL)
+         {
+           DEBUG(0,("process_name_query_request: malloc fail !\n"));
+           goto done;
+--- samba-2.2.12/source/nmbd/nmbd_namelistdb.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd_namelistdb.c	2004-12-17 11:17:04.000000000 -0200
+@@ -195,8 +195,8 @@
+   }
+ 
+   memset( (char *)namerec, '\0', sizeof(*namerec) );
+-  namerec->data.ip = (struct in_addr *)malloc( sizeof(struct in_addr) 
+-                                               * num_ips );
++  namerec->data.ip = (struct in_addr *)malloc_array( sizeof(struct in_addr), 
++                                               num_ips );
+   if( NULL == namerec->data.ip )
+   {
+      DEBUG( 0, ( "add_name_to_subnet: malloc fail when creating ip_flgs.\n" ) );
+@@ -336,8 +336,8 @@
+   if( find_ip_in_name_record( namerec, new_ip ) )
+     return;
+   
+-  new_list = (struct in_addr *)malloc( (namerec->data.num_ips + 1)
+-                                       * sizeof(struct in_addr) );
++  new_list = (struct in_addr *)malloc_array( (namerec->data.num_ips + 1),
++                                       sizeof(struct in_addr) );
+   if( NULL == new_list )
+   {
+     DEBUG(0,("add_ip_to_name_record: Malloc fail !\n"));
+@@ -492,7 +492,7 @@
+     /* Create an IP list containing all our known subnets. */
+ 
+     num_ips = iface_count();
+-    iplist = (struct in_addr *)malloc( num_ips * sizeof(struct in_addr) );
++    iplist = (struct in_addr *)malloc_array( num_ips, sizeof(struct in_addr) );
+     if( NULL == iplist )
+     {
+       DEBUG(0,("add_samba_names_to_subnet: Malloc fail !\n"));
+--- samba-2.2.12/source/nmbd/nmbd_nameregister.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd_nameregister.c	2004-12-17 11:17:04.000000000 -0200
+@@ -276,7 +276,7 @@
+   for(subrec = FIRST_SUBNET; subrec; subrec = NEXT_SUBNET_EXCLUDING_UNICAST(subrec) )
+     num_ips++;
+ 
+-  if((ip_list = (struct in_addr *)malloc(num_ips * sizeof(struct in_addr)))==NULL)
++  if((ip_list = (struct in_addr *)malloc_array(num_ips, sizeof(struct in_addr)))==NULL)
+   {
+     DEBUG(0,("multihomed_register_name: malloc fail !\n"));
+     return True;
+--- samba-2.2.12/source/nmbd/nmbd_packets.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd_packets.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1724,7 +1724,12 @@
+     return True;
+   }
+ 
+-  if((sock_array = (int *)malloc(((count*2) + 2)*sizeof(int))) == NULL)
++  if(count >= (UINT_MAX/2)-2)
++  {
++    DEBUG(0,("create_listen_fdset: integer overflow detected.\n"));
++    return True;
++  }
++  if((sock_array = (int *)malloc_array(((count*2) + 2), sizeof(int))) == NULL)
+   {
+     DEBUG(0,("create_listen_fdset: malloc fail for socket array.\n"));
+     return True;
+--- samba-2.2.12/source/nmbd/nmbd_winsproxy.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd_winsproxy.c	2004-12-17 11:17:04.000000000 -0200
+@@ -61,7 +61,7 @@
+     iplist = &ip;
+   else
+   {
+-    if((iplist = (struct in_addr *)malloc( num_ips * sizeof(struct in_addr) )) == NULL)
++    if((iplist = (struct in_addr *)malloc_array( num_ips, sizeof(struct in_addr) )) == NULL)
+     {
+       DEBUG(0,("wins_proxy_name_query_request_success: malloc fail !\n"));
+       return;
+--- samba-2.2.12/source/nmbd/nmbd_winsserver.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/nmbd/nmbd_winsserver.c	2004-12-17 11:17:04.000000000 -0200
+@@ -272,7 +272,7 @@
+     }
+ 
+     /* Allocate the space for the ip_list. */
+-    if((ip_list = (struct in_addr *)malloc( num_ips * sizeof(struct in_addr))) == NULL)
++    if((ip_list = (struct in_addr *)malloc_array( num_ips, sizeof(struct in_addr))) == NULL)
+     {
+       DEBUG(0,("initialise_wins: Malloc fail !\n"));
+       return False;
+@@ -1237,7 +1237,7 @@
+     return;
+   }
+ 
+-  if((prdata = (char *)malloc( num_ips * 6 )) == NULL)
++  if((prdata = (char *)malloc_array( num_ips, 6 )) == NULL)
+   {
+     DEBUG(0,("process_wins_dmb_query_request: Malloc fail !.\n"));
+     return;
+@@ -1309,7 +1309,7 @@
+       prdata = rdata;
+     else
+     {
+-      if((prdata = (char *)malloc( namerec->data.num_ips * 6 )) == NULL)
++      if((prdata = (char *)malloc_array( namerec->data.num_ips, 6 )) == NULL)
+       {
+         DEBUG(0,("send_wins_name_query_response: malloc fail !\n"));
+         return;
+--- samba-2.2.12/source/nsswitch/wb_common.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/nsswitch/wb_common.c	2004-12-17 11:17:04.000000000 -0200
+@@ -294,7 +294,8 @@
+ 			sizeof(struct winbindd_response);
+ 		
+ 		/* Mallocate memory for extra data */
+-		
++		if(extra_data_len <= 0)
++			return -1;
+ 		if (!(response->extra_data = malloc(extra_data_len))) {
+ 			return -1;
+ 		}
+--- samba-2.2.12/source/nsswitch/winbindd_cache.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/nsswitch/winbindd_cache.c	2004-12-17 11:17:04.000000000 -0200
+@@ -321,6 +321,11 @@
+ {
+ 	uint8 *p;
+ 	if (centry->len - centry->ofs >= len) return;
++	if(centry->len >= INT_MAX/2)
++	{
++		DEBUG(0,("centry_expand: integer overflow detected.\n"));
++		return;
++	}
+ 	centry->len *= 2;
+ 	p = realloc(centry->data, centry->len);
+ 	if (!p) {
+@@ -494,7 +499,7 @@
+ 	
+ 	if (*num_entries == 0) goto do_cached;
+ 
+-	(*info) = talloc(mem_ctx, sizeof(**info) * (*num_entries));
++	(*info) = talloc_array(mem_ctx, sizeof(**info), (*num_entries));
+ 	if (! (*info)) smb_panic("query_user_list out of memory");
+ 	for (i=0; i<(*num_entries); i++) {
+ 		(*info)[i].acct_name = centry_string(centry, mem_ctx);
+@@ -580,7 +585,7 @@
+ 	
+ 	if (*num_entries == 0) goto do_cached;
+ 
+-	(*info) = talloc(mem_ctx, sizeof(**info) * (*num_entries));
++	(*info) = talloc_array(mem_ctx, sizeof(**info), (*num_entries));
+ 	if (! (*info)) smb_panic("enum_dom_groups out of memory");
+ 	for (i=0; i<(*num_entries); i++) {
+ 		fstrcpy((*info)[i].acct_name, centry_string(centry, mem_ctx));
+@@ -783,7 +788,7 @@
+ 	
+ 	if (*num_groups == 0) goto do_cached;
+ 
+-	(*user_gids) = talloc(mem_ctx, sizeof(**user_gids) * (*num_groups));
++	(*user_gids) = talloc_array(mem_ctx, sizeof(**user_gids), (*num_groups));
+ 	if (! (*user_gids)) smb_panic("lookup_usergroups out of memory");
+ 	for (i=0; i<(*num_groups); i++) {
+ 		(*user_gids)[i] = centry_uint32(centry);
+@@ -841,9 +846,9 @@
+ 	
+ 	if (*num_names == 0) goto do_cached;
+ 
+-	(*rid_mem) = talloc(mem_ctx, sizeof(**rid_mem) * (*num_names));
+-	(*names) = talloc(mem_ctx, sizeof(**names) * (*num_names));
+-	(*name_types) = talloc(mem_ctx, sizeof(**name_types) * (*num_names));
++	(*rid_mem) = talloc_array(mem_ctx, sizeof(**rid_mem), (*num_names));
++	(*names) = talloc_array(mem_ctx, sizeof(**names), (*num_names));
++	(*name_types) = talloc_array(mem_ctx, sizeof(**name_types), (*num_names));
+ 
+ 	if (! (*rid_mem) || ! (*names) || ! (*name_types)) {
+ 		smb_panic("lookup_groupmem out of memory");
+--- samba-2.2.12/source/nsswitch/winbindd_group.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/nsswitch/winbindd_group.c	2004-12-17 11:17:04.000000000 -0200
+@@ -431,7 +431,7 @@
+ 	/* Copy entries into return buffer */
+ 
+ 	if (num_entries) {
+-		name_list = malloc(sizeof(struct acct_info) * num_entries);
++		name_list = malloc_array(sizeof(struct acct_info), num_entries);
+ 		memcpy(name_list, sam_grp_entries, 
+ 		       num_entries * sizeof(struct acct_info));
+ 	}
+@@ -477,7 +477,7 @@
+ 	num_groups = MIN(MAX_GETGRENT_GROUPS, state->request.data.num_entries);
+ 
+ 	if ((state->response.extra_data = 
+-	     malloc(num_groups * sizeof(struct winbindd_gr))) == NULL)
++	     malloc_array(num_groups, sizeof(struct winbindd_gr))) == NULL)
+ 		return WINBINDD_ERROR;
+ 
+ 	state->response.data.num_entries = 0;
+@@ -830,7 +830,7 @@
+ 	/* Copy data back to client */
+ 
+ 	num_gids = 0;
+-	gid_list = malloc(sizeof(gid_t) * num_groups);
++	gid_list = malloc_array(sizeof(gid_t), num_groups);
+ 
+ 	if (state->response.extra_data)
+ 		goto done;
+--- samba-2.2.12/source/nsswitch/winbindd_misc.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/nsswitch/winbindd_misc.c	2004-12-17 11:17:04.000000000 -0200
+@@ -108,6 +108,12 @@
+ 		/* Add domain to list */
+ 
+ 		total_entries++;
++		if(sizeof(fstring) >= UINT_MAX/total_entries)
++		{
++			DEBUG(0,("winbindd_list_domains: integer overflow detected.\n"));
++			SAFE_FREE(extra_data);
++			return WINBINDD_ERROR;
++		}
+ 		ted = Realloc(extra_data, sizeof(fstring) * 
+                               total_entries);
+ 
+--- samba-2.2.12/source/nsswitch/winbindd_rpc.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/nsswitch/winbindd_rpc.c	2004-12-17 11:17:04.000000000 -0200
+@@ -192,7 +192,16 @@
+ 			talloc_destroy(mem_ctx2);
+ 			break;
+ 		}
+-
++		if(
++			(*num_entries) >= INT_MAX-count ||
++			sizeof(**info) >= INT_MAX/(*num_entries)
++		)
++		{
++			DEBUG(0,("enum_dom_groups: integer overflow detected.\n"));
++			talloc_destroy(mem_ctx2);
++			cli_samr_close(hnd->cli, mem_ctx, &dom_pol);
++			return NT_STATUS_NO_MEMORY;
++		}
+ 		(*info) = talloc_realloc(mem_ctx, *info, 
+ 					 sizeof(**info) * ((*num_entries) + count));
+ 		if (! *info) {
+@@ -499,8 +508,8 @@
+ 
+ #define MAX_LOOKUP_RIDS 900
+ 
+-        *names = talloc_zero(mem_ctx, *num_names * sizeof(char *));
+-        *name_types = talloc_zero(mem_ctx, *num_names * sizeof(uint32));
++        *names = talloc_zero_array(mem_ctx, *num_names, sizeof(char *));
++        *name_types = talloc_zero_array(mem_ctx, *num_names, sizeof(uint32));
+ 
+         for (i = 0; i < *num_names; i += MAX_LOOKUP_RIDS) {
+                 int num_lookup_rids = MIN(*num_names - i, MAX_LOOKUP_RIDS);
+--- samba-2.2.12/source/nsswitch/winbindd_user.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/nsswitch/winbindd_user.c	2004-12-17 11:17:04.000000000 -0200
+@@ -438,7 +438,7 @@
+ 	num_users = MIN(MAX_GETPWENT_USERS, state->request.data.num_entries);
+ 	
+ 	if ((state->response.extra_data = 
+-	     malloc(num_users * sizeof(struct winbindd_pw))) == NULL)
++	     malloc_array(num_users, sizeof(struct winbindd_pw))) == NULL)
+ 		return WINBINDD_ERROR;
+ 
+ 	memset(state->response.extra_data, 0, num_users * 
+@@ -601,7 +601,12 @@
+ 		/* Allocate some memory for extra data */
+ 
+ 		total_entries += num_entries;
+-			
++		if(sizeof(fstring) >= UINT_MAX/total_entries)
++		{
++			DEBUG(0,("winbindd_list_users: integer overflow detected.\n"));
++			SAFE_FREE(extra_data);
++			goto done;
++		}		
+ 		ted = Realloc(extra_data, sizeof(fstring) * total_entries);
+ 			
+ 		if (!ted) {
+--- samba-2.2.12/source/nsswitch/winbind_nss.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/nsswitch/winbind_nss.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1307,7 +1307,7 @@
+ 			if (gid_list[i] == group) continue;
+ 
+ 			/* Add to buffer */
+-
++			// XXX thomas: realloc arg needs constraints */
+ 			if (*start == *size && limit <= 0) {
+ 				(*groups) = realloc(
+ 					(*groups), (2 * (*size) + 1) * sizeof(**groups));
+--- samba-2.2.12/source/pam_smbpass/support.c.CAN-2004-1154	2004-08-12 15:24:24.000000000 -0300
++++ samba-2.2.12/source/pam_smbpass/support.c	2004-12-17 11:17:04.000000000 -0200
+@@ -238,7 +238,7 @@
+     if (x != NULL) {
+         register int i;
+ 
+-        for (i = 0; x[i]; ++i); /* length of string */
++	for (i = 0; x[i] && i < INT_MAX; ++i); /* length of string */
+         if ((new = malloc(++i)) == NULL) {
+             i = 0;
+             _log_err( LOG_CRIT, "out of memory in smbpXstrDup" );
+--- samba-2.2.12/source/param/loadparm.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/param/loadparm.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1912,7 +1912,7 @@
+ 		service **tsp;
+ 
+ #ifdef __INSURE__
+-		service **oldservices = iNumServices ? malloc(sizeof(service *) * iNumServices) : NULL;
++		service **oldservices = iNumServices ? malloc_array(sizeof(service *), iNumServices) : NULL;
+ 
+ 		if (iNumServices)
+ 			memcpy(oldservices, ServicePtrs, sizeof(service *) * iNumServices);
+@@ -2732,7 +2732,7 @@
+ {
+ 	int i;
+ 	SAFE_FREE(pservice->copymap);
+-	pservice->copymap = (BOOL *)malloc(sizeof(BOOL) * NUMPARAMETERS);
++	pservice->copymap = (BOOL *)malloc_array(sizeof(BOOL), NUMPARAMETERS);
+ 	if (!pservice->copymap)
+ 		DEBUG(0,
+ 		      ("Couldn't allocate copymap!! (size %d)\n",
+--- samba-2.2.12/source/passdb/pampass.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/passdb/pampass.c	2004-12-17 11:17:04.000000000 -0200
+@@ -126,7 +126,7 @@
+ 		return PAM_CONV_ERR;
+ 	}
+ 
+-	reply = malloc(sizeof(struct pam_response) * num_msg);
++	reply = malloc_array(sizeof(struct pam_response), num_msg);
+ 	if (!reply)
+ 		return PAM_CONV_ERR;
+ 
+@@ -286,7 +286,7 @@
+ 		return PAM_CONV_ERR;
+ 	}
+ 
+-	reply = malloc(sizeof(struct pam_response) * num_msg);
++	reply = malloc_array(sizeof(struct pam_response), num_msg);
+ 	if (!reply) {
+ 		DEBUG(0,("smb_pam_passchange_conv: malloc for reply failed!\n"));
+ 		free_pw_chat(pw_chat);
+--- samba-2.2.12/source/passdb/passdb.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/passdb/passdb.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1620,7 +1620,7 @@
+ 	if (sampass->nt_pw!=NULL)
+ 		DEBUG(4,("pdb_set_nt_passwd: NT hash non NULL overwritting ?\n"));
+ 	else
+-		sampass->nt_pw=(unsigned char *)malloc(sizeof(unsigned char)*16);
++		sampass->nt_pw=(unsigned char *)malloc_array(sizeof(unsigned char), 16);
+ 	
+ 	if (sampass->nt_pw==NULL)
+ 		return False;
+@@ -1651,7 +1651,7 @@
+ 	if (sampass->lm_pw!=NULL)
+ 		DEBUG(4,("pdb_set_lanman_passwd: LM hash non NULL overwritting ?\n"));
+ 	else
+-		sampass->lm_pw=(unsigned char *)malloc(sizeof(unsigned char)*16);
++		sampass->lm_pw=(unsigned char *)malloc_array(sizeof(unsigned char), 16);
+ 	
+ 	if (sampass->lm_pw==NULL)
+ 		return False;
+--- samba-2.2.12/source/passdb/pdb_ldap.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/passdb/pdb_ldap.c	2004-12-17 11:17:04.000000000 -0200
+@@ -480,6 +480,11 @@
+ 
+ 	if (mods[i] == NULL)
+ 	{
++		if((i+2) >= INT_MAX/sizeof (LDAPMod *))
++		{
++			DEBUG(0,("make_a_mod: integer overflow detected.\n"));
++			return;
++		}
+ 		mods = (LDAPMod **) Realloc (mods, (i + 2) * sizeof (LDAPMod *));
+ 		if (mods == NULL)
+ 		{
+@@ -504,6 +509,11 @@
+ 		if (mods[i]->mod_values != NULL) {
+ 			for (; mods[i]->mod_values[j] != NULL; j++);
+ 		}
++		if((j+2) >= INT_MAX/sizeof(char *))
++		{
++			DEBUG(0,("make_a_mod: integer overflow detected.\n"));
++			return;
++		}
+ 		mods[i]->mod_values = (char **)Realloc(mods[i]->mod_values,
+ 					       (j + 2) * sizeof (char *));
+ 					       
+--- samba-2.2.12/source/passdb/pdb_nisplus.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/passdb/pdb_nisplus.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1244,7 +1244,7 @@
+ 
+   ta_maxcol = obj->TA_data.ta_maxcol;
+   
+-  if(!(ecol = (entry_col*)malloc(ta_maxcol*sizeof(entry_col)))) {
++  if(!(ecol = (entry_col*)malloc_array(ta_maxcol, sizeof(entry_col)))) {
+     DEBUG(0, ("memory allocation failure\n"));
+     nis_freeresult(tblresult);
+     return False;
+@@ -1326,7 +1326,7 @@
+   memmove((char *)&new_obj, obj, sizeof (new_obj));
+   ta_maxcol = obj->TA_data.ta_maxcol;
+   
+-  if(!(ecol = (entry_col*)malloc(ta_maxcol*sizeof(entry_col)))) {
++  if(!(ecol = (entry_col*)malloc_array(ta_maxcol, sizeof(entry_col)))) {
+     DEBUG(0, ("memory allocation failure\n"));
+     nis_freeresult(result);
+     return False;
+--- samba-2.2.12/source/popt/popt.c.CAN-2004-1154	2004-08-12 15:24:19.000000000 -0300
++++ samba-2.2.12/source/popt/popt.c	2004-12-17 11:17:04.000000000 -0200
+@@ -65,7 +65,7 @@
+     con->execs = NULL;
+     con->numExecs = 0;
+     con->finalArgvAlloced = argc * 2;
+-    con->finalArgv = calloc( con->finalArgvAlloced, sizeof(*con->finalArgv) );
++    con->finalArgv = calloc_array( con->finalArgvAlloced, sizeof(*con->finalArgv) );
+     con->execAbsolute = 1;
+     con->arg_strip = NULL;
+ 
+@@ -158,8 +158,8 @@
+        time 'round */
+     if ((con->finalArgvCount + 1) >= (con->finalArgvAlloced)) {
+ 	con->finalArgvAlloced += 10;
+-	con->finalArgv = realloc(con->finalArgv,
+-			sizeof(*con->finalArgv) * con->finalArgvAlloced);
++	con->finalArgv = realloc_array(con->finalArgv,
++			sizeof(*con->finalArgv), con->finalArgvAlloced);
+     }
+ 
+     i = con->finalArgvCount++;
+@@ -221,7 +221,7 @@
+     int pos = 0;
+     const char * script = con->doExec->script;
+ 
+-    argv = malloc(sizeof(*argv) *
++    argv = malloc_array(sizeof(*argv),
+ 			(6 + con->numLeftovers + con->finalArgvCount));
+ 
+     if (!con->execAbsolute && strchr(script, '/')) return;
+@@ -677,10 +677,10 @@
+ 
+     /* SunOS won't realloc(NULL, ...) */
+     if (!con->aliases)
+-	con->aliases = malloc(sizeof(newAlias) * con->numAliases);
++	con->aliases = malloc_array(sizeof(newAlias), con->numAliases);
+     else
+-	con->aliases = realloc(con->aliases,
+-			       sizeof(newAlias) * con->numAliases);
++	con->aliases = realloc_array(con->aliases,
++			       sizeof(newAlias), con->numAliases);
+     alias = con->aliases + aliasNum;
+ 
+     alias->longName = (newAlias.longName)
+--- samba-2.2.12/source/popt/poptconfig.c.CAN-2004-1154	2004-08-12 15:24:19.000000000 -0300
++++ samba-2.2.12/source/popt/poptconfig.c	2004-12-17 11:17:04.000000000 -0200
+@@ -40,8 +40,8 @@
+ 	alias.longName = longName, alias.shortName = shortName;
+ 	poptAddAlias(con, alias, 0);
+     } else if (!strcmp(entryType, "exec")) {
+-	con->execs = realloc(con->execs,
+-				sizeof(*con->execs) * (con->numExecs + 1));
++	con->execs = realloc_array(con->execs,
++				sizeof(*con->execs), (con->numExecs + 1));
+ 	if (longName)
+ 	    con->execs[con->numExecs].longName = xstrdup(longName);
+ 	else
+--- samba-2.2.12/source/popt/poptparse.c.CAN-2004-1154	2004-08-12 15:24:19.000000000 -0300
++++ samba-2.2.12/source/popt/poptparse.c	2004-12-17 11:17:04.000000000 -0200
+@@ -40,7 +40,7 @@
+     const char * src;
+     char quote = '\0';
+     int argvAlloced = POPT_ARGV_ARRAY_GROW_DELTA;
+-    const char ** argv = malloc(sizeof(*argv) * argvAlloced);
++    const char ** argv = malloc_array(sizeof(*argv), argvAlloced);
+     int argc = 0;
+     int buflen = strlen(s) + 1;
+     char *buf0 = calloc(buflen, 1);
+@@ -67,7 +67,7 @@
+ 		buf++, argc++;
+ 		if (argc == argvAlloced) {
+ 		    argvAlloced += POPT_ARGV_ARRAY_GROW_DELTA;
+-		    argv = realloc(argv, sizeof(*argv) * argvAlloced);
++		    argv = realloc_array(argv, sizeof(*argv), argvAlloced);
+ 		}
+ 		argv[argc] = buf;
+ 	    }
+--- samba-2.2.12/source/printing/nt_printing.c.CAN-2004-1154	2004-08-12 15:24:22.000000000 -0300
++++ samba-2.2.12/source/printing/nt_printing.c	2004-12-17 11:17:04.000000000 -0200
+@@ -448,7 +448,7 @@
+ 		SAFE_FREE(dbuf.dptr);
+ 		if (ret != dbuf.dsize) continue;
+ 
+-		tl = Realloc(*list, sizeof(nt_forms_struct)*(n+1));
++		tl = realloc_array(*list, sizeof(nt_forms_struct), (n+1));
+ 		if (!tl) {
+ 			DEBUG(0,("get_ntforms: Realloc fail.\n"));
+ 			return 0;
+@@ -519,7 +519,7 @@
+ 	}
+ 
+ 	if (update==False) {
+-		if((tl=Realloc(*list, (n+1)*sizeof(nt_forms_struct))) == NULL) {
++		if((tl=realloc_array(*list, (n+1), sizeof(nt_forms_struct))) == NULL) {
+ 			DEBUG(0,("add_a_form: failed to enlarge forms list!\n"));
+ 			return False;
+ 		}
+@@ -627,7 +627,7 @@
+ 	     newkey = tdb_nextkey(tdb_drivers, kbuf), safe_free(kbuf.dptr), kbuf=newkey) {
+ 		if (strncmp(kbuf.dptr, key, strlen(key)) != 0) continue;
+ 		
+-		if((fl = Realloc(*list, sizeof(fstring)*(total+1))) == NULL) {
++		if((fl = realloc_array(*list, sizeof(fstring), (total+1))) == NULL) {
+ 			DEBUG(0,("get_ntdrivers: failed to enlarge list!\n"));
+ 			return -1;
+ 		}
+@@ -1744,7 +1744,7 @@
+ 	fstrcpy(info.configfile, "");
+ 	fstrcpy(info.helpfile, "");
+ 
+-	if ((info.dependentfiles=(fstring *)malloc(2*sizeof(fstring))) == NULL)
++	if ((info.dependentfiles=(fstring *)malloc_array(2, sizeof(fstring))) == NULL)
+ 		return WERR_NOMEM;
+ 
+ 	memset(info.dependentfiles, '\0', 2*sizeof(fstring));
+@@ -1796,8 +1796,8 @@
+ 	while (len < dbuf.dsize) {
+ 		fstring *tddfs;
+ 
+-		tddfs = (fstring *)Realloc(driver.dependentfiles,
+-							 sizeof(fstring)*(i+2));
++		tddfs = (fstring *)realloc_array(driver.dependentfiles,
++							 sizeof(fstring), (i+2));
+ 		if (tddfs == NULL) {
+ 			DEBUG(0,("get_a_printer_driver_3: failed to enlarge buffer!\n"));
+ 			break;
+@@ -3598,7 +3598,7 @@
+ 	/* exited because it exist */
+ 	*type=param->type;		
+ 	StrnCpy(value, param->value, sizeof(fstring)-1);
+-	*data=(uint8 *)malloc(param->data_len*sizeof(uint8));
++	*data=(uint8 *)malloc_array(param->data_len, sizeof(uint8));
+ 	if(*data == NULL)
+ 		return False;
+ 	ZERO_STRUCTP(*data);
+@@ -3638,7 +3638,7 @@
+ 		/* exited because it exist */
+ 		*type=param->type;	
+ 		
+-		*data=(uint8 *)malloc(param->data_len*sizeof(uint8));
++		*data=(uint8 *)malloc_array(param->data_len, sizeof(uint8));
+ 		if(*data == NULL)
+ 			return False;
+ 		memcpy(*data, param->data, param->data_len);
+--- samba-2.2.12/source/printing/print_cups.c.CAN-2004-1154	2004-08-12 15:24:22.000000000 -0300
++++ samba-2.2.12/source/printing/print_cups.c	2004-12-17 11:17:04.000000000 -0200
+@@ -920,7 +920,7 @@
+ 		{
+ 			qalloc += 16;
+ 
+-			temp = Realloc(queue, sizeof(print_queue_struct) * qalloc);
++			temp = realloc_array(queue, sizeof(print_queue_struct), qalloc);
+ 
+ 			if (temp == NULL)
+ 			{
+--- samba-2.2.12/source/printing/print_generic.c.CAN-2004-1154	2004-08-12 15:24:22.000000000 -0300
++++ samba-2.2.12/source/printing/print_generic.c	2004-12-17 11:17:04.000000000 -0200
+@@ -218,7 +218,7 @@
+ 	qcount = 0;
+ 	ZERO_STRUCTP(status);
+ 	if (numlines)
+-		queue = (print_queue_struct *)malloc(sizeof(print_queue_struct)*(numlines+1));
++		queue = (print_queue_struct *)malloc_array(sizeof(print_queue_struct), (numlines+1));
+ 
+ 	if (queue) {
+ 		for (i=0; i<numlines; i++) {
+--- samba-2.2.12/source/printing/printing.c.CAN-2004-1154	2004-08-12 15:24:22.000000000 -0300
++++ samba-2.2.12/source/printing/printing.c	2004-12-17 11:17:04.000000000 -0200
+@@ -1314,7 +1314,7 @@
+ 
+ 	/* Allocate the queue size. */
+ 	if ((tstruct.queue = (print_queue_struct *)
+-	     malloc(sizeof(print_queue_struct)*tsc.count)) == NULL)
++	     malloc_array(sizeof(print_queue_struct), tsc.count)) == NULL)
+ 		return 0;
+ 
+ 	/*
+--- samba-2.2.12/source/rpc_client/cli_spoolss_notify.c.CAN-2004-1154	2004-08-12 15:24:19.000000000 -0300
++++ samba-2.2.12/source/rpc_client/cli_spoolss_notify.c	2004-12-17 11:17:04.000000000 -0200
+@@ -328,7 +328,7 @@
+ 		{
+ 			DEBUG(10,("build_notify_data: %s set on [%s][%d]\n", msg_table[i].name,
+ 				printer->info_2->printername, idx));
+-			if ((data=Realloc(*notify_data, (idx+1)*sizeof(SPOOL_NOTIFY_INFO_DATA))) == NULL) {
++			if ((data=realloc_array(*notify_data, (idx+1), sizeof(SPOOL_NOTIFY_INFO_DATA))) == NULL) {
+ 				DEBUG(0,("build_notify_data: Realloc() failed with size [%d]!\n",
+ 					(idx+1)*sizeof(SPOOL_NOTIFY_INFO_DATA)));
+ 				return -1;
+--- samba-2.2.12/source/rpc_parse/parse_lsa.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/rpc_parse/parse_lsa.c	2004-12-17 11:17:04.000000000 -0200
+@@ -686,7 +686,7 @@
+ 		return False;
+ 
+ 	if (UNMARSHALLING(ps)) {
+-		d_q->auditsettings = (uint32 *)talloc_zero(ps->mem_ctx, d_q->count2 * sizeof(uint32));
++		d_q->auditsettings = (uint32 *)talloc_zero_array(ps->mem_ctx, d_q->count2, sizeof(uint32));
+ 	}
+ 
+ 	if (d_q->auditsettings == NULL) {
+--- samba-2.2.12/source/rpc_parse/parse_misc.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/rpc_parse/parse_misc.c	2004-12-17 11:17:04.000000000 -0200
+@@ -950,7 +950,7 @@
+ 	to->uni_str_len = i;
+ 
+ 	/* allocate the space and copy the string buffer */
+-	to->buffer = (uint16 *)talloc_zero(get_talloc_ctx(), sizeof(uint16)*(to->uni_str_len));
++	to->buffer = (uint16 *)talloc_zero_array(get_talloc_ctx(), sizeof(uint16), (to->uni_str_len));
+ 	if (to->buffer == NULL)
+ 		smb_panic("init_unistr2_from_unistr: malloc fail\n");
+ 	memcpy(to->buffer, from->buffer, to->uni_max_len*sizeof(uint16));
+--- samba-2.2.12/source/rpc_parse/parse_net.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/rpc_parse/parse_net.c	2004-12-17 11:17:04.000000000 -0200
+@@ -824,7 +824,7 @@
+ 			;
+ 
+ 		/* Now allocate space for them. */
+-		*ppsids = (DOM_SID2 *)talloc_zero(ctx, count * sizeof(DOM_SID2));
++		*ppsids = (DOM_SID2 *)talloc_zero_array(ctx, count, sizeof(DOM_SID2));
+ 		if (*ppsids == NULL)
+ 			return 0;
+ 
+@@ -1291,7 +1291,7 @@
+ 	/* always have at least one group == the user's primary group */
+ 	usr->num_groups2 = num_groups+1;
+ 
+-	usr->gids = (DOM_GID *)talloc_zero(ctx,sizeof(DOM_GID) * (num_groups+1));
++	usr->gids = (DOM_GID *)talloc_zero_array(ctx,sizeof(DOM_GID), (num_groups+1));
+ 	if (usr->gids == NULL)
+ 		return;
+ 
+@@ -2130,7 +2130,7 @@
+ 			return False;
+ 		}
+ 
+-                info->rids = talloc(ps->mem_ctx, sizeof(uint32) *
++                info->rids = talloc_array(ps->mem_ctx, sizeof(uint32),
+                                     info->num_members2);
+ 
+                 if (info->rids == NULL) {
+@@ -2245,7 +2245,7 @@
+ 			return False;
+ 		}
+ 
+-                info->ptr_sids = talloc(ps->mem_ctx, sizeof(uint32) *
++                info->ptr_sids = talloc_array(ps->mem_ctx, sizeof(uint32),
+                                         info->num_sids);
+                 
+                 if (info->ptr_sids == NULL) {
+@@ -2261,7 +2261,7 @@
+                                 return False;
+ 		}
+ 
+-                info->sids = talloc(ps->mem_ctx, sizeof(DOM_SID2) *
++                info->sids = talloc_array(ps->mem_ctx, sizeof(DOM_SID2),
+                                     info->num_sids);
+ 
+                 if (info->sids == NULL) {
+@@ -2403,7 +2403,7 @@
+ 
+                         if (r_s->num_deltas2 > 0) {
+                                 r_s->hdr_deltas = (SAM_DELTA_HDR *)
+-                                        talloc(ps->mem_ctx, r_s->num_deltas2 *
++                                        talloc_array(ps->mem_ctx, r_s->num_deltas2,
+                                                sizeof(SAM_DELTA_HDR));
+                           
+                                 if (r_s->hdr_deltas == NULL) {
+@@ -2424,7 +2424,7 @@
+ 
+                         if (r_s->num_deltas2 > 0) {
+                                 r_s->deltas = (SAM_DELTA_CTR *)
+-                                        talloc(ps->mem_ctx, r_s->num_deltas2 *
++                                        talloc_array(ps->mem_ctx, r_s->num_deltas2,
+                                                sizeof(SAM_DELTA_CTR));
+ 
+                                 if (r_s->deltas == NULL) {
+@@ -2539,7 +2539,7 @@
+ 		{
+                         if (r_s->num_deltas > 0) {
+                                 r_s->hdr_deltas = (SAM_DELTA_HDR *)
+-                                        talloc(ps->mem_ctx, r_s->num_deltas *
++                                        talloc_array(ps->mem_ctx, r_s->num_deltas,
+                                                sizeof(SAM_DELTA_HDR));
+                                 if (r_s->hdr_deltas == NULL) {
+                                         DEBUG(0, ("error tallocating memory "
+@@ -2557,7 +2557,7 @@
+                         
+                         if (r_s->num_deltas > 0) {
+                                 r_s->deltas = (SAM_DELTA_CTR *)
+-                                        talloc(ps->mem_ctx, r_s->num_deltas *
++                                        talloc_array(ps->mem_ctx, r_s->num_deltas,
+                                                sizeof(SAM_DELTA_CTR));
+ 
+                                 if (r_s->deltas == NULL) {
+--- samba-2.2.12/source/rpc_parse/parse_samr.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/rpc_parse/parse_samr.c	2004-12-17 11:17:05.000000000 -0200
+@@ -1451,11 +1451,11 @@
+ 	if (num_entries==0)
+ 		return NT_STATUS_OK;
+ 
+-	sam->sam=(SAM_ENTRY1 *)talloc(ctx, num_entries*sizeof(SAM_ENTRY1));
++	sam->sam=(SAM_ENTRY1 *)talloc_array(ctx, num_entries, sizeof(SAM_ENTRY1));
+ 	if (!sam->sam)
+ 		return NT_STATUS_NO_MEMORY;
+ 
+-	sam->str=(SAM_STR1 *)talloc(ctx, num_entries*sizeof(SAM_STR1));
++	sam->str=(SAM_STR1 *)talloc_array(ctx, num_entries, sizeof(SAM_STR1));
+ 	if (!sam->str)
+ 		return NT_STATUS_NO_MEMORY;
+ 
+@@ -1554,10 +1554,10 @@
+ 	if (num_entries==0)
+ 		return NT_STATUS_OK;
+ 
+-	if (!(sam->sam=(SAM_ENTRY2 *)talloc(ctx, num_entries*sizeof(SAM_ENTRY2))))
++	if (!(sam->sam=(SAM_ENTRY2 *)talloc_array(ctx, num_entries, sizeof(SAM_ENTRY2))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+-	if (!(sam->str=(SAM_STR2 *)talloc(ctx, num_entries*sizeof(SAM_STR2))))
++	if (!(sam->str=(SAM_STR2 *)talloc_array(ctx, num_entries, sizeof(SAM_STR2))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+ 	ZERO_STRUCTP(sam->sam);
+@@ -1652,10 +1652,10 @@
+ 	if (num_entries==0)
+ 		return NT_STATUS_OK;
+ 
+-	if (!(sam->sam=(SAM_ENTRY3 *)talloc(ctx, num_entries*sizeof(SAM_ENTRY3))))
++	if (!(sam->sam=(SAM_ENTRY3 *)talloc_array(ctx, num_entries, sizeof(SAM_ENTRY3))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+-	if (!(sam->str=(SAM_STR3 *)talloc(ctx, num_entries*sizeof(SAM_STR3))))
++	if (!(sam->str=(SAM_STR3 *)talloc_array(ctx, num_entries, sizeof(SAM_STR3))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+ 	ZERO_STRUCTP(sam->sam);
+@@ -1747,10 +1747,10 @@
+ 	if (num_entries==0)
+ 		return NT_STATUS_OK;
+ 
+-	if (!(sam->sam=(SAM_ENTRY4 *)talloc(ctx, num_entries*sizeof(SAM_ENTRY4))))
++	if (!(sam->sam=(SAM_ENTRY4 *)talloc_array(ctx, num_entries, sizeof(SAM_ENTRY4))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+-	if (!(sam->str=(SAM_STR4 *)talloc(ctx, num_entries*sizeof(SAM_STR4))))
++	if (!(sam->str=(SAM_STR4 *)talloc_array(ctx, num_entries, sizeof(SAM_STR4))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+ 	ZERO_STRUCTP(sam->sam);
+@@ -1838,10 +1838,10 @@
+ 	if (num_entries==0)
+ 		return NT_STATUS_OK;
+ 
+-	if (!(sam->sam=(SAM_ENTRY5 *)talloc(ctx, num_entries*sizeof(SAM_ENTRY5))))
++	if (!(sam->sam=(SAM_ENTRY5 *)talloc_array(ctx, num_entries, sizeof(SAM_ENTRY5))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+-	if (!(sam->str=(SAM_STR5 *)talloc(ctx, num_entries*sizeof(SAM_STR5))))
++	if (!(sam->str=(SAM_STR5 *)talloc_array(ctx, num_entries, sizeof(SAM_STR5))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+ 	ZERO_STRUCTP(sam->sam);
+@@ -3918,7 +3918,7 @@
+ 	q_u->flags = flags;
+ 	q_u->ptr = 0;
+ 	q_u->num_rids2 = num_rids;
+-	q_u->rid = (uint32 *)talloc_zero(ctx, num_rids * sizeof(q_u->rid[0]));
++	q_u->rid = (uint32 *)talloc_zero_array(ctx, num_rids, sizeof(q_u->rid[0]));
+ 	if (q_u->rid == NULL) {
+ 		q_u->num_rids1 = 0;
+ 		q_u->num_rids2 = 0;
+@@ -4550,10 +4550,10 @@
+ 	q_u->ptr = 0;
+ 	q_u->num_names2 = num_names;
+ 
+-	if (!(q_u->hdr_name = (UNIHDR *)talloc_zero(ctx, num_names * sizeof(UNIHDR))))
++	if (!(q_u->hdr_name = (UNIHDR *)talloc_zero_array(ctx, num_names, sizeof(UNIHDR))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+-	if (!(q_u->uni_name = (UNISTR2 *)talloc_zero(ctx, num_names * sizeof(UNISTR2))))
++	if (!(q_u->uni_name = (UNISTR2 *)talloc_zero_array(ctx, num_names, sizeof(UNISTR2))))
+ 		return NT_STATUS_NO_MEMORY;
+ 
+ 	for (i = 0; i < num_names; i++) {
+@@ -4642,9 +4642,9 @@
+ 		r_u->ptr_rids = 1;
+ 		r_u->num_rids2 = num_rids;
+ 
+-		if (!(r_u->rids = (uint32 *)talloc_zero(ctx, sizeof(uint32)*num_rids)))
++		if (!(r_u->rids = (uint32 *)talloc_zero_array(ctx, sizeof(uint32), num_rids)))
+ 			return NT_STATUS_NO_MEMORY;
+-		if (!(r_u->types = (uint32 *)talloc_zero(ctx, sizeof(uint32)*num_rids)))
++		if (!(r_u->types = (uint32 *)talloc_zero_array(ctx, sizeof(uint32), num_rids)))
+ 			return NT_STATUS_NO_MEMORY;
+ 
+ 		if (!r_u->rids || !r_u->types)
+--- samba-2.2.12/source/rpc_parse/parse_sec.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/rpc_parse/parse_sec.c	2004-12-17 11:17:05.000000000 -0200
+@@ -130,7 +130,7 @@
+ 	   positive number. */
+ 
+ 	if ((num_aces) && 
+-            ((dst->ace = (SEC_ACE *)talloc(ctx, sizeof(SEC_ACE) * num_aces)) 
++            ((dst->ace = (SEC_ACE *)talloc_array(ctx, sizeof(SEC_ACE), num_aces)) 
+              == NULL)) {
+ 		return NULL;
+ 	}
+--- samba-2.2.12/source/rpc_parse/parse_spoolss.c.CAN-2004-1154	2004-08-12 15:24:28.000000000 -0300
++++ samba-2.2.12/source/rpc_parse/parse_spoolss.c	2004-12-17 11:17:05.000000000 -0200
+@@ -1930,7 +1930,7 @@
+ 
+ 			/* Yes this should be malloc not talloc. Don't change. */
+ 
+-			chaine.buffer = malloc((q-p+1)*sizeof(uint16));
++			chaine.buffer = malloc_array((q-p+1), sizeof(uint16));
+ 			if (chaine.buffer == NULL)
+ 				return False;
+ 
+@@ -5009,7 +5009,7 @@
+ 	while (src < ((char *)buf5->buffer) + buf5->buf_len*2) {
+ 		unistr_to_dos(f, src, sizeof(f)-1);
+ 		src = skip_unibuf(src, 2*buf5->buf_len - PTR_DIFF(src,buf5->buffer));
+-		tar = (fstring *)Realloc(*ar, sizeof(fstring)*(n+2));
++		tar = (fstring *)realloc_array(*ar, sizeof(fstring), (n+2));
+ 		if (!tar)
+ 			return False;
+ 		else
+@@ -5973,7 +5973,7 @@
+ 	(*param)->data_len=len;
+ 	
+ 	if (len) {
+-		(*param)->data=(uint8 *)malloc(len * sizeof(uint8));
++		(*param)->data=(uint8 *)malloc_array(len, sizeof(uint8));
+ 		if((*param)->data == NULL)
+ 			return False;
+ 		memcpy((*param)->data, data, len);
+--- samba-2.2.12/source/rpc_server/srv_dfs_nt.c.CAN-2004-1154	2004-08-12 15:24:26.000000000 -0300
++++ samba-2.2.12/source/rpc_server/srv_dfs_nt.c	2004-12-17 11:17:05.000000000 -0200
+@@ -82,8 +82,8 @@
+   else
+     jn.referral_count = 1;
+ 
+-  jn.referral_list = (struct referral*) talloc(p->mem_ctx, jn.referral_count 
+-					       * sizeof(struct referral));
++  jn.referral_list = (struct referral*) talloc_array(p->mem_ctx, jn.referral_count, 
++					       sizeof(struct referral));
+ 
+   if(jn.referral_list == NULL)
+     {
+@@ -245,7 +245,7 @@
+       dfs3[i].ptr_storages = 1;
+      
+       /* also enumerate the storages */
+-      dfs3[i].storages = (DFS_STORAGE_INFO*) talloc(ctx, j[i].referral_count * 
++      dfs3[i].storages = (DFS_STORAGE_INFO*) talloc_array(ctx, j[i].referral_count, 
+ 						    sizeof(DFS_STORAGE_INFO));
+       if (!dfs3[i].storages)
+         return False;
+@@ -288,7 +288,7 @@
+     case 1:
+       {
+ 	DFS_INFO_1* dfs1;
+-	dfs1 = (DFS_INFO_1*) talloc(ctx, num_jn * sizeof(DFS_INFO_1));
++	dfs1 = (DFS_INFO_1*) talloc_array(ctx, num_jn, sizeof(DFS_INFO_1));
+ 	if (!dfs1)
+ 		return WERR_NOMEM;
+ 	init_reply_dfs_info_1(jn, dfs1, num_jn);
+@@ -298,7 +298,7 @@
+     case 2:
+       {
+ 	DFS_INFO_2* dfs2;
+-	dfs2 = (DFS_INFO_2*) talloc(ctx, num_jn * sizeof(DFS_INFO_2));
++	dfs2 = (DFS_INFO_2*) talloc_array(ctx, num_jn, sizeof(DFS_INFO_2));
+ 	if (!dfs2)
+ 		return WERR_NOMEM;
+ 	init_reply_dfs_info_2(jn, dfs2, num_jn);
+@@ -308,7 +308,7 @@
+     case 3:
+       {
+ 	DFS_INFO_3* dfs3;
+-	dfs3 = (DFS_INFO_3*) talloc(ctx, num_jn * sizeof(DFS_INFO_3));
++	dfs3 = (DFS_INFO_3*) talloc_array(ctx, num_jn, sizeof(DFS_INFO_3));
+ 	if (!dfs3)
+ 		return WERR_NOMEM;
+ 	init_reply_dfs_info_3(ctx, jn, dfs3, num_jn);
+--- samba-2.2.12/source/rpc_server/srv_lsa_nt.c.CAN-2004-1154	2004-08-12 15:24:26.000000000 -0300
++++ samba-2.2.12/source/rpc_server/srv_lsa_nt.c	2004-12-17 11:17:05.000000000 -0200
+@@ -218,13 +218,13 @@
+ 	/* Allocate memory for list of names */
+ 
+ 	if (num_entries > 0) {
+-		if (!(trn->name = (LSA_TRANS_NAME *)talloc(ctx, sizeof(LSA_TRANS_NAME) *
++		if (!(trn->name = (LSA_TRANS_NAME *)talloc_array(ctx, sizeof(LSA_TRANS_NAME),
+ 							  num_entries))) {
+ 			DEBUG(0, ("init_lsa_trans_names(): out of memory\n"));
+ 			return;
+ 		}
+ 
+-		if (!(trn->uni_name = (UNISTR2 *)talloc(ctx, sizeof(UNISTR2) * 
++		if (!(trn->uni_name = (UNISTR2 *)talloc_array(ctx, sizeof(UNISTR2),
+ 							num_entries))) {
+ 			DEBUG(0, ("init_lsa_trans_names(): out of memory\n"));
+ 			return;
+@@ -385,7 +385,7 @@
+ 			info->id2.auditing_enabled = 1;
+ 			info->id2.count1 = 7;
+ 			info->id2.count2 = 7;
+-			if ((info->id2.auditsettings = (uint32 *)talloc(p->mem_ctx,7*sizeof(uint32))) == NULL)
++			if ((info->id2.auditsettings = (uint32 *)talloc_array(p->mem_ctx, 7, sizeof(uint32))) == NULL)
+ 				return NT_STATUS_NO_MEMORY;
+ 			for (i = 0; i < 7; i++)
+ 				info->id2.auditsettings[i] = 3;
+@@ -566,7 +566,7 @@
+ 	if (enum_context >= PRIV_ALL_INDEX)
+ 		return NT_STATUS_UNABLE_TO_FREE_VM;
+ 
+-	entries = (LSA_PRIV_ENTRY *)talloc_zero(p->mem_ctx, sizeof(LSA_PRIV_ENTRY) * (PRIV_ALL_INDEX-enum_context));
++	entries = (LSA_PRIV_ENTRY *)talloc_zero_array(p->mem_ctx, sizeof(LSA_PRIV_ENTRY), (PRIV_ALL_INDEX-enum_context));
+ 	if (entries==NULL)
+ 		return NT_STATUS_NO_MEMORY;
+ 
+--- samba-2.2.12/source/rpc_server/srv_samr_nt.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/rpc_server/srv_samr_nt.c	2004-12-17 11:17:05.000000000 -0200
+@@ -175,8 +175,8 @@
+ 		if (info->disp_info.num_user_account % MAX_SAM_ENTRIES == 0) {
+ 		
+ 			DEBUG(10,("load_sampwd_entries: allocating more memory\n"));
+-			pwd_array=(DISP_USER_INFO *)Realloc(info->disp_info.disp_user_info, 
+-			                  (info->disp_info.num_user_account+MAX_SAM_ENTRIES)*sizeof(DISP_USER_INFO));
++			pwd_array=(DISP_USER_INFO *)realloc_array(info->disp_info.disp_user_info, 
++			                  (info->disp_info.num_user_account+MAX_SAM_ENTRIES), sizeof(DISP_USER_INFO));
+ 
+ 			if (pwd_array==NULL)
+ 				return NT_STATUS_NO_MEMORY;
+@@ -214,7 +214,7 @@
+ 	static BOOL group_map_init;
+ 	extern DOM_SID global_sam_sid;
+ 
+-	*ret_map = (GROUP_MAP *)malloc(sizeof(GROUP_MAP)*2);
++	*ret_map = (GROUP_MAP *)malloc_array(sizeof(GROUP_MAP), 2);
+ 	if (!ret_map)
+ 		return 2;
+ 	
+@@ -268,7 +268,7 @@
+ 
+ 	info->disp_info.num_group_account=group_entries;
+ 
+-	grp_array=(DISP_GROUP_INFO *)malloc(info->disp_info.num_group_account*sizeof(DISP_GROUP_INFO));
++	grp_array=(DISP_GROUP_INFO *)malloc_array(info->disp_info.num_group_account, sizeof(DISP_GROUP_INFO));
+ 
+ 	if (group_entries!=0 && grp_array==NULL) {
+ 		return NT_STATUS_NO_MEMORY;
+@@ -557,9 +557,9 @@
+ 	if (num_sam_entries == 0)
+ 		return;
+ 
+-	sam = (SAM_ENTRY *)talloc_zero(ctx, sizeof(SAM_ENTRY)*num_sam_entries);
++	sam = (SAM_ENTRY *)talloc_zero_array(ctx, sizeof(SAM_ENTRY), num_sam_entries);
+ 
+-	uni_name = (UNISTR2 *)talloc_zero(ctx, sizeof(UNISTR2)*num_sam_entries);
++	uni_name = (UNISTR2 *)talloc_zero_array(ctx, sizeof(UNISTR2), num_sam_entries);
+ 
+ 	if (sam == NULL || uni_name == NULL) {
+ 		DEBUG(0, ("NULL pointers in SAMR_R_QUERY_DISPINFO\n"));
+@@ -644,9 +644,9 @@
+ 	if (num_sam_entries == 0)
+ 		return;
+ 
+-	sam = (SAM_ENTRY *)talloc_zero(ctx, sizeof(SAM_ENTRY)*num_sam_entries);
++	sam = (SAM_ENTRY *)talloc_zero_array(ctx, sizeof(SAM_ENTRY), num_sam_entries);
+ 
+-	uni_name = (UNISTR2 *)talloc_zero(ctx, sizeof(UNISTR2)*num_sam_entries);
++	uni_name = (UNISTR2 *)talloc_zero_array(ctx, sizeof(UNISTR2), num_sam_entries);
+ 
+ 	if (sam == NULL || uni_name == NULL) {
+ 		DEBUG(0, ("NULL pointers in SAMR_R_QUERY_DISPINFO\n"));
+@@ -991,7 +991,7 @@
+ 	switch (q_u->switch_level) {
+ 	case 0x1:
+ 		if (max_entries) {
+-			if (!(ctr->sam.info1 = (SAM_DISPINFO_1 *)talloc_zero(p->mem_ctx,max_entries*sizeof(SAM_DISPINFO_1))))
++			if (!(ctr->sam.info1 = (SAM_DISPINFO_1 *)talloc_zero_array(p->mem_ctx,max_entries, sizeof(SAM_DISPINFO_1))))
+ 				return NT_STATUS_NO_MEMORY;
+ 		}
+ 		disp_ret = init_sam_dispinfo_1(p->mem_ctx, ctr->sam.info1, max_entries, enum_context, info->disp_info.disp_user_info);
+@@ -1000,7 +1000,7 @@
+ 		break;
+ 	case 0x2:
+ 		if (max_entries) {
+-			if (!(ctr->sam.info2 = (SAM_DISPINFO_2 *)talloc_zero(p->mem_ctx,max_entries*sizeof(SAM_DISPINFO_2))))
++			if (!(ctr->sam.info2 = (SAM_DISPINFO_2 *)talloc_zero_array(p->mem_ctx,max_entries, sizeof(SAM_DISPINFO_2))))
+ 				return NT_STATUS_NO_MEMORY;
+ 		}
+ 		disp_ret = init_sam_dispinfo_2(p->mem_ctx, ctr->sam.info2, max_entries, enum_context, info->disp_info.disp_user_info);
+@@ -1009,7 +1009,7 @@
+ 		break;
+ 	case 0x3:
+ 		if (max_entries) {
+-			if (!(ctr->sam.info3 = (SAM_DISPINFO_3 *)talloc_zero(p->mem_ctx,max_entries*sizeof(SAM_DISPINFO_3))))
++			if (!(ctr->sam.info3 = (SAM_DISPINFO_3 *)talloc_zero_array(p->mem_ctx,max_entries, sizeof(SAM_DISPINFO_3))))
+ 				return NT_STATUS_NO_MEMORY;
+ 		}
+ 		disp_ret = init_sam_dispinfo_3(p->mem_ctx, ctr->sam.info3, max_entries, enum_context, info->disp_info.disp_group_info);
+@@ -1018,7 +1018,7 @@
+ 		break;
+ 	case 0x4:
+ 		if (max_entries) {
+-			if (!(ctr->sam.info4 = (SAM_DISPINFO_4 *)talloc_zero(p->mem_ctx,max_entries*sizeof(SAM_DISPINFO_4))))
++			if (!(ctr->sam.info4 = (SAM_DISPINFO_4 *)talloc_zero_array(p->mem_ctx,max_entries, sizeof(SAM_DISPINFO_4))))
+ 				return NT_STATUS_NO_MEMORY;
+ 		}
+ 		disp_ret = init_sam_dispinfo_4(p->mem_ctx, ctr->sam.info4, max_entries, enum_context, info->disp_info.disp_user_info);
+@@ -1027,7 +1027,7 @@
+ 		break;
+ 	case 0x5:
+ 		if (max_entries) {
+-			if (!(ctr->sam.info5 = (SAM_DISPINFO_5 *)talloc_zero(p->mem_ctx,max_entries*sizeof(SAM_DISPINFO_5))))
++			if (!(ctr->sam.info5 = (SAM_DISPINFO_5 *)talloc_zero_array(p->mem_ctx,max_entries, sizeof(SAM_DISPINFO_5))))
+ 				return NT_STATUS_NO_MEMORY;
+ 		}
+ 		disp_ret = init_sam_dispinfo_5(p->mem_ctx, ctr->sam.info5, max_entries, enum_context, info->disp_info.disp_group_info);
+@@ -1287,11 +1287,11 @@
+ 	*pp_hdr_name = NULL;
+ 
+ 	if (num_names != 0) {
+-		hdr_name = (UNIHDR *)talloc_zero(ctx, sizeof(UNIHDR)*num_names);
++		hdr_name = (UNIHDR *)talloc_zero_array(ctx, sizeof(UNIHDR), num_names);
+ 		if (hdr_name == NULL)
+ 			return False;
+ 
+-		uni_name = (UNISTR2 *)talloc_zero(ctx,sizeof(UNISTR2)*num_names);
++		uni_name = (UNISTR2 *)talloc_zero_array(ctx,sizeof(UNISTR2), num_names);
+ 		if (uni_name == NULL)
+ 			return False;
+ 	}
+@@ -1337,7 +1337,7 @@
+ 	}
+ 
+ 	if (num_rids) {
+-		if ((group_attrs = (uint32 *)talloc_zero(p->mem_ctx, num_rids * sizeof(uint32))) == NULL)
++		if ((group_attrs = (uint32 *)talloc_zero_array(p->mem_ctx, num_rids, sizeof(uint32))) == NULL)
+ 			return NT_STATUS_NO_MEMORY;
+ 	}
+ 
+@@ -2073,8 +2073,8 @@
+ 	if (num_sam_entries == 0)
+ 		return True;
+ 
+-	sam = (SAM_ENTRY *)talloc_zero(ctx, sizeof(SAM_ENTRY)*num_sam_entries);
+-	uni_name = (UNISTR2 *)talloc_zero(ctx, sizeof(UNISTR2)*num_sam_entries);
++	sam = (SAM_ENTRY *)talloc_zero_array(ctx, sizeof(SAM_ENTRY), num_sam_entries);
++	uni_name = (UNISTR2 *)talloc_zero_array(ctx, sizeof(UNISTR2), num_sam_entries);
+ 
+ 	if (sam == NULL || uni_name == NULL)
+ 		return False;
+@@ -2603,7 +2603,7 @@
+ 	int num_rids;
+ 
+ 	num_rids = 1;
+-	rid=(uint32 *)talloc_zero(p->mem_ctx, num_rids*sizeof(uint32));
++	rid=(uint32 *)talloc_zero_array(p->mem_ctx, num_rids, sizeof(uint32));
+ 	if (rid == NULL)
+ 		return NT_STATUS_NO_MEMORY;
+ 
+--- samba-2.2.12/source/rpc_server/srv_spoolss_nt.c.CAN-2004-1154	2004-08-12 15:31:57.000000000 -0300
++++ samba-2.2.12/source/rpc_server/srv_spoolss_nt.c	2004-12-17 11:17:05.000000000 -0200
+@@ -880,7 +880,7 @@
+ 	
+ 	len = unistrlen(devmode->devicename.buffer);
+ 	if (len != -1) {
+-		d->devicename.buffer = talloc(ctx, len*2);
++		d->devicename.buffer = talloc_array(ctx, len, 2);
+ 		if (unistrcpy(d->devicename.buffer, devmode->devicename.buffer) != len)
+ 			return NULL;
+ 	}
+@@ -888,7 +888,7 @@
+ 
+ 	len = unistrlen(devmode->formname.buffer);
+ 	if (len != -1) {
+-		d->devicename.buffer = talloc(ctx, len*2);
++		d->devicename.buffer = talloc_array(ctx, len, 2);
+ 		if (unistrcpy(d->formname.buffer, devmode->formname.buffer) != len)
+ 			return NULL;
+ 	}
+@@ -1305,7 +1305,7 @@
+ 	if ((devmode->driverextra != 0) && (devmode->private != NULL)) {
+ 		SAFE_FREE(nt_devmode->private);
+ 		nt_devmode->driverextra=devmode->driverextra;
+-		if((nt_devmode->private=(uint8 *)malloc(nt_devmode->driverextra * sizeof(uint8))) == NULL)
++		if((nt_devmode->private=(uint8 *)malloc_array(nt_devmode->driverextra, sizeof(uint8))) == NULL)
+ 			return False;
+ 		memcpy(nt_devmode->private, devmode->private, nt_devmode->driverextra);
+ 	}
+@@ -1521,7 +1521,7 @@
+ 		
+ 	if (!strcmp(value, "W3SvcInstalled")) {
+ 		*type = 0x4;
+-		if((*data = (uint8 *)talloc_zero(ctx, 4*sizeof(uint8) )) == NULL)
++		if((*data = (uint8 *)talloc_zero_array(ctx, 4, sizeof(uint8) )) == NULL)
+ 			return False;
+ 		*needed = 0x4;			
+ 		return True;
+@@ -1574,7 +1574,7 @@
+ 		fstrcpy(string, string_truncate(lp_serverstring(), MAX_SERVER_STRING_LENGTH));
+ 		*type = 0x1;			
+ 		*needed = 2*(strlen(string)+1);		
+-		if((*data  = (uint8 *)talloc(ctx, ((*needed > in_size) ? *needed:in_size) *sizeof(uint8))) == NULL)
++		if((*data  = (uint8 *)talloc_array(ctx, ((*needed > in_size) ? *needed:in_size), sizeof(uint8))) == NULL)
+ 			return False;
+ 		memset(*data, 0, (*needed > in_size) ? *needed:in_size);
+ 		
+@@ -1590,7 +1590,7 @@
+ 		pstring string="Windows NT x86";
+ 		*type = 0x1;			
+ 		*needed = 2*(strlen(string)+1);	
+-		if((*data  = (uint8 *)talloc(ctx, ((*needed > in_size) ? *needed:in_size) *sizeof(uint8))) == NULL)
++		if((*data  = (uint8 *)talloc_array(ctx, ((*needed > in_size) ? *needed:in_size), sizeof(uint8))) == NULL)
+ 			return False;
+ 		memset(*data, 0, (*needed > in_size) ? *needed:in_size);
+ 		for (i=0; i<strlen(string); i++) {
+@@ -1640,7 +1640,7 @@
+ 	DEBUG(5,("getprinterdata_printer:allocating %d\n", in_size));
+ 
+ 	if (in_size) {
+-		if((*data  = (uint8 *)talloc(ctx, in_size *sizeof(uint8) )) == NULL) {
++		if((*data  = (uint8 *)talloc_array(ctx, in_size, sizeof(uint8) )) == NULL) {
+ 			return False;
+ 		}
+ 
+@@ -1711,7 +1711,7 @@
+ 		DEBUG(5, ("value not found, allocating %d\n", *out_size));
+ 		/* reply this param doesn't exist */
+ 		if (*out_size) {
+-			if((*data=(uint8 *)talloc_zero(p->mem_ctx, *out_size*sizeof(uint8))) == NULL)
++			if((*data=(uint8 *)talloc_zero_array(p->mem_ctx, *out_size, sizeof(uint8))) == NULL)
+ 				return WERR_NOMEM;
+ 		} else {
+ 			*data = NULL;
+@@ -2704,7 +2704,7 @@
+ 		if (!search_notify(type, field, &j) )
+ 			continue;
+ 
+-		if((tid=(SPOOL_NOTIFY_INFO_DATA *)Realloc(info->data, (info->count+1)*sizeof(SPOOL_NOTIFY_INFO_DATA))) == NULL) {
++		if((tid=(SPOOL_NOTIFY_INFO_DATA *)realloc_array(info->data, (info->count+1), sizeof(SPOOL_NOTIFY_INFO_DATA))) == NULL) {
+ 			DEBUG(2,("construct_notify_printer_info: failed to enlarge buffer info->data!\n"));
+ 			return False;
+ 		}
+@@ -2760,7 +2760,7 @@
+ 		if (!search_notify(type, field, &j) )
+ 			continue;
+ 
+-		if((tid=Realloc(info->data, (info->count+1)*sizeof(SPOOL_NOTIFY_INFO_DATA))) == NULL) {
++		if((tid=realloc_array(info->data, (info->count+1), sizeof(SPOOL_NOTIFY_INFO_DATA))) == NULL) {
+ 			DEBUG(2,("construct_notify_jobs_info: failed to enlarg buffer info->data!\n"));
+ 			return False;
+ 		}
+@@ -3432,7 +3432,7 @@
+ 			DEBUG(4,("Found a printer in smb.conf: %s[%x]\n", lp_servicename(snum), snum));
+ 
+ 			if (construct_printer_info_1(flags, &current_prt, snum)) {
+-				if((tp=Realloc(printers, (*returned +1)*sizeof(PRINTER_INFO_1))) == NULL) {
++				if((tp=realloc_array(printers, (*returned +1), sizeof(PRINTER_INFO_1))) == NULL) {
+ 					DEBUG(2,("enum_all_printers_info_1: failed to enlarge printers buffer!\n"));
+ 					SAFE_FREE(printers);
+ 					*returned=0;
+@@ -3601,7 +3601,7 @@
+ 			DEBUG(4,("Found a printer in smb.conf: %s[%x]\n", lp_servicename(snum), snum));
+ 				
+ 			if (construct_printer_info_2(&current_prt, snum)) {
+-				if((tp=Realloc(printers, (*returned +1)*sizeof(PRINTER_INFO_2))) == NULL) {
++				if((tp=realloc_array(printers, (*returned +1), sizeof(PRINTER_INFO_2))) == NULL) {
+ 					DEBUG(2,("enum_all_printers_info_2: failed to enlarge printers buffer!\n"));
+ 					SAFE_FREE(printers);
+ 					*returned = 0;
+@@ -4128,7 +4128,7 @@
+ 		if (strlen(v) == 0) break;
+ 		slprintf(line, sizeof(line)-1, "\\\\%s%s", servername, v);
+ 		DEBUGADD(6,("%d:%s:%d\n", i, line, strlen(line)));
+-		if((tuary=Realloc(*uni_array, (j+strlen(line)+2)*sizeof(uint16))) == NULL) {
++		if((tuary=realloc_array(*uni_array, (j+strlen(line)+2), sizeof(uint16))) == NULL) {
+ 			DEBUG(2,("init_unistr_array: Realloc error\n" ));
+ 			return;
+ 		} else
+@@ -5541,7 +5541,7 @@
+ 	JOB_INFO_1 *info;
+ 	int i;
+ 	
+-	info=(JOB_INFO_1 *)malloc(*returned*sizeof(JOB_INFO_1));
++	info=(JOB_INFO_1 *)malloc_array(*returned, sizeof(JOB_INFO_1));
+ 	if (info==NULL) {
+ 		SAFE_FREE(queue);
+ 		*returned=0;
+@@ -5591,7 +5591,7 @@
+ 	WERROR result;
+ 	DEVICEMODE *devmode = NULL;
+ 	
+-	info=(JOB_INFO_2 *)malloc(*returned*sizeof(JOB_INFO_2));
++	info=(JOB_INFO_2 *)malloc_array(*returned, sizeof(JOB_INFO_2));
+ 	if (info==NULL) {
+ 		*returned=0;
+ 		result = WERR_NOMEM;
+@@ -5783,7 +5783,7 @@
+ 			return WERR_NOMEM;
+ 
+ 		if(ndrivers != 0) {
+-			if((tdi1=(DRIVER_INFO_1 *)Realloc(driver_info_1, (*returned+ndrivers) * sizeof(DRIVER_INFO_1))) == NULL) {
++			if((tdi1=(DRIVER_INFO_1 *)realloc_array(driver_info_1, (*returned+ndrivers), sizeof(DRIVER_INFO_1))) == NULL) {
+ 				DEBUG(0,("enumprinterdrivers_level1: failed to enlarge driver info buffer!\n"));
+ 				SAFE_FREE(driver_info_1);
+ 				SAFE_FREE(list);
+@@ -5864,7 +5864,7 @@
+ 			return WERR_NOMEM;
+ 
+ 		if(ndrivers != 0) {
+-			if((tdi2=(DRIVER_INFO_2 *)Realloc(driver_info_2, (*returned+ndrivers) * sizeof(DRIVER_INFO_2))) == NULL) {
++			if((tdi2=(DRIVER_INFO_2 *)realloc_array(driver_info_2, (*returned+ndrivers), sizeof(DRIVER_INFO_2))) == NULL) {
+ 				DEBUG(0,("enumprinterdrivers_level2: failed to enlarge driver info buffer!\n"));
+ 				SAFE_FREE(driver_info_2);
+ 				SAFE_FREE(list);
+@@ -5946,7 +5946,7 @@
+ 			return WERR_NOMEM;
+ 
+ 		if(ndrivers != 0) {
+-			if((tdi3=(DRIVER_INFO_3 *)Realloc(driver_info_3, (*returned+ndrivers) * sizeof(DRIVER_INFO_3))) == NULL) {
++			if((tdi3=(DRIVER_INFO_3 *)realloc_array(driver_info_3, (*returned+ndrivers), sizeof(DRIVER_INFO_3))) == NULL) {
+ 				DEBUG(0,("enumprinterdrivers_level3: failed to enlarge driver info buffer!\n"));
+ 				SAFE_FREE(driver_info_3);
+ 				SAFE_FREE(list);
+@@ -6099,7 +6099,7 @@
+ 
+ 	switch (level) {
+ 	case 1:
+-		if ((forms_1=(FORM_1 *)malloc(*numofforms * sizeof(FORM_1))) == NULL) {
++		if ((forms_1=(FORM_1 *)malloc_array(*numofforms, sizeof(FORM_1))) == NULL) {
+ 			*numofforms=0;
+ 			return WERR_NOMEM;
+ 		}
+@@ -6305,7 +6305,7 @@
+ 		close(fd);
+ 
+ 		if(numlines) {
+-			if((ports=(PORT_INFO_1 *)malloc( numlines * sizeof(PORT_INFO_1) )) == NULL) {
++			if((ports=(PORT_INFO_1 *)malloc_array( numlines, sizeof(PORT_INFO_1) )) == NULL) {
+ 				DEBUG(10,("Returning WERR_NOMEM [%s]\n", 
+ 					  dos_errstr(WERR_NOMEM)));
+ 				file_lines_free(qlines);
+@@ -6404,7 +6404,7 @@
+ 		close(fd);
+ 
+ 		if(numlines) {
+-			if((ports=(PORT_INFO_2 *)malloc( numlines * sizeof(PORT_INFO_2) )) == NULL) {
++			if((ports=(PORT_INFO_2 *)malloc_array( numlines, sizeof(PORT_INFO_2) )) == NULL) {
+ 				file_lines_free(qlines);
+ 				return WERR_NOMEM;
+ 			}
+@@ -6942,7 +6942,7 @@
+ 		   problems unmarshalling the response */
+ 
+ 		*out_max_value_len=(in_value_len/sizeof(uint16));
+-		if((*out_value=(uint16 *)talloc_zero(p->mem_ctx, in_value_len*sizeof(uint8))) == NULL)
++		if((*out_value=(uint16 *)talloc_zero_array(p->mem_ctx, in_value_len, sizeof(uint8))) == NULL)
+ 			return WERR_NOMEM;
+ 
+ 		*out_value_len = (uint32)dos_PutUniCode((char *)*out_value, "", in_value_len, True);
+@@ -6950,7 +6950,7 @@
+ 		/* the data is counted in bytes */
+ 		*out_max_data_len = in_data_len;
+ 		*out_data_len = in_data_len;
+-		if((*data_out=(uint8 *)talloc_zero(p->mem_ctx, in_data_len*sizeof(uint8))) == NULL)
++		if((*data_out=(uint8 *)talloc_zero_array(p->mem_ctx, in_data_len, sizeof(uint8))) == NULL)
+ 			return WERR_NOMEM;
+ 
+ 		return WERR_NO_MORE_ITEMS;
+@@ -6968,7 +6968,7 @@
+ 	 */
+ 	
+ 	*out_max_value_len=(in_value_len/sizeof(uint16));
+-	if((*out_value=(uint16 *)talloc_zero(p->mem_ctx,in_value_len*sizeof(uint8))) == NULL) {
++	if((*out_value=(uint16 *)talloc_zero_array(p->mem_ctx,in_value_len, sizeof(uint8))) == NULL) {
+ 		SAFE_FREE(data);
+ 		return WERR_NOMEM;
+ 	}
+@@ -6979,7 +6979,7 @@
+ 
+ 	/* the data is counted in bytes */
+ 	*out_max_data_len=in_data_len;
+-	if((*data_out=(uint8 *)talloc_zero(p->mem_ctx, in_data_len*sizeof(uint8))) == NULL) {
++	if((*data_out=(uint8 *)talloc_zero_array(p->mem_ctx, in_data_len, sizeof(uint8))) == NULL) {
+ 		SAFE_FREE(data);
+ 		return WERR_NOMEM;
+ 	}
+@@ -7824,7 +7824,7 @@
+ 		
+ 		/* reply this param doesn't exist */
+ 		if (*out_size) {
+-			if((*data=(uint8 *)talloc_zero(p->mem_ctx, *out_size*sizeof(uint8))) == NULL)
++			if((*data=(uint8 *)talloc_zero_array(p->mem_ctx, *out_size, sizeof(uint8))) == NULL)
+ 				return WERR_NOMEM;
+ 		} else {
+ 			*data = NULL;
+@@ -8007,7 +8007,11 @@
+ 		PRINTER_ENUM_VALUES	*ptr;
+ 
+ 		DEBUG(10,("retrieved value number [%d] [%s]\n", num_entries, value));
+-
++		if((num_entries+1) >= UINT_MAX/sizeof(PRINTER_ENUM_VALUES))
++		{
++			DEBUG(0,("_spoolss_enumprinterdataex: integer overflow detected.\n"));
++			goto done;
++		}
+ 		if ((ptr=talloc_realloc(p->mem_ctx, enum_values, (num_entries+1) * sizeof(PRINTER_ENUM_VALUES))) == NULL)
+ 		{
+ 			DEBUG(0,("talloc_realloc failed to allocate more memory!\n"));
+--- samba-2.2.12/source/rpc_server/srv_srvsvc_nt.c.CAN-2004-1154	2004-08-12 15:24:26.000000000 -0300
++++ samba-2.2.12/source/rpc_server/srv_srvsvc_nt.c	2004-12-17 11:17:05.000000000 -0200
+@@ -494,7 +494,7 @@
+ 		SRV_SHARE_INFO_1 *info1;
+ 		int i = 0;
+ 
+-		info1 = talloc(ctx, num_entries * sizeof(SRV_SHARE_INFO_1));
++		info1 = talloc_array(ctx, num_entries, sizeof(SRV_SHARE_INFO_1));
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+ 			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_admin_share(snum)) ) {
+@@ -511,7 +511,7 @@
+ 		SRV_SHARE_INFO_2 *info2;
+ 		int i = 0;
+ 
+-		info2 = talloc(ctx, num_entries * sizeof(SRV_SHARE_INFO_2));
++		info2 = talloc_array(ctx, num_entries, sizeof(SRV_SHARE_INFO_2));
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+ 			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_admin_share(snum)) ) {
+@@ -528,7 +528,7 @@
+ 		SRV_SHARE_INFO_501 *info501;
+ 		int i = 0;
+ 	
+-		info501 = talloc(ctx, num_entries * sizeof(SRV_SHARE_INFO_501));
++		info501 = talloc_array(ctx, num_entries, sizeof(SRV_SHARE_INFO_501));
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+ 			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_admin_share(snum)) ) {
+@@ -545,7 +545,7 @@
+ 		SRV_SHARE_INFO_502 *info502;
+ 		int i = 0;
+ 
+-		info502 = talloc(ctx, num_entries * sizeof(SRV_SHARE_INFO_502));
++		info502 = talloc_array(ctx, num_entries, sizeof(SRV_SHARE_INFO_502));
+ 
+ 		for (snum = *resume_hnd; snum < num_services; snum++) {
+ 			if (lp_browseable(snum) && lp_snum_ok(snum) && (all_shares || !is_admin_share(snum)) ) {
+--- samba-2.2.12/source/rpc_server/srv_util.c.CAN-2004-1154	2004-08-12 15:24:26.000000000 -0300
++++ samba-2.2.12/source/rpc_server/srv_util.c	2004-12-17 11:17:05.000000000 -0200
+@@ -97,7 +97,7 @@
+        count++)
+     ;
+ 
+-  gids = (DOM_GID *)talloc(ctx, sizeof(DOM_GID) * count );
++  gids = (DOM_GID *)talloc_array(ctx, sizeof(DOM_GID), count );
+   if(!gids)
+   {
+     DEBUG(0,("make_dom_gids: talloc fail !\n"));
+--- samba-2.2.12/source/rpcclient/cmd_lsarpc.c.CAN-2004-1154	2004-08-12 15:24:20.000000000 -0300
++++ samba-2.2.12/source/rpcclient/cmd_lsarpc.c	2004-12-17 11:17:04.000000000 -0200
+@@ -142,7 +142,7 @@
+ 
+ 	/* Convert arguments to sids */
+ 
+-	sids = (DOM_SID *)talloc(mem_ctx, sizeof(DOM_SID) * (argc - 1));
++	sids = (DOM_SID *)talloc_array(mem_ctx, sizeof(DOM_SID), (argc - 1));
+ 
+ 	if (!sids) {
+ 		printf("could not allocate memory for %d sids\n", argc - 1);
+--- samba-2.2.12/source/rpcclient/cmd_samr.c.CAN-2004-1154	2004-08-12 15:24:20.000000000 -0300
++++ samba-2.2.12/source/rpcclient/cmd_samr.c	2004-12-17 11:17:04.978777592 -0200
+@@ -1045,7 +1045,7 @@
+ 	/* Look up names */
+ 
+ 	num_names = argc - 2;
+-	names = (const char **)talloc(mem_ctx, sizeof(char *) * num_names);
++	names = (const char **)talloc_array(mem_ctx, sizeof(char *), num_names);
+ 
+ 	for (i = 0; i < argc - 2; i++)
+ 		names[i] = argv[i + 2];
+@@ -1106,7 +1106,7 @@
+ 	/* Look up rids */
+ 
+ 	num_rids = argc - 1;
+-	rids = (uint32 *)talloc(mem_ctx, sizeof(uint32) * num_rids);
++	rids = (uint32 *)talloc_array(mem_ctx, sizeof(uint32), num_rids);
+ 
+ 	for (i = 0; i < argc - 1; i++)
+                 sscanf(argv[i + 1], "%i", &rids[i]);
+--- samba-2.2.12/source/rpcclient/cmd_spoolss.c.CAN-2004-1154	2004-08-12 15:24:20.000000000 -0300
++++ samba-2.2.12/source/rpcclient/cmd_spoolss.c	2004-12-17 11:17:04.980777288 -0200
+@@ -1031,7 +1031,7 @@
+ 	/* allocate the space; add one extra slot for a terminating NULL.
+ 	   Each filename is NULL terminated and the end contains a double
+ 	   NULL */
+-	if ((info->dependentfiles=(uint16*)talloc(mem_ctx, (len+1)*sizeof(uint16))) == NULL)
++	if ((info->dependentfiles=(uint16*)talloc_array(mem_ctx, (len+1), sizeof(uint16))) == NULL)
+ 	{
+ 		DEBUG(0,("init_drv_info_3_members: Unable to malloc memory for dependenfiles\n"));
+ 		return False;
+--- samba-2.2.12/source/rpcclient/rpcclient.c.CAN-2004-1154	2004-08-12 15:24:20.000000000 -0300
++++ samba-2.2.12/source/rpcclient/rpcclient.c	2004-12-17 11:17:04.981777136 -0200
+@@ -54,7 +54,7 @@
+ 	if (!commands) 
+ 		return NULL;
+ 
+-	matches = (char **)malloc(sizeof(matches[0])*MAX_COMPLETIONS);
++	matches = (char **)malloc_array(sizeof(matches[0]), MAX_COMPLETIONS);
+ 	if (!matches) return NULL;
+ 
+ 	matches[count++] = strdup(text);
+@@ -463,7 +463,7 @@
+ 
+ 		/* Create argument list */
+ 
+-		argv = (char **)malloc(sizeof(char *) * argc);
++		argv = (char **)malloc_array(sizeof(char *), argc);
+                 memset(argv, 0, sizeof(char *) * argc);
+ 
+ 		if (!argv) {
+--- samba-2.2.12/source/smbd/ipc.c.CAN-2004-1154	2004-08-12 15:24:20.000000000 -0300
++++ samba-2.2.12/source/smbd/ipc.c	2004-12-17 11:17:05.513696272 -0200
+@@ -419,7 +419,7 @@
+ 
+ 	if (suwcnt) {
+ 		int i;
+-		if((setup = (uint16 *)malloc(suwcnt*sizeof(uint16))) == NULL) {
++		if((setup = (uint16 *)malloc_array(suwcnt, sizeof(uint16))) == NULL) {
+ 			DEBUG(0,("reply_trans: setup malloc fail for %u bytes !\n", (unsigned int)(suwcnt * sizeof(uint16))));
+ 			SAFE_FREE(data);
+ 			SAFE_FREE(params);
+--- samba-2.2.12/source/smbd/lanman.c.CAN-2004-1154	2004-08-12 15:24:21.000000000 -0300
++++ samba-2.2.12/source/smbd/lanman.c	2004-12-17 11:17:05.515695968 -0200
+@@ -1009,17 +1009,17 @@
+     if (lp_snum_ok(i) && lp_print_ok(i) && lp_browseable(i))
+       queuecnt++;
+   if (uLevel > 0) {
+-    if((queue = (print_queue_struct**)malloc(queuecnt*sizeof(print_queue_struct*))) == NULL) {
++    if((queue = (print_queue_struct**)malloc_array(queuecnt, sizeof(print_queue_struct*))) == NULL) {
+       DEBUG(0,("api_DosPrintQEnum: malloc fail !\n"));
+       return False;
+     }
+     memset(queue,0,queuecnt*sizeof(print_queue_struct*));
+-    if((status = (print_status_struct*)malloc(queuecnt*sizeof(print_status_struct))) == NULL) {
++    if((status = (print_status_struct*)malloc_array(queuecnt, sizeof(print_status_struct))) == NULL) {
+       DEBUG(0,("api_DosPrintQEnum: malloc fail !\n"));
+       return False;
+     }
+     memset(status,0,queuecnt*sizeof(print_status_struct));
+-    if((subcntarr = (int*)malloc(queuecnt*sizeof(int))) == NULL) {
++    if((subcntarr = (int*)malloc_array(queuecnt, sizeof(int))) == NULL) {
+       DEBUG(0,("api_DosPrintQEnum: malloc fail !\n"));
+       return False;
+     }
+@@ -1136,7 +1136,7 @@
+ 
+       alloced += 10;
+       ts = (struct srv_info_struct *)
+-	Realloc(*servers,sizeof(**servers)*alloced);
++	realloc_array(*servers, sizeof(**servers), alloced);
+       if (!ts) {
+         DEBUG(0,("get_server_info: failed to enlarge servers info struct!\n"));
+         return(0);
+--- samba-2.2.12/source/smbd/mangle_hash2.c.CAN-2004-1154	2004-08-12 15:25:49.000000000 -0300
++++ samba-2.2.12/source/smbd/mangle_hash2.c	2004-12-17 11:17:05.516695816 -0200
+@@ -141,10 +141,10 @@
+ {
+ 	if (prefix_cache) return True;
+ 
+-	prefix_cache = calloc(MANGLE_CACHE_SIZE, sizeof(char *));
++	prefix_cache = calloc_array(MANGLE_CACHE_SIZE, sizeof(char *));
+ 	if (!prefix_cache) return False;
+ 
+-	prefix_cache_hashes = calloc(MANGLE_CACHE_SIZE, sizeof(u32));
++	prefix_cache_hashes = calloc_array(MANGLE_CACHE_SIZE, sizeof(u32));
+ 	if (!prefix_cache_hashes) return False;
+ 
+ 	return True;
+--- samba-2.2.12/source/smbd/password.c.CAN-2004-1154	2004-08-12 15:24:20.000000000 -0300
++++ samba-2.2.12/source/smbd/password.c	2004-12-17 11:17:05.517695664 -0200
+@@ -195,7 +195,7 @@
+ 	if (sup_tok && sup_tok->num_sids)
+ 		num_sids += sup_tok->num_sids;
+ 
+-	if ((token->user_sids = (DOM_SID *)malloc( num_sids*sizeof(DOM_SID))) == NULL) {
++	if ((token->user_sids = (DOM_SID *)malloc_array( num_sids, sizeof(DOM_SID))) == NULL) {
+ 		SAFE_FREE(token);
+ 		return NULL;
+ 	}
+@@ -1652,7 +1652,7 @@
+ 		}
+  
+ 		ptok->num_sids = (size_t)info3.num_groups2 + info3.num_other_sids;
+-		if ((ptok->user_sids = (DOM_SID *)malloc( sizeof(DOM_SID) * ptok->num_sids )) == NULL) {
++		if ((ptok->user_sids = (DOM_SID *)malloc_array( sizeof(DOM_SID), ptok->num_sids )) == NULL) {
+ 			DEBUG(0, ("domain_client_validate: Out of memory allocating group SIDS\n"));
+ 			SAFE_FREE(ptok);
+ 			release_server_mutex();
+--- samba-2.2.12/source/smbd/posix_acls.c.CAN-2004-1154	2004-08-12 15:24:20.000000000 -0300
++++ samba-2.2.12/source/smbd/posix_acls.c	2004-12-17 11:17:05.520695208 -0200
+@@ -2387,7 +2387,7 @@
+ 		num_dir_acls = count_canon_ace_list(dir_ace);
+ 
+ 		/* Allocate the ace list. */
+-		if ((nt_ace_list = (SEC_ACE *)malloc((num_acls + num_profile_acls + num_dir_acls)* sizeof(SEC_ACE))) == NULL) {
++		if ((nt_ace_list = (SEC_ACE *)malloc_array((num_acls + num_profile_acls + num_dir_acls), sizeof(SEC_ACE))) == NULL) {
+ 			DEBUG(0,("get_nt_acl: Unable to malloc space for nt_ace_list.\n"));
+ 			goto done;
+ 		}
+--- samba-2.2.12/source/smbd/sec_ctx.c.CAN-2004-1154	2004-08-12 15:24:21.000000000 -0300
++++ samba-2.2.12/source/smbd/sec_ctx.c	2004-12-17 11:17:05.521695056 -0200
+@@ -155,7 +155,7 @@
+ 		goto fail;
+ 	}
+ 
+-	if((groups = (gid_t *)malloc(sizeof(gid_t)*(ngroups+1))) == NULL) {
++	if((groups = (gid_t *)malloc_array(sizeof(gid_t), (ngroups+1))) == NULL) {
+ 		DEBUG(0,("setup_groups malloc fail !\n"));
+ 		goto fail;
+ 	}
+@@ -301,7 +301,7 @@
+ 	ctx_p->ngroups = sys_getgroups(0, NULL);
+ 
+ 	if (ctx_p->ngroups != 0) {
+-		if (!(ctx_p->groups = malloc(ctx_p->ngroups * sizeof(gid_t)))) {
++		if (!(ctx_p->groups = malloc_array(ctx_p->ngroups, sizeof(gid_t)))) {
+ 			DEBUG(0, ("Out of memory in push_sec_ctx()\n"));
+ 			delete_nt_token(&ctx_p->token);
+ 			return False;
+--- samba-2.2.12/source/smbd/uid.c.CAN-2004-1154	2004-08-12 15:24:21.000000000 -0300
++++ samba-2.2.12/source/smbd/uid.c	2004-12-17 11:17:05.522694904 -0200
+@@ -395,7 +395,7 @@
+ 
+ 	total_groups = current_n_groups + ptok->num_sids;
+  
+-	final_groups = (gid_t *)malloc(total_groups * sizeof(gid_t));
++	final_groups = (gid_t *)malloc_array(total_groups, sizeof(gid_t));
+ 	if (!final_groups) {
+ 		DEBUG(0,("add_supplementary_nt_login_groups: Failed to malloc new groups.\n"));
+ 		delete_nt_token(&new_tok);
+--- samba-2.2.12/source/smbwrapper/smbw_dir.c.CAN-2004-1154	2004-08-12 15:24:19.000000000 -0300
++++ samba-2.2.12/source/smbwrapper/smbw_dir.c	2004-12-17 11:17:05.522694904 -0200
+@@ -80,8 +80,8 @@
+ 	DEBUG(5,("%s\n", finfo->name));
+ 
+ 	if (cur_dir->malloced == cur_dir->count) {
+-		cur_dir->list = (struct file_info *)Realloc(cur_dir->list, 
+-							    sizeof(cur_dir->list[0])*
++		cur_dir->list = (struct file_info *)realloc_array(cur_dir->list, 
++							    sizeof(cur_dir->list[0]),
+ 							    (cur_dir->count+100));
+ 		if (!cur_dir->list) {
+ 			/* oops */
+--- samba-2.2.12/source/tdb/tdb.c.CAN-2004-1154	2004-08-12 15:24:35.000000000 -0300
++++ samba-2.2.12/source/tdb/tdb.c	2004-12-17 11:17:05.524694600 -0200
+@@ -1749,6 +1749,14 @@
+ 	tdb->map_size = st.st_size;
+ 	tdb->device = st.st_dev;
+ 	tdb->inode = st.st_ino;
++	if(tdb->header.hash_size == INT_MAX || tdb->header.hash_size >= INT_MAX/sizeof(tdb->locked[0]))
++	{
++		TDB_LOG((tdb, 2, "tdb_open_ex: "
++			"integer overflow detected for %s\n",
++			name));
++		errno = ENOMEM;
++		goto fail;
++	}
+ 	tdb->locked = calloc(tdb->header.hash_size+1, sizeof(tdb->locked[0]));
+ 	if (!tdb->locked) {
+ 		TDB_LOG((tdb, 2, "tdb_open_ex: "
+--- samba-2.2.12/source/tests/getgroups.c.CAN-2004-1154	2004-08-12 15:24:23.000000000 -0300
++++ samba-2.2.12/source/tests/getgroups.c	2004-12-17 11:17:05.524694600 -0200
+@@ -32,7 +32,7 @@
+ 	if (ngroups <= 0)
+ 		ngroups = 32;
+ 
+-	igroups = (int *)malloc(sizeof(int)*ngroups);
++	igroups = (int *)malloc_array(sizeof(int), ngroups);
+ 
+ 	for (i=0;i<ngroups;i++)
+ 		igroups[i] = 0x42424242;
+--- samba-2.2.12/source/utils/locktest2.c.CAN-2004-1154	2004-08-12 15:24:34.000000000 -0300
++++ samba-2.2.12/source/utils/locktest2.c	2004-12-17 11:17:05.525694448 -0200
+@@ -432,7 +432,7 @@
+ 	ZERO_STRUCT(fnum);
+ 	ZERO_STRUCT(cli);
+ 
+-	recorded = (struct record *)malloc(sizeof(*recorded) * numops);
++	recorded = (struct record *)malloc_array(sizeof(*recorded), numops);
+ 
+ 	for (n=0; n<numops; n++) {
+ 		recorded[n].conn = random() % NCONNECTIONS;
+--- samba-2.2.12/source/utils/locktest.c.CAN-2004-1154	2004-08-12 15:24:35.000000000 -0300
++++ samba-2.2.12/source/utils/locktest.c	2004-12-17 11:17:05.527694144 -0200
+@@ -376,7 +376,7 @@
+ 	ZERO_STRUCT(fnum);
+ 	ZERO_STRUCT(cli);
+ 
+-	recorded = (struct record *)malloc(sizeof(*recorded) * numops);
++	recorded = (struct record *)malloc_array(sizeof(*recorded), numops);
+ 
+ 	for (n=0; n<numops; n++) {
+ #if PRESETS
+--- samba-2.2.12/source/utils/make_smbcodepage.c.CAN-2004-1154	2004-08-12 15:24:34.000000000 -0300
++++ samba-2.2.12/source/utils/make_smbcodepage.c	2004-12-17 11:17:05.527694144 -0200
+@@ -67,10 +67,16 @@
+   pstring linebuf;
+   char *p = *buf;
+   int num_lines = 0;
+-  char *newbuf = (char *)malloc( *size + 1);
++  char *newbuf;
+   char *newbuf_p = NULL;
+ 
+-  if(newbuf == NULL)
++  if(*size == UINT_MAX)
++  {
++    fprintf(stderr, "%s: size %lu is too big (integer overflow).\n", prog_name, *size);
++    exit(1);
++  }
++
++  if((newbuf = (char *)malloc( *size + 1)) == NULL)
+   {
+     fprintf(stderr, "%s: malloc fail for size %d.\n", prog_name, *size + 1);
+     exit(1);
+--- samba-2.2.12/source/utils/make_unicodemap.c.CAN-2004-1154	2004-08-12 15:24:34.000000000 -0300
++++ samba-2.2.12/source/utils/make_unicodemap.c	2004-12-17 11:17:05.528693992 -0200
+@@ -66,10 +66,18 @@
+   pstring linebuf;
+   char *p = *buf;
+   size_t num_lines = 0;
+-  char *newbuf = (char *)malloc( *size + 1);
++  char *newbuf;
+   char *newbuf_p = NULL;
+ 
+-  if(newbuf == NULL) {
++
++  if(*size == UINT_MAX)
++  {
++    fprintf(stderr, "%s: size %lu is too big (integer overflow).\n", prog_name, *size);
++    exit(1);
++  }
++
++  if((newbuf = (char *)malloc( *size + 1)) == NULL)
++  {
+     fprintf(stderr, "%s: malloc fail for size %u.\n", prog_name, (unsigned int)(*size + 1));
+     exit(1);
+   }
+--- samba-2.2.12/source/utils/nsstest.c.CAN-2004-1154	2004-08-12 15:24:34.000000000 -0300
++++ samba-2.2.12/source/utils/nsstest.c	2004-12-17 11:17:05.528693992 -0200
+@@ -242,7 +242,7 @@
+ 	gid_t *groups = NULL;
+ 	int i;
+ 
+-	groups = (gid_t *)malloc(size * sizeof(gid_t));
++	groups = (gid_t *)malloc_array(size, sizeof(gid_t));
+ 	groups[0] = gid;
+ 
+ 	nss_initgroups(name, gid, &groups, &start, &size);
+--- samba-2.2.12/source/utils/smbcacls.c.CAN-2004-1154	2004-08-12 15:24:35.000000000 -0300
++++ samba-2.2.12/source/utils/smbcacls.c	2004-12-17 11:17:05.529693840 -0200
+@@ -337,7 +337,7 @@
+ 		return True;
+ 	}
+ 
+-	aces = calloc(1+(*the_acl)->num_aces,sizeof(SEC_ACE));
++	aces = calloc_array(1+(*the_acl)->num_aces,sizeof(SEC_ACE));
+ 	memcpy(aces, (*the_acl)->ace, (*the_acl)->num_aces * sizeof(SEC_ACE));
+ 	memcpy(aces+(*the_acl)->num_aces, ace, sizeof(SEC_ACE));
+ 	new = make_sec_acl(ctx,(*the_acl)->revision,1+(*the_acl)->num_aces, aces);
+--- samba-2.2.12/source/web/cgi.c.CAN-2004-1154	2004-08-12 15:24:27.000000000 -0300
++++ samba-2.2.12/source/web/cgi.c	2004-12-17 11:17:05.530693688 -0200
+@@ -94,8 +94,20 @@
+ 	
+ 		if (i == len) {
+ 			char *ret2;
+-			if (len == 0) len = 1024;
+-			else len *= 2;
++			if (len == 0)
++			{
++				len = 1024;
++			}
++			else
++			{
++				if(len >= INT_MAX/2)
++				{
++					if(ret)
++						free(ret);
++					return NULL;
++				}
++				len *= 2;
++			}
+ 			ret2 = (char *)Realloc(ret, len);
+ 			if (!ret2) return ret;
+ 			ret = ret2;

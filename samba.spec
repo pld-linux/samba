@@ -7,7 +7,7 @@
 #
 # Conditional build:
 %bcond_without cups		# without CUPS support
-%bcond_without mysql	# without CUPS support
+%bcond_without mysql		# without MySQL support
 %bcond_with ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
 %bcond_with ipv6		# with IPv6 support
 %bcond_without ldap		# without LDAP support
@@ -277,19 +277,27 @@ SWAT - ferramentada Web de configuração do Samba.
 
 %package pdb-mysql
 Summary:	Samba MySQL password database plugin
+Summary(pl):	Wtyczka Samby do przechowywania hase³ w bazie MySQL
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 
 %description pdb-mysql
 Samba MySQL password database plugin.
 
+%description pdb-mysql -l pl
+Wtyczka Samby do przechowywania hase³ w bazie MySQL.
+
 %package pdb-xml
 Summary:	Samba XML password database plugin
+Summary(pl):	Wtyczka Samby do przechowywania hase³ w bazie XML
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 
 %description pdb-xml
 Samba XML password database plugin.
+
+%description pdb-xml -l pl
+Wtyczka Samby do przechowywania hase³ w bazie XML.
 
 %package client
 Summary:	Samba client programs

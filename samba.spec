@@ -9,6 +9,7 @@
 # Conditional build:
 %bcond_without	cups		# without CUPS support
 %bcond_without	mysql		# without MySQL support
+%bcond_without	pgsql	# without PostgreSQL support
 %bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
 #%bcond_with	ipv6		# with IPv6 support
 %bcond_without	ldap		# without LDAP support
@@ -34,7 +35,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.7
-Release:	1
+Release:	1.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -65,6 +66,9 @@ BuildRequires:	libxml2-devel
 %if %{with mysql}
 BuildRequires:	mysql-devel
 BuildRequires:	mysql-extras
+%endif
+%if %{with pgsql}
+BuildRequires:	postgresql-devel
 %endif
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel}
@@ -289,6 +293,18 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Samba MySQL password database plugin.
 
 %description pdb-mysql -l pl
+Wtyczka Samby do przechowywania hase³ w bazie MySQL.
+
+%package pdb-pgsql
+Summary:	Samba PostgreSQL password database plugin
+Summary(pl):	Wtyczka Samby do przechowywania hase³ w bazie PostgreSQL
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description pdb-pgsql
+Samba MySQL password database plugin.
+
+%description pdb-pgsql -l pl
 Wtyczka Samby do przechowywania hase³ w bazie MySQL.
 
 %package pdb-xml
@@ -856,7 +872,7 @@ cd source
 	--with-utmp \
 	--with-fhs \
         %{?with_python:--with-python} \
-	--with-expsam=xml,%{?with_mysql:mysql} \
+	--with-expsam=xml,%{?with_mysql:mysql}%{?with_pgsql:,pgsql} \
 	%{?with_ldapsam:--with-ldapsam} \
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_krb5:out}-krb5
@@ -1048,6 +1064,12 @@ fi
 %files pdb-mysql
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/pdb/mysql.so
+%endif
+
+%if %{with pgsql}
+%files pdb-pgsql
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/pdb/pgsql.so
 %endif
 
 %files pdb-xml

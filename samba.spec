@@ -17,6 +17,9 @@ Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	smb.init
 Source2:	samba.pamd
 Source3:	swat.inetd
+Source4:	samba.sysconfig
+Source5:	samba.logrotate
+Source6:	smb.conf
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Patch3:		samba-DESTDIR.patch
@@ -145,24 +148,17 @@ make all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/codepages/src \
-	$RPM_BUILD_ROOT/etc/sysconfig/rc-inetd
+install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,sysconfig/rc-inetd} \
+	$RPM_BUILD_ROOT/{var/lock/,home/}samba
 
-( cd source; make install DESTDIR=$RPM_BUILD_ROOT)
+(cd source; make install DESTDIR=$RPM_BUILD_ROOT)
 
-
-install  source/codepages/codepage_def.* \
-	$RPM_BUILD_ROOT%{_sysconfdir}/codepages/src
-
-install  packaging/PLD/smb.conf		$RPM_BUILD_ROOT%{_sysconfdir}
-install  packaging/PLD/smbusers		$RPM_BUILD_ROOT%{_sysconfdir}
-install  packaging/PLD/smbprint		$RPM_BUILD_ROOT%{_bindir}
-install  packaging/PLD/smbadduser	$RPM_BUILD_ROOT%{_bindir}
-install  packaging/PLD/findsmb		$RPM_BUILD_ROOT%{_bindir}
-install  packaging/PLD/smb.init		$RPM_BUILD_ROOT/etc/rc.d/init.d/smb
-install  packaging/PLD/samba.log	$RPM_BUILD_ROOT/etc/logrotate.d/samba
-install  %{SOURCE2}			$RPM_BUILD_ROOT/etc/pam.d/samba
-install  %{SOURCE3}		$RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
+install %{SOURCE6} $RPM_BUILD_ROOT/etc/samba/smb.conf
 
 strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
@@ -170,12 +166,7 @@ touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
 
-echo "NICELEVEL=+5" > $RPM_BUILD_ROOT/etc/sysconfig/samba
-
-for i in 437 737 850 852 861 866 932 949 950 936; do
-$RPM_BUILD_ROOT%{_bindir}/make_smbcodepage c $i \
-$RPM_BUILD_ROOT%{_sysconfdir}/codepages/src/codepage_def.$i \
-$RPM_BUILD_ROOT%{_sysconfdir}/codepages/codepage.$i; done
+strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
 gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man?/* \
 	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
@@ -199,9 +190,9 @@ fi
 
 %post -n swat
 if [ -f /var/lock/subsys/rc-inetd ]; then
-   /etc/rc.d/init.d/rc-inetd restart 1>&2
+	/etc/rc.d/init.d/rc-inetd restart 1>&2
 else
-   echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet sever" 1>&2
+	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet sever" 1>&2
 fi
 
 %postun -n swat
@@ -227,8 +218,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smbusers
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lmhosts
 
-%attr(750,root,root) /etc/rc.d/init.d/smb
-%attr(640,root,root) %config %verify(not size mtime md5) /etc/sysconfig/samba
+%attr(754,root,root) /etc/rc.d/init.d/smb
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
 %attr(640,root,root) /etc/logrotate.d/samba
 %attr(640,root,root) /etc/pam.d/samba
 

@@ -317,17 +317,18 @@ Samba-common содержит файлы, необходимые для работы как клиента, так и
 Samba-common м╕стить файли, необх╕дн╕ для роботи як кл╕╓нта, так ╕
 сервера Samba.
 
-%package -n pam_smbpass
+%package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
 Summary(pl):	ModuЁ PAM smbpass
 Group:		Base
+Obsoletes:	pam_smbpass
 
-%description -n pam_smbpass
+%description -n pam-pam_smbpass
 PAM module which can be used on conforming systems to keep the
 smbpasswd (Samba password) database in sync with the unix password
 file.
 
-%description -n pam_smbpass -l pl
+%description -n pam-pam_smbpass -l pl
 ModuЁ PAMa, ktСry mo©e byФ u©ywany do trzymania pliku smbpasswd (hasЁa
 Samby) zsynchronizowanego z hasЁami unixowymi.
 
@@ -575,7 +576,7 @@ fi
 %{_mandir}/man8/swat.8*
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/swat
 
-%files -n pam_smbpass
+%files -n pam-pam_smbpass
 %defattr(644,root,root,755)
 %doc source/pam_smbpass/{CHAN*,README,TODO} source/pam_smbpass/samples
 %attr(755,root,root) /lib/security/pam_smbpass.so

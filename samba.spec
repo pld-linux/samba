@@ -242,32 +242,16 @@ rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
 %post
-/sbin/chkconfig --add smb
-if [ -r /var/lock/subsys/smb ]; then
-	/etc/rc.d/init.d/smb restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/smb start\" to start Samba daemons."
-fi
+NAME=smb; DESC="Samba daemons"; %chkconfig_add
 
 %preun
-if [ "$1" = "0" ]; then
-	if [ -r /var/lock/subsys/smb ]; then
-		/etc/rc.d/init.d/smb stop >&2
-	fi
-	/sbin/chkconfig --del smb
-fi
+NAME=smb; %chkconfig_del
 
 %post -n swat
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload 1>&2
-else
-	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet sever" 1>&2
-fi
+%rc_inetd_post
 
 %postun -n swat
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload
-fi
+%rc_inetd_postun
 
 %triggerpostun -- samba < 1.9.18p7
 if [ "$1" != "0" ]; then

@@ -1,7 +1,7 @@
-diff -urN samba-2.2.0.org/source/Makefile.in samba-2.2.0/source/Makefile.in
---- samba-2.2.0.org/source/Makefile.in	Wed Apr 18 01:27:35 2001
-+++ samba-2.2.0/source/Makefile.in	Wed Apr 18 01:48:43 2001
-@@ -50,7 +50,7 @@
+diff -urN samba-2.2.1.org/source/Makefile.in samba-2.2.1/source/Makefile.in
+--- samba-2.2.1.org/source/Makefile.in	Sun Jul  8 22:29:34 2001
++++ samba-2.2.1/source/Makefile.in	Wed Jul 11 19:56:04 2001
+@@ -49,7 +49,7 @@
  CONFIGFILE = $(CONFIGDIR)/smb.conf
  LMHOSTSFILE = $(CONFIGDIR)/lmhosts
  DRIVERFILE = $(CONFIGDIR)/printers.def
@@ -10,57 +10,57 @@ diff -urN samba-2.2.0.org/source/Makefile.in samba-2.2.0/source/Makefile.in
  # This is where smbpasswd et al go
  PRIVATEDIR = @privatedir@
  
-diff -urN samba-2.2.0.org/source/configure.in samba-2.2.0/source/configure.in
---- samba-2.2.0.org/source/configure.in	Wed Apr 18 01:27:35 2001
-+++ samba-2.2.0/source/configure.in	Wed Apr 18 01:48:11 2001
-@@ -665,6 +665,11 @@
+diff -urN samba-2.2.1.org/source/configure.in samba-2.2.1/source/configure.in
+--- samba-2.2.1.org/source/configure.in	Tue Jul 10 02:12:50 2001
++++ samba-2.2.1/source/configure.in	Wed Jul 11 20:00:03 2001
+@@ -656,6 +656,11 @@
+ 		AC_DEFINE(HAVE_STRCASECMP))
  fi
  
- #
 +# Check for yp_get_default_domain in -lnsl (linux glibc2.1)
 +#
 +AC_LIBTESTFUNC(nsl, yp_get_default_domain)
-+
 +#
++
+ #
  # Check for the functions putprpwnam, set_auth_parameters,
  # getspnam, bigcrypt and getprpwnam in -lsec and -lsecurity
- # Needed for OSF1 and HPUX.
-@@ -1613,7 +1618,7 @@
+@@ -1630,7 +1635,7 @@
    yes)
      AC_MSG_RESULT(yes)
      AC_DEFINE(WITH_PAM)
 -    LIBS="$LIBS -lpam"
 +    LIBS="$LIBS -ldl -lpam -lpamc"
+     with_pam_for_crypt=yes
      ;;
    *)
-     AC_MSG_RESULT(no)
-@@ -1712,7 +1717,7 @@
+@@ -1776,20 +1781,18 @@
    yes)
      AC_MSG_RESULT(yes)
      AC_DEFINE(WITH_SSL)
 -    withval="/usr/local/ssl"     # default
+-
 +    withval="/usr"     # default
- 
      if test "${with_sslinc+set}" = set; then
  
-@@ -1720,12 +1725,11 @@
+ 	withval="$with_sslinc"
  	case "$withval" in
  	yes|no)
  	  echo "configure: warning: --with-sslinc called without argument - will use default" 1>&w
 -	  CFLAGS="-I/usr/local/ssl/include $CFLAGS"
-+	  CFLAGS="-I/usr/include/openssl $CFLAGS"
++	 CFLAGS="-I/usr/include/openssl $CFLAGS"
  	  LIBS="-lssl -lcrypto $LIBS"
 -	  LDFLAGS="=L/usr/local/ssl/lib $LDFLAGS"
  	;;
          * )
--          CFLAGS="-I${withval}/include $CFLAGS"
-+          CFLAGS="-I${withval}/include/openssl $CFLAGS"
+-          CFLAGS="-I${withval} $CFLAGS"
++	  CFLAGS="-I${withval}/include/openssl $CFLAGS"
  	  LIBS="-lssl -lcrypto $LIBS"
    	  LDFLAGS="-L${withval}/lib $LDFLAGS"
  	;;
-diff -urN samba-2.2.0.org/source/smbwrapper/smbsh.in samba-2.2.0/source/smbwrapper/smbsh.in
---- samba-2.2.0.org/source/smbwrapper/smbsh.in	Wed Apr 18 01:27:40 2001
-+++ samba-2.2.0/source/smbwrapper/smbsh.in	Wed Apr 18 01:48:11 2001
+diff -urN samba-2.2.1.org/source/smbwrapper/smbsh.in samba-2.2.1/source/smbwrapper/smbsh.in
+--- samba-2.2.1.org/source/smbwrapper/smbsh.in	Wed Oct  7 06:43:09 1998
++++ samba-2.2.1/source/smbwrapper/smbsh.in	Wed Jul 11 20:00:35 2001
 @@ -1,6 +1,6 @@
  #! /bin/sh
  

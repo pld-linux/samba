@@ -109,7 +109,7 @@ NetBIOS sopra TCP/IP e non ha bisogno del protocollo NetBEUI.
 %description -l pl
 Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia
 us³ug sieciowych (potocznie zwanych "Lan Manager"), dla klientów
-takich jak MS Windows, OS/2 a tak¿e maszyn linuxowych. W pakiecie
+takich jak MS Windows, OS/2 a tak¿e maszyn linuksowych. W pakiecie
 znajduje siê równie¿ oprogramowanie klienckie. Samba u¿ywa protoko³u
 NetBIOS po TCP/IP (NetBT) i nie wymaga protoko³u NetBEUI. Ta wersja ma
 pe³ne wsparcie dla blokowania plików, a tak¿e wsparcie dla kodowania

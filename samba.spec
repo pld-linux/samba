@@ -4,7 +4,7 @@
 # _with_ldap	- with LDAP-based auth (instead of smbpasswd)
 # _with_ipv6    - with IPv6 support
 #
-%define		vscan_version 0.3.2b
+%define		vscan_version 0.3.4
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -26,7 +26,7 @@ Version:	3.0.0
 Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc3.tar.bz2
+Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc4.tar.bz2
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -558,7 +558,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q -n samba-3.0.0rc3
+%setup -q -n samba-3.0.0rc4
 ##%patch0 -p1
 #%patch1 -p1
 #%patch2 -p1

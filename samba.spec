@@ -739,7 +739,8 @@ cd source
 	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}
 
-%{__make} everything pam_smbpass bin/smbget client/mount.cifs proto
+%{__make} proto
+%{__make} everything pam_smbpass bin/smbget client/mount.cifs
 
 cd ../examples/VFS
 %{__autoconf}

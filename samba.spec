@@ -105,7 +105,7 @@ install -d $RPM_BUILD_ROOT/etc/samba/codepages/src \
 	$RPM_BUILD_ROOT/home/samba \
 	$RPM_BUILD_ROOT/lib/security \
 	$RPM_BUILD_ROOT/usr/{bin,man/man{1,5,7,8},sbin} \
-	$RPM_BUILD_ROOT/var/{lock,log,spool}/samba} \
+	$RPM_BUILD_ROOT/var/{lock,log,spool}/samba \
 	$RPM_BUILD_ROOT/usr/share/swat/{include,images,help}
 
 ( cd source;

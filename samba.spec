@@ -26,6 +26,7 @@ Release:	1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
+# Source0-md5: 51466fdd7b7125a5bd41608a76e8e7c8
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd

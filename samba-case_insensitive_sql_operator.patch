@@ -1,0 +1,105 @@
+diff -urN samba-3.0.8pre1/source/passdb/pdb_mysql.c samba-ziew/source/passdb/pdb_mysql.c
+--- samba-3.0.8pre1/source/passdb/pdb_mysql.c	Wed Sep  8 22:49:59 2004
++++ samba-ziew/source/passdb/pdb_mysql.c	Mon Nov  1 15:55:13 2004
+@@ -132,7 +132,7 @@
+ 		return NT_STATUS_INVALID_HANDLE;
+ 	}
+ 
+-	query = sql_account_query_select(data->location, update, SQL_SEARCH_NONE, NULL);
++	query = sql_account_query_select(data->location, update, SQL_SEARCH_NONE, NULL, "=");
+ 
+ 	ret = mysql_query(data->handle, query);
+ 	SAFE_FREE(query);
+@@ -230,7 +230,7 @@
+ 		return NT_STATUS_INVALID_PARAMETER;
+ 	}
+ 
+-	query = sql_account_query_select(data->location, True, field, esc_sname);
++	query = sql_account_query_select(data->location, True, field, esc_sname, "=");
+ 
+ 	SAFE_FREE(esc_sname);
+ 
+@@ -344,7 +344,7 @@
+ 
+ 	SAFE_FREE(tmp_sname);
+ 
+-	query = sql_account_query_delete(data->location, esc);
++	query = sql_account_query_delete(data->location, esc, "=");
+ 
+ 	SAFE_FREE(esc);
+ 
+diff -urN samba-3.0.8pre1/source/passdb/pdb_pgsql.c samba-ziew/source/passdb/pdb_pgsql.c
+--- samba-3.0.8pre1/source/passdb/pdb_pgsql.c	Wed Sep  8 22:49:59 2004
++++ samba-ziew/source/passdb/pdb_pgsql.c	Mon Nov  1 15:55:13 2004
+@@ -125,7 +125,7 @@
+   
+   SET_DATA( data, methods ) ;
+   
+-  query = sql_account_query_select(data->location, update, SQL_SEARCH_NONE, NULL);
++  query = sql_account_query_select(data->location, update, SQL_SEARCH_NONE, NULL, "ILIKE");
+   
+   /* Do it */
+   DEBUG( 5, ("Executing query %s\n", query) ) ;
+@@ -228,7 +228,7 @@
+   //tmp_sname = smb_xstrdup(sname);
+   PQescapeString( esc, sname, strlen(sname) ) ;
+   
+-  query = sql_account_query_select(data->location, True, field, esc);
++  query = sql_account_query_select(data->location, True, field, esc, "ILIKE" );
+   
+   /* Do it */
+   DEBUG( 5, ("Executing query %s\n", query) ) ;
+@@ -327,7 +327,7 @@
+   
+   PQescapeString( esc, sname, strlen(sname) ) ;
+   
+-  query = sql_account_query_delete(data->location, esc);
++  query = sql_account_query_delete(data->location, esc, "ILIKE");
+   
+   /* Do it */
+   result = PQexec( data->handle, query ) ;
+diff -urN samba-3.0.8pre1/source/passdb/pdb_sql.c samba-ziew/source/passdb/pdb_sql.c
+--- samba-3.0.8pre1/source/passdb/pdb_sql.c	Wed Sep  8 22:49:59 2004
++++ samba-ziew/source/passdb/pdb_sql.c	Mon Nov  1 15:55:13 2004
+@@ -181,7 +181,7 @@
+ 	return (const char *)v;
+ }
+ 
+-char *sql_account_query_select(const char *data, BOOL update, enum sql_search_field field, const char *value)
++char *sql_account_query_select(const char *data, BOOL update, enum sql_search_field field, const char *value, const char * eq_op)
+ {
+ 	const char *field_string;
+ 	char *query;
+@@ -204,7 +204,7 @@
+ 	}
+ 
+ 	asprintf(&query,
+-			 "SELECT %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s = '%s'",
++			 "SELECT %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s %s '%s'",
+ 			 config_value_read(data, "logon time column",
+ 							   CONFIG_LOGON_TIME_DEFAULT),
+ 			 config_value_read(data, "logoff time column",
+@@ -264,19 +264,19 @@
+ 			 config_value_read(data, "unknown 6 column",
+ 							   CONFIG_UNKNOWN_6_DEFAULT),
+ 			 config_value(data, "table", CONFIG_TABLE_DEFAULT), 
+-			 field_string, value
++			 field_string, eq_op, value
+ 				 );
+ 	 return query;
+ }
+ 
+-char *sql_account_query_delete(const char *data, const char *esc) 
++char *sql_account_query_delete(const char *data, const char *esc, const char *eq_op) 
+ {
+ 	char *query;
+ 	
+-	asprintf(&query, "DELETE FROM %s WHERE %s = '%s'",
++	asprintf(&query, "DELETE FROM %s WHERE %s %s '%s'",
+ 			 config_value(data, "table", CONFIG_TABLE_DEFAULT),
+ 			 config_value_read(data, "username column",
+-							   CONFIG_USERNAME_DEFAULT), esc);
++							   CONFIG_USERNAME_DEFAULT), eq_op, esc);
+ 	return query;
+ }
+ 

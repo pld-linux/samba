@@ -40,12 +40,12 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.8
-Release:	0.pre1.4
+Release:	0.pre2.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://us1.samba.org/samba/ftp/pre/%{name}-%{version}pre1.tar.gz
-# Source0-md5:	27eac147bc5c5f37dd173ce9af16fbbd
+Source0:	http://us1.samba.org/samba/ftp/pre/%{name}-%{version}pre2.tar.gz
+# Source0-md5:	20ec3f498e2fc30bc6e9f540f8dac270
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -60,6 +60,7 @@ Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
 #Patch2:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 Patch3:		%{name}-setup-python.patch
+Patch4:		%{name}-FHS.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -837,13 +838,14 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q -n %{name}-%{version}pre1
+%setup -q -n %{name}-%{version}pre2
 %patch0 -p1
 %ifarch amd64
 %patch1 -p1
 %endif
 #%{?with_ipv6:%patch2 -p1}
 %patch3 -p1
+%patch4 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

@@ -1,3 +1,9 @@
+
+#
+# todo:
+# - create pdb (i.e. xml, mysql) subpackages
+#
+
 #
 # Conditional build:
 # _without_cups	- without CUPS support

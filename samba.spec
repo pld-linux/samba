@@ -833,7 +833,7 @@ cd source
 	--with-libsmbclient \
 	--with-pam \
 	--with-pam_smbpass \
-	--with-ads \
+	--with%{!?with_ldap:out}-ads \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--with-quotas \
 	--with-readline \
@@ -845,9 +845,8 @@ cd source
         %{?with_python:--with-python} \
 	--with-expsam=xml,%{?with_mysql:mysql} \
 	%{?with_ldapsam:--with-ldapsam} \
-	%{!?with_ldap:--without-ldap} \
-	%{?with_krb5:--with-krb5} \
-	%{!?with_krb5:--without-krb5}
+	--with%{!?with_ldap:out}-ldap \
+	--with%{!?with_krb5:out}-krb5
 
 %{__make} proto
 %{__make} everything pam_smbpass bin/smbget client/mount.cifs

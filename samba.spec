@@ -36,7 +36,7 @@ Patch12:	%{name}-awk_path.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
-Requires:       samba-common = %{version} 
+Requires:	samba-common = %{version} 
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	readline-devel >= 4.1
 BuildRequires:	pam-devel > 0.66
@@ -140,13 +140,13 @@ swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy
 przegl±darki www.
 
 %package client
-Summary:        Samba client programs.
-Summary(pl):    Klienci serwera Samba
-Group:          Networking/Other
-Group(de):      Netzwerkwesen/Unsere
-Group(pl):      Sieciowe/Inne
-Requires:       samba-common = %{version}
-Obsoletes:      smbfs
+Summary:	Samba client programs.
+Summary(pl):	Klienci serwera Samba
+Group:		Applications/Networking
+Group(de):	Applikationen/Netzwerkwesen
+Group(pl):	Aplikacje/Sieciowe
+Requires:	samba-common = %{version}
+Obsoletes:	smbfs
 
 %description client
 Samba-client provides some SMB clients, which complement the build-in
@@ -154,16 +154,16 @@ SMB filesystem in Linux. These allow accessing of SMB shares and
 printing to SMB printers.
 
 %description client -l pl
-Klient-samby dostarcza pewne programy które uzupe³niaj± system
-plików SMB zawarty w j±drze. Pozwala na wspó³dzielenie i drukowanie
-w sieci SMB.
+Klient-samby dostarcza pewne programy które uzupe³niaj± system plików
+SMB zawarty w j±drze. Pozwala na wspó³dzielenie i drukowanie w sieci
+SMB.
 
 %package common
-Summary:        Files used by both Samba servers and clients.
-Summary(pl):    Pliki u¿ywane przez serwer i klientów Samba.
-Group:          Networking/Daemons
-Group(de):      Netzwerkwesen/Server
-Group(pl):      Sieciowe/Serwery
+Summary:	Files used by both Samba servers and clients.
+Summary(pl):	Pliki u¿ywane przez serwer i klientów Samba.
+Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
+Group(pl):	Sieciowe/Serwery
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -191,7 +191,7 @@ klientów Samba.
 cd source
 autoconf
 %configure \
-	--with-privatedir=%{_sysconfdir} \
+	--with-privatedir=%{_libdir} \
 	--with-lockdir=%{_var}/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
@@ -224,13 +224,13 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
-install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/smb.conf
+install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
-echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
+echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 
-> $RPM_BUILD_ROOT%{_sysconfdir}/smbusers
+> $RPM_BUILD_ROOT%{_libdir}/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 gzip -9nf README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
@@ -282,10 +282,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.gz Manifest.gz WHATSNEW.txt.gz
-%doc Roadmap.gz docs/faq docs/*.reg.gz
-%doc docs/textdocs docs/*.txt.gz docs/{history,announce,THANKS}.gz
-
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
@@ -294,8 +290,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/convert_smbpasswd
 
-%dir %{_sysconfdir}
-%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smbusers
+%dir %{_libdir}
+%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
 %attr(640,root,root) /etc/logrotate.d/samba
@@ -309,8 +305,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/smbpasswd.8*
 
 %dir /home/samba
-#%{_sysconfdir}/codepages
-
 %dir /var/lock/samba
 %ghost /var/lock/samba/*
 
@@ -319,6 +313,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(1777,root,root) %dir /var/spool/samba
 
 %files client
+%defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.smbfs
 %attr(755,root,root) %{_bindir}/smbmount
 %attr(755,root,root) %{_bindir}/smbmnt
@@ -334,16 +329,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 
-
 %files common
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smb.conf
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/lmhosts
+%defattr(644,root,root,755)
+%doc README.gz Manifest.gz WHATSNEW.txt.gz
+%doc Roadmap.gz docs/faq docs/*.reg.gz
+%doc docs/textdocs docs/*.txt.gz docs/{history,announce,THANKS}.gz
+%config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
 %attr(755,root,root) %{_bindir}/make_smbcodepage
 %attr(755,root,root) %{_bindir}/make_unicodemap
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/testprns
 %attr(755,root,root) %{_bindir}/make_printerdef
-%{_sysconfdir}/codepages
+%{_libdir}/codepages
 %{_mandir}/man1/make_smbcodepage.1*
 %{_mandir}/man1/make_unicodemap.1*
 %{_mandir}/man1/testparm.1*

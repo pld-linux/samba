@@ -20,8 +20,8 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·şÎñÆ÷
 Name:		samba
-Version:	2.2.7
-Release:	3
+Version:	2.2.7a
+Release:	1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -145,21 +145,21 @@ Samba ¤Û¤È¤ó¤ÉÆ°ºî¤¹¤ë NT ¥É¥á¥¤¥ó¥³¥ó¥È¥í¡¼¥ë¤Îµ¡Ç½¤òÆÃÄ§¤È¤·¡¢
 ÌÜ²¼¤Î¤È¤³¤í¤³¤ì¤Ï inetd ¤òÄÌ¤·¤Æ TCP ¥İ¡¼¥È 901 ¤ÇÍ­¸ú¤Ë¤Ê¤ê¤Ş¤¹¡£
 
 %description -l ko
-»ï¹Ù´Â MS Windows, OS/2, È¤Àº ´Ù¸¥ ¸®´ª½º ¸Ó½ÅÀ» Æ÷ÇÔÇÏ´Â 
-SMB(È¤Àº "Lan Manager"¶ó°íµµ ºÒ¸²) Å¬¶óÀÌ¾ğÆ®¸¦ ³×Æ®¿öÅ© ¼­ºñ½º À§ÇØ
-»ç¿ëÇÒ ¼ö ÀÖ´Â SMB ¼­¹ö¸¦ Á¦°øÇÑ´Ù.
-»ï¹Ù´Â  TCP/IP ÇÁ·ÎÅäÄİÀ» ÅëÇØ NetBIOS¸¦ »ç¿ëÇÏ°í NetBEUI
-(Microsoft Raw NetBIOS ÇÁ·¹ÀÓ) ÇÁ·ÎÅäÄİÀº ÇÊ¿äÇÏÁö ¾Ê´Ù.
+»ï¹Ù´Â MS Windows, OS/2, È¤Àº ´Ù¸¥ ¸®´ª½º ¸Ó½ÅÀ» Æ÷ÇÔÇÏ´Â SMB(È¤Àº
+"Lan Manager"¶ó°íµµ ºÒ¸²) Å¬¶óÀÌ¾ğÆ®¸¦ ³×Æ®¿öÅ© ¼­ºñ½º À§ÇØ »ç¿ëÇÒ ¼ö
+ÀÖ´Â SMB ¼­¹ö¸¦ Á¦°øÇÑ´Ù. »ï¹Ù´Â TCP/IP ÇÁ·ÎÅäÄİÀ» ÅëÇØ NetBIOS¸¦
+»ç¿ëÇÏ°í NetBEUI (Microsoft Raw NetBIOS ÇÁ·¹ÀÓ) ÇÁ·ÎÅäÄİÀº ÇÊ¿äÇÏÁö
+¾Ê´Ù.
 
-»ï¹Ù-2.2 ÀÇ Æ¯Â¡Àº  NT µµ¸ŞÀÎ ÄÁÆ®·ÑÀÇ ¼º´ÉÀ¸·Î ÀÛ¾÷À» ÇÏ°í, »õ·Î¿î
+»ï¹Ù-2.2 ÀÇ Æ¯Â¡Àº NT µµ¸ŞÀÎ ÄÁÆ®·ÑÀÇ ¼º´ÉÀ¸·Î ÀÛ¾÷À» ÇÏ°í, »õ·Î¿î
 SWAT(Samba Web Administration Tool)·Î À¥ºê¶ó¿ìÀú¸¦ »ç¿ëÇÏ¿© ¿ø°İÁö¿¡¼­
 »ï¹ÙÀÇ smb.conf ÆÄÀÏÀ» °ü¸®ÇÏµµ·Ï ÇÑ´Ù. ÀÌ·¯ÇÑ °æ¿ì inetd µ¥¸óÀ» ÅëÇØ
 TCP 901 Æ÷Æ®¸¦ »ç¿ëÇÏ°Ô µÈ´Ù.
 
-ÃÖ±Ù Á¤º¸·Î WHATSNEW.txt ÆÄÀÏÀÇ ¹®¼­¸¦ Âü°íÇÏµµ·Ï ÇÑ´Ù.
-¹ÙÀÌ³Ê¸®ÀÇ ¸±¸®Áî´Â ¾ÏÈ£È­µÈ ÆĞ½º¿öµå¸¦ Á¦°øÇÑ´Ù. ±¸Çö¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ
-Á¤º¸¸¦ ¾ò±â À§ÇØ docs µğ·ºÅä¸®³»¿¡ ÀÖ´Â smb.conf ÆÄÀÏ°ú ENCRYPTION.txt 
-ÆÄÀÏÀ» ÀĞ¾îº»´Ù.
+ÃÖ±Ù Á¤º¸·Î WHATSNEW.txt ÆÄÀÏÀÇ ¹®¼­¸¦ Âü°íÇÏµµ·Ï ÇÑ´Ù. ¹ÙÀÌ³Ê¸®ÀÇ
+¸±¸®Áî´Â ¾ÏÈ£È­µÈ ÆĞ½º¿öµå¸¦ Á¦°øÇÑ´Ù. ±¸Çö¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ Á¤º¸¸¦ ¾ò±â
+À§ÇØ docs µğ·ºÅä¸®³»¿¡ ÀÖ´Â smb.conf ÆÄÀÏ°ú ENCRYPTION.txt ÆÄÀÏÀ»
+ÀĞ¾îº»´Ù.
 
 %description -l pl
 Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia
@@ -384,7 +384,7 @@ desenvolver aplicativos clientes para o samba.
 %package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
-Group:		Application/Printing
+Group:		Applications/Printing
 Requires:	cups
 Requires:	samba-client = %{version}
 
@@ -556,6 +556,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
 
 %dir /home/services/samba
@@ -583,6 +584,7 @@ fi
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbsh.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
 %attr(755,root,root) %{_bindir}/wbinfo

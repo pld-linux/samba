@@ -59,7 +59,7 @@ BuildRequires:	mysql-extras
 %endif
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7
+BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2

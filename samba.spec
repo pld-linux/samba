@@ -26,7 +26,7 @@ Version:	3.0.0
 Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}rc4.tar.bz2
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -545,7 +545,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q -n samba-3.0.0rc4
+%setup -q
 #%{?_with_ipv6:%patch1 -p1}
 
 cd examples/VFS
@@ -794,7 +794,6 @@ fi
 %{_mandir}/man1/vfstest.1*
 %{_mandir}/man5/smb.conf.5*
 %{_mandir}/man5/lmhosts.5*
-
 %files -n swat
 %defattr(644,root,root,755)
 #%doc swat/README* swat/help/*

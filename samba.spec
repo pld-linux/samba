@@ -269,8 +269,8 @@ install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
-install source/bin/libsmbclient.so	$RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
-ln -s	libsmbclient.so.0		$RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+install source/bin/libsmbclient.so	$RPM_BUILD_ROOT/usr/lib/libsmbclient.so.0
+ln -s	libsmbclient.so.0		$RPM_BUILD_ROOT/usr/lib/libsmbclient.so
 install source/include/libsmbclient.h	$RPM_BUILD_ROOT%{_includedir}
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
@@ -426,9 +426,9 @@ fi
 
 %files libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%attr(755,root,root) /usr/lib/libsmbclient.so.*
 
 %files libsmbclient-devel
 %defattr(644,root,root,755)
 %{_includedir}/libsmbclient.h
-%attr(755,root,root) %{_libdir}/libsmbclient.so
+%attr(755,root,root) /usr/lib/libsmbclient.so

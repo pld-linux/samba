@@ -160,7 +160,7 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 
 (cd source; make install DESTDIR=$RPM_BUILD_ROOT)
 
-ln -sf $RPM_BUILD_ROOT/%{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs 
+ln -sf %{_sbindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs 
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba

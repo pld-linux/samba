@@ -61,6 +61,7 @@ BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
 Requires(post,preun):	/sbin/chkconfig
 Requires:	logrotate
+Requires:	openssl >= 0.9.6m
 Requires:	pam >= 0.66
 Requires:	samba-common = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

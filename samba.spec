@@ -23,6 +23,7 @@ Source6:	smb.conf
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Patch3:		samba-DESTDIR.patch
+Patch4:		samba-fix_link_libs.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -127,6 +128,7 @@ internetowej.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 cd source
@@ -148,8 +150,8 @@ make all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT/{var/lock/,var/spool/,home/}samba \
+install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
+	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
 	$RPM_BUILD_ROOT/sbin 
 
 (cd source; make install DESTDIR=$RPM_BUILD_ROOT)
@@ -246,6 +248,8 @@ rm -rf $RPM_BUILD_ROOT
 %ghost /var/lock/samba/*
 
 %attr(0750,root,root) %dir /var/log/samba
+%attr(0750,root,root) %dir /var/log/archiv/samba
+
 %attr(1777,root,root) %dir /var/spool/samba
 
 %files -n swat

@@ -285,6 +285,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
+%attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
@@ -305,6 +306,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/winbindd.8*
 
 %dir /home/samba
 %dir /var/lock/samba

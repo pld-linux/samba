@@ -1,0 +1,11 @@
+--- samba-2.0.7/source/configure.in.cups	Mon Jul 31 14:31:10 2000
++++ samba-2.0.7/source/configure.in	Mon Jul 31 14:31:21 2000
+@@ -236,7 +236,7 @@
+ AC_CHECK_TYPE(ssize_t, int)
+ 
+ # we need libcups for CUPS support...
+-AC_CHECK_LIB(cups,httpConnect)
++dnl AC_CHECK_LIB(cups,httpConnect)
+ 
+ # we need libdl for PAM and the new VFS code
+ AC_CHECK_LIB(dl,main)

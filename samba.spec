@@ -1,8 +1,8 @@
 Summary:	SMB client and server
 Summary(pl):	Klient i serwer SMB
 Name:		samba
-Version:	2.0.3
-Release:	2
+Version:	2.0.4b
+Release:	1
 Copyright:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery

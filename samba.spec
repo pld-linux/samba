@@ -7,6 +7,7 @@
 #
 # Conditional build:
 %bcond_without cups		# without CUPS support
+%bcond_without mysql	# without CUPS support
 %bcond_with ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
 %bcond_with ipv6		# with IPv6 support
 %bcond_without ldap		# without LDAP support
@@ -31,7 +32,7 @@ Summary(uk):	SMB кл╕╓нт та сервер
 Summary(zh_CN):	Samba ©м╩╖╤к╨м╥ЧнЯфВ
 Name:		samba
 Version:	3.0.1rc1
-Release:	0.1
+Release:	0.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}.tar.bz2
@@ -55,8 +56,10 @@ BuildRequires:	autoconf
 %{?with_krb5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	libxml2-devel
+%if %{with mysql}
 BuildRequires:	mysql-devel
 BuildRequires:	mysql-extras
+%endif
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7
@@ -271,6 +274,22 @@ SWAT - ferramentada Web de configuraГЦo do Samba.
 Пакет samba-swat м╕стить новий SWAT (Samba Web Administration Tool),
 для дистанц╕йного адм╕н╕стрування файлу smb.conf за допомогою вашого
 улюбленого Web-браузеру.
+
+%package pdb-mysql
+Summary:	Samba MySQL password database plugin
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}
+
+%description pdb-mysql
+Samba MySQL password database plugin.
+
+%package pdb-xml
+Summary:	Samba XML password database plugin
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}
+
+%description pdb-xml
+Samba XML password database plugin.
 
 %package client
 Summary:	Samba client programs
@@ -647,7 +666,7 @@ cd source
 	--with-utmp \
 	--with-vfs \
 	--with-fhs \
-	--with-expsam \
+	--with-expsam=xml,%{?with_mysql:mysql} \
 	%{?with_ipv6:--with-ipv6} \
         %{?with_ldapsam:--with-ldapsam} \
 	%{!?with_ldap:--without-ldap} \
@@ -779,8 +798,8 @@ fi
 
 %attr(755,root,root) /lib/libnss_*
 %attr(755,root,root) /lib/security/pam_winbind.so
-%attr(755,root,root) %{_libdir}/%{name}/pdb/*.so
 
+%dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
 
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
@@ -807,6 +826,16 @@ fi
 %attr(0750,root,root) %dir /var/log/samba
 %attr(0750,root,root) %dir /var/log/archiv/samba
 %attr(1777,root,root) %dir /var/spool/samba
+
+%if %{with mysql}
+%files pdb-mysql
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/pdb/mysql.so
+%endif
+
+%files pdb-xml
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/pdb/xml.so
 
 %files client
 %defattr(644,root,root,755)

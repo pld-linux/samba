@@ -9,7 +9,7 @@ Summary(it):	Server SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
 Version:	2.2.1a
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server

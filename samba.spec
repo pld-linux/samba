@@ -391,7 +391,7 @@ and group/user enumeration from a Windows or Samba domain controller.
 %package -n nss_wins
 URL:		http://www.samba.org
 Summary:	Name Service Switch service for WINS
-Group:		System/Servers
+Group:		Base
 Requires:	%{name}-common = %{epoch}:%{version}
 
 %description -n nss_wins

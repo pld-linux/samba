@@ -33,26 +33,17 @@ RETVAL=0
 # See how we were called.
 case "$1" in
   start)
-  
-		daemon winbindd
-		RETVAL=$?
-	else
-		echo "Winbind is not configured in /etc/samba/smb.conf, not starting"
-	fi
-	echo
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/winbind || \
-	   RETVAL=1
-	return $RETVAL
-
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/winbind ]; then
 	  	if [ "`grep -i 'idmap uid' /etc/samba/smb.conf | egrep -v [\#\;]`" -a "`grep -i 'idmap gid' /etc/samba/smb.conf | egrep -v [\#\;]`" ]; then
 			msg_starting winbindd
-			daemon $NICELEVEL winbindd -D
+			daemon winbindd
 			RETVAL=$?
 			[ $RETVAL -eq 0] && touch /var/lock/subsys/winbind || \
 			RETVAL=1
-		fi 
+		else
+			nls "Winbind is not configured in /etc/samba/smb.conf, not starting"
+		fi
 	else
 		msg_already_running winbindd
 	fi
@@ -69,8 +60,7 @@ case "$1" in
 	;;
   status)
 	status winbindd
-	RETVAL=$?	
-	[ $RETVAL -eq 0 ] && RETVAL=$RET
+	RETVAL=$?
 	;;
   restart)
 	$0 stop

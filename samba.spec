@@ -8,8 +8,8 @@ Summary(fr):	Serveur SMB
 Summary(it):	Server SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
-Version:	2.2.0
-Release:	2
+Version:	2.2.0a
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server

@@ -1041,6 +1041,9 @@ fi
 %attr(0750,root,root) %dir /var/log/samba
 %attr(0750,root,root) %dir /var/log/archiv/samba
 %attr(1777,root,root) %dir /var/spool/samba
+%if %{with ldap}
+%doc examples/LDAP
+%endif
 
 %if %{with mysql}
 %files pdb-mysql

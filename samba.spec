@@ -1,10 +1,10 @@
 #
 # Conditional build:
+# _without_cups - without CUPS support
 # _with_ldap	- with LDAP support
 # _with_ipv6    - with IPv6 support
 #
 Summary:	SMB server
-Summary(pl):	Serwer SMB
 Summary(cs):	Server SMB
 Summary(da):	SMB server
 Summary(de):	SMB-Server
@@ -13,15 +13,16 @@ Summary(fi):	SMB-palvelin
 Summary(fr):	Serveur SMB
 Summary(it):	Server SMB
 Summary(ja):	Samba SMB ¥µ¡¼¥Ð¡¼
+Summary(ko):	»ï¹Ù SMB ¼­¹ö
 Summary(pl):	Serwer SMB
 Summary(pt_BR):	Cliente e servidor SMB
 Summary(ru):	SMB ËÌÉÅÎÔ É ÓÅÒ×ÅÒ
 Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
-Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷.
+Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	2.2.6
-Release:	1
+Version:	2.2.8a
+Release:	2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -49,16 +50,20 @@ Requires:	pam >= 0.66
 Requires:	logrotate
 Requires:	samba-common = %{version}
 BuildRequires:	autoconf
+%{!?_without_cups:BuildRequires:        cups-devel}
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	pam-devel > 0.66
 %{?_with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	openssl-devel >= 0.9.6i
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
+%if 0%{!?_without_cups:1}
+%define         cups_serverbin  %(cups-config --serverbin)
+%endif
 
 %description
 Samba provides an SMB server which can be used to provide network
@@ -142,6 +147,23 @@ Samba ¤Û¤È¤ó¤ÉÆ°ºî¤¹¤ë NT ¥É¥á¥¤¥ó¥³¥ó¥È¥í¡¼¥ë¤Îµ¡Ç½¤òÆÃÄ§¤È¤·¡¢
 ¹¥¤­¤Ê¥Ö¥é¥¦¥¶¤ò»È¤Ã¤Æ samba ¤Î smb.conf ¥Õ¥¡¥¤¥ë¤ò¥ê¥â¡¼¥È´ÉÍý¤¹¤ë
 ¿·¤·¤¤ SWAT (Samba Web Administration Tool) ¤ò´Þ¤ß¤Þ¤¹¡£
 ÌÜ²¼¤Î¤È¤³¤í¤³¤ì¤Ï inetd ¤òÄÌ¤·¤Æ TCP ¥Ý¡¼¥È 901 ¤ÇÍ­¸ú¤Ë¤Ê¤ê¤Þ¤¹¡£
+
+%description -l ko
+»ï¹Ù´Â MS Windows, OS/2, È¤Àº ´Ù¸¥ ¸®´ª½º ¸Ó½ÅÀ» Æ÷ÇÔÇÏ´Â SMB(È¤Àº
+"Lan Manager"¶ó°íµµ ºÒ¸²) Å¬¶óÀÌ¾ðÆ®¸¦ ³×Æ®¿öÅ© ¼­ºñ½º À§ÇØ »ç¿ëÇÒ ¼ö
+ÀÖ´Â SMB ¼­¹ö¸¦ Á¦°øÇÑ´Ù. »ï¹Ù´Â TCP/IP ÇÁ·ÎÅäÄÝÀ» ÅëÇØ NetBIOS¸¦
+»ç¿ëÇÏ°í NetBEUI (Microsoft Raw NetBIOS ÇÁ·¹ÀÓ) ÇÁ·ÎÅäÄÝÀº ÇÊ¿äÇÏÁö
+¾Ê´Ù.
+
+»ï¹Ù-2.2 ÀÇ Æ¯Â¡Àº NT µµ¸ÞÀÎ ÄÁÆ®·ÑÀÇ ¼º´ÉÀ¸·Î ÀÛ¾÷À» ÇÏ°í, »õ·Î¿î
+SWAT(Samba Web Administration Tool)·Î À¥ºê¶ó¿ìÀú¸¦ »ç¿ëÇÏ¿© ¿ø°ÝÁö¿¡¼­
+»ï¹ÙÀÇ smb.conf ÆÄÀÏÀ» °ü¸®ÇÏµµ·Ï ÇÑ´Ù. ÀÌ·¯ÇÑ °æ¿ì inetd µ¥¸óÀ» ÅëÇØ
+TCP 901 Æ÷Æ®¸¦ »ç¿ëÇÏ°Ô µÈ´Ù.
+
+ÃÖ±Ù Á¤º¸·Î WHATSNEW.txt ÆÄÀÏÀÇ ¹®¼­¸¦ Âü°íÇÏµµ·Ï ÇÑ´Ù. ¹ÙÀÌ³Ê¸®ÀÇ
+¸±¸®Áî´Â ¾ÏÈ£È­µÈ ÆÐ½º¿öµå¸¦ Á¦°øÇÑ´Ù. ±¸Çö¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ Á¤º¸¸¦ ¾ò±â
+À§ÇØ docs µð·ºÅä¸®³»¿¡ ÀÖ´Â smb.conf ÆÄÀÏ°ú ENCRYPTION.txt ÆÄÀÏÀ»
+ÀÐ¾îº»´Ù.
 
 %description -l pl
 Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia
@@ -363,6 +385,19 @@ Pliki nag³ówkowe dla libsmbclient.
 Arquivos de inclusão, bibliotecas e documentação necessários para
 desenvolver aplicativos clientes para o samba.
 
+%package -n cups-backend-smb
+Summary:	CUPS backend for printing to SMB printers
+Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
+Group:		Applications/Printing
+Requires:	cups
+Requires:	samba-client = %{version}
+
+%description -n cups-backend-smb
+CUPS backend for printing to SMB printers.
+
+%description -n cups-backend-smb -l pl
+Backend CUPS-a drukuj±cy na drukarkach SMB.
+
 %prep
 %setup -q
 %patch1 -p1
@@ -431,7 +466,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
 
-install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/lib/libnss_wins.so.2
+install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/lib/libnss_winbind.so.2
 install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
@@ -444,6 +479,11 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
+
+%if 0%{!?_without_cups:1}
+install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
+ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
+%endif
 
 > $RPM_BUILD_ROOT%{_libdir}/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
@@ -503,11 +543,11 @@ fi
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
+%attr(755,root,root) %{_bindir}/tdbbackup
 
-%attr(755,root,root) /lib/libnss_wins*
+%attr(755,root,root) /lib/libnss_*
 %attr(755,root,root) /lib/security/pam_winbind.so
 
-%dir %{_libdir}
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
@@ -521,6 +561,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
 
 %dir /home/services/samba
@@ -543,24 +584,27 @@ fi
 %attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
-%attr(755,root,root) %{_bindir}/smbspool
 %attr(755,root,root) %{_bindir}/smbcacls
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbsh.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
 %attr(755,root,root) %{_bindir}/wbinfo
 %{_mandir}/man1/wbinfo.1*
+%attr(755,root,root) %{_bindir}/findsmb
+%{_mandir}/man1/findsmb.1*
 
 %files common
 %defattr(644,root,root,755)
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/faq docs/Registry/*
 %doc docs/textdocs/* docs/htmldocs/*.* docs/{history,announce,THANKS}
+%dir %{_libdir}
 %config(noreplace) %verify(not size mtime md5) %{_libdir}/smb.conf
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
+%config(noreplace) %verify(not size mtime md5) %{_libdir}/lmhosts
 %attr(755,root,root) %{_bindir}/make_smbcodepage
 %attr(755,root,root) %{_bindir}/make_unicodemap
 %attr(755,root,root) %{_bindir}/testparm
@@ -595,3 +639,11 @@ fi
 %defattr(644,root,root,755)
 %{_includedir}/libsmbclient.h
 %attr(755,root,root) /lib/libsmbclient.so
+
+%if 0%{!?_without_cups:1}
+%files -n cups-backend-smb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/smbspool
+%attr(755,root,root) %(cups-config --serverbin)/backend/smb
+%{_mandir}/man8/smbspool.8*
+%endif

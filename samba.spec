@@ -1,10 +1,5 @@
 
 #
-# todo:
-# - create pdb (i.e. xml, mysql) subpackages
-#
-
-#
 # Conditional build:
 %bcond_without cups		# without CUPS support
 %bcond_without mysql		# without MySQL support
@@ -33,7 +28,7 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.1
 Epoch:		1
-Release:	0.1
+Release:	1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2

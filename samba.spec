@@ -1156,9 +1156,10 @@ fi
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/*.pdf docs/registry/*
 %doc docs/htmldocs/*.* docs/{history,THANKS}
-%dir %{_libdir}/%{name}
+%dir %{_sysconfdir}/%{name}
 %attr(664,root,fileshare) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
+%dir %{_libdir}/%{name}
 %{_libdir}/%{name}/*.dat
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/testprns

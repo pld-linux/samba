@@ -216,7 +216,7 @@ ChGW
 
 %build
 cd source
-autoconf
+%{__autoconf}
 %configure \
 	--with-readline \
 	--with-privatedir=%{_libdir} \

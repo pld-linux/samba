@@ -70,6 +70,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_vfsdir		/usr/lib/%{name}/vfs
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
+%define		_sambahome	/home/services/samba
 %if 0%{!?_without_cups:1}
 %define		cups_serverbin	%(cups-config --serverbin)
 %endif
@@ -627,8 +628,8 @@ done
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home/services}/samba \
-	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_vfsdir},%{_includedir}}
+	$RPM_BUILD_ROOT/var/{lock,log,log/archiv,spool}/samba \
+	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
@@ -750,7 +751,7 @@ fi
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
 
-%dir /home/services/samba
+%dir %{_sambahome}
 %dir /var/lock/samba
 %ghost /var/lock/samba/*
 

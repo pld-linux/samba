@@ -24,6 +24,7 @@ Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Patch3:		samba-DESTDIR.patch
 Patch4:		samba-fix_link_libs.patch
+Patch5:		samba-glibc21.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -129,6 +130,7 @@ internetowej.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 cd source

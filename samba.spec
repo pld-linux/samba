@@ -12,13 +12,13 @@ Summary(es):	El servidor SMB
 Summary(fi):	SMB-palvelin
 Summary(fr):	Serveur SMB
 Summary(it):	Server SMB
-Summary(ja):	Samba SMB ╔╣║╪╔п║╪
+Summary(ja):	Samba SMB Ц┌╣Ц┐╪Ц┐░Ц┐╪
 Summary(pl):	Serwer SMB
 Summary(pt_BR):	Cliente e servidor SMB
-Summary(ru):	SMB клиент и сервер
+Summary(ru):	SMB п╨п╩п╦п╣п╫я┌ п╦ я│п╣я─п╡п╣я─
 Summary(tr):	SMB sunucusu
-Summary(uk):	SMB кл╕╓нт та сервер
-Summary(zh_CN):	Samba ©м╩╖╤к╨м╥ЧнЯфВ.
+Summary(uk):	SMB п╨п╩я√я■п╫я┌ я┌п╟ я│п╣я─п╡п╣я─
+Summary(zh_CN):	Samba Е╝╒Ф┬╥Г╚╞Е▓▄Ф°█Е┼║Е≥╗.
 Name:		samba
 Version:	2.2.5
 Release:	6
@@ -79,49 +79,49 @@ smb.conf file and ENCRYPTION.txt in the docs directory for
 implementation details.
 
 %description -l cs
-Samba poskytuje server SMB, kterЩ lze pou╬Мt pro poskytovАnМ sМ╩ovЩch
-slu╬eb klientЫm SMB (nЛkdy nazЩvanЩch klienti "LAN mana╬er") vХetnЛ
-klientЫ rЫznЩch verzМ MS Windows, OS/2 a dal╧Мch linuxovЩch strojЫ.
-Samba tИ╬ poskytuje nЛkterИ klienty SMB, kteЬМ komplementujМ vestavЛnЩ
-souborovЩ systИm SMB v Linuxu. Samba pou╬МvА protokoly NetBIOS pЬes
-TCP/IP (NetBT) a NEpotЬebuje protokol NetBEUI (neformАtovanЩ rАmec
-NetBIOS od spoleХnosti Microsoft.
+Samba poskytuje server SMB, kterц╫ lze pouе╬ц╜t pro poskytovц║nц╜ sц╜е╔ovц╫ch
+sluе╬eb klientе╞m SMB (nд⌡kdy nazц╫vanц╫ch klienti "LAN manaе╬er") vд█etnд⌡
+klientе╞ rе╞znц╫ch verzц╜ MS Windows, OS/2 a dalе║ц╜ch linuxovц╫ch strojе╞.
+Samba tц╘е╬ poskytuje nд⌡kterц╘ klienty SMB, kteе≥ц╜ komplementujц╜ vestavд⌡nц╫
+souborovц╫ systц╘m SMB v Linuxu. Samba pouе╬ц╜vц║ protokoly NetBIOS pе≥es
+TCP/IP (NetBT) a NEpotе≥ebuje protokol NetBEUI (neformц║tovanц╫ rц║mec
+NetBIOS od spoleд█nosti Microsoft.
 
 %description -l da
-Samba tilbyder en SMB server som kan bruges til at tilbyde netvФrk
-services til SMB (ogsЕ kaldet "Lan Manager") klienter, incl.
+Samba tilbyder en SMB server som kan bruges til at tilbyde netvц╕rk
+services til SMB (ogsц╔ kaldet "Lan Manager") klienter, incl.
 forskellige versioner af MS Windows, OS/2, og andre Linux maskiner.
-Samba tilbyder ogsЕ SMB klienter, som udbygger det indbyggede SMB
+Samba tilbyder ogsц╔ SMB klienter, som udbygger det indbyggede SMB
 filsystem i Linux. Samba benytter NetBIOS over TCP/IP (NetBT)
-protocolen og krФver ikke NetBEUI (Microsoft Raw NetBIOS frame)
+protocolen og krц╕ver ikke NetBEUI (Microsoft Raw NetBIOS frame)
 protokollen.
 
 %description -l de
-Samba stellt einen SMB-Server zum Anbieten von Netzwerkdiensten fЭr
-SMB-Clients (auch "Lan Manager" genannt) zur VerfЭgung, darunter
+Samba stellt einen SMB-Server zum Anbieten von Netzwerkdiensten fц╪r
+SMB-Clients (auch "Lan Manager" genannt) zur Verfц╪gung, darunter
 verschiedenen Versionen von MS Windows-, OS/2- und anderen
-Linux-Rechnern. Samba enthДlt auъerdem einige SMB-Clients, die das in
-Linux integrierte SMB-Dateisystem ergДnzen. Samba benutzt
-NetBIOS-Эber-TCP/IP (NetBT)-Protokolle und benЖtigt KEIN NetBEUI
+Linux-Rechnern. Samba enthц╓lt auц÷erdem einige SMB-Clients, die das in
+Linux integrierte SMB-Dateisystem ergц╓nzen. Samba benutzt
+NetBIOS-ц╪ber-TCP/IP (NetBT)-Protokolle und benц╤tigt KEIN NetBEUI
 (Microsoft Raw NetBIOS frame)-Protokoll.
 
 %description -l es
 Samba provee un servidor SMB que se puede usar para ofrecer servicios
 de red a clientes SMB (algunas veces se le llama de "Lan Manager"),
-incluyendo varias versiones de MS Windows, OS/2, y otras mАquinas
-Linux. Samba tambiИn ofrece algunos clientes SMB, que complementan el
+incluyendo varias versiones de MS Windows, OS/2, y otras mц║quinas
+Linux. Samba tambiц╘n ofrece algunos clientes SMB, que complementan el
 sistema de archivos SMB de Linux. Samba usa el protocolo NetBIOS sobre
 TCP/IP (NetBT) y no necesita del protocolo NetBEUI (Microsoft Raw
 NetBIOS frame).
 
 %description -l fi
-Samba on SMB-palvelin, jota voidaan kДyttДД SMB-asiakasohjelmien
+Samba on SMB-palvelin, jota voidaan kц╓yttц╓ц╓ SMB-asiakasohjelmien
 verkkopalvelujen tarjoajana. SMB-protokollaa kutsutaan joskus "Lan
 Manager" protokollaksi ja asiakasohjelmat toimivat dosissa,
 Windowseissa, OS/2:ssa ja toisissa Linux-koneissa. Samban mukana on
-myЖs joitakin SMB-asiakasohjelmia, jotka tДydentДvДt Linuxin
-kernelissД olevaa SMB-tiedostojДrjestelmДn tukea. Samba vaatii NetBIOS
-over TCP/IP (NetBT) protokollaa eikД tarvitse tai pysty kДyttДmДДn
+myц╤s joitakin SMB-asiakasohjelmia, jotka tц╓ydentц╓vц╓t Linuxin
+kernelissц╓ olevaa SMB-tiedostojц╓rjestelmц╓n tukea. Samba vaatii NetBIOS
+over TCP/IP (NetBT) protokollaa eikц╓ tarvitse tai pysty kц╓yttц╓mц╓ц╓n
 NetBEUI-protokollaa.
 
 %description -l it
@@ -131,81 +131,81 @@ altre macchine Linux. Samba fornisce anche i client SMB. Samba usa
 NetBIOS sopra TCP/IP e non ha bisogno del protocollo NetBEUI.
 
 %description -l ja
-Samba ╓о MS Windows ╓нмм║╧╓й╔п║╪╔╦╔Г╔С║╒OS/2 ╓╫╓╥╓фб╬╓н Linux ╔ч╔╥╔С
-╓Р╢ч╓Ю SMB (╓©╓ч╓к "Lan Manager" ╓х╦ф╓п╓Л╓К)
-╔╞╔И╔╓╔╒╔С╔х╓к╔м╔ц╔х╔О║╪╔╞ ╔╣║╪╔с╔╧╓РдС╤║╓╧╓К╓©╓А╓к╩хмя╓╣╓Л╓К SMB
-╔╣║╪╔п╓РдС╤║╓╥╓ч╓╧║ёSamba ╓о NetBIOS over TCP/IP (NetBT)
-╔в╔М╔х╔Ё╔К╓Р╩хмя╓╥║╒ NetBEUI(Microsoft Raw NetBIOS frame)
-╔в╔М╔х╔Ё╔К╓ои╛мв╓╒╓Й╓ч╓╩╓С║ё
+Samba Ц│╞ MS Windows Ц│╝Ф╖≤Ц─┘Ц│╙Ц┐░Ц┐╪Ц┌╦Ц┐╖Ц┐ЁЦ─│OS/2 Ц│²Ц│≈Ц│╕Д╩√Ц│╝ Linux Ц┐·Ц┌╥Ц┐Ё
+Ц┌▓Е░╚Ц┌─ SMB (Ц│÷Ц│╬Ц│╚ "Lan Manager" Ц│╗Е▒╪Ц│╟Ц┌▄Ц┌▀)
+Ц┌╞Ц┐╘Ц┌╓Ц┌╒Ц┐ЁЦ┐┬Ц│╚Ц┐█Ц┐┐Ц┐┬Ц┐╞Ц┐╪Ц┌╞ Ц┌╣Ц┐╪Ц┐⌠Ц┌╧Ц┌▓Ф▐░Д╬⌡Ц│≥Ц┌▀Ц│÷Ц┌│Ц│╚Д╫©Г■╗Ц│∙Ц┌▄Ц┌▀ SMB
+Ц┌╣Ц┐╪Ц┐░Ц┌▓Ф▐░Д╬⌡Ц│≈Ц│╬Ц│≥Ц─┌Samba Ц│╞ NetBIOS over TCP/IP (NetBT)
+Ц┐≈Ц┐╜Ц┐┬Ц┌ЁЦ┐╚Ц┌▓Д╫©Г■╗Ц│≈Ц─│ NetBEUI(Microsoft Raw NetBIOS frame)
+Ц┐≈Ц┐╜Ц┐┬Ц┌ЁЦ┐╚Ц│╞Е©┘Х╕│Ц│┌Ц┌┼Ц│╬Ц│⌡Ц┌⌠Ц─┌
 
-Samba ╓ш╓х╓С╓иф╟╨Н╓╧╓К NT ╔и╔А╔╓╔С╔Ё╔С╔х╔М║╪╔К╓н╣║г╫╓Рфцд╖╓х╓╥║╒
-╧╔╓╜╓й╔ж╔И╔╕╔╤╓Р╩х╓ц╓ф samba ╓н smb.conf ╔у╔║╔╓╔К╓Р╔Й╔Б║╪╔х╢имЩ╓╧╓К
-©╥╓╥╓╓ SWAT (Samba Web Administration Tool) ╓Р╢ч╓ъ╓ч╓╧║ё
-лэ╡╪╓н╓х╓Ё╓М╓Ё╓Л╓о inetd ╓Рдл╓╥╓ф TCP ╔щ║╪╔х 901 ╓гм╜╦З╓к╓й╓Й╓ч╓╧║ё
+Samba Ц│╩Ц│╗Ц┌⌠Ц│╘Е▀∙Д╫°Ц│≥Ц┌▀ NT Ц┐┴Ц┐║Ц┌╓Ц┐ЁЦ┌ЁЦ┐ЁЦ┐┬Ц┐╜Ц┐╪Ц┐╚Ц│╝Ф╘÷Х┐╫Ц┌▓Г┴╧Е╬╢Ц│╗Ц│≈Ц─│
+Е╔╫Ц│█Ц│╙Ц┐√Ц┐╘Ц┌╕Ц┌╤Ц┌▓Д╫©Ц│ёЦ│╕ samba Ц│╝ smb.conf Ц┐∙Ц┌║Ц┌╓Ц┐╚Ц┌▓Ц┐╙Ц┐╒Ц┐╪Ц┐┬Г╝║Г░├Ц│≥Ц┌▀
+Ф√╟Ц│≈Ц│└ SWAT (Samba Web Administration Tool) Ц┌▓Е░╚Ц│©Ц│╬Ц│≥Ц─┌
+Г⌡╝Д╦▀Ц│╝Ц│╗Ц│⌠Ц┌█Ц│⌠Ц┌▄Ц│╞ inetd Ц┌▓И─ Ц│≈Ц│╕ TCP Ц┐²Ц┐╪Ц┐┬ 901 Ц│╖Ф°┴Е┼╧Ц│╚Ц│╙Ц┌┼Ц│╬Ц│≥Ц─┌
 
 %description -l pl
-Samba udostЙpnia serwer SMB, ktСry mo©e byФ u©yty w celu dostarczenia
-usЁug sieciowych (potocznie zwanych "Lan Manager"), dla klientСw
-takich jak MS Windows, OS/2 a tak©e maszyn linuksowych. W pakiecie
-znajduje siЙ rСwnie© oprogramowanie klienckie. Samba u©ywa protokoЁu
-NetBIOS po TCP/IP (NetBT) i nie wymaga protokoЁu NetBEUI. Ta wersja ma
-peЁne wsparcie dla blokowania plikСw, a tak©e wsparcie dla kodowania
-haseЁ w standardzie MS i zarzadzania baz╠ WINS.
+Samba udostд≥pnia serwer SMB, ktцЁry moе╪e byд┤ uе╪yty w celu dostarczenia
+usе┌ug sieciowych (potocznie zwanych "Lan Manager"), dla klientцЁw
+takich jak MS Windows, OS/2 a takе╪e maszyn linuksowych. W pakiecie
+znajduje siд≥ rцЁwnieе╪ oprogramowanie klienckie. Samba uе╪ywa protokoе┌u
+NetBIOS po TCP/IP (NetBT) i nie wymaga protokoе┌u NetBEUI. Ta wersja ma
+peе┌ne wsparcie dla blokowania plikцЁw, a takе╪e wsparcie dla kodowania
+haseе┌ w standardzie MS i zarzadzania bazд┘ WINS.
 
 %description -l pt_BR
-O Samba provЙ um servidor SMB que pode ser usado para oferecer
-serviГos de rede a clientes SMB (algumas vezes chamado de "Lan
-Manager"), incluindo vАrias versУes de MS Windows, OS/2, e outras
-mАquinas Linux. O Samba tambИm fornece alguns clientes SMB, que
+O Samba provц╙ um servidor SMB que pode ser usado para oferecer
+serviц╖os de rede a clientes SMB (algumas vezes chamado de "Lan
+Manager"), incluindo vц║rias versц╣es de MS Windows, OS/2, e outras
+mц║quinas Linux. O Samba tambц╘m fornece alguns clientes SMB, que
 complementam o sistema de arquivos SMB do Linux. O Samba usa o
-protocolo NetBIOS sobre TCP/IP (NetBT) e nЦo necessita do protocolo
+protocolo NetBIOS sobre TCP/IP (NetBT) e nцёo necessita do protocolo
 NetBEUI (Microsoft Raw NetBIOS frame).
 
-O Samba inclui a maioria das caracterМsticas de um servidor de
-Controle de DomМnios NT e o SWAT (Samba Web Administration Tool), que
-permite que o arquivo smb.conf seja gerenciado remotamente atravИs de
-um navegador. Atualmente isto estА sendo habilitado na porta TCP 901
+O Samba inclui a maioria das caracterц╜sticas de um servidor de
+Controle de Domц╜nios NT e o SWAT (Samba Web Administration Tool), que
+permite que o arquivo smb.conf seja gerenciado remotamente atravц╘s de
+um navegador. Atualmente isto estц║ sendo habilitado na porta TCP 901
 via inetd.
 
 %description -l ru
-Samba предоставляет SMB-сервер, который может быть использован для
-предоставления сетевых сервисов SMB (иногда называемым "Lan Manager")
-клиентам, включая разнообразные версии MS Windows, OS/2, и другие
-Linux-машины. Samba также предоставляет SMB-клиентов, которые работают
-со встроенной в Linux файловой системой SMB.
+Samba п©я─п╣п╢п╬я│я┌п╟п╡п╩я▐п╣я┌ SMB-я│п╣я─п╡п╣я─, п╨п╬я┌п╬я─я▀п╧ п╪п╬п╤п╣я┌ п╠я▀я┌я▄ п╦я│п©п╬п╩я▄п╥п╬п╡п╟п╫ п╢п╩я▐
+п©я─п╣п╢п╬я│я┌п╟п╡п╩п╣п╫п╦я▐ я│п╣я┌п╣п╡я▀я┘ я│п╣я─п╡п╦я│п╬п╡ SMB (п╦п╫п╬пЁп╢п╟ п╫п╟п╥я▀п╡п╟п╣п╪я▀п╪ "Lan Manager")
+п╨п╩п╦п╣п╫я┌п╟п╪, п╡п╨п╩я▌я┤п╟я▐ я─п╟п╥п╫п╬п╬п╠я─п╟п╥п╫я▀п╣ п╡п╣я─я│п╦п╦ MS Windows, OS/2, п╦ п╢я─я┐пЁп╦п╣
+Linux-п╪п╟я┬п╦п╫я▀. Samba я┌п╟п╨п╤п╣ п©я─п╣п╢п╬я│я┌п╟п╡п╩я▐п╣я┌ SMB-п╨п╩п╦п╣п╫я┌п╬п╡, п╨п╬я┌п╬я─я▀п╣ я─п╟п╠п╬я┌п╟я▌я┌
+я│п╬ п╡я│я┌я─п╬п╣п╫п╫п╬п╧ п╡ Linux я└п╟п╧п╩п╬п╡п╬п╧ я│п╦я│я┌п╣п╪п╬п╧ SMB.
 
-Samba использует протокол NetBIOS over TCP/IP (NetBT) и не нуждается в
-протоколе NetBEUI (Microsoft Raw NetBIOS frame).
+Samba п╦я│п©п╬п╩я▄п╥я┐п╣я┌ п©я─п╬я┌п╬п╨п╬п╩ NetBIOS over TCP/IP (NetBT) п╦ п╫п╣ п╫я┐п╤п╢п╟п╣я┌я│я▐ п╡
+п©я─п╬я┌п╬п╨п╬п╩п╣ NetBEUI (Microsoft Raw NetBIOS frame).
 
-Samba содержит практически работающую реализацию NT Domain Control и
-включает новый SWAT (Samba Web Administration Tool), который позволяет
-удаленно управлять конфигурационным файлом smb.conf при помощи вашего
-любимого WEB-броузера. Пока что он разрешен через inetd на TCP-порту
+Samba я│п╬п╢п╣я─п╤п╦я┌ п©я─п╟п╨я┌п╦я┤п╣я│п╨п╦ я─п╟п╠п╬я┌п╟я▌я┴я┐я▌ я─п╣п╟п╩п╦п╥п╟я├п╦я▌ NT Domain Control п╦
+п╡п╨п╩я▌я┤п╟п╣я┌ п╫п╬п╡я▀п╧ SWAT (Samba Web Administration Tool), п╨п╬я┌п╬я─я▀п╧ п©п╬п╥п╡п╬п╩я▐п╣я┌
+я┐п╢п╟п╩п╣п╫п╫п╬ я┐п©я─п╟п╡п╩я▐я┌я▄ п╨п╬п╫я└п╦пЁя┐я─п╟я├п╦п╬п╫п╫я▀п╪ я└п╟п╧п╩п╬п╪ smb.conf п©я─п╦ п©п╬п╪п╬я┴п╦ п╡п╟я┬п╣пЁп╬
+п╩я▌п╠п╦п╪п╬пЁп╬ WEB-п╠я─п╬я┐п╥п╣я─п╟. п÷п╬п╨п╟ я┤я┌п╬ п╬п╫ я─п╟п╥я─п╣я┬п╣п╫ я┤п╣я─п╣п╥ inetd п╫п╟ TCP-п©п╬я─я┌я┐
 901.
 
 %description -l uk
-Samba нада╓ SMB-сервер, що може бути використаний для надання
-мережевих серв╕с╕в SMB (що ╖х ╕нод╕ називають "Lan Manager") кл╕╓нтам,
-включаючи р╕зноман╕тн╕ верс╕╖ MS Windows, OS/2, та ╕нш╕ Linux-машини.
-Samba також нада╓ SMB-кл╕╓нт╕в, що працюють з вбудованою в Linux
-файловою системою SMB.
+Samba п╫п╟п╢п╟я■ SMB-я│п╣я─п╡п╣я─, я┴п╬ п╪п╬п╤п╣ п╠я┐я┌п╦ п╡п╦п╨п╬я─п╦я│я┌п╟п╫п╦п╧ п╢п╩я▐ п╫п╟п╢п╟п╫п╫я▐
+п╪п╣я─п╣п╤п╣п╡п╦я┘ я│п╣я─п╡я√я│я√п╡ SMB (я┴п╬ я≈я┘ я√п╫п╬п╢я√ п╫п╟п╥п╦п╡п╟я▌я┌я▄ "Lan Manager") п╨п╩я√я■п╫я┌п╟п╪,
+п╡п╨п╩я▌я┤п╟я▌я┤п╦ я─я√п╥п╫п╬п╪п╟п╫я√я┌п╫я√ п╡п╣я─я│я√я≈ MS Windows, OS/2, я┌п╟ я√п╫я┬я√ Linux-п╪п╟я┬п╦п╫п╦.
+Samba я┌п╟п╨п╬п╤ п╫п╟п╢п╟я■ SMB-п╨п╩я√я■п╫я┌я√п╡, я┴п╬ п©я─п╟я├я▌я▌я┌я▄ п╥ п╡п╠я┐п╢п╬п╡п╟п╫п╬я▌ п╡ Linux
+я└п╟п╧п╩п╬п╡п╬я▌ я│п╦я│я┌п╣п╪п╬я▌ SMB.
 
-Samba використову╓ протокол NetBIOS over TCP/IP (NetBT) та не потребу╓
-протоколу NetBEUI (Microsoft Raw NetBIOS frame).
+Samba п╡п╦п╨п╬я─п╦я│я┌п╬п╡я┐я■ п©я─п╬я┌п╬п╨п╬п╩ NetBIOS over TCP/IP (NetBT) я┌п╟ п╫п╣ п©п╬я┌я─п╣п╠я┐я■
+п©я─п╬я┌п╬п╨п╬п╩я┐ NetBEUI (Microsoft Raw NetBIOS frame).
 
-Samba м╕стить майже працюючу реализац╕ю NT Domain Control та новый
-SWAT (Samba Web Administration Tool), котрий дозволя╓ в╕ддалено
-керувати конф╕гурац╕йним файлом smb.conf за допомогою вашого
-улюбленого WEB-броузера. Поки що в╕н дозволений через inetd на
-TCP-порту 901.
+Samba п╪я√я│я┌п╦я┌я▄ п╪п╟п╧п╤п╣ п©я─п╟я├я▌я▌я┤я┐ я─п╣п╟п╩п╦п╥п╟я├я√я▌ NT Domain Control я┌п╟ п╫п╬п╡я▀п╧
+SWAT (Samba Web Administration Tool), п╨п╬я┌я─п╦п╧ п╢п╬п╥п╡п╬п╩я▐я■ п╡я√п╢п╢п╟п╩п╣п╫п╬
+п╨п╣я─я┐п╡п╟я┌п╦ п╨п╬п╫я└я√пЁя┐я─п╟я├я√п╧п╫п╦п╪ я└п╟п╧п╩п╬п╪ smb.conf п╥п╟ п╢п╬п©п╬п╪п╬пЁп╬я▌ п╡п╟я┬п╬пЁп╬
+я┐п╩я▌п╠п╩п╣п╫п╬пЁп╬ WEB-п╠я─п╬я┐п╥п╣я─п╟. п÷п╬п╨п╦ я┴п╬ п╡я√п╫ п╢п╬п╥п╡п╬п╩п╣п╫п╦п╧ я┤п╣я─п╣п╥ inetd п╫п╟
+TCP-п©п╬я─я┌я┐ 901.
 
 %package -n swat
 Summary:	Samba Web Administration Tool
 Summary(es):	Samba SWAT and Web documentation
-Summary(pl):	NarzЙdzie administracyjne serwisu Samba
-Summary(pt_BR):	Samba SWAT e documentaГЦo Web
-Summary(ru):	Программа конфигурации SMB-сервера Samba
-Summary(uk):	Програма конфигурац╕╖ SMB-сервера Samba
+Summary(pl):	Narzд≥dzie administracyjne serwisu Samba
+Summary(pt_BR):	Samba SWAT e documentaц╖цёo Web
+Summary(ru):	п÷я─п╬пЁя─п╟п╪п╪п╟ п╨п╬п╫я└п╦пЁя┐я─п╟я├п╦п╦ SMB-я│п╣я─п╡п╣я─п╟ Samba
+Summary(uk):	п÷я─п╬пЁя─п╟п╪п╟ п╨п╬п╫я└п╦пЁя┐я─п╟я├я√я≈ SMB-я│п╣я─п╡п╣я─п╟ Samba
 Group:		Networking/Admin
 Requires:	%{name}
 Requires:	rc-inetd >= 0.8.2
@@ -220,30 +220,30 @@ help links to all the configurable options in the smb.conf file
 allowing an administrator to easily look up the effects of any change.
 
 %description -n swat -l pl
-swat pozwala na kompleksow╠ konfiguracjЙ smb.conf przy pomocy
-przegl╠darki WWW.
+swat pozwala na kompleksowд┘ konfiguracjд≥ smb.conf przy pomocy
+przeglд┘darki WWW.
 
 %description -n swat -l pt_BR
-SWAT - ferramentada Web de configuraГЦo do Samba.
+SWAT - ferramentada Web de configuraц╖цёo do Samba.
 
 %description -n swat -l ru
-Пакет samba-swat включает новый SWAT (Samba Web Administration Tool),
-для удаленного администрирования файла smb.conf при помощи вашего
-любимого Web-браузера.
+п÷п╟п╨п╣я┌ samba-swat п╡п╨п╩я▌я┤п╟п╣я┌ п╫п╬п╡я▀п╧ SWAT (Samba Web Administration Tool),
+п╢п╩я▐ я┐п╢п╟п╩п╣п╫п╫п╬пЁп╬ п╟п╢п╪п╦п╫п╦я│я┌я─п╦я─п╬п╡п╟п╫п╦я▐ я└п╟п╧п╩п╟ smb.conf п©я─п╦ п©п╬п╪п╬я┴п╦ п╡п╟я┬п╣пЁп╬
+п╩я▌п╠п╦п╪п╬пЁп╬ Web-п╠я─п╟я┐п╥п╣я─п╟.
 
 %description -n swat -l uk
-Пакет samba-swat м╕стить новий SWAT (Samba Web Administration Tool),
-для дистанц╕йного адм╕н╕стрування файлу smb.conf за допомогою вашого
-улюбленого Web-браузеру.
+п÷п╟п╨п╣я┌ samba-swat п╪я√я│я┌п╦я┌я▄ п╫п╬п╡п╦п╧ SWAT (Samba Web Administration Tool),
+п╢п╩я▐ п╢п╦я│я┌п╟п╫я├я√п╧п╫п╬пЁп╬ п╟п╢п╪я√п╫я√я│я┌я─я┐п╡п╟п╫п╫я▐ я└п╟п╧п╩я┐ smb.conf п╥п╟ п╢п╬п©п╬п╪п╬пЁп╬я▌ п╡п╟я┬п╬пЁп╬
+я┐п╩я▌п╠п╩п╣п╫п╬пЁп╬ Web-п╠я─п╟я┐п╥п╣я─я┐.
 
 %package client
 Summary:	Samba client programs
 Summary(es):	Cliente SMB de Samba
-Summary(ja):	Samba (SMB) ╔╞╔И╔╓╔╒╔С╔х╔в╔М╔╟╔И╔Ю
+Summary(ja):	Samba (SMB) Ц┌╞Ц┐╘Ц┌╓Ц┌╒Ц┐ЁЦ┐┬Ц┐≈Ц┐╜Ц┌╟Ц┐╘Ц┐═
 Summary(pl):	Klienci serwera Samba
 Summary(pt_BR):	Cliente SMB do samba
-Summary(ru):	Клиентские программы Samba (SMB)
-Summary(uk):	Кл╕╓нтськ╕ програми Samba (SMB)
+Summary(ru):	п п╩п╦п╣п╫я┌я│п╨п╦п╣ п©я─п╬пЁя─п╟п╪п╪я▀ Samba (SMB)
+Summary(uk):	п п╩я√я■п╫я┌я│я▄п╨я√ п©я─п╬пЁя─п╟п╪п╦ Samba (SMB)
 Group:		Applications/Networking
 Requires:	samba-common = %{version}
 Obsoletes:	smbfs
@@ -256,44 +256,44 @@ printing to SMB printers.
 %description client -l pt_BR
 O pacote samba-clientes prove alguns clientes SMB, que complementam o
 sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
-e tambИm, Ю impressoras SMB.
+e tambц╘m, ц═ impressoras SMB.
 
 %description client -l es
 Cliente SMB de Samba.
 
 %description client -l ja
-Samba-client ╓о Linux ╬Е╓к╢ч╓ч╓Л╓ф╓╓╓К SMB ╔у╔║╔╓╔К╔╥╔╧╔ф╔Ю╓РйД╓╕ SMB
-╔╞╔И╔╓╔╒╔С╔х╓РдС╤║╓╥╓ч╓╧║ё╓Ё╓Л╓И╓о SMB ╤╕м╜╓н╔╒╔╞╔╩╔╧╓х SMB
-╔в╔Й╔С╔©╓ь╓н╟У╨Ч╓Р╣Ж╡д╓╥╓ч╓╧║ё
+Samba-client Ц│╞ Linux Д╦┼Ц│╚Е░╚Ц│╬Ц┌▄Ц│╕Ц│└Ц┌▀ SMB Ц┐∙Ц┌║Ц┌╓Ц┐╚Ц┌╥Ц┌╧Ц┐├Ц┐═Ц┌▓Хё°Ц│├ SMB
+Ц┌╞Ц┐╘Ц┌╓Ц┌╒Ц┐ЁЦ┐┬Ц┌▓Ф▐░Д╬⌡Ц│≈Ц│╬Ц│≥Ц─┌Ц│⌠Ц┌▄Ц┌┴Ц│╞ SMB Е┘╠Ф°┴Ц│╝Ц┌╒Ц┌╞Ц┌╩Ц┌╧Ц│╗ SMB
+Ц┐≈Ц┐╙Ц┐ЁЦ┌©Ц│╦Ц│╝Е█╟Е┬╥Ц┌▓Х╗╠Е▐╞Ц│≈Ц│╬Ц│≥Ц─┌
 
 %description client -l pl
-Samba-client dostarcza pewne programy ktСre uzupeЁniaj╠ system plikСw
-SMB zawarty w j╠drze. Pozwala na wspСЁdzielenie i drukowanie w sieci
+Samba-client dostarcza pewne programy ktцЁre uzupeе┌niajд┘ system plikцЁw
+SMB zawarty w jд┘drze. Pozwala na wspцЁе┌dzielenie i drukowanie w sieci
 SMB.
 
 %description client -l pt_BR
 O pacote samba-clientes prove alguns clientes SMB, que complementam o
 sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
-e tambИm, Ю impressoras SMB.
+e tambц╘m, ц═ impressoras SMB.
 
 %description client -l ru
-Пакет samba-client предоставляет некоторые клиенты SMB для работы со
-встроенной файловой системой SMB в Linux. Эти клиенты позволяют
-получать доступ к разделяемым каталогам SMB и печать на SMB-принтеры.
+п÷п╟п╨п╣я┌ samba-client п©я─п╣п╢п╬я│я┌п╟п╡п╩я▐п╣я┌ п╫п╣п╨п╬я┌п╬я─я▀п╣ п╨п╩п╦п╣п╫я┌я▀ SMB п╢п╩я▐ я─п╟п╠п╬я┌я▀ я│п╬
+п╡я│я┌я─п╬п╣п╫п╫п╬п╧ я└п╟п╧п╩п╬п╡п╬п╧ я│п╦я│я┌п╣п╪п╬п╧ SMB п╡ Linux. п╜я┌п╦ п╨п╩п╦п╣п╫я┌я▀ п©п╬п╥п╡п╬п╩я▐я▌я┌
+п©п╬п╩я┐я┤п╟я┌я▄ п╢п╬я│я┌я┐п© п╨ я─п╟п╥п╢п╣п╩я▐п╣п╪я▀п╪ п╨п╟я┌п╟п╩п╬пЁп╟п╪ SMB п╦ п©п╣я┤п╟я┌я▄ п╫п╟ SMB-п©я─п╦п╫я┌п╣я─я▀.
 
 %description client -l uk
-Пакет samba-client нада╓ деяк╕ кл╕╓нти SMB для роботи з╕ вбудованою
-файловою системою SMB в Linux. Ц╕ кл╕╓нти дозволяють отримувати доступ
-до каталог╕в сп╕льного використання SMB та друк на SMB-пр╕нтери.
+п÷п╟п╨п╣я┌ samba-client п╫п╟п╢п╟я■ п╢п╣я▐п╨я√ п╨п╩я√я■п╫я┌п╦ SMB п╢п╩я▐ я─п╬п╠п╬я┌п╦ п╥я√ п╡п╠я┐п╢п╬п╡п╟п╫п╬я▌
+я└п╟п╧п╩п╬п╡п╬я▌ я│п╦я│я┌п╣п╪п╬я▌ SMB п╡ Linux. п╕я√ п╨п╩я√я■п╫я┌п╦ п╢п╬п╥п╡п╬п╩я▐я▌я┌я▄ п╬я┌я─п╦п╪я┐п╡п╟я┌п╦ п╢п╬я│я┌я┐п©
+п╢п╬ п╨п╟я┌п╟п╩п╬пЁя√п╡ я│п©я√п╩я▄п╫п╬пЁп╬ п╡п╦п╨п╬я─п╦я│я┌п╟п╫п╫я▐ SMB я┌п╟ п╢я─я┐п╨ п╫п╟ SMB-п©я─я√п╫я┌п╣я─п╦.
 
 %package common
 Summary:	Files used by both Samba servers and clients
 Summary(es):	Common files between samba and samba-clients
-Summary(ja):	Samba ╔╣║╪╔п║╪╓х╔╞╔И╔╓╔╒╔С╔х╓г╩хмя╓╣╓Л╓К╔в╔М╔╟╔И╔Ю
-Summary(pl):	Pliki u©ywane przez serwer i klientСw Samba
+Summary(ja):	Samba Ц┌╣Ц┐╪Ц┐░Ц┐╪Ц│╗Ц┌╞Ц┐╘Ц┌╓Ц┌╒Ц┐ЁЦ┐┬Ц│╖Д╫©Г■╗Ц│∙Ц┌▄Ц┌▀Ц┐≈Ц┐╜Ц┌╟Ц┐╘Ц┐═
+Summary(pl):	Pliki uе╪ywane przez serwer i klientцЁw Samba
 Summary(pt_BR):	Arquivos em comum entre samba e samba-clients
-Summary(ru):	Файлы, используемые как сервером, так и клиентом Samba
-Summary(uk):	Файли, що використовуються як сервером, так ╕ кл╕╓нтом Samba
+Summary(ru):	п╓п╟п╧п╩я▀, п╦я│п©п╬п╩я▄п╥я┐п╣п╪я▀п╣ п╨п╟п╨ я│п╣я─п╡п╣я─п╬п╪, я┌п╟п╨ п╦ п╨п╩п╦п╣п╫я┌п╬п╪ Samba
+Summary(uk):	п╓п╟п╧п╩п╦, я┴п╬ п╡п╦п╨п╬я─п╦я│я┌п╬п╡я┐я▌я┌я▄я│я▐ я▐п╨ я│п╣я─п╡п╣я─п╬п╪, я┌п╟п╨ я√ п╨п╩я√я■п╫я┌п╬п╪ Samba
 Group:		Networking/Daemons
 
 %description common
@@ -301,27 +301,27 @@ Samba-common provides files necessary for both the server and client
 packages of Samba.
 
 %description common -l ja
-Samba-common ╓о Samba ╓н╔╣║╪╔п╓х╔╞╔И╔╓╔╒╔С╔х╓нн╬йЩ╓н╔я╔ц╔╠║╪╔╦╓г
-╩хмя╓╣╓Л╓К╔у╔║╔╓╔К╓РдС╤║╓╥╓ч╓╧║ё
+Samba-common Ц│╞ Samba Ц│╝Ц┌╣Ц┐╪Ц┐░Ц│╗Ц┌╞Ц┐╘Ц┌╓Ц┌╒Ц┐ЁЦ┐┬Ц│╝Д╦║Ф√╧Ц│╝Ц┐▒Ц┐┐Ц┌╠Ц┐╪Ц┌╦Ц│╖
+Д╫©Г■╗Ц│∙Ц┌▄Ц┌▀Ц┐∙Ц┌║Ц┌╓Ц┐╚Ц┌▓Ф▐░Д╬⌡Ц│≈Ц│╬Ц│≥Ц─┌
 
 %description common -l pl
-Samba-common dostarcza pliki niezbЙdne zarСwno dla serwera jak i
-klientСw Samba.
+Samba-common dostarcza pliki niezbд≥dne zarцЁwno dla serwera jak i
+klientцЁw Samba.
 
 %description common -l pt_BR
 Arquivos em comum entre os pacotes samba e samba-clients.
 
 %description common -l ru
-Samba-common содержит файлы, необходимые для работы как клиента, так и
-сервера Samba.
+Samba-common я│п╬п╢п╣я─п╤п╦я┌ я└п╟п╧п╩я▀, п╫п╣п╬п╠я┘п╬п╢п╦п╪я▀п╣ п╢п╩я▐ я─п╟п╠п╬я┌я▀ п╨п╟п╨ п╨п╩п╦п╣п╫я┌п╟, я┌п╟п╨ п╦
+я│п╣я─п╡п╣я─п╟ Samba.
 
 %description common -l uk
-Samba-common м╕стить файли, необх╕дн╕ для роботи як кл╕╓нта, так ╕
-сервера Samba.
+Samba-common п╪Б∙∙я│я┌п╦я┌я▄ я└п╟п╧п╩п╦, п╫п╣п╬п╠я┘Б∙∙п╢п╫Б∙∙ п╢п╩я▐ я─п╬п╠п╬я┌п╦ я▐п╨ п╨п╩Б∙∙Б∙⌠п╫я┌п╟, я┌п╟п╨ Б∙∙
+я│п╣я─п╡п╣я─п╟ Samba.
 
 %package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
-Summary(pl):	ModuЁ PAM smbpass
+Summary(pl):	Moduе┌ PAM smbpass
 Group:		Base
 Obsoletes:	pam_smbpass
 
@@ -331,8 +331,8 @@ smbpasswd (Samba password) database in sync with the unix password
 file.
 
 %description -n pam-pam_smbpass -l pl
-ModuЁ PAMa, ktСry mo©e byФ u©ywany do trzymania pliku smbpasswd (hasЁa
-Samby) zsynchronizowanego z hasЁami unixowymi.
+Moduе┌ PAMa, ktцЁry moе╪e byд┤ uе╪ywany do trzymania pliku smbpasswd (hasе┌a
+Samby) zsynchronizowanego z hasе┌ami unixowymi.
 
 %package -n libsmbclient
 Summary:	libsmbclient - samba client library
@@ -343,7 +343,7 @@ Group:		Libraries
 libsmbclient - library that allows to use samba clients functions.
 
 %description -n libsmbclient -l pl
-libsmbclient - biblioteka pozwalaj╠ca korzystaФ z funcji klienta
+libsmbclient - biblioteka pozwalajд┘ca korzystaд┤ z funcji klienta
 samby.
 
 %package -n libsmbclient-devel
@@ -357,10 +357,10 @@ Requires:	libsmbclient = %{version}
 Header files for libsmbclient.
 
 %description -n libsmbclient-devel
-Pliki nagЁСwkowe dla libsmbclient.
+Pliki nagе┌цЁwkowe dla libsmbclient.
 
 %description -n libsmbclient-devel -l pt_BR
-Arquivos de inclusЦo, bibliotecas e documentaГЦo necessАrios para
+Arquivos de inclusцёo, bibliotecas e documentaц╖цёo necessц║rios para
 desenvolver aplicativos clientes para o samba.
 
 %prep

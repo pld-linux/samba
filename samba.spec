@@ -75,7 +75,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_vfsdir		/usr/lib/%{name}/vfs
 %define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
-%if %{?with_cups}
+%if %{with cups}
 %define		cups_serverbin	%(cups-config --serverbin)
 %endif
 
@@ -712,7 +712,7 @@ touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/lmhosts
 
-%if %{?with_cups}
+%if %{with cups}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
 ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 %endif
@@ -910,7 +910,7 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/libsmbclient.a
 
-%if %{?with_cups}
+%if %{with cups}
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbspool

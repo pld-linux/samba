@@ -38,8 +38,10 @@ case "$1" in
                 daemon $NICELEVEL smbd -D
                 msg_starting nmbd
                 daemon $NICELEVEL nmbd -D
-		msg_starting winbindd
-		daemon $NICELEVEL winbindd
+		if [ $WINBINDD = "yes" ]; then
+			msg_starting winbindd
+			daemon $NICELEVEL winbindd
+		fi
                 RETVAL=$?
                 [ $RETVAL -eq 0 ] && touch /var/lock/subsys/smb
         else
@@ -54,8 +56,10 @@ case "$1" in
                 killproc smbd
                 msg_stopping nmbd
 		killproc nmbd
-		msg_stopping winbindd
-		killproc winbindd
+		if [ $WINBINDD = "yes" ]; then
+			msg_stopping winbindd
+			killproc winbindd
+		fi
                 rm -f /var/lock/subsys/smb >/dev/null 2>&1
         else
                 msg_Not_Running smb

@@ -23,7 +23,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.12
-Release:	1
+Release:	2
 Epoch:		0
 License:	GPL v2
 Group:		Networking/Daemons

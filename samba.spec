@@ -853,7 +853,6 @@ Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
-%if %{with ldap}
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
 Summary(pl):	Schemat LDAP dla samby
@@ -866,7 +865,6 @@ This package contains samba.schema for openldap.
 
 %description -n openldap-schema-samba -l pl
 Ten pakiet zawiera schemat samby dla openldap-a.
-%endif
 
 %prep
 %setup -q
@@ -1054,7 +1052,6 @@ if [ -f /var/lock/subsys/rc-inetd ]; then
 	/etc/rc.d/init.d/rc-inetd reload
 fi
 
-%if %{with ldap}
 %post -n openldap-schema-samba
 if ! grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
 	sed -i -e '
@@ -1089,7 +1086,6 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/ldap restart >&2 || :
 	fi
 fi
-%endif
 
 %triggerpostun -- samba < 1.9.18p7
 if [ "$1" != "0" ]; then

@@ -474,9 +474,9 @@ Static libsmbclient library.
 Statyczna biblioteka libsmbclient.
 
 %package -n smbget
-Summary:        A utility for retrieving files using the SMB protocol
-Summary(pl):    Narzêdzie do pobierania plików protoko³em SMB
-Group:          Applications/Networking
+Summary:	A utility for retrieving files using the SMB protocol
+Summary(pl):	Narzêdzie do pobierania plików protoko³em SMB
+Group:		Applications/Networking
 
 %description -n smbget
 wget-like utility for download files over SMB.
@@ -546,9 +546,9 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-cap
-Convert an incoming Shift-JIS character to the 3 byte hex representation
-used by the Columbia AppleTalk Program (CAP), i.e. :AB. This is used for
-compatibility between Samba and CAP.
+Convert an incoming Shift-JIS character to the 3 byte hex
+representation used by the Columbia AppleTalk Program (CAP), i.e. :AB.
+This is used for compatibility between Samba and CAP.
 
 %description vfs-cap -l pl
 Zamienia znaki kodowane Shift-JIS do trzybajowej szestnastkowej
@@ -585,8 +585,9 @@ A VFS module for hosting a Microsoft Distributed File System Tree.
 
 The Distributed File System (DFS) provides a means of separating the
 logical view of files and directories that users see from the actual
-physical locations of these resources on the network. It allows for higher
-availability, smoother storage expansion, load balancing, and so on.
+physical locations of these resources on the network. It allows for
+higher availability, smoother storage expansion, load balancing, and
+so on.
 
 %description vfs-expand_msdfs -l pl
 
@@ -597,11 +598,12 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-fake_perms
-This module allow Roaming Profile files and directories to be set (on the
-Samba server under UNIX) as read only. This module will, if installed on the
-Profiles share, report to the client that the Profile files and directories
-are writeable. This satisfies the client even though the files will never be
-overwritten as the client logs out or shuts down.
+This module allow Roaming Profile files and directories to be set (on
+the Samba server under UNIX) as read only. This module will, if
+installed on the Profiles share, report to the client that the Profile
+files and directories are writeable. This satisfies the client even
+though the files will never be overwritten as the client logs out or
+shuts down.
 
 %description vfs-fake_perms -l pl
 
@@ -612,12 +614,12 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-netatalk
-Package contain a netatalk VFS module for ease co-existence of Samba and
-netatalk file sharing services.
+Package contain a netatalk VFS module for ease co-existence of Samba
+and netatalk file sharing services.
 
 %description vfs-netatalk -l pl
-Pakiet zawiera modu³ modui³ VFS netatalk umo¿liwiaj±cy wspó³pracê serwisów
-samba i netatalk przy serwowaniu zasobów.
+Pakiet zawiera modu³ modui³ VFS netatalk umo¿liwiaj±cy wspó³pracê
+serwisów samba i netatalk przy serwowaniu zasobów.
 
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV
@@ -770,14 +772,13 @@ Obsoletes:	vscan-kavp
 
 %description vfs-vscan-fsav
 A vfs-module for samba to implement on-access scanning using the
-F-Secure AntiVirus antivirus software (which must be installed to
-use this).
+F-Secure AntiVirus antivirus software (which must be installed to use
+this).
 
 %description vfs-vscan-fsav -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-F-Secure AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ
-ten modu³).
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego F-Secure
+AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
 %setup -q
@@ -837,7 +838,7 @@ cd ../examples/VFS
 mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
-cp /usr/share/automake/config.sub .
+cp %{_datadir}/automake/config.sub .
 %configure
 %{__make} -j1 all
 

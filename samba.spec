@@ -27,12 +27,12 @@ Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.2
 Epoch:		1
-Release:	0.rc1.0.3
+Release:	0.rc2.0.1
 License:	GPL v2
 Group:		Networking/Daemons
 #Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
-Source0:	http://pl.samba.org/samba/ftp/rc/%{name}-%{version}rc1.tar.bz2
-# Source0-md5:	d7196d877882fbbec1df91a33d2530ea
+Source0:	http://pl.samba.org/samba/ftp/rc/%{name}-%{version}rc2.tar.bz2
+# Source0-md5:	dd375cd6c465d7d999ca1c2d83e45362
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd

@@ -16,7 +16,6 @@ Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	samba.PLD.tar.bz2
 Source2:	samba.pamd
-Patch0:		samba-glibc2.1.patch
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Prereq:		/sbin/chkconfig
@@ -116,7 +115,6 @@ internetowej.
 
 %prep
 %setup -q -a1
-#%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
@@ -130,6 +128,7 @@ LDFLAGS="-s" export LDFLAGS \
 	--with-lockdir=/var/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
+	--without-smbwrapper \
 	--with-quotas \
 	--with-syslog \
 	--with-mmap \
@@ -175,10 +174,7 @@ install  packaging/PLD/smb.init		$RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install  packaging/PLD/samba.log	$RPM_BUILD_ROOT/etc/logrotate.d/samba
 install  %{SOURCE2}			$RPM_BUILD_ROOT/etc/pam.d/samba
 
-#install -s source/bin/*.so 	$RPM_BUILD_ROOT/lib/security
-#install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT%{_bindir}
-
-strip --strip-unneeded $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir},/lib/security}/* || :
+strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -191,8 +187,11 @@ $RPM_BUILD_ROOT%{_bindir}/make_smbcodepage c $i \
 $RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
 $RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
-gzip -9nf  $RPM_BUILD_ROOT%{_mandir}/man{1,5,7,8}/* \
-	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README
+gzip -9fn $RPM_BUILD_ROOT%{_mandir}/man{1,5,7,8}/* \
+	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README \
+	docs/textdocs/* docs/*.txt docs/{history,announce,THANKS}
+
+rm -f docs/faq/*.{sgml,txt}
 
 %post
 /sbin/chkconfig --add smb
@@ -214,7 +213,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.gz Manifest.gz WHATSNEW.txt.gz
-%doc Roadmap.gz docs/faq/*.html docs/*.reg.gz
+%doc Roadmap.gz docs/faq docs/*.reg.gz
+%doc docs/textdocs docs/*.txt.gz docs/{history,announce,THANKS}.gz
 
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/nmbd

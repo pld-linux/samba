@@ -1,7 +1,7 @@
 Summary:	SMB client and server
 Summary(pl):	Klient i serwer SMB
 Name:		samba
-Version:	2.0.4b
+Version:	2.0.5a
 Release:	1
 Copyright:	GPL
 Group:		Networking/Daemons
@@ -9,7 +9,7 @@ Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	samba.PLD.tar.bz2
 Source2:	samba.pamd
-Patch0:		samba-glibc2.1.patch
+#Patch0:		samba-glibc2.1.patch
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Prereq:		/sbin/chkconfig 
@@ -72,7 +72,7 @@ internetowej.
 
 %prep
 %setup -q -a1
-%patch0 -p1
+#%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
@@ -87,7 +87,8 @@ LDFLAGS="-s" export LDFLAGS \
 	--bindir=%{_bindir} \
 	--with-privatedir=/etc/samba \
 	--libdir=/etc/samba \
-	--localstatedir=/var \
+	--localstatedir=/var/log/samba \
+	--with-lockdir=/var/lock/samba \
 	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
 	--with-smbwrapper \

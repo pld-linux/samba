@@ -13,6 +13,7 @@
 #%bcond_with	ipv6		# with IPv6 support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	krb5		# without Kerberos5/Heimdal support
+%bcond_with	python		# with python utils, not builds, not packaged now
 #
 %define		vscan_version 0.3.4
 Summary:	SMB server
@@ -73,7 +74,7 @@ BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
-BuildRequires:	python-devel
+%{?with_python:BuildRequires:	python-devel}
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}
@@ -720,7 +721,7 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
-        --with-python \
+        %{?with_python:--with-python} \
 	--with-expsam=xml,%{?with_mysql:mysql} \
 	%{?with_ldapsam:--with-ldapsam} \
 	%{!?with_ldap:--without-ldap} \

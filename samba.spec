@@ -308,6 +308,7 @@ Group:		Applications/Networking
 Requires:	samba-common = %{epoch}:%{version}
 Obsoletes:	smbfs
 Obsoletes:	mount-cifs
+Obsoletes:	smbget
 
 %description client
 Samba-client provides some SMB clients, which complement the build-in
@@ -682,7 +683,7 @@ cd source
 	%{?with_krb5:--with-krb5} \
 	%{!?with_krb5:--without-krb5}
 
-%{__make} everything pam_smbpass
+%{__make} everything pam_smbpass bin/smbget
 %{__cc} %{rpmcflags} %{rpmldflags} client/mount.cifs.c -o client/mount.cifs
 
 cd ../examples/VFS
@@ -725,6 +726,7 @@ install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/%{_lib}/libnss_winbind
 install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
+install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 
 #install source/bin/libsmbclient.so $RPM_BUILD_ROOT/%{_lib}/libsmbclient.so.0
 mv $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
@@ -868,12 +870,14 @@ fi
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbcacls
+%attr(755,root,root) %{_bindir}/smbget
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbsh.1*
+%{_mandir}/man1/smbget.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
 %attr(755,root,root) %{_bindir}/wbinfo

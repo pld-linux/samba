@@ -16,6 +16,7 @@ Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	smb.init
 Source2:	samba.pamd
+Source3:	swat.inetd
 Patch1:		samba-config.patch
 Patch2:		samba-cap.patch
 Patch3:		samba-DESTDIR.patch
@@ -103,6 +104,8 @@ Summary(pl):	Narzêdzie administracyjne serwisu Samba
 Group:		Networking/Admin
 Group(pl):	Sieciowe/Administracja
 Requires:	%{name}
+Requires:	rc-inetd
+Requires:	inetdaemon
 
 %description -n swat
 swat allows a Samba administrator to configure the complex smb.conf file via
@@ -142,7 +145,8 @@ make all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/codepages/src
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/codepages/src \
+	$RPM_BUILD_ROOT/etc/sysconfig/rc-inetd
 
 ( cd source; make install DESTDIR=$RPM_BUILD_ROOT)
 
@@ -158,6 +162,7 @@ install  packaging/PLD/findsmb		$RPM_BUILD_ROOT%{_bindir}
 install  packaging/PLD/smb.init		$RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install  packaging/PLD/samba.log	$RPM_BUILD_ROOT/etc/logrotate.d/samba
 install  %{SOURCE2}			$RPM_BUILD_ROOT/etc/pam.d/samba
+install  %{SOURCE3}		$RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 
 strip $RPM_BUILD_ROOT/{%{_bindir},%{_sbindir}}/* || :
 
@@ -190,6 +195,18 @@ fi
 if [ "$1" = "0" ]; then
 	/etc/rc.d/init.d/smb stop >&2
 	/sbin/chkconfig --del smb
+fi
+
+%post -n swat
+if [ -f /var/lock/subsys/rc-inetd ]; then
+   /etc/rc.d/init.d/rc-inetd restart 1>&2
+else
+   echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet sever" 1>&2
+fi
+
+%postun -n swat
+if [ -f /var/lock/subsys/rc-inetd ]; then
+   /etc/rc.d/init.d/rc-inetd stop
 fi
 
 %clean
@@ -240,3 +257,5 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/swat
 %{_datadir}/swat
 %{_mandir}/man8/swat.8*
+
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/swat

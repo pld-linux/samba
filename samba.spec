@@ -39,7 +39,7 @@ Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/pre/%{name}-%{version}pre1.tar.gz
-# Source0-md5:	0156265c1e95ac662deef386f615504f
+# Source0-md5:	23d18efbebd672c25afa761444c92aad
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd

@@ -87,7 +87,7 @@ LDFLAGS="-s" export LDFLAGS \
 	--with-privatedir=/etc/samba \
 	--libdir=/etc/samba \
 	--localstatedir=/var \
-	--with-swatdir=/usr/share/swat \
+	--with-swatdir=%{_datadir}/swat \
 	--with-smbmount \
 	--with-smbwrapper \
 	--with-quotas \
@@ -106,7 +106,7 @@ install -d $RPM_BUILD_ROOT/etc/samba/codepages/src \
 	$RPM_BUILD_ROOT/lib/security \
 	$RPM_BUILD_ROOT/usr/{bin,man/man{1,5,7,8},sbin} \
 	$RPM_BUILD_ROOT/var/{lock,log,spool}/samba \
-	$RPM_BUILD_ROOT/usr/share/swat/{include,images,help}
+	$RPM_BUILD_ROOT%{_datadir}/swat/{include,images,help}
 
 ( cd source;
 make install \
@@ -116,7 +116,7 @@ make install \
 	SBINDIR=$RPM_BUILD_ROOT/usr/sbin \
 	LIBDIR=$RPM_BUILD_ROOT/etc/samba \
 	PRIVATEDIR=$RPM_BUILD_ROOT/etc/samba \
-	SWATDIR=$RPM_BUILD_ROOT/usr/share/swat \
+	SWATDIR=$RPM_BUILD_ROOT%{_datadir}/swat \
 	VARDIR=$RPM_BUILD_ROOT/var
 )
 
@@ -209,7 +209,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc swat/README.gz
 %attr(755,root,root) /usr/sbin/swat
-/usr/share/swat
+%{_datadir}/swat
 %{_mandir}/man8/swat.8.gz
 
 %changelog

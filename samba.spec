@@ -34,7 +34,7 @@ Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.3
 Epoch:		1
-Release:	1
+Release:	0.2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -496,6 +496,18 @@ Summary:	VFS module to audit file access
 Summary(pl):	Modu³ VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}
+
+%package vfs-shadow-copy
+Summary:	VFS module to make automatic copy of data in samba share
+Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}
+
+%description vfs-shadow-copy
+VFS module to make automatic copy of data in samba share
+
+%description vfs-shadow-copy -l pl
+Modu³ VFS do tworzenia automatycznych kopii danych w udziale samby
 
 %description vfs-audit
 A simple module to audit file access to the syslog facility. The
@@ -1064,6 +1076,10 @@ fi
 %attr(755,root,root) %{_vfsdir}/[d-n]*.so
 %attr(755,root,root) %{_vfsdir}/cap.so
 %attr(755,root,root) %{_vfsdir}/readonly.so
+
+%files vfs-shadow-copy
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/shadow_copy.so
 
 #%files vfs-block
 #%defattr(644,root,root,755)

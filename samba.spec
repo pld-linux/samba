@@ -7,6 +7,7 @@
 # - new package with McAfee vscan - I dunno what to do with daemon
 #
 # Conditional build:
+%bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
 %bcond_without	mysql		# without MySQL support
 %bcond_without	pgsql		# without PostgreSQL support
@@ -16,6 +17,10 @@
 %bcond_without	krb5		# without Kerberos5/Heimdal support
 %bcond_without	python		# without python libs/utils
 #
+# ADS requires krb5 and LDAP
+%if %{without krb5} || %{without ldap}
+%undefine	with_ads
+%endif
 %define		vscan_version 0.3.5
 Summary:	SMB server
 Summary(cs):	Server SMB
@@ -862,7 +867,7 @@ cd source
 	--with-libsmbclient \
 	--with-pam \
 	--with-pam_smbpass \
-	--with%{!?with_ldap:out}-ads \
+	--with%{!?with_ads:out}-ads \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--with-quotas \
 	--with-readline \

@@ -9,8 +9,8 @@ Summary(it):	Server SMB
 Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
-Version:	2.2.1a
-Release:	4
+Version:	2.2.2
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -127,6 +127,8 @@ Group(pl):	Sieciowe/Administacyjne
 Requires:	%{name}
 Requires:	rc-inetd >= 0.8.2
 Requires:	inetdaemon
+Provides:	samba-swat
+Obsoletes:	samba-swat
 
 %description -n swat
 swat allows a Samba administrator to configure the complex smb.conf

@@ -84,11 +84,11 @@ BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
 %{?with_python:BuildRequires:	python-devel}
 PreReq:		rc-scripts
+PreReq:		setup >= 2.4.6-7
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate
 Requires:	pam >= 0.66
-Requires:	setup >= 2.4.6-7
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_vfsdir		%{_libdir}/%{name}/vfs

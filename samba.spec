@@ -198,7 +198,7 @@ ChGW
 %package libsmbclient-devel
 Summary:	ChGW
 Group:		Libraries
-Requires:	libsmbclient
+Requires:	%{name}-libsmbclient = %{version}
 
 %description libsmbclient-devel
 ChGW

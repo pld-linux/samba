@@ -13,12 +13,12 @@ Summary(it):	Server SMB
 Summary(pl):	Serwer SMB
 Summary(tr):	SMB sunucusu
 Name:		samba
-Version:	2.2.3
-Release:	4
+Version:	2.2.3a
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 URL:		http://www.samba.org/
-Source0:	ftp://ftp.samba.org/pub/samba/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.samba.org/pub/samba/%{name}-%{version}.tar.bz2
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -32,6 +32,8 @@ Patch4:		%{name}-smbprint.patch
 Patch5:		%{name}-autoconf.patch
 Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
+Patch8:		%{name}-pam_smbpass.patch 
+Patch9:		%{name}-srv_spoolss_nt.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
@@ -170,6 +172,20 @@ packages of Samba.
 Samba-common dostarcza pliki niezbêdne zarówno dla serwera jak i
 klientów Samba.
 
+%package -n pam_smbpass
+Summary:	PAM Samba Password Module
+Summary(pl):	Modu³ PAM smbpass
+Group:		Base
+
+%description -n pam_smbpass
+PAM module which can be used on conforming systems to
+keep the smbpasswd (Samba password) database in sync with the unix
+password file.
+
+%description -n pam_smbpass -l pl
+Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
+(has³a Samby) zsynchronizowanego z has³ami unixowymi.
+
 %prep
 %setup -q
 %patch1 -p1
@@ -179,6 +195,8 @@ klientów Samba.
 %patch5 -p1
 #%patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 %build
 cd source
@@ -203,13 +221,16 @@ autoconf
 	--with-sslinc=%{_prefix} \
 	%{?_with_ldap:--with-ldapsam}
 
-%{__make} all
+mv Makefile Makefile.old
+sed -e "s#-symbolic##g" Makefile.old > Makefile
+
+%{__make} all nsswitch pam_smbpass
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
-	$RPM_BUILD_ROOT/sbin
+	$RPM_BUILD_ROOT/{sbin,lib/security}
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
@@ -225,6 +246,11 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
 
+install nsswitch/libnss_wins.so $RPM_BUILD_ROOT/lib/libnss_wins.so.2
+install nsswitch/pam_winbind.so $RPM_BUILD_ROOT/lib/security/
+install bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
+install bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
+
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
@@ -236,6 +262,8 @@ rm -f docs/faq/*.{sgml,txt}
 rm -f docs/htmldocs/*.[0-9].html
 
 gzip -9nfr Manifest README Roadmap WHATSNEW.txt docs/{announce,history,THANKS} docs/textdocs/*.txt
+gzip -9nfr source/nsswitch/README source/pam_smbpass/{CHAN*,README,TODO}
+gzip -9nfr packaging/Mandrake/system-auth-winbind.pamd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -281,6 +309,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
+%doc docs/nsswitch/README.gz packaging/Mandrake/*.gz
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/winbindd
@@ -288,6 +317,10 @@ fi
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
+
+%doc docs/nsswitch/README.gz winbind.pam*
+%attr(755,root,root) /lib/libnss_wins*
+%attr(755,root,root) /lib/security/pam_winbind.so
 
 %dir %{_libdir}
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
@@ -333,6 +366,8 @@ fi
 %{_mandir}/man1/smbcacls.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
+%attr(755,root,root) %{_bindir}/wbinfo
+%{_mandir}/man1/wbinfo.1*
 
 %files common
 %defattr(644,root,root,755)
@@ -360,5 +395,9 @@ fi
 %attr(755,root,root) %{_sbindir}/swat
 %{_datadir}/swat
 %{_mandir}/man8/swat.8*
-
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/swat
+
+%files -n pam_smbpass
+%defattr(644,root,root,755)
+%doc docs/pam_smbpass/*.gz docs/pam_smbpass/samples
+%attr(755,root,root) /lib/security/pam_smbpass.so

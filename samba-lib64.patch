@@ -45,8 +45,8 @@ diff -durN samba-3.0.1.orig/source/aclocal.m4 samba-3.0.1/source/aclocal.m4
  fi
  ])
 diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
---- samba-3.0.1.orig/source/configure.in	2003-12-15 04:36:25.000000000 +0100
-+++ samba-3.0.1/source/configure.in	2004-12-30 13:56:21.871183496 +0100
+--- samba-3.0.2a.orig/source/configure.in	2003-12-15 04:36:25.000000000 +0100
++++ samba-3.0.2a/source/configure.in	2004-12-30 13:56:21.871183496 +0100
 @@ -22,7 +22,7 @@
      mandir="\${prefix}/share/man"
      logfilebase="\${VARDIR}/log/samba"
@@ -95,7 +95,7 @@ diff -durN samba-3.0.1.orig/source/configure.in samba-3.0.1/source/configure.in
 @@ -1643,7 +1643,7 @@
  
      if test "$ICONV_FOUND" = yes; then
- 	LDFLAGS=$save_LDFLAG
+ 	LDFLAGS=$save_LDFLAGS
 -        LIB_ADD_DIR(LDFLAGS, "$i/lib")
 +        LIB_ADD_DIR(LDFLAGS, "$i/lib64")
          CFLAGS_ADD_DIR(CPPFLAGS, "$i/include")

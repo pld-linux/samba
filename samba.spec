@@ -21,7 +21,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -462,7 +462,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
 
-install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/lib/libnss_wins.so.2
+install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/lib/libnss_winbind.so.2
 install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
@@ -539,7 +539,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
 
-%attr(755,root,root) /lib/libnss_wins*
+%attr(755,root,root) /lib/libnss_*
 %attr(755,root,root) /lib/security/pam_winbind.so
 
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
@@ -555,7 +555,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
-#%%{_mandir}/man8/pdbedit.8*
+%{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
 
 %dir /home/services/samba
@@ -583,7 +583,7 @@ fi
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
-#%%{_mandir}/man1/smbsh.1*
+%{_mandir}/man1/smbsh.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
 %attr(755,root,root) %{_bindir}/wbinfo

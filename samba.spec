@@ -40,7 +40,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.10
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -529,7 +529,7 @@ Backend CUPS-a drukuj眂y na drukarkach SMB.
 Summary:	Samba python tools and libraries
 Summary(pl):	Narz阣zia i biblioteki pythona do samby
 Group:		Applications/Networking
-%pyrequires_eq libs
+%pyrequires_eq	python-libs
 
 %description -n python-samba
 Samba python tools and libraries.

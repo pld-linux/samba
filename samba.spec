@@ -54,7 +54,7 @@ mozliwo¶ci kontrolowania domeny NT.
 Summary:	Samba Web Administration Tool
 Summary(pl):	Narzêdzie administracyjne serwisu Samba
 Group:		Networking/Admin
-Group(pl):	Sieciowe/Administacyjne
+Group(pl):	Sieciowe/Administracyjne
 Requires:	%{name}
 
 %description -n swat

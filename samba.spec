@@ -40,7 +40,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.11
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -908,7 +908,7 @@ cd source
 	--with%{!?with_krb5:out}-krb5
 
 %{__make} proto
-%{__make} everything pam_smbpass bin/smbget client/mount.cifs
+%{__make} everything pam_smbpass bin/smbget client/mount.cifs bin/vfstest
 
 cd ../examples/VFS
 %{__autoconf}
@@ -956,6 +956,7 @@ install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
+install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
@@ -1169,6 +1170,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/pdbedit
+%attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}/charset
 %attr(755,root,root) %{_libdir}/%{name}/charset/*.so
 %{_mandir}/man1/editreg.1*

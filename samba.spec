@@ -37,7 +37,7 @@ Epoch:		1
 Release:	1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/rc/%{name}-%{version}.tar.bz2
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
 # Source0-md5:	1f0be8e0bd09ade4f079dfbbba7c9eb9
 Source1:	smb.init
 Source2:	%{name}.pamd

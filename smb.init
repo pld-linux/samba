@@ -70,7 +70,7 @@ case "$1" in
 	;;
   reload)
 	if [ -f /var/lock/subsys/smb ]; then
-	        msg_reload smb
+	        msg_reloading smb
 	        killproc smbd -HUP
 	else
 	        msg_Not_Running smb

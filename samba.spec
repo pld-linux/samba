@@ -35,7 +35,7 @@ Patch7:		%{name}-nmbd_socket.patch
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
 Requires:	logrotate
-Requires:	samba-common = %{version} 
+Requires:	samba-common = %{version}
 BuildRequires:	autoconf
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	readline-devel >= 4.2
@@ -202,21 +202,21 @@ autoconf
 	--with-ssl \
 	--with-sslinc=%{_prefix} \
 	%{?_with_ldap:--with-ldapsam}
-	
-%{__make} all 
+
+%{__make} all
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/{var/{lock,log,log/archiv,spool},home}/samba \
-	$RPM_BUILD_ROOT/sbin 
+	$RPM_BUILD_ROOT/sbin
 
 cd source
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
 cd ..
 
-ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs 
+ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba

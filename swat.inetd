@@ -7,3 +7,4 @@ MAX_CONNECTIONS=400
 USER=root
 SERVER=tcpd
 DAEMON=/usr/sbin/swat
+FAMILY=ipv4

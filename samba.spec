@@ -22,7 +22,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	2.2.8a
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -41,9 +41,10 @@ Patch6:		%{name}-smbadduser.patch
 Patch7:		%{name}-nmbd_socket.patch
 Patch8:		%{name}-vfs.patch
 Patch9:		%{name}-quota.patch
-Patch10:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
+Patch10:	http://v6web.litech.org/samba/%{name}-2.2.8a+IPv6-20030712.diff
 Patch11:	%{name}-DESTDIR-fix.patch
 Patch12:	%{name}-CIFS-extensions.patch
+Patch13:	%{name}-allow-suid.patch
 URL:		http://www.samba.org/
 Prereq:		/sbin/chkconfig
 Requires:	pam >= 0.66
@@ -412,6 +413,7 @@ Backend CUPS-a drukuj眂y na drukarkach SMB.
 %{?_with_ipv6:%patch10 -p1}
 %patch11 -p1
 #%patch12 -p1
+%patch13 -p1
 
 %build
 cd source

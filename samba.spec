@@ -611,6 +611,7 @@ sed -e "s#-symbolic##g" Makefile.old > Makefile
 
 cd ../examples/VFS
 %{__autoconf}
+chmod a+x configure
 %configure
 %{__make}
 mv README{,.vfs}

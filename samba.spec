@@ -62,7 +62,7 @@ BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
-BuildRequires:  python-devel
+BuildRequires:	python-devel
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{version}
@@ -272,10 +272,10 @@ SWAT - ferramentada Web de configuraÁ„o do Samba.
 ’Ã¿¬Ã≈Œœ«œ Web-¬“¡’⁄≈“’.
 
 %package pdb-mysql
-Summary:        Samba MySQL password database plugin
-Summary(pl):    Wtyczka Samby do przechowywania hase≥ w bazie MySQL
-Group:          Networking/Daemons
-Requires:       %{name} = %{version}
+Summary:	Samba MySQL password database plugin
+Summary(pl):	Wtyczka Samby do przechowywania hase≥ w bazie MySQL
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}
 
 %description pdb-mysql
 Samba MySQL password database plugin.
@@ -284,10 +284,10 @@ Samba MySQL password database plugin.
 Wtyczka Samby do przechowywania hase≥ w bazie MySQL.
 
 %package pdb-xml
-Summary:        Samba XML password database plugin
-Summary(pl):    Wtyczka Samby do przechowywania hase≥ w bazie XML
-Group:          Networking/Daemons
-Requires:       %{name} = %{version}
+Summary:	Samba XML password database plugin
+Summary(pl):	Wtyczka Samby do przechowywania hase≥ w bazie XML
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}
 
 %description pdb-xml
 Samba XML password database plugin.
@@ -379,10 +379,11 @@ Samba-common Õ¶”‘…‘ÿ ∆¡ Ã…, Œ≈œ¬»¶ƒŒ¶ ƒÃ— “œ¬œ‘… —À ÀÃ¶§Œ‘¡, ‘¡À ¶
 ”≈“◊≈“¡ Samba.
 
 %package winbind
-URL:    http://www.samba.org
-Summary: Samba-winbind daemon, utilities and documentation
-Group: System/Servers
-Requires: %{name}-common = %{version}
+URL:		http://www.samba.org
+Summary:	Samba-winbind daemon, utilities and documentation
+Group:		System/Servers
+######		Unknown group!
+Requires:	%{name}-common = %{version}
 Requires(post,preun):	/sbin/chkconfig
 
 %description winbind
@@ -515,13 +516,13 @@ Requires:	clamav
 Provides:	%{name}-vscan = %{version}-%{release}
 
 %description vfs-vscan-clamav
-A vfs-module for samba to implement on-access scanning using the ClamAV
-antivirus software (which must be installed to use this).
+A vfs-module for samba to implement on-access scanning using the
+ClamAV antivirus software (which must be installed to use this).
 
 %description vfs-vscan-clamav -l pl
 Modu≥ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego
-ClamAV (ktÛre musi byÊ zainstalowane, aby wykorzystaÊ ten modu≥).
+dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego ClamAV
+(ktÛre musi byÊ zainstalowane, aby wykorzystaÊ ten modu≥).
 
 %package vfs-vscan-fprot
 Summary:	On-access virus scanning for samba using FPROT
@@ -537,8 +538,8 @@ antivirus software (which must be installed to use this).
 
 %description vfs-vscan-fprot -l pl
 Modu≥ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego
-FPROT (ktÛre musi byÊ zainstalowane, aby wykorzystaÊ ten modu≥).
+dostÍpu do plikÛw korzystaj±c z oprogramowania antywirusowego FPROT
+(ktÛre musi byÊ zainstalowane, aby wykorzystaÊ ten modu≥).
 
 %package vfs-vscan-openantivirus
 Summary:	On-access virus scanning for samba using OpenAntivirus
@@ -669,7 +670,7 @@ cd source
 	--with-libsmbclient \
 	--with-lockdir=/var/lock/samba \
 	--with-logfilebase=/var/log/samba \
-	--libdir=/usr/lib/samba \
+	--libdir=%{_libdir}/samba \
 	--with-mmap \
 	--with-netatalk \
 	--without-smbwrapper \
@@ -881,8 +882,8 @@ fi
 
 %files winbind
 %defattr(644,root,root,755)
-%{_sbindir}/winbindd
-%{_bindir}/wbinfo
+%attr(755,root,root) %{_sbindir}/winbindd
+%attr(755,root,root) %{_bindir}/wbinfo
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
@@ -1062,7 +1063,7 @@ fi
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-mks32.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mksd.so
-%endif 
+%endif
 
 %files vfs-vscan-kavp
 %defattr(644,root,root,755)

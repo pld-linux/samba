@@ -71,9 +71,7 @@ Requires:	logrotate
 Requires:	pam >= 0.66
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_sysconfdir	/etc/samba
 %define		_vfsdir		/usr/lib/%{name}/vfs
-%define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
 %if %{with cups}
 %define		cups_serverbin	%(cups-config --serverbin)
@@ -673,7 +671,7 @@ cd source
 	--with-pam \
 	--with-pam_smbpass \
 	--with-ads \
-	--with-privatedir=%{_sysconfdir} \
+	--with-privatedir=%{_sysconfdir}/samba \
 	--with-quotas \
 	--with-readline \
 	--with-smbmount \

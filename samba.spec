@@ -204,7 +204,7 @@ Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
+%{?_with_ipv6:%patch12 -p1}
 
 %build
 cd source

@@ -388,7 +388,7 @@ Requires:	libsmbclient = %{version}
 %description -n libsmbclient-devel
 Header files for libsmbclient.
 
-%description -n libsmbclient-devel
+%description -n libsmbclient-devel -l pl
 Pliki nag³ówkowe dla libsmbclient.
 
 %description -n libsmbclient-devel -l pt_BR
@@ -451,7 +451,7 @@ Requires:	samba = %{version}
 %description vfs-recycle
 VFS module to add recycle bin facility to a samba share.
 
-%description vfs-block -l pl
+%description vfs-recycle -l pl
 Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 
 %package vfs-vscan-clamav

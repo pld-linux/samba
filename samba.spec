@@ -544,6 +544,41 @@ Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
 dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
+%package vfs-vscan-mks
+Summary:	On-access virus scanning for samba using mks
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa mks
+Group:		Networking/Daemons
+Obsoletes:	vscan-mks
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-mks
+A vfs-module for samba to implement on-access scanning using the mks
+antivirus software (which must be installed to use this).
+
+%description vfs-vscan-mks -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego mks
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
+%package vfs-vscan-kavp
+Summary:	On-access virus scanning for samba using Kaspersky AVP
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Kaspersky AVP
+Group:		Networking/Daemons
+Obsoletes:	vscan-kavp
+Provides:	%{name}-vscan
+Requires:	samba = %{version}
+
+%description vfs-vscan-kavp
+A vfs-module for samba to implement on-access scanning using the Kaspersky AVP
+antivirus software (which must be installed to use this).
+
+%description vfs-vscan-kavp -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego Kaspersky AVP
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
+
 %prep
 %setup -q
 #%{?_with_ipv6:%patch1 -p1}
@@ -879,4 +914,16 @@ fi
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+
+%files vfs-vscan-mks
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-mks32.conf
+%attr(755,root,root) %{_vfsdir}/vscan-mksd.so
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+
+%files vfs-vscan-kavp
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vscan-kavp.conf
+%attr(755,root,root) %{_vfsdir}/vscan-kavp.so
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}

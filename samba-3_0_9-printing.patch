@@ -326,7 +326,7 @@ diff -ruBb --exclude-from=../../../samba-cvs/diff.excludes samba-3.0.9-orig/sour
 +		ctx.printing_type,
 +		ctx.lpqcommand );
 +
-+	buffer = smb_xmalloc( sizeof(char)*len );
++	buffer = SMB_XMALLOC_ARRAY(char, len); 
 +
 +	/* now pack the buffer */
 +	newlen = tdb_pack( buffer, len, "fdP",

@@ -697,7 +697,7 @@ Summary(pl):	Skaner antywirusowy online wykorzystuj±cy F-Secure AntiVirus
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-kavp
+Obsoletes:	vscan-fsav
 
 %description vfs-vscan-fsav
 A vfs-module for samba to implement on-access scanning using the

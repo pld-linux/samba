@@ -2,12 +2,12 @@ Summary:	SMB client and server
 Summary(pl):	Klient i serwer SMB
 Name:		samba
 Version:	2.0.3
-Release:	1
+Release:	2
 Copyright:	GPL
-Group:		Daemons
-Group(pl):	Serwery
+Group:		Networking/Daemons
+Group(pl):	Sieciowe/Serwery
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
-Source1:	%{name}-PLD.tar.gz
+Source1:	%{name}.PLD.tar.bz2
 Patch0:		%{name}-glibc2.1.patch
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-cap.patch
@@ -49,6 +49,25 @@ MS i zarzadzania baz± WINS.
 UWAGA: w przeciwieñstwie do wersji 2.0.2 aktualnie samba pozbawiona jest
 mozliwo¶ci kontrolowania domeny NT.
 
+%package -n swat
+Summary:	Samba Web Administration Tool
+Summary(pl):	Narzêdzie administracyjne serwisu Samba
+Group:		Networking/Admin
+Group(pl):	Sieciowe/Administacyjne
+Requires:	%{name}
+
+%description -n swat
+swat allows a Samba administrator to configure the complex smb.conf
+file via a Web browser. In addition, a swat configuration page has
+help links to all the configurable options in the smb.conf file
+allowing an administrator to easily look up the effects of any change.
+
+swat is run from inetd
+
+%description -n swat -l pl
+swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy przegl±darki
+internetowej.
+
 %prep
 %setup -q -a1
 %patch0 -p1
@@ -58,30 +77,31 @@ mozliwo¶ci kontrolowania domeny NT.
 %build
 cd source
 autoconf
-CFLAGS=$RPM_OPT_FLAGS LDFLAGS=-s \
-    ./configure \
-	%{buildarch}-`echo %{buildos} | tr A-Z a-z` \
-	--sysconfdir=/etc/samba \
-	--with-smbmount \
-	--with-smb-wrapper \
-	--with-quotas \
+LDFLAGS="-s" export LDFLAGS \
+    %configure \
 	--prefix=/usr \
+	--sysconfdir=/etc/samba \
+	--sbindir=/usr/sbin \
+	--bindir=/usr/bin \
 	--with-privatedir=/etc/samba \
 	--libdir=/etc/samba \
 	--localstatedir=/var \
-	--sbindir=/usr/sbin \
-	--bindir=/usr/bin \
-	--with-swatdir=/usr/share/swat
+	--with-swatdir=/usr/share/swat \
+	--with-smbmount \
+	--with-smbwrapper \
+	--with-quotas \
+	--with-syslog \
+	--with-automount 
 #	--with-krb5=/usr \
 	
-make all smbwrapper
+make all smbwrapper bin/smbrun bin/debug2html
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/samba/codepages/src
-install -d $RPM_BUILD_ROOT/etc/{logrotate.d,pam.d}
+install -d $RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,sysconfig}
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -d $RPM_BUILD_ROOT/home/samba
 install -d $RPM_BUILD_ROOT/lib/security
@@ -107,11 +127,6 @@ make prefix=$RPM_BUILD_ROOT/usr \
 install  source/codepages/codepage_def.* \
     $RPM_BUILD_ROOT/etc/samba/codepages/src
 
-install  docs/manpages/*.1 $RPM_BUILD_ROOT/usr/man/man1
-install  docs/manpages/*.5 $RPM_BUILD_ROOT/usr/man/man5
-install  docs/manpages/*.7 $RPM_BUILD_ROOT/usr/man/man7
-install  docs/manpages/*.8 $RPM_BUILD_ROOT/usr/man/man8
-
 install  packaging/PLD/smb.conf		$RPM_BUILD_ROOT/etc/samba
 install  packaging/PLD/smbusers		$RPM_BUILD_ROOT/etc/samba
 install  packaging/PLD/smbprint		$RPM_BUILD_ROOT/usr/bin
@@ -121,34 +136,27 @@ install  packaging/PLD/smb.init		$RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install  packaging/PLD/samba.pam	$RPM_BUILD_ROOT/etc/pam.d/samba
 install  packaging/PLD/samba.log	$RPM_BUILD_ROOT/etc/logrotate.d/samba
 
-install swat/help/*.html docs/htmldocs/*.html \
-    $RPM_BUILD_ROOT/usr/share/swat/help
-install swat/images/*.gif $RPM_BUILD_ROOT/usr/share/swat/images
-install swat/include/*.html $RPM_BUILD_ROOT/usr/share/swat/include
-
-mv swat/README swat/README.swat
-
-install -s source/bin/*.so $RPM_BUILD_ROOT/lib/security
-install -s source/bin/smbsh $RPM_BUILD_ROOT/usr/bin
+install -s source/bin/*.so 	$RPM_BUILD_ROOT/lib/security
+install -s source/bin/{smbsh,smbrun,debug2html} $RPM_BUILD_ROOT/usr/bin
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
-echo 127.0.0.1 > $RPM_BUILD_ROOT/etc/samba/lmhosts
+echo 127.0.0.1 localhost > $RPM_BUILD_ROOT/etc/samba/lmhosts
+
+echo "NICELEVEL=+5" > $RPM_BUILD_ROOT/etc/sysconfig/samba
 
 for i in 437 737 850 852 861 866 932 949 950 936; do
 $RPM_BUILD_ROOT/usr/bin/make_smbcodepage c $i \
 $RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
 $RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
-gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/*
-gzip -9  README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README.swat
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/* \
+	README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README
 
 %post
 /sbin/chkconfig --add smb
 
+%post -n swat
 # Not for PLD
 #if !( grep ^[:space:]*swat /etc/services > /dev/null ) then
 #echo 'swat	901/tcp		# Swat service used via inetd' >> /etc/services
@@ -165,6 +173,9 @@ if [ $1 = 0 ]; then
     /etc/rc.d/init.d/smb stop >&2
     /sbin/chkconfig --del smb
 fi
+
+%preun -n swat
+#if [ $1 = 0 ]; then
 # Not for PLD 
 #    cd /etc
 #    tmpfile=/etc/tmp.$$
@@ -174,47 +185,55 @@ fi
 #    mv $tmpfile services
 #fi
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %files
 %defattr(644,root,root,755)
-%doc README.gz Manifest.gz WHATSNEW.txt.gz swat/README.swat.gz
+%doc README.gz Manifest.gz WHATSNEW.txt.gz
 %doc Roadmap.gz docs/faq/*.html docs/*.reg.gz 
 
 %attr(755,root,root) /usr/bin/*
-%attr(755,root,root) /usr/sbin/*
+%attr(755,root,root) /usr/sbin/nmbd
+%attr(755,root,root) /usr/sbin/smbd
+
 
 %dir /etc/samba
 %config(noreplace) %verify(not size mtime md5) /etc/samba/smb.conf
-%attr(600,root,root) %config %verify(not size mtime md5) /etc/samba/smbusers
-%attr(640,root,root) %config %verify(not size mtime md5) /etc/samba/lmhosts
+%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) /etc/samba/smbusers
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/samba/lmhosts
 
-%attr(750,root,root) %config /etc/rc.d/init.d/smb
+%attr(750,root,root) /etc/rc.d/init.d/smb
+%attr(640,root,root) %config %verify(not size mtime md5) /etc/sysconfig/samba
 %attr(640,root,root) /etc/logrotate.d/samba
 %attr(640,root,root) /etc/pam.d/samba
 
 %attr(755,root,root) /lib/security/*.so
 
-%attr(644,root, man) /usr/man/man[1578]/*
+/usr/man/man[157]/*
+/usr/man/man8/nmbd.8.gz
+/usr/man/man8/smbd.8.gz
+/usr/man/man8/smbmnt.8.gz
+/usr/man/man8/smbmount.8.gz
+/usr/man/man8/smbpasswd.8.gz
+/usr/man/man8/smbumount.8.gz
 
 %dir /home/samba
-%dir /etc/samba/codepages
-/etc/samba/codepages/*
+/etc/samba/codepages
 
-%dir /usr/share/swat
+%dir /var/lock/samba
+%ghost /var/lock/samba/*
 
-%dir /usr/share/swat/help
-/usr/share/swat/help/*.html
+%attr(0750,root,root) %dir /var/log/samba
+%attr(1777,root,root) %dir /var/spool/samba
 
-%dir /usr/share/swat/include
-/usr/share/swat/include/*.html
+%files -n swat
+%defattr(644,root,root,755)
+%doc swat/README.gz
+%attr(755,root,root) /usr/sbin/swat
+/usr/share/swat
+/usr/man/man8/swat.8.gz
 
-%dir /usr/share/swat/images
-/usr/share/swat/images/*.gif
-
-%attr(750,root,root) %dir /var/lock/samba
-%attr(640,root,root) /var/lock/samba/*
-
-%attr(0750,root, root) %dir /var/log/samba
-%attr(1777,root, root) %dir /var/spool/samba
 
 %changelog
 * Sun Mar 28 1999 Ziemek Borowski <zmb@ziembor.waw.pl>

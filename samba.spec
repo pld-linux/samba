@@ -1,12 +1,10 @@
-# TODO:
-# - SECURITY: http://securitytracker.com/alerts/2004/Aug/1011097.html (upgrade to 2.2.11)
 #
 # Conditional build:
-# _without_cups	- without CUPS support
-# _with_ldap	- with LDAP-based auth (instead of smbpasswd)
-# _with_ipv6	- with IPv6 support
+%bcond_without	cups	# without CUPS support
+%bcond_with	ipv6	# with IPv6 support
+%bcond_with	ldap	# with LDAP-based auth (instead of smbpasswd)
 #
-%define		vscan_version 0.3.4
+%define		vscan_version 0.3.5
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -24,12 +22,12 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	2.2.10
-Release:	1
+Version:	2.2.11
+Release:	0.1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	14033253e9ebbf3d6c1612468ad8914b
+Source0:	http://us4.samba.org/samba/ftp/%{name}-%{version}.tar.gz
+# Source0-md5:	3aa08a4821fd1ba03b603ac2ff4bf071
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -37,7 +35,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	acbcb28cff080dcf2ee732b7f2c0f949
+# Source7-md5:	5f173d549014985d681478897135915b
 Patch1:		%{name}-config.patch
 Patch2:		%{name}-DESTDIR.patch
 Patch3:		%{name}-manpages_PLD_fixes.patch
@@ -53,10 +51,10 @@ Patch12:	%{name}-CIFS-extensions.patch
 Patch13:	%{name}-allow-suid.patch
 URL:		http://www.samba.org/
 BuildRequires:	autoconf
-%{!?_without_cups:BuildRequires:	cups-devel}
+%{?with_cups:BuildRequires:	cups-devel}
 BuildRequires:	libtool >= 1.4.2
 BuildRequires:	ncurses-devel >= 5.2
-%{?_with_ldap:BuildRequires:	openldap-devel}
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.6m
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
@@ -65,7 +63,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	logrotate
 Requires:	openssl >= 0.9.6m
 Requires:	pam >= 0.66
-Requires:	samba-common = %{version}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
@@ -73,7 +71,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
-%if 0%{!?_without_cups:1}
+%if %{with_cups}
 %define		cups_serverbin	%(cups-config --serverbin)
 %endif
 
@@ -184,7 +182,7 @@ takich jak MS Windows, OS/2 a tak¿e maszyn linuksowych. W pakiecie
 znajduje siê równie¿ oprogramowanie klienckie. Samba u¿ywa protoko³u
 NetBIOS po TCP/IP (NetBT) i nie wymaga protoko³u NetBEUI. Ta wersja ma
 pe³ne wsparcie dla blokowania plików, a tak¿e wsparcie dla kodowania
-hase³ w standardzie MS i zarzadzania baz± WINS.
+hase³ w standardzie MS i zarz±dzania baz± WINS.
 
 %description -l pt_BR
 O Samba provê um servidor SMB que pode ser usado para oferecer
@@ -241,7 +239,7 @@ Summary(pt_BR):	Samba SWAT e documentação Web
 Summary(ru):	ðÒÏÇÒÁÍÍÁ ËÏÎÆÉÇÕÒÁÃÉÉ SMB-ÓÅÒ×ÅÒÁ Samba
 Summary(uk):	ðÒÏÇÒÁÍÁ ËÏÎÆÉÇÕÒÁÃ¦§ SMB-ÓÅÒ×ÅÒÁ Samba
 Group:		Networking/Admin
-Requires:	%{name}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	rc-inetd >= 0.8.2
 Requires:	inetdaemon
 Provides:	samba-swat
@@ -279,7 +277,7 @@ Summary(pt_BR):	Cliente SMB do samba
 Summary(ru):	ëÌÉÅÎÔÓËÉÅ ÐÒÏÇÒÁÍÍÙ Samba (SMB)
 Summary(uk):	ëÌ¦¤ÎÔÓØË¦ ÐÒÏÇÒÁÍÉ Samba (SMB)
 Group:		Applications/Networking
-Requires:	samba-common = %{version}
+Requires:	samba-common = %{epoch}:%{version}-%{release}
 Obsoletes:	smbfs
 
 %description client
@@ -301,9 +299,9 @@ Samba-client ¤Ï Linux ¾å¤Ë´Þ¤Þ¤ì¤Æ¤¤¤ë SMB ¥Õ¥¡¥¤¥ë¥·¥¹¥Æ¥à¤òÊä¤¦ SMB
 ¥×¥ê¥ó¥¿¤Ø¤Î°õºþ¤òµö²Ä¤·¤Þ¤¹¡£
 
 %description client -l pl
-Samba-client dostarcza pewne programy które uzupe³niaj± system plików
-SMB zawarty w j±drze. Pozwala na wspó³dzielenie i drukowanie w sieci
-SMB.
+Samba-client dostarcza programy uzupe³niaj±ce obs³ugê systemu plików
+SMB zawarty w j±drze. Pozwalaj± one na wspó³dzielenie zasobów SMB i
+drukowanie w sieci SMB.
 
 %description client -l pt_BR
 O pacote samba-clientes prove alguns clientes SMB, que complementam o
@@ -365,7 +363,7 @@ smbpasswd (Samba password) database in sync with the unix password
 file.
 
 %description -n pam-pam_smbpass -l pl
-Modu³ PAMa, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd (has³a
+Modu³ PAM, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd (has³a
 Samby) zsynchronizowanego z has³ami unixowymi.
 
 %package -n libsmbclient
@@ -385,7 +383,7 @@ Summary:	libsmbclient - samba client library
 Summary(pl):	libsmbclient - biblioteka klienta samby
 Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
-Requires:	libsmbclient = %{version}
+Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 
 %description -n libsmbclient-devel
 Header files for libsmbclient.
@@ -402,7 +400,7 @@ Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
 Group:		Applications/Printing
 Requires:	cups
-Requires:	samba-client = %{version}
+Requires:	%{name}-client = %{epoch}:%{version}-%{release}
 
 %description -n cups-backend-smb
 CUPS backend for printing to SMB printers.
@@ -414,7 +412,7 @@ Backend CUPS-a drukuj±cy na drukarkach SMB.
 Summary:	VFS module to audit file access
 Summary(pl):	Modu³ VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
-Requires:	samba = %{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-audit
 A simple module to audit file access to the syslog facility. The
@@ -431,7 +429,7 @@ nazwy/skasowania/zmiana praw plików.
 Summary:	VFS module to block access to files
 Summary(pl):	Modu³y VFS do blokowania dostêpu do plików
 Group:		Networking/Daemons
-Requires:	samba = %{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-block
 Sample module by Ronald Kuetemeier <ronald@kuetemeier.com> to block
@@ -448,7 +446,7 @@ przez linki symboliczne. Plik konfiguracyjny w
 Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl):	Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
 Group:		Networking/Daemons
-Requires:	samba = %{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-recycle
 VFS module to add recycle bin facility to a samba share.
@@ -460,26 +458,26 @@ Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 Summary:	On-access virus scanning for samba using ClamAV
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
 Group:		Networking/Daemons
-Provides:	%{name}-vscan
 Requires:	clamav
-Requires:	samba = %{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 
 %description vfs-vscan-clamav
-A vfs-module for samba to implement on-access scanning using the ClamAV
-antivirus software (which must be installed to use this).
+A vfs-module for samba to implement on-access scanning using the
+ClamAV antivirus software (which must be installed to use this).
 
 %description vfs-vscan-clamav -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-ClamAV (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego ClamAV
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-fprot
 Summary:	On-access virus scanning for samba using FPROT
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy FPROT
 Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-fprot
-Provides:	%{name}-vscan
-Requires:	samba = %{version}
 
 %description vfs-vscan-fprot
 A vfs-module for samba to implement on-access scanning using the FPROT
@@ -487,16 +485,16 @@ antivirus software (which must be installed to use this).
 
 %description vfs-vscan-fprot -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-FPROT (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego FPROT
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-kavp
 Summary:	On-access virus scanning for samba using Kaspersky AVP
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Kaspersky AVP
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Kaspersky AVP
 Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-fprot
-Provides:	%{name}-vscan
-Requires:	samba = %{version}
 
 %description vfs-vscan-kavp
 A vfs-module for samba to implement on-access scanning using the
@@ -511,11 +509,12 @@ modu³).
 
 %package vfs-vscan-mks
 Summary:	On-access virus scanning for samba using mks
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy mks
+Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa mks
 Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	mksd
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-fprot
-Provides:	%{name}-vscan
-Requires:	samba = %{version}
 
 %description vfs-vscan-mks
 A vfs-module for samba to implement on-access scanning using the mks
@@ -530,9 +529,9 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego mks
 Summary:	On-access virus scanning for samba using OpenAntivirus
 Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa OpenAntiVirus
 Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-openantivirus
-Provides:	%{name}-vscan
-Requires:	samba = %{version}
 
 %description vfs-vscan-openantivirus
 A vfs-module for samba to implement on-access scanning using the
@@ -549,9 +548,9 @@ modu³).
 Summary:	On-access virus scanning for samba using Sophos
 Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Sophos
 Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-sophos
-Provides:	%{name}-vscan
-Requires:	samba = %{version}
 
 %description vfs-vscan-sophos
 A vfs-module for samba to implement on-access scanning using the
@@ -566,9 +565,9 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Sophos
 Summary:	On-access virus scanning for samba using Symantec
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Symantec
 Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-symantec
-Provides:	%{name}-vscan
-Requires:	samba = %{version}
 
 %description vfs-vscan-symantec
 A vfs-module for samba to implement on-access scanning using the
@@ -583,9 +582,9 @@ Symantec (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 Summary:	On-access virus scanning for samba using Trend
 Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Trend
 Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-trend
-Provides:	%{name}-vscan
-Requires:	samba = %{version}
 
 %description vfs-vscan-trend
 A vfs-module for samba to implement on-access scanning using the Trend
@@ -607,7 +606,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 %patch7 -p1
 #%patch8 -p1
 #%patch9 -p1
-%{?_with_ipv6:%patch10 -p1}
+%{?with_ipv6:%patch10 -p1}
 %patch11 -p1
 #%patch12 -p1
 %patch13 -p1
@@ -639,8 +638,8 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-vfs \
-	%{?_with_ipv6:--with-ipv6} \
-	%{?_with_ldap:--with-ldapsam} \
+	%{?with_ipv6:--with-ipv6} \
+	%{?with_ldap:--with-ldapsam} \
 	--with-acl-support
 
 mv Makefile Makefile.old
@@ -702,7 +701,7 @@ touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_libdir}/lmhosts
 
-%if 0%{!?_without_cups:1}
+%if %{with_cups}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
 ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 %endif

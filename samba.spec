@@ -4,7 +4,7 @@
 # - look into other distro specs for valid %descriptions for samba 3
 # - review configure options
 # - fix broken --without ldap, test functionality with other bconds
-# - new package with McAfee vscan - I dunno what to do with daemon
+# - check tdbtool (with tdb.spec)
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -40,7 +40,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.8
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -989,6 +989,8 @@ install -d $RPM_BUILD_ROOT%{py_sitedir}
 cp -R source/build/lib.*/samba $RPM_BUILD_ROOT%{py_sitedir}
 %endif
 
+mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_libdir}/tdbtool_samba
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1056,7 +1058,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
-%attr(755,root,root) %{_bindir}/tdbtool
+%attr(755,root,root) %{_bindir}/tdbtool_samba
 
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}

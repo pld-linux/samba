@@ -1019,7 +1019,7 @@ fi
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
-%attr(640,root,root) /etc/logrotate.d/samba
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/security/blacklist.samba
 %{_mandir}/man1/smbstatus.1*

@@ -13,6 +13,7 @@ Summary(fi):	SMB-palvelin
 Summary(fr):	Serveur SMB
 Summary(it):	Server SMB
 Summary(ja):	Samba SMB ¥µ¡¼¥Ğ¡¼
+Summary(ko):	»ï¹Ù SMB ¼­¹ö
 Summary(pl):	Serwer SMB
 Summary(pt_BR):	Cliente e servidor SMB
 Summary(ru):	SMB ËÌÉÅÎÔ É ÓÅÒ×ÅÒ
@@ -21,7 +22,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·şÎñÆ÷.
 Name:		samba
 Version:	2.2.6
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.bz2
@@ -142,6 +143,23 @@ Samba ¤Û¤È¤ó¤ÉÆ°ºî¤¹¤ë NT ¥É¥á¥¤¥ó¥³¥ó¥È¥í¡¼¥ë¤Îµ¡Ç½¤òÆÃÄ§¤È¤·¡¢
 ¹¥¤­¤Ê¥Ö¥é¥¦¥¶¤ò»È¤Ã¤Æ samba ¤Î smb.conf ¥Õ¥¡¥¤¥ë¤ò¥ê¥â¡¼¥È´ÉÍı¤¹¤ë
 ¿·¤·¤¤ SWAT (Samba Web Administration Tool) ¤ò´Ş¤ß¤Ş¤¹¡£
 ÌÜ²¼¤Î¤È¤³¤í¤³¤ì¤Ï inetd ¤òÄÌ¤·¤Æ TCP ¥İ¡¼¥È 901 ¤ÇÍ­¸ú¤Ë¤Ê¤ê¤Ş¤¹¡£
+
+%description -l ko
+»ï¹Ù´Â MS Windows, OS/2, È¤Àº ´Ù¸¥ ¸®´ª½º ¸Ó½ÅÀ» Æ÷ÇÔÇÏ´Â 
+SMB(È¤Àº "Lan Manager"¶ó°íµµ ºÒ¸²) Å¬¶óÀÌ¾ğÆ®¸¦ ³×Æ®¿öÅ© ¼­ºñ½º À§ÇØ
+»ç¿ëÇÒ ¼ö ÀÖ´Â SMB ¼­¹ö¸¦ Á¦°øÇÑ´Ù.
+»ï¹Ù´Â  TCP/IP ÇÁ·ÎÅäÄİÀ» ÅëÇØ NetBIOS¸¦ »ç¿ëÇÏ°í NetBEUI
+(Microsoft Raw NetBIOS ÇÁ·¹ÀÓ) ÇÁ·ÎÅäÄİÀº ÇÊ¿äÇÏÁö ¾Ê´Ù.
+
+»ï¹Ù-2.2 ÀÇ Æ¯Â¡Àº  NT µµ¸ŞÀÎ ÄÁÆ®·ÑÀÇ ¼º´ÉÀ¸·Î ÀÛ¾÷À» ÇÏ°í, »õ·Î¿î
+SWAT(Samba Web Administration Tool)·Î À¥ºê¶ó¿ìÀú¸¦ »ç¿ëÇÏ¿© ¿ø°İÁö¿¡¼­
+»ï¹ÙÀÇ smb.conf ÆÄÀÏÀ» °ü¸®ÇÏµµ·Ï ÇÑ´Ù. ÀÌ·¯ÇÑ °æ¿ì inetd µ¥¸óÀ» ÅëÇØ
+TCP 901 Æ÷Æ®¸¦ »ç¿ëÇÏ°Ô µÈ´Ù.
+
+ÃÖ±Ù Á¤º¸·Î WHATSNEW.txt ÆÄÀÏÀÇ ¹®¼­¸¦ Âü°íÇÏµµ·Ï ÇÑ´Ù.
+¹ÙÀÌ³Ê¸®ÀÇ ¸±¸®Áî´Â ¾ÏÈ£È­µÈ ÆĞ½º¿öµå¸¦ Á¦°øÇÑ´Ù. ±¸Çö¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ
+Á¤º¸¸¦ ¾ò±â À§ÇØ docs µğ·ºÅä¸®³»¿¡ ÀÖ´Â smb.conf ÆÄÀÏ°ú ENCRYPTION.txt 
+ÆÄÀÏÀ» ÀĞ¾îº»´Ù.
 
 %description -l pl
 Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia

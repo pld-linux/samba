@@ -234,7 +234,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
 %attr(640,root,root) /etc/logrotate.d/samba
-%attr(640,root,root) /etc/pam.d/samba
+%attr(640,root,root) %config %verify(not size mtime md5) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/security/blacklist.samba
 
 %{_mandir}/man[157]/*

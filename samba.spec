@@ -1119,6 +1119,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/winbind
 %{_mandir}/man8/winbindd*.8*
+%{_mandir}/man8/pam_winbind.8*
 %{_mandir}/man1/wbinfo*.1*
 
 %files -n nss_wins

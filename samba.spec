@@ -693,7 +693,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego FPROT
 
 %package vfs-vscan-fsav
 Summary:	On-access virus scanning for samba using F-Secure AntiVirus
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa F-Secure AntiVirus
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy F-Secure AntiVirus
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -711,7 +711,7 @@ AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-kavp
 Summary:	On-access virus scanning for samba using Kaspersky AVP
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Kaspersky AVP
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Kaspersky AVP
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -730,7 +730,7 @@ modu³).
 
 %package vfs-vscan-mks
 Summary:	On-access virus scanning for samba using mks
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa mks
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy mks
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	mksd
@@ -748,7 +748,7 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego mks
 
 %package vfs-vscan-openantivirus
 Summary:	On-access virus scanning for samba using OpenAntivirus
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa OpenAntiVirus
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy OpenAntiVirus
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -767,7 +767,7 @@ modu³).
 
 %package vfs-vscan-sophos
 Summary:	On-access virus scanning for samba using Sophos
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Sophos
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Sophos
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -801,7 +801,7 @@ Symantec (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %package vfs-vscan-trend
 Summary:	On-access virus scanning for samba using Trend
-Summary(pl):	Modu³ VFS dodaj±cy obs³ugê antywirusa Trend
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Trend
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}

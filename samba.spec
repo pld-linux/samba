@@ -33,8 +33,8 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.4
-Epoch:		1
 Release:	1
+Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz

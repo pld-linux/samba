@@ -555,7 +555,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
-#%{_mandir}/man8/pdbedit.8*
+#%%{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/winbindd.8*
 
 %dir /home/services/samba
@@ -583,7 +583,7 @@ fi
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
-#%{_mandir}/man1/smbsh.1*
+#%%{_mandir}/man1/smbsh.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
 %attr(755,root,root) %{_bindir}/wbinfo

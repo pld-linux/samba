@@ -1079,7 +1079,6 @@ fi
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/pdbedit.8*
-%{_mandir}/man8/winbindd.8*
 %{_mandir}/man8/tdbbackup.8*
 
 %dir %{_sambahome}
@@ -1151,8 +1150,6 @@ fi
 %{_mandir}/man1/smbsh.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
-%attr(755,root,root) %{_bindir}/wbinfo
-%{_mandir}/man1/wbinfo.1*
 %attr(755,root,root) %{_bindir}/findsmb
 %{_mandir}/man1/findsmb.1*
 

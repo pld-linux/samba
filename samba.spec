@@ -1156,7 +1156,7 @@ fi
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/*.pdf docs/registry/*
 %doc docs/htmldocs/*.* docs/{history,THANKS}
-%dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/samba
 %attr(664,root,fileshare) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
 %dir %{_libdir}/%{name}

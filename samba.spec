@@ -822,8 +822,8 @@ fi
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/pdbedit
 #%attr(755,root,root) %{_bindir}/make_printerdef
-%dir %{_libdir}/charset
-%attr(755,root,root) %{_libdir}/charset/*.so
+%dir %{_libdir}/%{name}/charset
+%attr(755,root,root) %{_libdir}/%{name}/charset/*.so
 #%{_mandir}/man1/make_smbcodepage.1*
 #%{_mandir}/man1/make_unicodemap.1*
 %{_mandir}/man1/editreg.1*

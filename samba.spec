@@ -66,7 +66,7 @@ Requires:	samba-common = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/samba
-%define		_vfsdir		/usr/lib/%{name}/vfs
+%define		_vfsdir		/usr/%{_lib}/%{name}/vfs
 %define		_libdir		%{_sysconfdir}
 %define		_localstatedir	%{_var}/log/samba
 %define		_sambahome	/home/services/samba
@@ -602,7 +602,7 @@ cd source
 	--with-vfs \
 	%{?_with_ipv6:--with-ipv6} \
 	%{?_with_ldap:--with-ldapsam} \
-	--with-acl-support 
+	--with-acl-support
 
 mv Makefile Makefile.old
 sed -e "s#-symbolic##g" Makefile.old > Makefile
@@ -625,12 +625,12 @@ cd samba-vscan-%{vscan_version}
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT/var/{lock,log,log/archiv,spool}/samba \
-	$RPM_BUILD_ROOT/{sbin,lib/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
+	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome}}
 
 cd source
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
-install script/mksmbpasswd.sh /$RPM_BUILD_ROOT%{_sbindir}
+install script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 cd ..
 
 ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs
@@ -642,21 +642,21 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/smb.conf
 
-install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/lib/libnss_winbind.so.2
-install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/lib/security/
-install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/lib/security/
+install source/nsswitch/libnss_winbind.so	$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
+install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
+install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 
-install source/bin/libsmbclient.so $RPM_BUILD_ROOT/lib/libsmbclient.so.0
-ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/lib/libsmbclient.so
+install source/bin/libsmbclient.so $RPM_BUILD_ROOT/%{_lib}/libsmbclient.so.0
+ln -s libsmbclient.so.0 $RPM_BUILD_ROOT/%{_lib}/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
-# przyk³adowe modu³y VFS
+# example VFS modules
 install examples/VFS/{*.so,block/*.so,recycle/*.so} $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/block/samba-block.conf examples/VFS/recycle/recycle.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
-# modu³y vscan
+# vscan modules
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/samba-vscan-%{vscan_version}/*/*.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
@@ -729,8 +729,8 @@ fi
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/tdbbackup
 
-%attr(755,root,root) /lib/libnss_*
-%attr(755,root,root) /lib/security/pam_winbind.so
+%attr(755,root,root) /%{_lib}/libnss_*
+%attr(755,root,root) /%{_lib}/security/pam_winbind.so
 
 %attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_libdir}/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
@@ -813,16 +813,16 @@ fi
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)
 %doc source/pam_smbpass/{CHAN*,README,TODO} source/pam_smbpass/samples
-%attr(755,root,root) /lib/security/pam_smbpass.so
+%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) /lib/libsmbclient.so.*
+%attr(755,root,root) /%{_lib}/libsmbclient.so.*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %{_includedir}/libsmbclient.h
-%attr(755,root,root) /lib/libsmbclient.so
+%attr(755,root,root) /%{_lib}/libsmbclient.so
 
 %if 0%{!?_without_cups:1}
 %files -n cups-backend-smb

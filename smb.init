@@ -19,9 +19,13 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 . /etc/sysconfig/samba
 
 # Check that networking is up.
-if is_no "${NETWORKING}"; then
-        msg_Network_Down smb
-        exit 1
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network ]; then
+		msg_network_down smb
+		exit 1
+	fi
+else
+	exit 0
 fi
 
 TMPDIR="/tmp"; export TMPDIR
@@ -29,42 +33,45 @@ TMPDIR="/tmp"; export TMPDIR
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0
 
+
 # See how we were called.
 case "$1" in
   start)
-        # Check if the service is already running?
-        if [ ! -f /var/lock/subsys/smb ]; then
-                msg_starting smbd
-                daemon $NICELEVEL smbd -D
-                msg_starting nmbd
-                daemon $NICELEVEL nmbd -D
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/smb ]; then
+		msg_starting smbd
+		daemon $NICELEVEL smbd -D
+		RETVAL=$?
+		msg_starting nmbd
+		daemon $NICELEVEL nmbd -D
+		[ $RETVAL -eq 0 ] && RETVAL=$?
 		if [ "$WINBINDD" = "yes" ]; then
 			msg_starting winbindd
 			daemon $NICELEVEL winbindd
 		fi
-                RETVAL=$?
-                [ $RETVAL -eq 0 ] && touch /var/lock/subsys/smb
-        else
-                msg_Already_Running smb
-                exit 1
-        fi
+		[ $RETVAL -eq 0 ] && RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/smb
+	else
+		msg_already_running smb
+		exit 1
+	fi
 	;;
   stop)
-        # Stop daemons.
-        if [ -f /var/lock/subsys/smb ]; then
-                msg_stopping smbd
-                killproc smbd
-                msg_stopping nmbd
+	# Stop daemons.
+	if [ -f /var/lock/subsys/smb ]; then
+		msg_stopping smbd
+		killproc smbd
+		msg_stopping nmbd
 		killproc nmbd
 		if [ "$WINBINDD" = "yes" ]; then
 			msg_stopping winbindd
 			killproc winbindd
 		fi
-                rm -f /var/lock/subsys/smb >/dev/null 2>&1
-        else
-                msg_Not_Running smb
-                exit 1
-        fi
+		rm -f /var/lock/subsys/smb >/dev/null 2>&1
+	else
+		msg_not_running smb
+		exit 1
+	fi
 	;;
   status)
 	status smbd
@@ -77,17 +84,18 @@ case "$1" in
 	$0 stop
 	$0 start
 	;;
-  reload)
+  reload|force-reload)
 	if [ -f /var/lock/subsys/smb ]; then
-	        msg_reloading smb
-	        killproc smbd -HUP
+		msg_reloading smb
+		killproc smbd -HUP
+		RETVAL=$?
 	else
-	        msg_Not_Running smb
-	        exit 1
-        fi
+		msg_not_running smb
+		exit 1
+	fi
 	;;
   *)
-	msg_Usage "$0 {start|stop|restart|reload|status}"
+	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
 	exit 1
 esac
 

@@ -53,6 +53,7 @@ Patch13:	%{name}-allow-suid.patch
 URL:		http://www.samba.org/
 BuildRequires:	autoconf
 %{?with_cups:BuildRequires:	cups-devel}
+BuildRequires:	libmagic-devel
 BuildRequires:	libtool >= 1.4.2
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel}

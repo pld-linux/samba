@@ -2,10 +2,10 @@ Summary:	SMB client and server
 Summary(pl):	Klient i serwer SMB
 Name:		samba
 Version:	2.0.0
-Release:	1d
+Release:	2d
 Copyright:	GPL
 Group:		Networking
-Group(pl):	Sieci
+Group(pl):	Sieciowe
 Source0:	ftp://samba.anu.edu.au/pub/samba/%{name}-%{version}.tar.gz
 Source1:	%{name}.PLD.tar.bz2
 Patch0:		%{name}.%{version}.patch
@@ -127,6 +127,8 @@ install swat/help/*.html docs/htmldocs/*.html \
 install swat/images/*.gif $RPM_BUILD_ROOT/usr/share/swat/images
 install swat/include/*.html $RPM_BUILD_ROOT/usr/share/swat/include
 
+mv swat/README swat/README.swat
+
 install -s source/bin/*.so $RPM_BUILD_ROOT/lib/security
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
@@ -138,8 +140,8 @@ $RPM_BUILD_ROOT/usr/bin/make_smbcodepage c $i \
 $RPM_BUILD_ROOT/etc/samba/codepages/src/codepage_def.$i \
 $RPM_BUILD_ROOT/etc/samba/codepages/codepage.$i; done
 
-bzip2 -9 $RPM_BUILD_ROOT/usr/man/{man1/*,man5/*,man7/*,man8/*}
-bzip2 -9 README Manifest WHATSNEW.txt Roadmap docs/*.reg 
+gzip -9fn $RPM_BUILD_ROOT/usr/man/man[1578]/*
+bzip2 -9  README Manifest WHATSNEW.txt Roadmap docs/*.reg swat/README.swat
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -147,12 +149,12 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/chkconfig --add smb
 
-# Not for PLD-devel !
+# Not for PLD
 #if !( grep ^[:space:]*swat /etc/services > /dev/null ) then
 #echo 'swat	901/tcp		# Swat service used via inetd' >> /etc/services
 #fi
 
-# Not for PLD devel !
+# Not for PLD 
 #if !( grep ^[:space:]*swat /etc/inetd.conf > /dev/null ) then
 #echo 'swat	stream	tcp	nowait.400	root	/usr/sbin/swat swat' >> /etc/inetd.conf
 #killall -HUP inetd >&2
@@ -163,7 +165,7 @@ if [ $1 = 0 ]; then
     /etc/rc.d/init.d/smb stop >&2
     /sbin/chkconfig --del smb
 
-# Not for PLD devel !
+# Not for PLD 
 #    cd /etc
 #    tmpfile=/etc/tmp.$$
 #    sed -e '/^[:space:]*swat.*$/d' /etc/inetd.conf > $tmpfile
@@ -174,7 +176,7 @@ if [ $1 = 0 ]; then
 
 %files
 %defattr(644,root,root,755)
-%doc README.bz2 Manifest.bz2 WHATSNEW.txt.bz2 
+%doc README.bz2 Manifest.bz2 WHATSNEW.txt.bz2 swat/README.swat.bz2
 %doc Roadmap.bz2 docs/faq/*.html docs/*.reg.bz2 
 
 %attr(755,root,root) /usr/bin/*
@@ -185,7 +187,7 @@ if [ $1 = 0 ]; then
 %attr(600,root,root) %config %verify(not size mtime md5) /etc/samba/smbusers
 %attr(640,root,root) %config %verify(not size mtime md5) /etc/samba/lmhosts
 
-%attr(700,root,root) /etc/rc.d/init.d/smb
+%attr(750,root,root) %config /etc/rc.d/init.d/smb
 %attr(640,root,root) /etc/logrotate.d/samba
 %attr(640,root,root) /etc/pam.d/samba
 
@@ -193,10 +195,12 @@ if [ $1 = 0 ]; then
 
 %attr(644,root, man) /usr/man/man[1578]/*
 
-%attr(755,root,root) %dir /home/samba
-
-%attr(755,root,root) %dir /etc/samba/codepages
+%dir /home/samba
+%dir /etc/samba/codepages
 /etc/samba/codepages/*
+
+%dir /usr/share/swat
+/usr/share/swat/*
 
 %attr(750,root,root) %dir /var/lock/samba
 %attr(640,root,root) /var/lock/samba/*

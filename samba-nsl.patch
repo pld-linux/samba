@@ -1,0 +1,14 @@
+--- samba-2.0.5/source/configure.in.foo	Wed Jul 21 11:05:43 1999
++++ samba-2.0.5/source/configure.in	Wed Jul 21 11:12:02 1999
+@@ -424,6 +424,11 @@
+ fi
+ 
+ #
++# Check for yp_get_default_domain in -lnsl (linux glibc2.1)
++#
++AC_LIBTESTFUNC(nsl, yp_get_default_domain)
++
++#
+ # Check for the functions putprpwnam, set_auth_parameters,
+ # getspnam, bigcrypt and getprpwnam in -lsec and -lsecurity
+ # Needed for OSF1 and HPUX.

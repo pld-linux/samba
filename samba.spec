@@ -110,7 +110,7 @@ baz± WINS.
 Summary:	Samba Web Administration Tool
 Summary(pl):	Narzêdzie administracyjne serwisu Samba
 Group:		Networking/Admin
-Group(pl):	Sieciowe/Administracja
+Group(pl):	Sieciowe/Administracyjne
 Requires:	%{name}
 Requires:	rc-inetd
 Requires:	inetdaemon

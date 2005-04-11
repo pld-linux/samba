@@ -674,11 +674,10 @@ VFS module to make automatic copy of data in samba share.
 Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby.
 
 %package vfs-vscan-antivir
-Summary:        On-access virus scanning for samba using ClamAV
-Summary(pl):    Skaner antywirusowy online wykorzystuj±cy ClamAV
+Summary:        On-access virus scanning for samba using AntiVir
+Summary(pl):    Skaner antywirusowy online wykorzystuj±cy AntiVir
 Group:          Networking/Daemons
 Requires:       %{name} = %{epoch}:%{version}-%{release}
-Requires:       clamav
 Provides:       %{name}-vscan = %{epoch}:%{version}-%{release}
 
 %description vfs-vscan-antivir

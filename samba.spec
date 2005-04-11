@@ -16,7 +16,7 @@
 %if %{without krb5} || %{without ldap}
 %undefine	with_ads
 %endif
-%define		vscan_version 0.3.5
+%define		vscan_version 0.3.6
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -35,7 +35,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.13
-Release:	1
+Release:	1.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -48,7 +48,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	5f173d549014985d681478897135915b
+# Source7-md5:	68c9d099d942d85e68d96804b26ac788
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-statfs-workaround.patch
@@ -673,6 +673,23 @@ VFS module to make automatic copy of data in samba share.
 %description vfs-shadow_copy -l pl
 Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby.
 
+%package vfs-vscan-antivir
+Summary:        On-access virus scanning for samba using ClamAV
+Summary(pl):    Skaner antywirusowy online wykorzystuj±cy ClamAV
+Group:          Networking/Daemons
+Requires:       %{name} = %{epoch}:%{version}-%{release}
+Requires:       clamav
+Provides:       %{name}-vscan = %{epoch}:%{version}-%{release}
+
+%description vfs-vscan-antivir
+A vfs-module for samba to implement on-access scanning using the
+AntiVir antivirus software (which must be installed to use this).
+
+%description vfs-vscan-antivir -l pl
+Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
+dostêpu do plików korzystaj±c z oprogramowania antywirusowego AntiVir
+(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV
 Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
@@ -970,7 +987,7 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # vscan modules
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
-install examples/VFS/samba-vscan-%{vscan_version}/{clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure,nai}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
+install examples/VFS/samba-vscan-%{vscan_version}/{antivir,clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure,nai}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
 
 touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
 
@@ -1332,6 +1349,12 @@ fi
 %files vfs-shadow_copy
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/shadow_copy.so
+
+%files vfs-vscan-antivir
+%defattr(644,root,root,755)
+#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-antivir.conf
+%attr(755,root,root) %{_vfsdir}/vscan-antivir.so
 
 %files vfs-vscan-clamav
 %defattr(644,root,root,755)

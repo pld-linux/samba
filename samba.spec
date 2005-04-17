@@ -941,6 +941,11 @@ mv README{,.vfs}
 cd samba-vscan-%{vscan_version}
 cp -f /usr/share/automake/config.sub .
 %configure
+
+# Ugly workaround for relase containing character, for samba major version > 3
+# release is ignored (according to include/vscan-global.h)
+sed -i -e 's/SAMBA_VERSION_RELEASE 14a/SAMBA_VERSION_RELEASE 14/' ../../../source/include/version.h
+
 %{__make} -j1 all
 
 %install

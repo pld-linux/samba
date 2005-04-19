@@ -541,10 +541,11 @@ following operations are logged: share connect/disconnect, directory
 opens/create/remove, file open/close/rename/unlink/chmod.
 
 %description vfs-audit -l pl
-Prosty modu³ do monitorowania dostêpu do plików do sysloga.
-Monitorowane s± nastêpuj±ce operacje: pod³±czone/od³±czenie do zasobu,
-otwarcie/utworzenie/zmiana nazwy katalogu, otwarcie/zamknêcie/zmiana
-nazwy/skasowania/zmiana praw plików.
+Proste modu³y do monitorowania dostêpu do plików na serwerze samba do 
+do sysloga. Monitorowane s± nastêpuj±ce operacje: 
+pod³±czenie/od³±czenie do zasobu, otwarcie/utworzenie/zmiana nazwy 
+katalogu, otwarcie/zamknêcie/zmiana nazwy/skasowania/zmiana praw 
+plików. Zawiera modu³y audit, extd_audit i full_audit
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility

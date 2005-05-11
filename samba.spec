@@ -35,7 +35,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.14a
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -1392,7 +1392,7 @@ fi
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-mcdaemon.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mcdaemon.so
 
-%ifarch %{ix86} amd64
+%ifarch %{ix86} %{x8664}
 %files vfs-vscan-mks
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}

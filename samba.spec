@@ -35,7 +35,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.14a
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -92,7 +92,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_vfsdir		%{_libdir}/%{name}/vfs
 %define		_sambahome	/home/services/samba
 %if %{with cups}
-%define		cups_serverbin	%{_libdir}/cups
+%define		cups_serverbin	%{_prefix}/lib/cups
 %endif
 %define		schemadir	/usr/share/openldap/schema
 

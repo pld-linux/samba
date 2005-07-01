@@ -545,9 +545,9 @@ following operations are logged:
 %description vfs-audit -l pl
 Proste modu³y do monitorowania dostêpu do plików na serwerze samba do
 do sysloga. Monitorowane s± nastêpuj±ce operacje:
- - pod³±czenie/od³±czenie do zasobu,
+ - pod³±czenie do/od³±czenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
- - otwarcie/zamknêcie/zmiana nazwy/skasowania/zmiana praw plików.
+ - otwarcie/zamknêcie/zmiana nazwy/skasowanie/zmiana praw plików.
 Zawiera modu³y audit, extd_audit i full_audit.
 
 %package vfs-cap

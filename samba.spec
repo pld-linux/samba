@@ -35,7 +35,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.14a
-Release:	3
+Release:	4
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -537,15 +537,18 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-audit
 A simple module to audit file access to the syslog facility. The
-following operations are logged: share connect/disconnect, directory
-opens/create/remove, file open/close/rename/unlink/chmod.
+following operations are logged:
+ - share connect/disconnect,
+ - directory opens/create/remove,
+ - file open/close/rename/unlink/chmod.
 
 %description vfs-audit -l pl
-Proste modu³y do monitorowania dostêpu do plików na serwerze samba do 
-do sysloga. Monitorowane s± nastêpuj±ce operacje: 
-pod³±czenie/od³±czenie do zasobu, otwarcie/utworzenie/zmiana nazwy 
-katalogu, otwarcie/zamknêcie/zmiana nazwy/skasowania/zmiana praw 
-plików. Zawiera modu³y audit, extd_audit i full_audit
+Proste modu³y do monitorowania dostêpu do plików na serwerze samba do
+do sysloga. Monitorowane s± nastêpuj±ce operacje:
+ - pod³±czenie/od³±czenie do zasobu,
+ - otwarcie/utworzenie/zmiana nazwy katalogu,
+ - otwarcie/zamknêcie/zmiana nazwy/skasowania/zmiana praw plików.
+Zawiera modu³y audit, extd_audit i full_audit.
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
@@ -676,11 +679,11 @@ VFS module to make automatic copy of data in samba share.
 Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby.
 
 %package vfs-vscan-antivir
-Summary:        On-access virus scanning for samba using AntiVir
-Summary(pl):    Skaner antywirusowy online wykorzystuj±cy AntiVir
-Group:          Networking/Daemons
-Requires:       %{name} = %{epoch}:%{version}-%{release}
-Provides:       %{name}-vscan = %{epoch}:%{version}-%{release}
+Summary:	On-access virus scanning for samba using AntiVir
+Summary(pl):	Skaner antywirusowy online wykorzystuj±cy AntiVir
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 
 %description vfs-vscan-antivir
 A vfs-module for samba to implement on-access scanning using the
@@ -772,8 +775,8 @@ Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 Obsoletes:	vscan-mcafee
 
 %description vfs-vscan-mcafee
-A vfs-module for samba to implement on-access scanning using the mcafee
-antivirus software (which must be installed to use this).
+A vfs-module for samba to implement on-access scanning using the
+mcafee antivirus software (which must be installed to use this).
 
 %description vfs-vscan-mcafee -l pl
 Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
@@ -880,6 +883,73 @@ This package contains samba.schema for openldap.
 
 %description -n openldap-schema-samba -l pl
 Ten pakiet zawiera schemat samby dla openldap-a.
+
+%package doc-html
+Summary:	Samba HTML documentation
+Summary(pl):	Documentacja samby w formacie HTML
+Group:		Documentation
+
+%description doc-html
+Samba HTML documentation, consists of:
+
+1. SAMBA Developers Guide
+This book is a collection of documents that might be useful for
+people developing samba or those interested in doing so. It's nothing
+more than a collection of documents written by samba developers about
+the internals of various parts of samba and the SMB protocol. It's
+still (and will always be) incomplete.
+
+2. Samba-3 by Example
+Practical Exercises in Successful Samba Deployment.
+
+3. The Official Samba-3 HOWTO and Reference Guide
+This book provides example configurations, it documents key aspects
+of Microsoft Windows networking, provides in-depth insight into the
+important configuration of Samba-3, and helps to put all of these
+into a useful framework.
+
+4. Using Samba, 2nd Edition
+Using Samba, Second Edition is a comprehensive guide to Samba
+administration. It covers all versions of Samba from 2.0 to 2.2,
+including selected features from an alpha version of 3.0, as well as
+the SWAT graphical configuration tool. Updated for Windows 2000, ME,
+and XP, the book also explores Samba's new role as a primary domain
+controller and domain member server, its support for the use of
+Windows NT/2000/XP authentication and filesystem security on the host
+Unix system, and accessing shared files and printers from Unix
+clients.
+
+5. Man pages The Samba man pages in HTML.
+
+%description doc-html -l pl
+Documentacja samby w formacie HTML.
+
+%package doc-pdf
+Summary:	Samba documentation - PDF format
+Summary(pl):	Documentacja samby w formacie PDF
+Group:		Documentation
+
+%description doc-pdf
+Samba PDF documentation, consists of:
+
+1. SAMBA Developers Guide
+This book is a collection of documents that might be useful for
+people developing samba or those interested in doing so. It's nothing
+more than a collection of documents written by samba developers about
+the internals of various parts of samba and the SMB protocol. It's
+still (and will always be) incomplete.
+
+2. Samba-3 by Example
+Practical Exercises in Successful Samba Deployment.
+
+3. The Official Samba-3 HOWTO and Reference Guide
+This book provides example configurations, it documents key aspects
+of Microsoft Windows networking, provides in-depth insight into the
+important configuration of Samba-3, and helps to put all of these
+into a useful framework.
+
+%description doc-pdf -l pl
+Documentacja samby w formacie PDF.
 
 %prep
 %setup -q
@@ -1006,9 +1076,6 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 
 > $RPM_BUILD_ROOT%{_sysconfdir}/samba/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
-
-rm -f docs/faq/*.{sgml,txt}
-rm -f docs/htmldocs/*.[0-9].html
 
 # we have this utility in tdb package
 rm -f $RPM_BUILD_ROOT{%{_bindir}/tdbdump,%{_mandir}/man8/tdbdump.8*}
@@ -1223,8 +1290,8 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc README Manifest WHATSNEW.txt
-%doc Roadmap docs/*.pdf docs/registry/*
-%doc docs/htmldocs/*.* docs/{history,THANKS}
+%doc Roadmap docs/registry/*
+%doc docs/{history,THANKS}
 %dir %{_sysconfdir}/samba
 %attr(664,root,fileshare) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
@@ -1429,3 +1496,11 @@ fi
 %defattr(644,root,root,755)
 %{schemadir}/*.schema
 %endif
+
+%files doc-html
+%defattr(644,root,root,755)
+%doc docs/htmldocs/*
+
+%files doc-pdf
+%defattr(644,root,root,755)
+%doc docs/*.pdf

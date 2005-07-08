@@ -35,7 +35,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.14a
-Release:	4
+Release:	5
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -61,7 +61,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel}
-%{?with_krb5:BuildRequires:	heimdal-devel}
+%{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	libmagic-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	libxml2-devel

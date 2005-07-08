@@ -35,7 +35,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.14a
-Release:	5
+Release:	6
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons

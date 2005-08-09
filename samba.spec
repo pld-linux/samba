@@ -547,7 +547,7 @@ Proste modu³y do monitorowania dostêpu do plików na serwerze samba do
 do sysloga. Monitorowane s± nastêpuj±ce operacje:
  - pod³±czenie do/od³±czenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
- - otwarcie/zamknêcie/zmiana nazwy/skasowanie/zmiana praw plików.
+ - otwarcie/zamkniêcie/zmiana nazwy/skasowanie/zmiana praw plików.
 Zawiera modu³y audit, extd_audit i full_audit.
 
 %package vfs-cap

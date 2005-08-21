@@ -34,13 +34,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.14a
-Release:	6
+Version:	3.0.20
+Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	ebee37e66a8b5f6fd328967dc09088e8
+# Source0-md5:	68e72ab16334c329901816febc43217a
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -56,6 +56,7 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-case_insensitive_sql_operator.patch
+Patch5:		%{name}-c++-nofail.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -960,7 +961,9 @@ Documentacja samby w formacie PDF.
 %endif
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
+# fixme or better drop me, it changes behaviour!
+# %patch4 -p1
+%patch5 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}
@@ -1272,7 +1275,7 @@ fi
 %{_mandir}/man8/smbmnt.8*
 %{_mandir}/man8/smbmount.8*
 %{_mandir}/man8/smbumount.8*
-%{_mandir}/man8/mount.cifs.8*
+%{_mandir}/man8/*mount.cifs.8*
 %attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
@@ -1299,7 +1302,6 @@ fi
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/*.dat
 %attr(755,root,root) %{_bindir}/testparm
-%attr(755,root,root) %{_bindir}/testprns
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/profiles
@@ -1309,7 +1311,6 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/charset/*.so
 %{_mandir}/man1/editreg.1*
 %{_mandir}/man1/testparm.1*
-%{_mandir}/man1/testprns.1*
 %{_mandir}/man1/ntlm_auth.1*
 %{_mandir}/man1/smbcquotas.1*
 %{_mandir}/man1/profiles.1*
@@ -1333,7 +1334,6 @@ fi
 %dir %{_datadir}/swat/lang
 %lang(ja) %{_datadir}/swat/lang/ja
 %lang(tr) %{_datadir}/swat/lang/tr
-%{_datadir}/swat/using_samba
 %lang(de) %{_libdir}/%{name}/de.msg
 %{_libdir}/%{name}/en.msg
 %lang(fr) %{_libdir}/%{name}/fr.msg
@@ -1362,6 +1362,7 @@ fi
 %files -n libsmbclient
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%{_mandir}/man8/libsmbclient.8*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)

@@ -35,7 +35,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.20
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -55,8 +55,7 @@ Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
-Patch4:		%{name}-case_insensitive_sql_operator.patch
-Patch5:		%{name}-c++-nofail.patch
+Patch4:		%{name}-c++-nofail.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -961,8 +960,6 @@ Documentacja samby w formacie PDF.
 %endif
 %patch2 -p1
 %patch3 -p1
-# fixme or better drop me, it changes behaviour!
-# %patch4 -p1
 %patch5 -p1
 
 cd examples/VFS

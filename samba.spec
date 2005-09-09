@@ -960,7 +960,7 @@ Documentacja samby w formacie PDF.
 %endif
 %patch2 -p1
 %patch3 -p1
-%patch5 -p1
+%patch4 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

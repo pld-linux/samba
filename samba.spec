@@ -10,7 +10,7 @@
 %bcond_without	mysql		# without MySQL support
 %bcond_without	pgsql		# without PostgreSQL support
 %bcond_without	python		# without python libs/utils
-%bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
+%bcond_with	ldapsam		# with LDAP SAM (samba) 2.2 based auth (instead of newer bcond ldap)
 
 # ADS requires krb5 and LDAP
 %if %{without krb5} || %{without ldap}

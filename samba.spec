@@ -56,6 +56,7 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-c++-nofail.patch
+Patch5:		%{name}-pthread.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -961,6 +962,7 @@ Documentacja samby w formacie PDF.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

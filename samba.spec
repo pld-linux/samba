@@ -16,7 +16,7 @@
 %if %{without krb5} || %{without ldap}
 %undefine	with_ads
 %endif
-%define		vscan_version 0.3.6
+%define		vscan_version 0.3.6b
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -48,7 +48,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	68c9d099d942d85e68d96804b26ac788
+# Source7-md5:	900502ba36b80620229b94e5129bc856
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-statfs-workaround.patch

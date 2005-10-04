@@ -1018,7 +1018,7 @@ cp -f /usr/share/automake/config.sub .
 
 # Ugly workaround for release containing character, for samba major version > 3
 # release is ignored (according to include/vscan-global.h)
-sed -i -e 's/SAMBA_VERSION_RELEASE 14a/SAMBA_VERSION_RELEASE 14/' ../../../source/include/version.h
+sed -i -e 's/SAMBA_VERSION_RELEASE 20a/SAMBA_VERSION_RELEASE 20/' ../../../source/include/version.h
 
 %{__make} -j1 all
 
@@ -1059,7 +1059,7 @@ install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
-mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
+install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}

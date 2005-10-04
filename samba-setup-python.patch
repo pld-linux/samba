@@ -1,7 +1,7 @@
-diff -urN samba-3.0.14a.org/source/python/setup.py samba-3.0.14a/source/python/setup.py
---- samba-3.0.14a.org/source/python/setup.py	2005-02-25 18:59:23.000000000 +0100
-+++ samba-3.0.14a/source/python/setup.py	2005-07-08 22:51:27.823948560 +0200
-@@ -49,8 +49,12 @@
+diff -Nur samba-3.0.20a-orig/source/python/setup.py samba-3.0.20a/source/python/setup.py
+--- samba-3.0.20a-orig/source/python/setup.py	2005-09-29 23:52:39.000000000 +0200
++++ samba-3.0.20a/source/python/setup.py	2005-10-04 14:53:04.555788552 +0200
+@@ -51,13 +51,17 @@
  
  libraries = []
  library_dirs = []
@@ -14,15 +14,18 @@ diff -urN samba-3.0.14a.org/source/python/setup.py samba-3.0.14a/source/python/s
      if lib[0:2] == "-l":
          libraries.append(lib[2:])
          continue
-@@ -60,6 +64,12 @@
+     if lib[0:8] == "-pthread":
+-        libraries.append(lib[2:])
++	library_dirs.append("-lpthread")
+         continue
+     if lib[0:2] == "-L":
+         library_dirs.append(lib[2:])
+@@ -65,6 +69,9 @@
      if lib[0:2] == "-W":
          # Skip linker flags
          continue
 +    if lib[0:2] == "-z":
 +	skip_next_keyword = 1
-+	continue
-+    if lib[0:8] == "-pthread":
-+	library_dirs.append("-lpthread")
 +	continue
      print "Unknown entry '%s' in $LIBS variable passed to setup.py" % lib
      sys.exit(1)

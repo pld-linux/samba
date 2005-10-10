@@ -332,7 +332,7 @@ Summary(ru):	Клиентские программы Samba (SMB)
 Summary(uk):	Кл╕╓нтськ╕ програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-%{?with_krb5:Requires:	heimdal-devel >= 0.7}
+%{?with_krb5:Requires:	heimdal-libs >= 0.7}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 

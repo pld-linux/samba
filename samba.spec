@@ -305,10 +305,10 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description pdb-pgsql
-Samba MySQL password database plugin.
+Samba PostgreSQL password database plugin.
 
 %description pdb-pgsql -l pl
-Wtyczka Samby do przechowywania hase³ w bazie MySQL.
+Wtyczka Samby do przechowywania hase³ w bazie PostgreSQL.
 
 %package pdb-xml
 Summary:	Samba XML password database plugin

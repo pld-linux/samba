@@ -81,8 +81,8 @@ BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
 %{?with_python:BuildRequires:	python-devel}
-PreReq:		rc-scripts
-PreReq:		setup >= 2.4.6-7
+Requires:	rc-scripts
+Requires:	setup >= 2.4.6-7
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate
@@ -1197,12 +1197,12 @@ fi
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
 
-%attr(600,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smbusers
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/samba
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/samba
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/samba
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/security/blacklist.samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
 %{_mandir}/man1/smbstatus.1*
 %{_mandir}/man1/smbcontrol.1*
 %{_mandir}/man5/smbpasswd.5*
@@ -1247,7 +1247,7 @@ fi
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/winbind
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
 %{_mandir}/man8/winbindd*.8*
 %{_mandir}/man8/pam_winbind.8*
 %{_mandir}/man1/wbinfo*.1*
@@ -1291,8 +1291,8 @@ fi
 %doc Roadmap docs/registry/*
 %doc docs/{history,THANKS}
 %dir %{_sysconfdir}/samba
-%attr(664,root,fileshare) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/smb.conf
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/lmhosts
+%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/*.dat
 %attr(755,root,root) %{_bindir}/testparm
@@ -1320,7 +1320,7 @@ fi
 #%doc swat/README* swat/help/*
 %doc swat/help/*
 %attr(755,root,root) %{_sbindir}/swat
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/rc-inetd/swat
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/rc-inetd/swat
 %dir %{_datadir}/swat
 %{_datadir}/swat/help
 %{_datadir}/swat/images
@@ -1422,69 +1422,69 @@ fi
 %files vfs-vscan-antivir
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-antivir.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-antivir.conf
 %attr(755,root,root) %{_vfsdir}/vscan-antivir.so
 
 %files vfs-vscan-clamav
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-clamav.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-clamav.conf
 %attr(755,root,root) %{_vfsdir}/vscan-clamav.so
 
 %files vfs-vscan-fprot
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fprotd.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-fprotd.conf
 %attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
 
 %files vfs-vscan-fsav
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-fsav.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-fsav.conf
 %attr(755,root,root) %{_vfsdir}/vscan-fsav.so
 
 %files vfs-vscan-kavp
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-kavp.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-kavp.conf
 %attr(755,root,root) %{_vfsdir}/vscan-kavp.so
 
 %files vfs-vscan-mcafee
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-mcdaemon.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mcdaemon.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mcdaemon.so
 
 %ifarch %{ix86} %{x8664}
 %files vfs-vscan-mks
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-mks32.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mks32.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mksd.so
 %endif
 
 %files vfs-vscan-openantivirus
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-oav.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-oav.conf
 %attr(755,root,root) %{_vfsdir}/vscan-oav.so
 
 %files vfs-vscan-sophos
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-sophos.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-sophos.conf
 %attr(755,root,root) %{_vfsdir}/vscan-sophos.so
 
 %files vfs-vscan-symantec
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-icap.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-icap.conf
 %attr(755,root,root) %{_vfsdir}/vscan-icap.so
 
 %files vfs-vscan-trend
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/samba/vscan-trend.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
 
 %if %{with ldap}

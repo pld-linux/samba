@@ -1,13 +1,6 @@
-diff -urN samba-3.0.20.org/source/include/includes.h samba-3.0.20/source/include/includes.h
---- samba-3.0.20.org/source/include/includes.h	2005-07-28 15:19:49.000000000 +0200
-+++ samba-3.0.20/source/include/includes.h	2005-08-21 20:54:03.904616136 +0200
-@@ -27,12 +27,12 @@
- 
- #ifndef __cplusplus
- #define class #error DONT_USE_CPLUSPLUS_RESERVED_NAMES
--#define private #error DONT_USE_CPLUSPLUS_RESERVED_NAMES
-+/* #define private #error DONT_USE_CPLUSPLUS_RESERVED_NAMES */
- #define public #error DONT_USE_CPLUSPLUS_RESERVED_NAMES
+--- samba-3.0.21/source/include/includes.h.orig	2005-12-25 18:08:07.204427000 +0100
++++ samba-3.0.21/source/include/includes.h	2005-12-25 18:11:14.004427000 +0100
+@@ -33,7 +33,7 @@
  #define protected #error DONT_USE_CPLUSPLUS_RESERVED_NAMES
  #define template #error DONT_USE_CPLUSPLUS_RESERVED_NAMES
  #define this #error DONT_USE_CPLUSPLUS_RESERVED_NAMES

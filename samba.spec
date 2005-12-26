@@ -35,7 +35,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.21
-Release:	0.1
+Release:	0.2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -992,6 +992,7 @@ cd source
 	--with-quotas \
 	--with-readline \
 	--with-smbmount \
+	--with-smbwrapper \
 	--with-swatdir=%{_datadir}/swat \
 	--with-syslog \
 	--with-utmp \
@@ -1303,7 +1304,7 @@ fi
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}/charset
 %attr(755,root,root) %{_libdir}/%{name}/charset/*.so
-%{_mandir}/man1/editreg.1*
+#%%{_mandir}/man1/editreg.1*
 %{_mandir}/man1/testparm.1*
 %{_mandir}/man1/ntlm_auth.1*
 %{_mandir}/man1/smbcquotas.1*

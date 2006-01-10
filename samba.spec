@@ -985,6 +985,7 @@ cd source
 	--with-acl-support \
 	--with-automount \
 	--with-libsmbclient \
+	--with-lockdir=/var/lib/samba \
 	--with-pam \
 	--with-pam_smbpass \
 	--with%{!?with_ads:out}-ads \
@@ -1021,7 +1022,7 @@ cp -f /usr/share/automake/config.sub .
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT/var/{lock,log,log/archiv,spool}/samba \
+	$RPM_BUILD_ROOT{/var/{log,log/archiv,spool}/samba,/var/lib/samba/printing} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
 
 cd source
@@ -1064,7 +1065,7 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/samba-vscan-%{vscan_version}/{antivir,clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure,nai}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
 
-touch $RPM_BUILD_ROOT/var/lock/samba/{STATUS..LCK,wins.dat,browse.dat}
+touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
 echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
 
@@ -1097,7 +1098,18 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/chkconfig --add smb
 if [ -r /var/lock/subsys/smb ]; then
-	/etc/rc.d/init.d/smb restart >&2
+	if [ -f /var/lock/samba/connections.tdb -a ! -f /var/lib/samba/connections.tdb ]; then
+		echo "Moving old /var/lock/samba contents to /var/lib/samba"
+		/etc/rc.d/init.d/smb stop >&2
+		mv -f /var/lock/samba/*.tdb /var/lib/samba 2>/dev/null || :
+		mv -f /var/lock/samba/*.dat /var/lib/samba 2>/dev/null || :
+		if [ -d /var/lock/samba/printing ]; then
+			mv -f /var/lock/samba/printing/*.tdb /var/lib/samba/printing 2>/dev/null || :
+		fi
+		/etc/rc.d/init.d/smb start >&2
+	else
+		/etc/rc.d/init.d/smb restart >&2
+	fi
 else
 	echo "Run \"/etc/rc.d/init.d/smb start\" to start Samba daemons."
 fi
@@ -1178,12 +1190,6 @@ if [ "$1" != "0" ]; then
 	/sbin/chkconfig --add smb
 fi
 
-%triggerpostun -- samba < 2.0.5a-3
-if [ "$1" != "0" ]; then
-	[ ! -d /var/lock/samba ] && mkdir -m 0755 /var/lock/samba
-	[ ! -d /var/spool/samba ] && mkdir -m 1777 /var/spool/samba
-fi
-
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/nmbd
@@ -1215,8 +1221,9 @@ fi
 %{_mandir}/man8/tdbbackup.8*
 
 %dir %{_sambahome}
-%dir /var/lock/samba
-%ghost /var/lock/samba/*
+%dir /var/lib/samba
+%ghost /var/lib/samba/*.dat
+%dir /var/lib/samba/printing
 
 %attr(750,root,root) %dir /var/log/samba
 %attr(750,root,root) %dir /var/log/archiv/samba

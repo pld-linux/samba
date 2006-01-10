@@ -1,5 +1,10 @@
 #
 # TODO:
+# - unpackaged files:
+#   /usr/bin/eventlogadm
+#   /usr/include/libmsrpc.h
+#   /usr/lib/samba/auth/script.so
+#   /usr/lib/samba/libmsrpc.so
 # - look into other distro specs for valid %descriptions for samba 3
 #
 # Conditional build:

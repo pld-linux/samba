@@ -1,10 +1,5 @@
 #
 # TODO:
-# - unpackaged files:
-#   /usr/bin/eventlogadm
-#   /usr/include/libmsrpc.h
-#   /usr/lib/samba/auth/script.so
-#   /usr/lib/samba/libmsrpc.so
 # - look into other distro specs for valid %descriptions for samba 3
 #
 # Conditional build:
@@ -1063,6 +1058,9 @@ install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
 install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+mv $RPM_BUILD_ROOT%{_libdir}/samba/libmsrpc.so $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so.0
+install source/bin/libmsrpc.a $RPM_BUILD_ROOT%{_libdir}/libmsrpc.a
+ln -s libmsrpc.so.0 $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
@@ -1222,7 +1220,6 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
-%{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/tdbbackup.8*
 
 %dir %{_sambahome}
@@ -1261,9 +1258,9 @@ fi
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
-%{_mandir}/man8/winbindd*.8*
-%{_mandir}/man7/pam_winbind.7*
 %{_mandir}/man1/wbinfo*.1*
+%{_mandir}/man7/pam_winbind.7*
+%{_mandir}/man8/winbindd*.8*
 
 %files -n nss_wins
 %defattr(644,root,root,755)
@@ -1273,25 +1270,25 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.smbfs
 %attr(755,root,root) /sbin/mount.cifs
-%attr(755,root,root) %{_bindir}/smbmount
-%attr(755,root,root) %{_bindir}/smbmnt
-%attr(755,root,root) %{_bindir}/smbumount
 %attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/smbmnt
+%attr(755,root,root) %{_bindir}/smbmount
 %attr(755,root,root) %{_bindir}/smbtree
+%attr(755,root,root) %{_bindir}/smbumount
+%{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
 %{_mandir}/man8/smbmnt.8*
 %{_mandir}/man8/smbmount.8*
 %{_mandir}/man8/smbumount.8*
 %{_mandir}/man8/*mount.cifs.8*
 %attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
-%attr(755,root,root) %{_bindir}/smbcacls
-%{_mandir}/man1/smbtar.1*
-%{_mandir}/man1/smbtree.1*
-%{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbsh.1*
 %attr(755,root,root) %{_bindir}/rpcclient
 %{_mandir}/man1/rpcclient.1*
@@ -1306,27 +1303,29 @@ fi
 %dir %{_sysconfdir}/samba
 %attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
+%attr(755,root,root) %{_bindir}/eventlogadm
+%attr(755,root,root) %{_bindir}/ntlm_auth
+%attr(755,root,root) %{_bindir}/pdbedit
+%attr(755,root,root) %{_bindir}/profiles
+%attr(755,root,root) %{_bindir}/smbcquotas
+%attr(755,root,root) %{_bindir}/testparm
+%attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/*.dat
-%attr(755,root,root) %{_bindir}/testparm
-%attr(755,root,root) %{_bindir}/ntlm_auth
-%attr(755,root,root) %{_bindir}/smbcquotas
-%attr(755,root,root) %{_bindir}/profiles
-%attr(755,root,root) %{_bindir}/pdbedit
-%attr(755,root,root) %{_bindir}/vfstest
+%dir %{_libdir}/%{name}/auth
+%attr(755,root,root) %{_libdir}/%{name}/auth/script.so
 %dir %{_libdir}/%{name}/charset
 %attr(755,root,root) %{_libdir}/%{name}/charset/*.so
 #%%{_mandir}/man1/editreg.1*
-%{_mandir}/man1/testparm.1*
 %{_mandir}/man1/ntlm_auth.1*
-%{_mandir}/man1/smbcquotas.1*
 %{_mandir}/man1/profiles.1*
+%{_mandir}/man1/smbcquotas.1*
+%{_mandir}/man1/testparm.1*
 %{_mandir}/man1/vfstest.1*
-
-%{_mandir}/man1/log2pcap.1*
-
-%{_mandir}/man5/smb.conf.5*
+#%{_mandir}/man1/log2pcap.1*
 %{_mandir}/man5/lmhosts.5*
+%{_mandir}/man5/smb.conf.5*
+%{_mandir}/man8/pdbedit.8*
 
 %files swat
 %defattr(644,root,root,755)
@@ -1368,16 +1367,20 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libmsrpc.so.*
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libmsrpc.so
 %attr(755,root,root) %{_libdir}/libsmbclient.so
+%{_includedir}/libmsrpc.h
 %{_includedir}/libsmbclient.h
 
 %files -n libsmbclient-static
 %defattr(644,root,root,755)
+%{_libdir}/libmsrpc.a
 %{_libdir}/libsmbclient.a
 
 %files -n smbget

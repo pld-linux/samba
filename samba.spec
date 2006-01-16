@@ -1316,7 +1316,6 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/auth/script.so
 %dir %{_libdir}/%{name}/charset
 %attr(755,root,root) %{_libdir}/%{name}/charset/*.so
-#%%{_mandir}/man1/editreg.1*
 %{_mandir}/man1/ntlm_auth.1*
 %{_mandir}/man1/profiles.1*
 %{_mandir}/man1/smbcquotas.1*

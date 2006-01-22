@@ -71,17 +71,18 @@ BuildRequires:	libxml2-devel
 BuildRequires:	mysql-devel
 BuildRequires:	mysql-extras
 %endif
-%if %{with pgsql}
-BuildRequires:	postgresql-devel
-%endif
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
+%{?with_pgsql:BuildRequires:	postgresql-devel}
+%if %{with python}
+BuildRequires:	python-devel
+BuildRequires:	rpm-pythonprov
+%endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	xfsprogs-devel
-%{?with_python:BuildRequires:	python-devel}
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
 Requires(post,preun):	/sbin/chkconfig

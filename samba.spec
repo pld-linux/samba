@@ -35,7 +35,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.21a
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -57,6 +57,7 @@ Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-c++-nofail.patch
 Patch5:		%{name}-pthread.patch
+Patch6:		%{name}-3401.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -963,6 +964,7 @@ Documentacja samby w formacie PDF.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

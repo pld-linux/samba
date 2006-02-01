@@ -64,6 +64,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel}
 %{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
+BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	libxml2-devel

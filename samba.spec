@@ -34,13 +34,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.21a
-Release:	2
+Version:	3.0.21b
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	b5306d2681e97e4499daf7845581d116
+# Source0-md5:	bb73dffb33f4a39386ef9f3e07ae28ff
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -53,11 +53,9 @@ Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
-Patch2:		%{name}-setup-python.patch
-Patch3:		%{name}-FHS.patch
-Patch4:		%{name}-c++-nofail.patch
-Patch5:		%{name}-pthread.patch
-Patch6:		%{name}-3401.patch
+Patch2:		%{name}-FHS.patch
+Patch3:		%{name}-c++-nofail.patch
+Patch4:		%{name}-pthread.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -965,8 +963,6 @@ Documentacja samby w formacie PDF.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

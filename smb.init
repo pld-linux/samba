@@ -31,6 +31,7 @@ else
 fi
 
 TMPDIR="/tmp"; export TMPDIR
+unset TMP || :
 
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0

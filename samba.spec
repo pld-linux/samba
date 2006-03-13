@@ -81,13 +81,14 @@ BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 %endif
 BuildRequires:	readline-devel >= 4.2
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	xfsprogs-devel
-Requires:	rc-scripts
-Requires:	setup >= 2.4.6-7
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate
 Requires:	pam >= 0.66
+Requires:	rc-scripts
+Requires:	setup >= 2.4.6-7
 Obsoletes:	samba-vfs-block
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -1100,57 +1101,41 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add smb
-if [ -r /var/lock/subsys/smb ]; then
-	if [ -f /var/lock/samba/connections.tdb -a ! -f /var/lib/samba/connections.tdb ]; then
-		echo "Moving old /var/lock/samba contents to /var/lib/samba"
-		/etc/rc.d/init.d/smb stop >&2
-		mv -f /var/lock/samba/*.tdb /var/lib/samba 2>/dev/null || :
-		mv -f /var/lock/samba/*.dat /var/lib/samba 2>/dev/null || :
-		if [ -d /var/lock/samba/printing ]; then
-			mv -f /var/lock/samba/printing/*.tdb /var/lib/samba/printing 2>/dev/null || :
-		fi
-		/etc/rc.d/init.d/smb start >&2
-	else
-		/etc/rc.d/init.d/smb restart >&2
+if [ -f /var/lock/samba/connections.tdb -a ! -f /var/lib/samba/connections.tdb ]; then
+	echo >&2 "Moving old /var/lock/samba contents to /var/lib/samba"
+	/sbin/service smb stop >&2
+	mv -f /var/lock/samba/*.tdb /var/lib/samba 2>/dev/null || :
+	mv -f /var/lock/samba/*.dat /var/lib/samba 2>/dev/null || :
+	if [ -d /var/lock/samba/printing ]; then
+		mv -f /var/lock/samba/printing/*.tdb /var/lib/samba/printing 2>/dev/null || :
 	fi
+	/sbin/service smb start >&2
 else
-	echo "Run \"/etc/rc.d/init.d/smb start\" to start Samba daemons."
+	%service smb restart "Samba daemons"
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -r /var/lock/subsys/smb ]; then
-		/etc/rc.d/init.d/smb stop >&2
-	fi
+	%service smb stop
 	/sbin/chkconfig --del smb
 fi
 
 %post winbind
 /sbin/chkconfig --add winbind
-if [ -r /var/lock/subsys/winbind ]; then
-	/etc/rc.d/init.d/winbind restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/winbind start\" to start Winbind daemon."
-fi
+%service winbind restart "Winbind daemon"
 
 %preun winbind
 if [ "$1" = "0" ]; then
-	if [ -r /var/lock/subsys/winbind ]; then
-		/etc/rc.d/init.d/winbind stop >&2
-	fi
+	%service winbind stop
 	/sbin/chkconfig --del winbind
 fi
 
 %post swat
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload 1>&2
-else
-	echo "Type \"/etc/rc.d/init.d/rc-inetd start\" to start inet server" 1>&2
-fi
+%service -q rc-inetd reload
 
 %postun swat
-if [ -f /var/lock/subsys/rc-inetd ]; then
-	/etc/rc.d/init.d/rc-inetd reload
+if [ "$1" = 0 ]; then
+	%service -q rc-inetd reload
 fi
 
 %post -n openldap-schema-samba
@@ -1168,9 +1153,7 @@ include		%{schemadir}/samba.schema
 	' /etc/openldap/slapd.conf
 fi
 
-if [ -f /var/lock/subsys/ldap ]; then
-	/etc/rc.d/init.d/ldap restart >&2
-fi
+%service -q ldap restart
 
 %postun -n openldap-schema-samba
 if [ "$1" = "0" ]; then
@@ -1183,9 +1166,7 @@ if [ "$1" = "0" ]; then
 		' /etc/openldap/slapd.conf
 	fi
 
-	if [ -f /var/lock/subsys/ldap ]; then
-		/etc/rc.d/init.d/ldap restart >&2 || :
-	fi
+	%service -q ldap restart
 fi
 
 %triggerpostun -- samba < 1.9.18p7

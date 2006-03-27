@@ -15,7 +15,6 @@
 %bcond_without	pgsql		# without PostgreSQL support
 %bcond_without	python		# without python libs/utils
 %bcond_with	ldapsam		# with LDAP SAM 2.2 based auth (instead of smbpasswd)
-#%bcond_with	ipv6		# with IPv6 support
 #
 # ADS requires krb5 and LDAP
 %if %{without krb5} || %{without ldap}
@@ -40,12 +39,12 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.11
-Release:	0.pre1.3
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://us1.samba.org/samba/ftp/pre/%{name}-%{version}pre1.tar.gz
-# Source0-md5:	22ca6799d8bca78df6be9a2106229fa6
+Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
+# Source0-md5:	217e489646a474b4fb69d5802c14bc6e
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -61,8 +60,6 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-setup-python.patch
 Patch3:		%{name}-FHS.patch
 Patch4:		%{name}-case_insensitive_sql_operator.patch
-Patch5:		%{name}-printing_release.patch
-#Patch6:	http://v6web.litech.org/samba/%{name}-2.2.4+IPv6-20020609.diff
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -860,16 +857,14 @@ dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
 (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
 
 %prep
-%setup -q -n %{name}-%{version}pre1
+%setup -q
 %patch0 -p1
-%ifarch amd64
+%if "%{_lib}" == "lib64"
 %patch1 -p1
 %endif
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-#%{?with_ipv6:%patch6 -p1}
 
 cd examples/VFS
 tar xjf %{SOURCE7}
@@ -910,7 +905,7 @@ cd source
 	--with%{!?with_krb5:out}-krb5
 
 %{__make} proto
-%{__make} everything pam_smbpass bin/smbget client/mount.cifs
+%{__make} everything pam_smbpass bin/smbget client/mount.cifs bin/vfstest
 
 cd ../examples/VFS
 %{__autoconf}
@@ -958,6 +953,7 @@ install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
+install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
@@ -1171,6 +1167,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/pdbedit
+%attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}/charset
 %attr(755,root,root) %{_libdir}/%{name}/charset/*.so
 %{_mandir}/man1/editreg.1*

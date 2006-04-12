@@ -34,13 +34,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.21c
+Version:	3.0.22
 Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	9deeda292399d2bbad120f98a290f5da
+# Source0-md5:	5c39505af17cf5caf3d6ed8bab135036
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -1194,6 +1194,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
+%{_mandir}/man1/log2pcap.1*
 %{_mandir}/man1/smbstatus.1*
 %{_mandir}/man1/smbcontrol.1*
 %{_mandir}/man5/smbpasswd.5*

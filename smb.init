@@ -84,7 +84,7 @@ case "$1" in
 		killproc smbd -HUP
 		RETVAL=$?
 	else
-		msg_not_running smb >&2
+		msg_not_running smb
 		exit 7
 	fi
 	;;

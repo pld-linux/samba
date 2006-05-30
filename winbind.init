@@ -76,7 +76,7 @@ case "$1" in
 		killproc winbindd -HUP
 		RETVAL=$?
 	else
-		msg_not_running winbindd >&2
+		msg_not_running winbindd
 		exit 7
 	fi
 	;;

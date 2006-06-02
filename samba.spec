@@ -81,7 +81,7 @@ BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 %endif
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -1139,33 +1139,13 @@ if [ "$1" = 0 ]; then
 fi
 
 %post -n openldap-schema-samba
-if ! grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
-	sed -i -e '
-		/^include.*local.schema/{
-			i\
-include		%{schemadir}/samba.schema
-		}
-
-		# enable dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
-		/^#include.*\(cosine\|inetorgperson\|nis\)\.schema/{
-			s/^#//
-		}
-	' /etc/openldap/slapd.conf
-fi
-
+# dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
+%openldap_schema_register %{schemadir}/samba.schema -d cosine,inetorgperson,nis
 %service -q ldap restart
 
 %postun -n openldap-schema-samba
 if [ "$1" = "0" ]; then
-	if grep -q %{schemadir}/samba.schema /etc/openldap/slapd.conf; then
-		sed -i -e '
-		/^include.*\/usr\/share\/openldap\/schema\/samba.schema/d
-
-		# for symmetry it would be nice if we disable enabled schemas in post,
-		# but we really can not do that, it would break something else.
-		' /etc/openldap/slapd.conf
-	fi
-
+	%openldap_schema_unregister %{schemadir}/samba.schema
 	%service -q ldap restart
 fi
 

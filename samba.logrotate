@@ -3,7 +3,6 @@
 	missingok
 	olddir /var/log/archiv/samba
 	postrotate
-		/bin/killall -HUP nmbd
-		/bin/killall -HUP smbd
+		/bin/killall -HUP nmbd smbd
 	endscript
 }

@@ -61,7 +61,6 @@ BuildRequires:	automake
 BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libtool >= 2:1.4d
-#BuildRequires:	libxml2-devel
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d

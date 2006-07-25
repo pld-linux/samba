@@ -1,0 +1,6 @@
+- secuirty update to 2.2.8
+  Bug: A buffer overrun condition exists in the SMB/CIFS packet fragment
+  re-assembly code in smbd which would allow an attacker to cause smbd to
+  overwrite arbitrary areas of memory in its own process address space. This
+  could allow a skilled attacker to inject binary specific exploit code into
+  smbd.

@@ -1,14 +1,12 @@
-#
 # TODO:
 # - look into other distro specs for valid %descriptions for samba 3
+# - check where's pdb-xml
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
 %bcond_without	krb5		# without Kerberos5/Heimdal support
 %bcond_without	ldap		# without LDAP support
-%bcond_without	mysql		# without MySQL support
-%bcond_without	pgsql		# without PostgreSQL support
 %bcond_without	python		# without python libs/utils
 %bcond_with	ldapsam		# with LDAP SAM (samba) 2.2 based auth (instead of newer bcond ldap)
 
@@ -34,13 +32,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	3.0.22
-Release:	2
+Version:	3.0.23a
+Release:	0.2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	5c39505af17cf5caf3d6ed8bab135036
+# Source0-md5:	e48f196fa51c22ff67463680ce95a58d
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -51,12 +49,11 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 # Source7-md5:	900502ba36b80620229b94e5129bc856
 Source8:	winbind.init
 Source9:	winbind.sysconfig
-Patch0:		%{name}-statfs-workaround.patch
+#Patch0:		%{name}-statfs-workaround.patch
 Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-FHS.patch
 Patch3:		%{name}-c++-nofail.patch
 Patch4:		%{name}-pthread.patch
-Patch5:		%{name}-3.0-CAN-2006-3403.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -67,10 +64,6 @@ BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	libxml2-devel
-%if %{with mysql}
-BuildRequires:	mysql-devel
-BuildRequires:	mysql-extras
-%endif
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -99,6 +92,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		cups_serverbin	%{_prefix}/lib/cups
 %endif
 %define		schemadir	/usr/share/openldap/schema
+
+# CFLAGS modified (the second ./configure)
+%undefine	configure_cache
 
 %description
 Samba provides an SMB server which can be used to provide network
@@ -288,30 +284,6 @@ SWAT - ferramentada Web de configuração do Samba.
 ðÁËÅÔ samba-swat Í¦ÓÔÉÔØ ÎÏ×ÉÊ SWAT (Samba Web Administration Tool),
 ÄÌÑ ÄÉÓÔÁÎÃ¦ÊÎÏÇÏ ÁÄÍ¦Î¦ÓÔÒÕ×ÁÎÎÑ ÆÁÊÌÕ smb.conf ÚÁ ÄÏÐÏÍÏÇÏÀ ×ÁÛÏÇÏ
 ÕÌÀÂÌÅÎÏÇÏ Web-ÂÒÁÕÚÅÒÕ.
-
-%package pdb-mysql
-Summary:	Samba MySQL password database plugin
-Summary(pl):	Wtyczka Samby do przechowywania hase³ w bazie MySQL
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description pdb-mysql
-Samba MySQL password database plugin.
-
-%description pdb-mysql -l pl
-Wtyczka Samby do przechowywania hase³ w bazie MySQL.
-
-%package pdb-pgsql
-Summary:	Samba PostgreSQL password database plugin
-Summary(pl):	Wtyczka Samby do przechowywania hase³ w bazie PostgreSQL
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description pdb-pgsql
-Samba PostgreSQL password database plugin.
-
-%description pdb-pgsql -l pl
-Wtyczka Samby do przechowywania hase³ w bazie PostgreSQL.
 
 %package pdb-xml
 Summary:	Samba XML password database plugin
@@ -958,17 +930,17 @@ Documentacja samby w formacie PDF.
 
 %prep
 %setup -q
-%patch0 -p1
+#%patch0 -p1 OBSOLETE?
 %if "%{_lib}" == "lib64"
 %patch1 -p1
 %endif
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p0
 
 cd examples/VFS
 tar xjf %{SOURCE7}
+mv README{,.vfs}
 
 %build
 cd source
@@ -983,8 +955,12 @@ cd source
 #	--with-vfs \
 #	--with-tdbsam \
 #	%{?with_ipv6:--with-ipv6} \
+#	--with-expsam=xml%{?with_mysql:,mysql}%{?with_pgsql:,pgsql} \
+#	%{?with_ldapsam:--with-ldapsam} \
 
 %configure \
+	--with-rootsbindir=/sbin \
+	--with-pammodulesdir=/%{_lib}/security \
 	--with-acl-support \
 	--with-automount \
 	--with-libsmbclient \
@@ -1002,25 +978,22 @@ cd source
 	--with-utmp \
 	--with-fhs \
 	%{?with_python:--with-python} \
-	--with-expsam=xml,%{?with_mysql:mysql}%{?with_pgsql:,pgsql} \
-	%{?with_ldapsam:--with-ldapsam} \
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_krb5:out}-krb5
 
 %{__make} proto
-%{__make} everything pam_smbpass bin/smbget client/mount.cifs bin/vfstest
+%{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest
 
 cd ../examples/VFS
 %{__autoconf}
 %configure \
 	CFLAGS="%{rpmcflags} -fPIC"
 %{__make}
-mv README{,.vfs}
 
 cd samba-vscan-%{vscan_version}
 cp -f /usr/share/automake/config.sub .
 %configure
-%{__make} -j1 all
+%{__make} all
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -1047,13 +1020,10 @@ install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 install %{SOURCE9} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
-install source/client/mount.cifs	$RPM_BUILD_ROOT/sbin/mount.cifs
 install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
 ln -s libnss_winbind.so.2		$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
 install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
 ln -s libnss_wins.so.2			$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
-install source/nsswitch/pam_winbind.so	$RPM_BUILD_ROOT/%{_lib}/security
-install source/bin/pam_smbpass.so	$RPM_BUILD_ROOT/%{_lib}/security
 install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
@@ -1073,7 +1043,7 @@ install examples/VFS/samba-vscan-%{vscan_version}/{antivir,clamav,fprot,icap,kas
 
 touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
-echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
+echo '127.0.0.1 localhost' > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
 
 %if %{with cups}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
@@ -1198,21 +1168,9 @@ fi
 %doc examples/LDAP
 %endif
 
-%if %{with mysql}
-%files pdb-mysql
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/%{name}/pdb/mysql.so
-%endif
-
-%if %{with pgsql}
-%files pdb-pgsql
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/%{name}/pdb/pgsql.so
-%endif
-
 %files pdb-xml
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/%{name}/pdb/xml.so
+#%attr(755,root,root) %{_libdir}/%{name}/pdb/xml.so
 
 %files winbind
 %defattr(644,root,root,755)
@@ -1234,6 +1192,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.smbfs
 %attr(755,root,root) /sbin/mount.cifs
+%attr(755,root,root) /sbin/umount.cifs
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/smbmnt
 %attr(755,root,root) %{_bindir}/smbmount
@@ -1300,6 +1259,7 @@ fi
 %{_datadir}/swat/help
 %{_datadir}/swat/images
 %{_datadir}/swat/include
+%{_datadir}/swat/using_samba
 %dir %{_datadir}/swat/lang
 %lang(ja) %{_datadir}/swat/lang/ja
 %lang(tr) %{_datadir}/swat/lang/tr

@@ -1,0 +1,3 @@
+- added swat.inetd
+- added 'Requires: rc-inted, inetdaemon' to swat subpackage
+- added %post{un} scripts for swat subpackage

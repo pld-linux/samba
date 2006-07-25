@@ -33,7 +33,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.23a
-Release:	0.2
+Release:	0.4
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -468,6 +468,13 @@ Static libsmbclient library.
 
 %description -n libsmbclient-static -l pl
 Statyczna biblioteka libsmbclient.
+
+%package devel
+Summary:	Header files for Samba
+Group:		Development/Libraries
+
+%description devel
+Header files for Samba.
 
 %package -n smbget
 Summary:	A utility for retrieving files using the SMB protocol
@@ -1037,6 +1044,13 @@ ln -s libmsrpc.so.0 $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
+# these are needed to build samba-pdbsql
+install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{smbwrapper,tdb,nsswitch}
+cp -a source/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
+cp -a source/smbwrapper/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
+cp -a source/tdb/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
+cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
+
 # vscan modules
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/samba-vscan-%{vscan_version}/{antivir,clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure,nai}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
@@ -1300,6 +1314,10 @@ fi
 %attr(755,root,root) %{_libdir}/libsmbclient.so
 %{_includedir}/libmsrpc.h
 %{_includedir}/libsmbclient.h
+
+%files devel
+%defattr(644,root,root,755)
+%{_includedir}/%{name}
 
 %files -n libsmbclient-static
 %defattr(644,root,root,755)

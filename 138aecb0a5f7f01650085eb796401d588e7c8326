@@ -1,0 +1,4 @@
+- added DESTDIR style %install (DESTDIR patch),
+- cuted %changelog,
+- added noreplace for sysconfig file for samba,
+- fiew files separated into Source# files.

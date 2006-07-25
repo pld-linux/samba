@@ -1,6 +1,5 @@
 # TODO:
 # - look into other distro specs for valid %descriptions for samba 3
-# - check where's pdb-xml
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -32,7 +31,7 @@ Summary(uk):	SMB кл╕╓нт та сервер
 Summary(zh_CN):	Samba ©м╩╖╤к╨м╥ЧнЯфВ
 Name:		samba
 Version:	3.0.23a
-Release:	0.4
+Release:	0.6
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -62,7 +61,7 @@ BuildRequires:	automake
 BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libtool >= 2:1.4d
-BuildRequires:	libxml2-devel
+#BuildRequires:	libxml2-devel
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -82,6 +81,7 @@ Requires:	logrotate
 Requires:	pam >= 0.66
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
+Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -283,18 +283,6 @@ SWAT - ferramentada Web de configuraГЦo do Samba.
 Пакет samba-swat м╕стить новий SWAT (Samba Web Administration Tool),
 для дистанц╕йного адм╕н╕стрування файлу smb.conf за допомогою вашого
 улюбленого Web-браузеру.
-
-%package pdb-xml
-Summary:	Samba XML password database plugin
-Summary(pl):	Wtyczka Samby do przechowywania haseЁ w bazie XML
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description pdb-xml
-Samba XML password database plugin.
-
-%description pdb-xml -l pl
-Wtyczka Samby do przechowywania haseЁ w bazie XML.
 
 %package client
 Summary:	Samba client programs
@@ -961,7 +949,6 @@ cd source
 #	--with-vfs \
 #	--with-tdbsam \
 #	%{?with_ipv6:--with-ipv6} \
-#	--with-expsam=xml%{?with_mysql:,mysql}%{?with_pgsql:,pgsql} \
 
 %configure \
 	--with-rootsbindir=/sbin \
@@ -1179,10 +1166,6 @@ fi
 %if %{with ldap}
 %doc examples/LDAP
 %endif
-
-%files pdb-xml
-%defattr(644,root,root,755)
-#%attr(755,root,root) %{_libdir}/%{name}/pdb/xml.so
 
 %files winbind
 %defattr(644,root,root,755)

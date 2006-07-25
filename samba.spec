@@ -31,7 +31,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.23a
-Release:	0.6
+Release:	0.7
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -1031,9 +1031,9 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{smbwrapper,tdb,nsswitch}
 cp -a source/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a source/smbwrapper/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a source/tdb/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
+cp -a source/smbwrapper/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/smbwrapper
+cp -a source/tdb/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 
 # vscan modules
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}

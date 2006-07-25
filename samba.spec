@@ -8,7 +8,6 @@
 %bcond_without	krb5		# without Kerberos5/Heimdal support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
-%bcond_with	ldapsam		# with LDAP SAM (samba) 2.2 based auth (instead of newer bcond ldap)
 
 # ADS requires krb5 and LDAP
 %if %{without krb5} || %{without ldap}
@@ -963,7 +962,6 @@ cd source
 #	--with-tdbsam \
 #	%{?with_ipv6:--with-ipv6} \
 #	--with-expsam=xml%{?with_mysql:,mysql}%{?with_pgsql:,pgsql} \
-#	%{?with_ldapsam:--with-ldapsam} \
 
 %configure \
 	--with-rootsbindir=/sbin \

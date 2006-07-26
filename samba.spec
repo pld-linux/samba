@@ -457,10 +457,14 @@ Statyczna biblioteka libsmbclient.
 
 %package devel
 Summary:	Header files for Samba
+Summary(pl):	Pliki nag³ówkowe Samby
 Group:		Development/Libraries
 
 %description devel
 Header files for Samba.
+
+%description devel -l pl
+Pliki nag³ówkowe Samby.
 
 %package -n smbget
 Summary:	A utility for retrieving files using the SMB protocol

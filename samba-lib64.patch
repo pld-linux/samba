@@ -1,7 +1,7 @@
-diff -Nur samba-3.0.11/source/aclocal.m4 samba-3.0.11.64/source/aclocal.m4
---- samba-3.0.11/source/aclocal.m4	2004-10-25 23:05:11.000000000 +0200
-+++ samba-3.0.11.64/source/aclocal.m4	2005-02-05 11:16:37.674724456 +0100
-@@ -511,7 +511,7 @@
+diff -urN samba-3.0.23b.org/source/aclocal.m4 samba-3.0.23b/source/aclocal.m4
+--- samba-3.0.23b.org/source/aclocal.m4	2006-06-23 15:16:53.000000000 +0200
++++ samba-3.0.23b/source/aclocal.m4	2006-08-09 21:19:38.914290750 +0200
+@@ -564,7 +564,7 @@
    fi
  
    AC_REQUIRE([AC_CANONICAL_TARGET])
@@ -10,7 +10,7 @@ diff -Nur samba-3.0.11/source/aclocal.m4 samba-3.0.11.64/source/aclocal.m4
    AC_MSG_CHECKING(for PGSQL)
    no_pgsql=""
    if test "$PGSQL_CONFIG" = "no" ; then
-@@ -541,12 +541,12 @@
+@@ -594,12 +594,12 @@
    $1=[$]ac_new_flags
  ])
      
@@ -25,7 +25,7 @@ diff -Nur samba-3.0.11/source/aclocal.m4 samba-3.0.11.64/source/aclocal.m4
      *) ac_new_flags="[$]ac_new_flags [$]i" ;;
      esac
    done
-@@ -677,9 +677,9 @@
+@@ -719,9 +719,9 @@
  ])
  
  dnl LIB_ADD_DIR(LDFLAGS, $LIBDIR)
@@ -37,19 +37,19 @@ diff -Nur samba-3.0.11/source/aclocal.m4 samba-3.0.11.64/source/aclocal.m4
      $1="$$1 -L$2"
  fi
  ])
-diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
---- samba-3.0.11/source/configure.in	2005-02-05 11:20:30.587316360 +0100
-+++ samba-3.0.11.64/source/configure.in	2005-02-05 11:16:37.708719288 +0100
-@@ -27,7 +27,7 @@
- mandir="\${prefix}/man"
+diff -urN samba-3.0.23b.org/source/configure.in samba-3.0.23b/source/configure.in
+--- samba-3.0.23b.org/source/configure.in	2006-07-21 18:22:57.000000000 +0200
++++ samba-3.0.23b/source/configure.in	2006-08-09 21:20:13.784470000 +0200
+@@ -28,7 +28,7 @@
+ test "${mandir}" || mandir="\${prefix}/man"
  logfilebase="\${VARDIR}"
  privatedir="\${prefix}/private"
--libdir="\${prefix}/lib"
-+libdir="\${prefix}/lib64"
+-test "${libdir}" || libdir="\${prefix}/lib"
++test "${libdir}" || libdir="\${prefix}/lib64"
+ pammodulesdir="\${LIBDIR}/security"
  configdir="\${LIBDIR}"
  swatdir="\${prefix}/swat"
- 
-@@ -40,7 +40,7 @@
+@@ -42,7 +42,7 @@
      mandir="\${prefix}/share/man"
      logfilebase="\${VARDIR}/log/samba"
      privatedir="\${CONFIGDIR}/private"
@@ -58,7 +58,7 @@ diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
      configdir="${sysconfdir}/samba"
      swatdir="\${DATADIR}/samba/swat"
      ;;
-@@ -629,7 +629,7 @@
+@@ -811,7 +811,7 @@
  # Note: iconv does that explicitly below, but other packages
  # don't.
  	CPPFLAGS="$CPPFLAGS -I/sw/include"
@@ -67,7 +67,7 @@ diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
  
  # If we have dlsym_prepend_underscore (from Fink's dlcompat),
  # use that instead of plain dlsym.
-@@ -914,7 +914,7 @@
+@@ -1183,7 +1183,7 @@
      _cppflags=${CPPFLAGS}
  
      # Add additional search path
@@ -76,7 +76,7 @@ diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
      CPPFLAGS="-I$with_readline/include $CPPFLAGS"
  
      AC_CHECK_HEADERS(readline.h history.h readline/readline.h)
-@@ -925,7 +925,7 @@
+@@ -1194,7 +1194,7 @@
         AC_CHECK_LIB(${termlib}, tgetent, [TERMLIBS="-l${termlib}"; break])
        done
        AC_CHECK_LIB(readline, rl_callback_handler_install,
@@ -85,7 +85,7 @@ diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
         TERMCPPFLAGS="-I$with_readline/include"
         CPPFLAGS="-I$with_readline/include $CPPFLAGS"
         TERMLIBS="-lreadline $TERMLIBS"
-@@ -1725,7 +1725,7 @@
+@@ -2280,7 +2280,7 @@
  ICONV_LOCATION=standard
  LOOK_DIRS="/usr /usr/local /sw /opt"
  AC_ARG_WITH(libiconv,
@@ -94,7 +94,7 @@ diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
  [
    if test "$withval" = "no" ; then
      AC_MSG_ERROR([argument to --with-libiconv must be a directory])
-@@ -2652,7 +2652,7 @@
+@@ -3307,7 +3307,7 @@
          AC_MSG_RESULT($withval)
          KRB5_CFLAGS="-I$withval/include"
          KRB5_CPPFLAGS="-I$withval/include"
@@ -103,7 +103,7 @@ diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
          FOUND_KRB5=yes
  	if test -x "$withval/bin/krb5-config"; then
  		KRB5CONFIG=$withval/bin/krb5-config
-@@ -2689,10 +2689,10 @@
+@@ -3344,10 +3344,10 @@
      # see if this box has the SuSE location for the heimdal krb implementation
      AC_MSG_CHECKING(for /usr/include/heimdal)
      if test -d /usr/include/heimdal; then
@@ -116,18 +116,18 @@ diff -Nur samba-3.0.11/source/configure.in samba-3.0.11.64/source/configure.in
            AC_MSG_RESULT(yes)
        else
            KRB5_CFLAGS="-I/usr/include/heimdal"
-@@ -4612,7 +4612,7 @@
- builddir=`pwd`
- AC_SUBST(builddir)
+@@ -5636,7 +5636,7 @@
+ SMBD_LIBS="$samba_fam_libs $samba_dmapi_libs"
+ AC_SUBST(SMBD_LIBS)
  
 -dnl Remove -L/usr/lib/? from LDFLAGS and LIBS
 +dnl Remove -L/usr/lib64/? from LDFLAGS and LIBS
  LIB_REMOVE_USR_LIB(LDFLAGS)
  LIB_REMOVE_USR_LIB(LIBS)
  
-diff -Nur samba-3.0.11/source/torture/nsstest.c samba-3.0.11.64/source/torture/nsstest.c
---- samba-3.0.11/source/torture/nsstest.c	2004-10-25 23:05:10.000000000 +0200
-+++ samba-3.0.11.64/source/torture/nsstest.c	2005-02-05 11:16:37.690722024 +0100
+diff -urN samba-3.0.23b.org/source/torture/nsstest.c samba-3.0.23b/source/torture/nsstest.c
+--- samba-3.0.23b.org/source/torture/nsstest.c	2006-04-20 04:29:44.000000000 +0200
++++ samba-3.0.23b/source/torture/nsstest.c	2006-08-09 21:19:38.922291250 +0200
 @@ -21,7 +21,7 @@
  
  #include "includes.h"

@@ -1,0 +1,302 @@
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/auth/auth_util.c samba-3.0.23b-patched/source/auth/auth_util.c
+--- samba-3.0.23b/source/auth/auth_util.c	2006-08-07 11:46:33.000000000 -0500
++++ samba-3.0.23b-patched/source/auth/auth_util.c	2006-08-22 11:09:19.000000000 -0500
+@@ -562,6 +562,10 @@
+ 	struct passwd *pwd;
+ 	gid_t *gids;
+ 	auth_serversupplied_info *result;
++	int i;
++	size_t num_gids;
++	DOM_SID unix_group_sid;
++	
+ 
+ 	if ( !(pwd = getpwnam_alloc(NULL, pdb_get_username(sampass))) ) {
+ 		DEBUG(1, ("User %s in passdb, but getpwnam() fails!\n",
+@@ -592,10 +596,29 @@
+ 		TALLOC_FREE(result);
+ 		return status;
+ 	}
++	
++	/* Add the "Unix Group" SID for each gid to catch mapped groups
++	   and their Unix equivalent.  This is to solve the backwards 
++	   compatibility problem of 'valid users = +ntadmin' where 
++	   ntadmin has been paired with "Domain Admins" in the group 
++	   mapping table.  Otherwise smb.conf would need to be changed
++	   to 'valid user = "Domain Admins"'.  --jerry */
++	
++	num_gids = result->num_sids;
++	for ( i=0; i<num_gids; i++ ) {
++		if ( !gid_to_unix_groups_sid( gids[i], &unix_group_sid ) ) {
++			DEBUG(1,("make_server_info_sam: Failed to create SID "
++				"for gid %d!\n", gids[i]));
++			continue;
++		}
++		add_sid_to_array_unique( result, &unix_group_sid,
++			&result->sids, &result->num_sids );
++	}
+ 
+ 	/* For now we throw away the gids and convert via sid_to_gid
+ 	 * later. This needs fixing, but I'd like to get the code straight and
+ 	 * simple first. */
++	 
+ 	TALLOC_FREE(gids);
+ 
+ 	DEBUG(5,("make_server_info_sam: made server info for user %s -> %s\n",
+@@ -873,7 +896,7 @@
+ 			become_root();
+ 			status = create_builtin_administrators( );
+ 			if ( !NT_STATUS_IS_OK(status) ) {
+-				DEBUG(0,("create_local_nt_token: Failed to create BUILTIN\\Administrators group!\n"));
++				DEBUG(2,("create_local_nt_token: Failed to create BUILTIN\\Administrators group!\n"));
+ 				/* don't fail, just log the message */
+ 			}
+ 			unbecome_root();
+@@ -900,7 +923,7 @@
+ 			become_root();
+ 			status = create_builtin_users( );
+ 			if ( !NT_STATUS_IS_OK(status) ) {
+-				DEBUG(0,("create_local_nt_token: Failed to create BUILTIN\\Administrators group!\n"));
++				DEBUG(2,("create_local_nt_token: Failed to create BUILTIN\\Administrators group!\n"));
+ 				/* don't fail, just log the message */
+ 			}
+ 			unbecome_root();
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/groupdb/mapping.c samba-3.0.23b-patched/source/groupdb/mapping.c
+--- samba-3.0.23b/source/groupdb/mapping.c	2006-04-19 21:29:21.000000000 -0500
++++ samba-3.0.23b-patched/source/groupdb/mapping.c	2006-08-22 11:09:00.000000000 -0500
+@@ -195,7 +195,7 @@
+ 	fstrcpy(map.nt_name, grpname);
+ 
+ 	if (pdb_rid_algorithm()) {
+-		rid = pdb_gid_to_group_rid( grp->gr_gid );
++		rid = algorithmic_pdb_gid_to_group_rid( grp->gr_gid );
+ 	} else {
+ 		if (!pdb_new_rid(&rid)) {
+ 			DEBUG(3, ("Could not get a new RID for %s\n",
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/include/smb.h samba-3.0.23b-patched/source/include/smb.h
+--- samba-3.0.23b/source/include/smb.h	2006-07-10 11:27:52.000000000 -0500
++++ samba-3.0.23b-patched/source/include/smb.h	2006-08-22 11:09:00.000000000 -0500
+@@ -272,7 +272,7 @@
+ #define LOOKUP_NAME_REMOTE   2  /* Ask others */
+ #define LOOKUP_NAME_ALL (LOOKUP_NAME_ISOLATED|LOOKUP_NAME_REMOTE)
+ 
+-#define LOOKUP_NAME_GROUP    4  /* This is a NASTY hack for valid users = @foo
++#define LOOKUP_NAME_GROUP    4  /* (unused) This is a NASTY hack for valid users = @foo
+ 				 * where foo also exists in as user. */
+ 
+ /**
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/passdb/lookup_sid.c samba-3.0.23b-patched/source/passdb/lookup_sid.c
+--- samba-3.0.23b/source/passdb/lookup_sid.c	2006-08-07 11:46:33.000000000 -0500
++++ samba-3.0.23b-patched/source/passdb/lookup_sid.c	2006-08-22 11:09:14.000000000 -0500
+@@ -43,7 +43,6 @@
+ 	DOM_SID sid;
+ 	enum SID_NAME_USE type;
+ 	TALLOC_CTX *tmp_ctx = talloc_new(mem_ctx);
+-	struct group *grp;
+ 
+ 	if (tmp_ctx == NULL) {
+ 		DEBUG(0, ("talloc_new failed\n"));
+@@ -120,63 +119,6 @@
+ 		goto failed;
+ 	}
+ 
+-	/*
+-	 * Nasty hack necessary for too common scenarios:
+-	 *
+-	 * For 'valid users = +users' we know "users" is most probably not
+-	 * BUILTIN\users but the unix group users. This hack requires the
+-	 * admin to explicitly qualify BUILTIN if BUILTIN\users is meant.
+-	 *
+-	 * Please note that LOOKUP_NAME_GROUP can not be requested via for
+-	 * example lsa_lookupnames, it only comes into this routine via
+-	 * the expansion of group names coming in from smb.conf
+-	 */
+-
+-	if ((flags & LOOKUP_NAME_GROUP) && ((grp = getgrnam(name)) != NULL)) {
+-
+-		GROUP_MAP map;
+-
+-		if (pdb_getgrgid(&map, grp->gr_gid)) {
+-			/* The hack gets worse. Handle the case where we have
+-			 * 'force group = +unixgroup' but "unixgroup" has a
+-			 * group mapping */
+-
+-			if (sid_check_is_in_builtin(&map.sid)) {
+-				domain = talloc_strdup(
+-					tmp_ctx, builtin_domain_name());
+-			} else {
+-				domain = talloc_strdup(
+-					tmp_ctx, get_global_sam_name());
+-			}
+-
+-			sid_copy(&sid, &map.sid);
+-			type = map.sid_name_use;
+-			goto ok;
+-		}
+-
+-		/* If we are using the smbpasswd backend, we need to use the
+-		 * algorithmic mapping for the unix group we find. This is
+-		 * necessary because when creating the NT token from the unix
+-		 * gid list we got from initgroups() we use gid_to_sid() that
+-		 * uses algorithmic mapping if pdb_rid_algorithm() is true. */
+-
+-		if (pdb_rid_algorithm() &&
+-		    (grp->gr_gid < max_algorithmic_gid())) {
+-			domain = talloc_strdup(tmp_ctx, get_global_sam_name());
+-			sid_compose(&sid, get_global_sam_sid(),
+-				    pdb_gid_to_group_rid(grp->gr_gid));
+-			type = SID_NAME_DOM_GRP;
+-			goto ok;
+-		}
+-		
+-		if (lookup_unix_group_name(name, &sid)) {
+-			domain = talloc_strdup(tmp_ctx,
+-					       unix_groups_domain_name());
+-			type = SID_NAME_DOM_GRP;
+-			goto ok;
+-		}
+-	}
+-
+ 	/* Now the guesswork begins, we haven't been given an explicit
+ 	 * domain. Try the sequence as documented on
+ 	 * http://msdn.microsoft.com/library/en-us/secmgmt/security/lsalookupnames.asp
+@@ -1138,14 +1080,9 @@
+ 		goto done;
+ 	}
+ 
+-	if (pdb_rid_algorithm() && (uid < max_algorithmic_uid())) {
+-		sid_copy(psid, get_global_sam_sid());
+-		sid_append_rid(psid, algorithmic_pdb_uid_to_user_rid(uid));
+-		goto done;
+-	} else {
+-		uid_to_unix_users_sid(uid, psid);
+-		goto done;
+-	}
++	/* This is an unmapped user */
++
++	uid_to_unix_users_sid(uid, psid);
+ 
+  done:
+ 	DEBUG(10,("uid_to_sid: local %u -> %s\n", (unsigned int)uid,
+@@ -1180,16 +1117,10 @@
+ 		/* This is a mapped group */
+ 		goto done;
+ 	}
++	
++	/* This is an unmapped group */
+ 
+-	if (pdb_rid_algorithm() && (gid < max_algorithmic_gid())) {
+-		sid_copy(psid, get_global_sam_sid());
+-		sid_append_rid(psid, pdb_gid_to_group_rid(gid));
+-		goto done;
+-	} else {
+-		sid_copy(psid, &global_sid_Unix_Groups);
+-		sid_append_rid(psid, gid);
+-		goto done;
+-	}
++	gid_to_unix_groups_sid(gid, psid);
+ 
+  done:
+ 	DEBUG(10,("gid_to_sid: local %u -> %s\n", (unsigned int)gid,
+@@ -1235,14 +1166,9 @@
+ 			*puid = id.uid;
+ 			goto done;
+ 		}
+-		if (pdb_rid_algorithm() &&
+-		    algorithmic_pdb_rid_is_user(rid)) {
+-			*puid = algorithmic_pdb_user_rid_to_uid(rid);
+-			goto done;
+-		}
+ 
+-		/* This was ours, but it was neither mapped nor
+-		 * algorithmic. Fail */
++		/* This was ours, but it was not mapped.  Fail */
++
+ 		return False;
+ 	}
+ 
+@@ -1323,14 +1249,9 @@
+ 			*pgid = id.gid;
+ 			goto done;
+ 		}
+-		if (pdb_rid_algorithm() &&
+-		    !algorithmic_pdb_rid_is_user(rid)) {
+-			/* This must be a group, presented as alias */
+-			*pgid = pdb_group_rid_to_gid(rid);
+-			goto done;
+-		}
+-		/* This was ours, but it was neither mapped nor
+-		 * algorithmic. Fail. */
++
++		/* This was ours, but it was not mapped.  Fail */
++
+ 		return False;
+ 	}
+ 	
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/passdb/passdb.c samba-3.0.23b-patched/source/passdb/passdb.c
+--- samba-3.0.23b/source/passdb/passdb.c	2006-07-10 11:27:52.000000000 -0500
++++ samba-3.0.23b-patched/source/passdb/passdb.c	2006-08-22 11:09:00.000000000 -0500
+@@ -505,7 +505,7 @@
+  there is not anymore a direct link between the gid and the rid.
+  ********************************************************************/
+ 
+-uint32 pdb_gid_to_group_rid(gid_t gid)
++uint32 algorithmic_pdb_gid_to_group_rid(gid_t gid)
+ {
+ 	int rid_offset = algorithmic_rid_base();
+ 	return (((((uint32)gid)*RID_MULTIPLIER) + rid_offset) | GROUP_RID_TYPE);
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/passdb/pdb_interface.c samba-3.0.23b-patched/source/passdb/pdb_interface.c
+--- samba-3.0.23b/source/passdb/pdb_interface.c	2006-07-21 11:22:57.000000000 -0500
++++ samba-3.0.23b-patched/source/passdb/pdb_interface.c	2006-08-22 11:09:00.000000000 -0500
+@@ -595,7 +595,7 @@
+ 	}
+ 
+ 	if (pdb_rid_algorithm()) {
+-		*rid = pdb_gid_to_group_rid( grp->gr_gid );
++		*rid = algorithmic_pdb_gid_to_group_rid( grp->gr_gid );
+ 	} else {
+ 		if (!pdb_new_rid(rid)) {
+ 			return NT_STATUS_ACCESS_DENIED;
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/passdb/util_unixsids.c samba-3.0.23b-patched/source/passdb/util_unixsids.c
+--- samba-3.0.23b/source/passdb/util_unixsids.c	2006-07-10 11:27:52.000000000 -0500
++++ samba-3.0.23b-patched/source/passdb/util_unixsids.c	2006-08-22 11:09:14.000000000 -0500
+@@ -42,6 +42,12 @@
+ 	return sid_append_rid(sid, uid);
+ }
+ 
++BOOL gid_to_unix_groups_sid(gid_t gid, DOM_SID *sid)
++{
++	sid_copy(sid, &global_sid_Unix_Groups);
++	return sid_append_rid(sid, gid);
++}
++
+ const char *unix_users_domain_name(void)
+ {
+ 	return "Unix User";
+diff -urN --exclude-from=/home/drizzt/jerry/tmp/diff.excludes samba-3.0.23b/source/utils/net_groupmap.c samba-3.0.23b-patched/source/utils/net_groupmap.c
+--- samba-3.0.23b/source/utils/net_groupmap.c	2006-04-19 21:29:41.000000000 -0500
++++ samba-3.0.23b-patched/source/utils/net_groupmap.c	2006-08-22 11:09:00.000000000 -0500
+@@ -275,7 +275,7 @@
+ 	if ( (rid == 0) && (string_sid[0] == '\0') ) {
+ 		d_printf("No rid or sid specified, choosing a RID\n");
+ 		if (pdb_rid_algorithm()) {
+-			rid = pdb_gid_to_group_rid(gid);
++			rid = algorithmic_pdb_gid_to_group_rid(gid);
+ 		} else {
+ 			if (!pdb_new_rid(&rid)) {
+ 				d_printf("Could not get new RID\n");
+@@ -555,7 +555,14 @@
+ 		map.gid = grp->gr_gid;
+ 
+ 		if (opt_rid == 0) {
+-			opt_rid = pdb_gid_to_group_rid(map.gid);
++			if ( pdb_rid_algorithm() )
++				opt_rid = algorithmic_pdb_gid_to_group_rid(map.gid);
++			else {
++				if ( !pdb_new_rid((uint32*)&opt_rid) ) {
++					d_fprintf( stderr, "Could not allocate new RID\n");
++					return -1;
++				}
++			}
+ 		}
+ 
+ 		sid_copy(&map.sid, get_global_sam_sid());

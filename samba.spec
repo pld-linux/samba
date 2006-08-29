@@ -57,6 +57,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel}
+BuildRequires:	dmapi-devel
 %{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	iconv
 BuildRequires:	libmagic-devel

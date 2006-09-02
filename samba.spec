@@ -30,8 +30,8 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.23b
-Release:	2
+Version:	3.0.23c
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -52,7 +52,6 @@ Patch1:		%{name}-lib64.patch
 Patch2:		%{name}-FHS.patch
 Patch3:		%{name}-c++-nofail.patch
 Patch4:		%{name}-pthread.patch
-Patch5:		%{name}-lookup_name_smbconf.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -936,7 +935,6 @@ Documentacja samby w formacie PDF.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

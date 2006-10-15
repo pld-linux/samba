@@ -995,6 +995,7 @@ cp -f /usr/share/automake/config.sub .
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT{/var/{log,log/archiv,spool}/samba,/var/lib/samba/printing} \
+	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
 
 cd source
@@ -1165,6 +1166,9 @@ fi
 %dir /var/lib/samba/printing
 
 %attr(750,root,root) %dir /var/log/samba
+%attr(750,root,root) %dir /var/log/samba/cores
+%attr(750,root,root) %dir /var/log/samba/cores/smbd
+%attr(750,root,root) %dir /var/log/samba/cores/nmbd
 %attr(750,root,root) %dir /var/log/archiv/samba
 %attr(1777,root,root) %dir /var/spool/samba
 %if %{with ldap}

@@ -56,7 +56,7 @@ URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
-%{?with_cups:BuildRequires:	cups-devel}
+%{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 %{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	iconv
@@ -81,6 +81,8 @@ Requires:	logrotate
 Requires:	pam >= 0.66
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
+# smbd links with libcups
+%{?with_cups:Requires:	cups >= 1:1.2.0}
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -484,7 +486,7 @@ Summary:	CUPS backend for printing to SMB printers
 Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
 Group:		Applications/Printing
 Requires:	%{name}-client = %{epoch}:%{version}-%{release}
-Requires:	cups
+Requires:	cups >= 1:1.2.0
 
 %description -n cups-backend-smb
 CUPS backend for printing to SMB printers.

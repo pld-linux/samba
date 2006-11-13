@@ -9,7 +9,7 @@
 %bcond_without	python		# without python libs/utils
 
 # ADS requires krb5 and LDAP
-%if %{without krb5} || %{without ldap}
+%if !%{with krb5} || !%{with ldap}
 %undefine	with_ads
 %endif
 %define		vscan_version 0.3.6b

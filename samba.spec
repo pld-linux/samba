@@ -31,7 +31,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.23c
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -82,7 +82,7 @@ Requires:	pam >= 0.66
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
-%{?with_cups:Requires:	cups >= 1:1.2.0}
+%{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

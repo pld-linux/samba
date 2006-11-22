@@ -30,13 +30,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.23c
-Release:	3
+Version:	3.0.23d
+Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	9e06d5e10f4ae84f7fafad75d1b4184c
+# Source0-md5:	afe6923d05fed5b5ccab593c7a407cd1
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -47,11 +47,10 @@ Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.
 # Source7-md5:	900502ba36b80620229b94e5129bc856
 Source8:	winbind.init
 Source9:	winbind.sysconfig
-#Patch0:		%{name}-statfs-workaround.patch
-Patch1:		%{name}-lib64.patch
-Patch2:		%{name}-FHS.patch
-Patch3:		%{name}-c++-nofail.patch
-Patch4:		%{name}-pthread.patch
+Patch0:		%{name}-lib64.patch
+Patch1:		%{name}-FHS.patch
+Patch2:		%{name}-c++-nofail.patch
+Patch3:		%{name}-pthread.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -930,13 +929,12 @@ Documentacja samby w formacie PDF.
 
 %prep
 %setup -q
-#%patch0 -p1 OBSOLETE?
 %if "%{_lib}" == "lib64"
-%patch1 -p1
+%patch0 -p1
 %endif
+%patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

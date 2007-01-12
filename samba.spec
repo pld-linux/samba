@@ -31,7 +31,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.23d
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -51,6 +51,7 @@ Patch0:		%{name}-lib64.patch
 Patch1:		%{name}-FHS.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
+Patch4:		%{name}-libsmbclient-libnscd_link.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -59,6 +60,7 @@ BuildRequires:	automake
 BuildRequires:	dmapi-devel
 %{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	iconv
+BuildRequires:	libnscd-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
@@ -935,6 +937,7 @@ Documentacja samby w formacie PDF.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 cd examples/VFS
 tar xjf %{SOURCE7}

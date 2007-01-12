@@ -1,0 +1,11 @@
+--- samba-3.0.23d/source/Makefile.in~	2006-11-14 15:42:15.000000000 +0100
++++ samba-3.0.23d/source/Makefile.in	2007-01-12 20:19:34.704177380 +0100
+@@ -1101,7 +1101,7 @@
+ 
+ bin/libsmbclient.@SHLIBEXT@: $(LIBSMBCLIENT_PICOBJS)
+ 	@echo Linking libsmbclient shared library $@
+-	@$(SHLD) $(LDSHFLAGS) -o $@ $(LIBSMBCLIENT_PICOBJS) $(LDFLAGS) $(LIBS) \
++	@$(SHLD) $(LDSHFLAGS) -o $@ $(LIBSMBCLIENT_PICOBJS) $(LDFLAGS) $(LIBS) -lnscd \
+ 		$(KRB5LIBS) $(LDAP_LIBS) \
+ 		@SONAMEFLAG@`basename $@`.$(LIBSMBCLIENT_MAJOR)
+ 

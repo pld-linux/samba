@@ -14,21 +14,21 @@
 %endif
 %define		vscan_version 0.3.6b
 Summary:	SMB server
-Summary(cs):	Server SMB
-Summary(da):	SMB server
-Summary(de):	SMB-Server
-Summary(es):	El servidor SMB
-Summary(fi):	SMB-palvelin
-Summary(fr):	Serveur SMB
-Summary(it):	Server SMB
-Summary(ja):	Samba SMB ¥µ¡¼¥Ð¡¼
-Summary(ko):	»ï¹Ù SMB ¼­¹ö
-Summary(pl):	Serwer SMB
-Summary(pt_BR):	Cliente e servidor SMB
-Summary(ru):	SMB ËÌÉÅÎÔ É ÓÅÒ×ÅÒ
-Summary(tr):	SMB sunucusu
-Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
-Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
+Summary(cs.UTF-8):   Server SMB
+Summary(da.UTF-8):   SMB server
+Summary(de.UTF-8):   SMB-Server
+Summary(es.UTF-8):   El servidor SMB
+Summary(fi.UTF-8):   SMB-palvelin
+Summary(fr.UTF-8):   Serveur SMB
+Summary(it.UTF-8):   Server SMB
+Summary(ja.UTF-8):   Samba SMB ã‚µãƒ¼ãƒãƒ¼
+Summary(ko.UTF-8):   ì‚¼ë°” SMB ì„œë²„
+Summary(pl.UTF-8):   Serwer SMB
+Summary(pt_BR.UTF-8):   Cliente e servidor SMB
+Summary(ru.UTF-8):   SMB ÐºÐ»Ð¸ÐµÐ½Ñ‚ Ð¸ ÑÐµÑ€Ð²ÐµÑ€
+Summary(tr.UTF-8):   SMB sunucusu
+Summary(uk.UTF-8):   SMB ÐºÐ»Ñ–Ñ”Ð½Ñ‚ Ñ‚Ð° ÑÐµÑ€Ð²ÐµÑ€
+Summary(zh_CN.UTF-8):   Samba å®¢æˆ·ç«¯å’ŒæœåŠ¡å™¨
 Name:		samba
 Version:	3.0.23d
 Release:	4
@@ -115,149 +115,149 @@ Please refer to the WHATSNEW.txt document for fixup information. This
 binary release includes encrypted password support. Please read the
 smb.conf file for implementation details.
 
-%description -l cs
-Samba poskytuje server SMB, který lze pou¾ít pro poskytování sí»ových
-slu¾eb klientùm SMB (nìkdy nazývaných klienti "LAN mana¾er") vèetnì
-klientù rùzných verzí MS Windows, OS/2 a dal¹ích linuxových strojù.
-Samba té¾ poskytuje nìkteré klienty SMB, kteøí komplementují vestavìný
-souborový systém SMB v Linuxu. Samba pou¾ívá protokoly NetBIOS pøes
-TCP/IP (NetBT) a NEpotøebuje protokol NetBEUI (neformátovaný rámec
-NetBIOS od spoleènosti Microsoft.
+%description -l cs.UTF-8
+Samba poskytuje server SMB, kterÃ½ lze pouÅ¾Ã­t pro poskytovÃ¡nÃ­ sÃ­Å¥ovÃ½ch
+sluÅ¾eb klientÅ¯m SMB (nÄ›kdy nazÃ½vanÃ½ch klienti "LAN manaÅ¾er") vÄetnÄ›
+klientÅ¯ rÅ¯znÃ½ch verzÃ­ MS Windows, OS/2 a dalÅ¡Ã­ch linuxovÃ½ch strojÅ¯.
+Samba tÃ©Å¾ poskytuje nÄ›kterÃ© klienty SMB, kteÅ™Ã­ komplementujÃ­ vestavÄ›nÃ½
+souborovÃ½ systÃ©m SMB v Linuxu. Samba pouÅ¾Ã­vÃ¡ protokoly NetBIOS pÅ™es
+TCP/IP (NetBT) a NEpotÅ™ebuje protokol NetBEUI (neformÃ¡tovanÃ½ rÃ¡mec
+NetBIOS od spoleÄnosti Microsoft.
 
-%description -l da
-Samba tilbyder en SMB server som kan bruges til at tilbyde netværk
-services til SMB (også kaldet "Lan Manager") klienter, incl.
+%description -l da.UTF-8
+Samba tilbyder en SMB server som kan bruges til at tilbyde netvÃ¦rk
+services til SMB (ogsÃ¥ kaldet "Lan Manager") klienter, incl.
 forskellige versioner af MS Windows, OS/2, og andre Linux maskiner.
-Samba tilbyder også SMB klienter, som udbygger det indbyggede SMB
+Samba tilbyder ogsÃ¥ SMB klienter, som udbygger det indbyggede SMB
 filsystem i Linux. Samba benytter NetBIOS over TCP/IP (NetBT)
-protocolen og kræver ikke NetBEUI (Microsoft Raw NetBIOS frame)
+protocolen og krÃ¦ver ikke NetBEUI (Microsoft Raw NetBIOS frame)
 protokollen.
 
-%description -l de
-Samba stellt einen SMB-Server zum Anbieten von Netzwerkdiensten für
-SMB-Clients (auch "Lan Manager" genannt) zur Verfügung, darunter
+%description -l de.UTF-8
+Samba stellt einen SMB-Server zum Anbieten von Netzwerkdiensten fÃ¼r
+SMB-Clients (auch "Lan Manager" genannt) zur VerfÃ¼gung, darunter
 verschiedenen Versionen von MS Windows-, OS/2- und anderen
-Linux-Rechnern. Samba enthält außerdem einige SMB-Clients, die das in
-Linux integrierte SMB-Dateisystem ergänzen. Samba benutzt
-NetBIOS-über-TCP/IP (NetBT)-Protokolle und benötigt KEIN NetBEUI
+Linux-Rechnern. Samba enthÃ¤lt auÃŸerdem einige SMB-Clients, die das in
+Linux integrierte SMB-Dateisystem ergÃ¤nzen. Samba benutzt
+NetBIOS-Ã¼ber-TCP/IP (NetBT)-Protokolle und benÃ¶tigt KEIN NetBEUI
 (Microsoft Raw NetBIOS frame)-Protokoll.
 
-%description -l es
+%description -l es.UTF-8
 Samba provee un servidor SMB que se puede usar para ofrecer servicios
 de red a clientes SMB (algunas veces se le llama de "Lan Manager"),
-incluyendo varias versiones de MS Windows, OS/2, y otras máquinas
-Linux. Samba también ofrece algunos clientes SMB, que complementan el
+incluyendo varias versiones de MS Windows, OS/2, y otras mÃ¡quinas
+Linux. Samba tambiÃ©n ofrece algunos clientes SMB, que complementan el
 sistema de archivos SMB de Linux. Samba usa el protocolo NetBIOS sobre
 TCP/IP (NetBT) y no necesita del protocolo NetBEUI (Microsoft Raw
 NetBIOS frame).
 
-%description -l fi
-Samba on SMB-palvelin, jota voidaan käyttää SMB-asiakasohjelmien
+%description -l fi.UTF-8
+Samba on SMB-palvelin, jota voidaan kÃ¤yttÃ¤Ã¤ SMB-asiakasohjelmien
 verkkopalvelujen tarjoajana. SMB-protokollaa kutsutaan joskus "Lan
 Manager" protokollaksi ja asiakasohjelmat toimivat dosissa,
 Windowseissa, OS/2:ssa ja toisissa Linux-koneissa. Samban mukana on
-myös joitakin SMB-asiakasohjelmia, jotka täydentävät Linuxin
-kernelissä olevaa SMB-tiedostojärjestelmän tukea. Samba vaatii NetBIOS
-over TCP/IP (NetBT) protokollaa eikä tarvitse tai pysty käyttämään
+myÃ¶s joitakin SMB-asiakasohjelmia, jotka tÃ¤ydentÃ¤vÃ¤t Linuxin
+kernelissÃ¤ olevaa SMB-tiedostojÃ¤rjestelmÃ¤n tukea. Samba vaatii NetBIOS
+over TCP/IP (NetBT) protokollaa eikÃ¤ tarvitse tai pysty kÃ¤yttÃ¤mÃ¤Ã¤n
 NetBEUI-protokollaa.
 
-%description -l it
+%description -l it.UTF-8
 Samba fornisce un server SMB che puo` essere usato per fornire servizi
 di rete ai client SMB, incluse le versioni MS Windows, OS/2 e per
 altre macchine Linux. Samba fornisce anche i client SMB. Samba usa
 NetBIOS sopra TCP/IP e non ha bisogno del protocollo NetBEUI.
 
-%description -l ja
-Samba ¤Ï MS Windows ¤ÎÍÍ¡¹¤Ê¥Ð¡¼¥¸¥ç¥ó¡¢OS/2 ¤½¤·¤ÆÂ¾¤Î Linux ¥Þ¥·¥ó
-¤ò´Þ¤à SMB (¤¿¤Þ¤Ë "Lan Manager" ¤È¸Æ¤Ð¤ì¤ë)
-¥¯¥é¥¤¥¢¥ó¥È¤Ë¥Í¥Ã¥È¥ï¡¼¥¯ ¥µ¡¼¥Ó¥¹¤òÄó¶¡¤¹¤ë¤¿¤á¤Ë»ÈÍÑ¤µ¤ì¤ë SMB
-¥µ¡¼¥Ð¤òÄó¶¡¤·¤Þ¤¹¡£Samba ¤Ï NetBIOS over TCP/IP (NetBT)
-¥×¥í¥È¥³¥ë¤ò»ÈÍÑ¤·¡¢ NetBEUI(Microsoft Raw NetBIOS frame)
-¥×¥í¥È¥³¥ë¤ÏÉ¬Í×¤¢¤ê¤Þ¤»¤ó¡£
+%description -l ja.UTF-8
+Samba ã¯ MS Windows ã®æ§˜ã€…ãªãƒãƒ¼ã‚¸ãƒ§ãƒ³ã€OS/2 ãã—ã¦ä»–ã® Linux ãƒžã‚·ãƒ³
+ã‚’å«ã‚€ SMB (ãŸã¾ã« "Lan Manager" ã¨å‘¼ã°ã‚Œã‚‹)
+ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã«ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ ã‚µãƒ¼ãƒ“ã‚¹ã‚’æä¾›ã™ã‚‹ãŸã‚ã«ä½¿ç”¨ã•ã‚Œã‚‹ SMB
+ã‚µãƒ¼ãƒã‚’æä¾›ã—ã¾ã™ã€‚Samba ã¯ NetBIOS over TCP/IP (NetBT)
+ãƒ—ãƒ­ãƒˆã‚³ãƒ«ã‚’ä½¿ç”¨ã—ã€ NetBEUI(Microsoft Raw NetBIOS frame)
+ãƒ—ãƒ­ãƒˆã‚³ãƒ«ã¯å¿…è¦ã‚ã‚Šã¾ã›ã‚“ã€‚
 
-Samba ¤Û¤È¤ó¤ÉÆ°ºî¤¹¤ë NT ¥É¥á¥¤¥ó¥³¥ó¥È¥í¡¼¥ë¤Îµ¡Ç½¤òÆÃÄ§¤È¤·¡¢
-¹¥¤­¤Ê¥Ö¥é¥¦¥¶¤ò»È¤Ã¤Æ samba ¤Î smb.conf ¥Õ¥¡¥¤¥ë¤ò¥ê¥â¡¼¥È´ÉÍý¤¹¤ë
-¿·¤·¤¤ SWAT (Samba Web Administration Tool) ¤ò´Þ¤ß¤Þ¤¹¡£
-ÌÜ²¼¤Î¤È¤³¤í¤³¤ì¤Ï inetd ¤òÄÌ¤·¤Æ TCP ¥Ý¡¼¥È 901 ¤ÇÍ­¸ú¤Ë¤Ê¤ê¤Þ¤¹¡£
+Samba ã»ã¨ã‚“ã©å‹•ä½œã™ã‚‹ NT ãƒ‰ãƒ¡ã‚¤ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®æ©Ÿèƒ½ã‚’ç‰¹å¾´ã¨ã—ã€
+å¥½ããªãƒ–ãƒ©ã‚¦ã‚¶ã‚’ä½¿ã£ã¦ samba ã® smb.conf ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒªãƒ¢ãƒ¼ãƒˆç®¡ç†ã™ã‚‹
+æ–°ã—ã„ SWAT (Samba Web Administration Tool) ã‚’å«ã¿ã¾ã™ã€‚
+ç›®ä¸‹ã®ã¨ã“ã‚ã“ã‚Œã¯ inetd ã‚’é€šã—ã¦ TCP ãƒãƒ¼ãƒˆ 901 ã§æœ‰åŠ¹ã«ãªã‚Šã¾ã™ã€‚
 
-%description -l ko
-»ï¹Ù´Â MS Windows, OS/2, È¤Àº ´Ù¸¥ ¸®´ª½º ¸Ó½ÅÀ» Æ÷ÇÔÇÏ´Â SMB(È¤Àº
-"Lan Manager"¶ó°íµµ ºÒ¸²) Å¬¶óÀÌ¾ðÆ®¸¦ ³×Æ®¿öÅ© ¼­ºñ½º À§ÇØ »ç¿ëÇÒ ¼ö
-ÀÖ´Â SMB ¼­¹ö¸¦ Á¦°øÇÑ´Ù. »ï¹Ù´Â TCP/IP ÇÁ·ÎÅäÄÝÀ» ÅëÇØ NetBIOS¸¦
-»ç¿ëÇÏ°í NetBEUI (Microsoft Raw NetBIOS ÇÁ·¹ÀÓ) ÇÁ·ÎÅäÄÝÀº ÇÊ¿äÇÏÁö
-¾Ê´Ù.
+%description -l ko.UTF-8
+ì‚¼ë°”ëŠ” MS Windows, OS/2, í˜¹ì€ ë‹¤ë¥¸ ë¦¬ëˆ…ìŠ¤ ë¨¸ì‹ ì„ í¬í•¨í•˜ëŠ” SMB(í˜¹ì€
+"Lan Manager"ë¼ê³ ë„ ë¶ˆë¦¼) í´ë¼ì´ì–¸íŠ¸ë¥¼ ë„¤íŠ¸ì›Œí¬ ì„œë¹„ìŠ¤ ìœ„í•´ ì‚¬ìš©í•  ìˆ˜
+ìžˆëŠ” SMB ì„œë²„ë¥¼ ì œê³µí•œë‹¤. ì‚¼ë°”ëŠ” TCP/IP í”„ë¡œí† ì½œì„ í†µí•´ NetBIOSë¥¼
+ì‚¬ìš©í•˜ê³  NetBEUI (Microsoft Raw NetBIOS í”„ë ˆìž„) í”„ë¡œí† ì½œì€ í•„ìš”í•˜ì§€
+ì•Šë‹¤.
 
-»ï¹Ù-2.2 ÀÇ Æ¯Â¡Àº NT µµ¸ÞÀÎ ÄÁÆ®·ÑÀÇ ¼º´ÉÀ¸·Î ÀÛ¾÷À» ÇÏ°í, »õ·Î¿î
-SWAT(Samba Web Administration Tool)·Î À¥ºê¶ó¿ìÀú¸¦ »ç¿ëÇÏ¿© ¿ø°ÝÁö¿¡¼­
-»ï¹ÙÀÇ smb.conf ÆÄÀÏÀ» °ü¸®ÇÏµµ·Ï ÇÑ´Ù. ÀÌ·¯ÇÑ °æ¿ì inetd µ¥¸óÀ» ÅëÇØ
-TCP 901 Æ÷Æ®¸¦ »ç¿ëÇÏ°Ô µÈ´Ù.
+ì‚¼ë°”-2.2 ì˜ íŠ¹ì§•ì€ NT ë„ë©”ì¸ ì»¨íŠ¸ë¡¤ì˜ ì„±ëŠ¥ìœ¼ë¡œ ìž‘ì—…ì„ í•˜ê³ , ìƒˆë¡œìš´
+SWAT(Samba Web Administration Tool)ë¡œ ì›¹ë¸Œë¼ìš°ì €ë¥¼ ì‚¬ìš©í•˜ì—¬ ì›ê²©ì§€ì—ì„œ
+ì‚¼ë°”ì˜ smb.conf íŒŒì¼ì„ ê´€ë¦¬í•˜ë„ë¡ í•œë‹¤. ì´ëŸ¬í•œ ê²½ìš° inetd ë°ëª¬ì„ í†µí•´
+TCP 901 í¬íŠ¸ë¥¼ ì‚¬ìš©í•˜ê²Œ ëœë‹¤.
 
-ÃÖ±Ù Á¤º¸·Î WHATSNEW.txt ÆÄÀÏÀÇ ¹®¼­¸¦ Âü°íÇÏµµ·Ï ÇÑ´Ù. ¹ÙÀÌ³Ê¸®ÀÇ
-¸±¸®Áî´Â ¾ÏÈ£È­µÈ ÆÐ½º¿öµå¸¦ Á¦°øÇÑ´Ù.
+ìµœê·¼ ì •ë³´ë¡œ WHATSNEW.txt íŒŒì¼ì˜ ë¬¸ì„œë¥¼ ì°¸ê³ í•˜ë„ë¡ í•œë‹¤. ë°”ì´ë„ˆë¦¬ì˜
+ë¦´ë¦¬ì¦ˆëŠ” ì•”í˜¸í™”ëœ íŒ¨ìŠ¤ì›Œë“œë¥¼ ì œê³µí•œë‹¤.
 
-%description -l pl
-Samba udostêpnia serwer SMB, który mo¿e byæ u¿yty w celu dostarczenia
-us³ug sieciowych (potocznie zwanych "Lan Manager"), dla klientów
-takich jak MS Windows, OS/2 a tak¿e maszyn linuksowych. W pakiecie
-znajduje siê równie¿ oprogramowanie klienckie. Samba u¿ywa protoko³u
-NetBIOS po TCP/IP (NetBT) i nie wymaga protoko³u NetBEUI. Ta wersja ma
-pe³ne wsparcie dla blokowania plików, a tak¿e wsparcie dla kodowania
-hase³ w standardzie MS i zarz±dzania baz± WINS.
+%description -l pl.UTF-8
+Samba udostÄ™pnia serwer SMB, ktÃ³ry moÅ¼e byÄ‡ uÅ¼yty w celu dostarczenia
+usÅ‚ug sieciowych (potocznie zwanych "Lan Manager"), dla klientÃ³w
+takich jak MS Windows, OS/2 a takÅ¼e maszyn linuksowych. W pakiecie
+znajduje siÄ™ rÃ³wnieÅ¼ oprogramowanie klienckie. Samba uÅ¼ywa protokoÅ‚u
+NetBIOS po TCP/IP (NetBT) i nie wymaga protokoÅ‚u NetBEUI. Ta wersja ma
+peÅ‚ne wsparcie dla blokowania plikÃ³w, a takÅ¼e wsparcie dla kodowania
+haseÅ‚ w standardzie MS i zarzÄ…dzania bazÄ… WINS.
 
-%description -l pt_BR
-O Samba provê um servidor SMB que pode ser usado para oferecer
-serviços de rede a clientes SMB (algumas vezes chamado de "Lan
-Manager"), incluindo várias versões de MS Windows, OS/2, e outras
-máquinas Linux. O Samba também fornece alguns clientes SMB, que
+%description -l pt_BR.UTF-8
+O Samba provÃª um servidor SMB que pode ser usado para oferecer
+serviÃ§os de rede a clientes SMB (algumas vezes chamado de "Lan
+Manager"), incluindo vÃ¡rias versÃµes de MS Windows, OS/2, e outras
+mÃ¡quinas Linux. O Samba tambÃ©m fornece alguns clientes SMB, que
 complementam o sistema de arquivos SMB do Linux. O Samba usa o
-protocolo NetBIOS sobre TCP/IP (NetBT) e não necessita do protocolo
+protocolo NetBIOS sobre TCP/IP (NetBT) e nÃ£o necessita do protocolo
 NetBEUI (Microsoft Raw NetBIOS frame).
 
-O Samba inclui a maioria das características de um servidor de
-Controle de Domínios NT e o SWAT (Samba Web Administration Tool), que
-permite que o arquivo smb.conf seja gerenciado remotamente através de
-um navegador. Atualmente isto está sendo habilitado na porta TCP 901
+O Samba inclui a maioria das caracterÃ­sticas de um servidor de
+Controle de DomÃ­nios NT e o SWAT (Samba Web Administration Tool), que
+permite que o arquivo smb.conf seja gerenciado remotamente atravÃ©s de
+um navegador. Atualmente isto estÃ¡ sendo habilitado na porta TCP 901
 via inetd.
 
-%description -l ru
-Samba ÐÒÅÄÏÓÔÁ×ÌÑÅÔ SMB-ÓÅÒ×ÅÒ, ËÏÔÏÒÙÊ ÍÏÖÅÔ ÂÙÔØ ÉÓÐÏÌØÚÏ×ÁÎ ÄÌÑ
-ÐÒÅÄÏÓÔÁ×ÌÅÎÉÑ ÓÅÔÅ×ÙÈ ÓÅÒ×ÉÓÏ× SMB (ÉÎÏÇÄÁ ÎÁÚÙ×ÁÅÍÙÍ "Lan Manager")
-ËÌÉÅÎÔÁÍ, ×ËÌÀÞÁÑ ÒÁÚÎÏÏÂÒÁÚÎÙÅ ×ÅÒÓÉÉ MS Windows, OS/2, É ÄÒÕÇÉÅ
-Linux-ÍÁÛÉÎÙ. Samba ÔÁËÖÅ ÐÒÅÄÏÓÔÁ×ÌÑÅÔ SMB-ËÌÉÅÎÔÏ×, ËÏÔÏÒÙÅ ÒÁÂÏÔÁÀÔ
-ÓÏ ×ÓÔÒÏÅÎÎÏÊ × Linux ÆÁÊÌÏ×ÏÊ ÓÉÓÔÅÍÏÊ SMB.
+%description -l ru.UTF-8
+Samba Ð¿Ñ€ÐµÐ´Ð¾ÑÑ‚Ð°Ð²Ð»ÑÐµÑ‚ SMB-ÑÐµÑ€Ð²ÐµÑ€, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¼Ð¾Ð¶ÐµÑ‚ Ð±Ñ‹Ñ‚ÑŒ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ð½ Ð´Ð»Ñ
+Ð¿Ñ€ÐµÐ´Ð¾ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð¸Ñ ÑÐµÑ‚ÐµÐ²Ñ‹Ñ… ÑÐµÑ€Ð²Ð¸ÑÐ¾Ð² SMB (Ð¸Ð½Ð¾Ð³Ð´Ð° Ð½Ð°Ð·Ñ‹Ð²Ð°ÐµÐ¼Ñ‹Ð¼ "Lan Manager")
+ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°Ð¼, Ð²ÐºÐ»ÑŽÑ‡Ð°Ñ Ñ€Ð°Ð·Ð½Ð¾Ð¾Ð±Ñ€Ð°Ð·Ð½Ñ‹Ðµ Ð²ÐµÑ€ÑÐ¸Ð¸ MS Windows, OS/2, Ð¸ Ð´Ñ€ÑƒÐ³Ð¸Ðµ
+Linux-Ð¼Ð°ÑˆÐ¸Ð½Ñ‹. Samba Ñ‚Ð°ÐºÐ¶Ðµ Ð¿Ñ€ÐµÐ´Ð¾ÑÑ‚Ð°Ð²Ð»ÑÐµÑ‚ SMB-ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð¾Ð², ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÑŽÑ‚
+ÑÐ¾ Ð²ÑÑ‚Ñ€Ð¾ÐµÐ½Ð½Ð¾Ð¹ Ð² Linux Ñ„Ð°Ð¹Ð»Ð¾Ð²Ð¾Ð¹ ÑÐ¸ÑÑ‚ÐµÐ¼Ð¾Ð¹ SMB.
 
-Samba ÉÓÐÏÌØÚÕÅÔ ÐÒÏÔÏËÏÌ NetBIOS over TCP/IP (NetBT) É ÎÅ ÎÕÖÄÁÅÔÓÑ ×
-ÐÒÏÔÏËÏÌÅ NetBEUI (Microsoft Raw NetBIOS frame).
+Samba Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ Ð¿Ñ€Ð¾Ñ‚Ð¾ÐºÐ¾Ð» NetBIOS over TCP/IP (NetBT) Ð¸ Ð½Ðµ Ð½ÑƒÐ¶Ð´Ð°ÐµÑ‚ÑÑ Ð²
+Ð¿Ñ€Ð¾Ñ‚Ð¾ÐºÐ¾Ð»Ðµ NetBEUI (Microsoft Raw NetBIOS frame).
 
-Samba ÓÏÄÅÒÖÉÔ ÐÒÁËÔÉÞÅÓËÉ ÒÁÂÏÔÁÀÝÕÀ ÒÅÁÌÉÚÁÃÉÀ NT Domain Control É
-×ËÌÀÞÁÅÔ ÎÏ×ÙÊ SWAT (Samba Web Administration Tool), ËÏÔÏÒÙÊ ÐÏÚ×ÏÌÑÅÔ
-ÕÄÁÌÅÎÎÏ ÕÐÒÁ×ÌÑÔØ ËÏÎÆÉÇÕÒÁÃÉÏÎÎÙÍ ÆÁÊÌÏÍ smb.conf ÐÒÉ ÐÏÍÏÝÉ ×ÁÛÅÇÏ
-ÌÀÂÉÍÏÇÏ WEB-ÂÒÏÕÚÅÒÁ. ðÏËÁ ÞÔÏ ÏÎ ÒÁÚÒÅÛÅÎ ÞÅÒÅÚ inetd ÎÁ TCP-ÐÏÒÔÕ
+Samba ÑÐ¾Ð´ÐµÑ€Ð¶Ð¸Ñ‚ Ð¿Ñ€Ð°ÐºÑ‚Ð¸Ñ‡ÐµÑÐºÐ¸ Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÑŽÑ‰ÑƒÑŽ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸ÑŽ NT Domain Control Ð¸
+Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ Ð½Ð¾Ð²Ñ‹Ð¹ SWAT (Samba Web Administration Tool), ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¿Ð¾Ð·Ð²Ð¾Ð»ÑÐµÑ‚
+ÑƒÐ´Ð°Ð»ÐµÐ½Ð½Ð¾ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÑÑ‚ÑŒ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ð¼ Ñ„Ð°Ð¹Ð»Ð¾Ð¼ smb.conf Ð¿Ñ€Ð¸ Ð¿Ð¾Ð¼Ð¾Ñ‰Ð¸ Ð²Ð°ÑˆÐµÐ³Ð¾
+Ð»ÑŽÐ±Ð¸Ð¼Ð¾Ð³Ð¾ WEB-Ð±Ñ€Ð¾ÑƒÐ·ÐµÑ€Ð°. ÐŸÐ¾ÐºÐ° Ñ‡Ñ‚Ð¾ Ð¾Ð½ Ñ€Ð°Ð·Ñ€ÐµÑˆÐµÐ½ Ñ‡ÐµÑ€ÐµÐ· inetd Ð½Ð° TCP-Ð¿Ð¾Ñ€Ñ‚Ñƒ
 901.
 
-%description -l uk
-Samba ÎÁÄÁ¤ SMB-ÓÅÒ×ÅÒ, ÝÏ ÍÏÖÅ ÂÕÔÉ ×ÉËÏÒÉÓÔÁÎÉÊ ÄÌÑ ÎÁÄÁÎÎÑ
-ÍÅÒÅÖÅ×ÉÈ ÓÅÒ×¦Ó¦× SMB (ÝÏ §È ¦ÎÏÄ¦ ÎÁÚÉ×ÁÀÔØ "Lan Manager") ËÌ¦¤ÎÔÁÍ,
-×ËÌÀÞÁÀÞÉ Ò¦ÚÎÏÍÁÎ¦ÔÎ¦ ×ÅÒÓ¦§ MS Windows, OS/2, ÔÁ ¦ÎÛ¦ Linux-ÍÁÛÉÎÉ.
-Samba ÔÁËÏÖ ÎÁÄÁ¤ SMB-ËÌ¦¤ÎÔ¦×, ÝÏ ÐÒÁÃÀÀÔØ Ú ×ÂÕÄÏ×ÁÎÏÀ × Linux
-ÆÁÊÌÏ×ÏÀ ÓÉÓÔÅÍÏÀ SMB.
+%description -l uk.UTF-8
+Samba Ð½Ð°Ð´Ð°Ñ” SMB-ÑÐµÑ€Ð²ÐµÑ€, Ñ‰Ð¾ Ð¼Ð¾Ð¶Ðµ Ð±ÑƒÑ‚Ð¸ Ð²Ð¸ÐºÐ¾Ñ€Ð¸ÑÑ‚Ð°Ð½Ð¸Ð¹ Ð´Ð»Ñ Ð½Ð°Ð´Ð°Ð½Ð½Ñ
+Ð¼ÐµÑ€ÐµÐ¶ÐµÐ²Ð¸Ñ… ÑÐµÑ€Ð²Ñ–ÑÑ–Ð² SMB (Ñ‰Ð¾ Ñ—Ñ… Ñ–Ð½Ð¾Ð´Ñ– Ð½Ð°Ð·Ð¸Ð²Ð°ÑŽÑ‚ÑŒ "Lan Manager") ÐºÐ»Ñ–Ñ”Ð½Ñ‚Ð°Ð¼,
+Ð²ÐºÐ»ÑŽÑ‡Ð°ÑŽÑ‡Ð¸ Ñ€Ñ–Ð·Ð½Ð¾Ð¼Ð°Ð½Ñ–Ñ‚Ð½Ñ– Ð²ÐµÑ€ÑÑ–Ñ— MS Windows, OS/2, Ñ‚Ð° Ñ–Ð½ÑˆÑ– Linux-Ð¼Ð°ÑˆÐ¸Ð½Ð¸.
+Samba Ñ‚Ð°ÐºÐ¾Ð¶ Ð½Ð°Ð´Ð°Ñ” SMB-ÐºÐ»Ñ–Ñ”Ð½Ñ‚Ñ–Ð², Ñ‰Ð¾ Ð¿Ñ€Ð°Ñ†ÑŽÑŽÑ‚ÑŒ Ð· Ð²Ð±ÑƒÐ´Ð¾Ð²Ð°Ð½Ð¾ÑŽ Ð² Linux
+Ñ„Ð°Ð¹Ð»Ð¾Ð²Ð¾ÑŽ ÑÐ¸ÑÑ‚ÐµÐ¼Ð¾ÑŽ SMB.
 
-Samba ×ÉËÏÒÉÓÔÏ×Õ¤ ÐÒÏÔÏËÏÌ NetBIOS over TCP/IP (NetBT) ÔÁ ÎÅ ÐÏÔÒÅÂÕ¤
-ÐÒÏÔÏËÏÌÕ NetBEUI (Microsoft Raw NetBIOS frame).
+Samba Ð²Ð¸ÐºÐ¾Ñ€Ð¸ÑÑ‚Ð¾Ð²ÑƒÑ” Ð¿Ñ€Ð¾Ñ‚Ð¾ÐºÐ¾Ð» NetBIOS over TCP/IP (NetBT) Ñ‚Ð° Ð½Ðµ Ð¿Ð¾Ñ‚Ñ€ÐµÐ±ÑƒÑ”
+Ð¿Ñ€Ð¾Ñ‚Ð¾ÐºÐ¾Ð»Ñƒ NetBEUI (Microsoft Raw NetBIOS frame).
 
-Samba Í¦ÓÔÉÔØ ÍÁÊÖÅ ÐÒÁÃÀÀÞÕ ÒÅÁÌÉÚÁÃ¦À NT Domain Control ÔÁ ÎÏ×ÙÊ
-SWAT (Samba Web Administration Tool), ËÏÔÒÉÊ ÄÏÚ×ÏÌÑ¤ ×¦ÄÄÁÌÅÎÏ
-ËÅÒÕ×ÁÔÉ ËÏÎÆ¦ÇÕÒÁÃ¦ÊÎÉÍ ÆÁÊÌÏÍ smb.conf ÚÁ ÄÏÐÏÍÏÇÏÀ ×ÁÛÏÇÏ
-ÕÌÀÂÌÅÎÏÇÏ WEB-ÂÒÏÕÚÅÒÁ. ðÏËÉ ÝÏ ×¦Î ÄÏÚ×ÏÌÅÎÉÊ ÞÅÒÅÚ inetd ÎÁ
-TCP-ÐÏÒÔÕ 901.
+Samba Ð¼Ñ–ÑÑ‚Ð¸Ñ‚ÑŒ Ð¼Ð°Ð¹Ð¶Ðµ Ð¿Ñ€Ð°Ñ†ÑŽÑŽÑ‡Ñƒ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ñ–ÑŽ NT Domain Control Ñ‚Ð° Ð½Ð¾Ð²Ñ‹Ð¹
+SWAT (Samba Web Administration Tool), ÐºÐ¾Ñ‚Ñ€Ð¸Ð¹ Ð´Ð¾Ð·Ð²Ð¾Ð»ÑÑ” Ð²Ñ–Ð´Ð´Ð°Ð»ÐµÐ½Ð¾
+ÐºÐµÑ€ÑƒÐ²Ð°Ñ‚Ð¸ ÐºÐ¾Ð½Ñ„Ñ–Ð³ÑƒÑ€Ð°Ñ†Ñ–Ð¹Ð½Ð¸Ð¼ Ñ„Ð°Ð¹Ð»Ð¾Ð¼ smb.conf Ð·Ð° Ð´Ð¾Ð¿Ð¾Ð¼Ð¾Ð³Ð¾ÑŽ Ð²Ð°ÑˆÐ¾Ð³Ð¾
+ÑƒÐ»ÑŽÐ±Ð»ÐµÐ½Ð¾Ð³Ð¾ WEB-Ð±Ñ€Ð¾ÑƒÐ·ÐµÑ€Ð°. ÐŸÐ¾ÐºÐ¸ Ñ‰Ð¾ Ð²Ñ–Ð½ Ð´Ð¾Ð·Ð²Ð¾Ð»ÐµÐ½Ð¸Ð¹ Ñ‡ÐµÑ€ÐµÐ· inetd Ð½Ð°
+TCP-Ð¿Ð¾Ñ€Ñ‚Ñƒ 901.
 
 %package swat
 Summary:	Samba Web Administration Tool
-Summary(es):	Samba SWAT and Web documentation
-Summary(pl):	Narzêdzie administracyjne serwisu Samba
-Summary(pt_BR):	Samba SWAT e documentação Web
-Summary(ru):	ðÒÏÇÒÁÍÍÁ ËÏÎÆÉÇÕÒÁÃÉÉ SMB-ÓÅÒ×ÅÒÁ Samba
-Summary(uk):	ðÒÏÇÒÁÍÁ ËÏÎÆÉÇÕÒÁÃ¦§ SMB-ÓÅÒ×ÅÒÁ Samba
+Summary(es.UTF-8):   Samba SWAT and Web documentation
+Summary(pl.UTF-8):   NarzÄ™dzie administracyjne serwisu Samba
+Summary(pt_BR.UTF-8):   Samba SWAT e documentaÃ§Ã£o Web
+Summary(ru.UTF-8):   ÐŸÑ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð° ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¸ SMB-ÑÐµÑ€Ð²ÐµÑ€Ð° Samba
+Summary(uk.UTF-8):   ÐŸÑ€Ð¾Ð³Ñ€Ð°Ð¼Ð° ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ñ–Ñ— SMB-ÑÐµÑ€Ð²ÐµÑ€Ð° Samba
 Group:		Networking/Admin
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	inetdaemon
@@ -270,31 +270,31 @@ file via a Web browser. In addition, a swat configuration page has
 help links to all the configurable options in the smb.conf file
 allowing an administrator to easily look up the effects of any change.
 
-%description swat -l pl
-swat pozwala na kompleksow± konfiguracjê smb.conf przy pomocy
-przegl±darki WWW.
+%description swat -l pl.UTF-8
+swat pozwala na kompleksowÄ… konfiguracjÄ™ smb.conf przy pomocy
+przeglÄ…darki WWW.
 
-%description swat -l pt_BR
-SWAT - ferramentada Web de configuração do Samba.
+%description swat -l pt_BR.UTF-8
+SWAT - ferramentada Web de configuraÃ§Ã£o do Samba.
 
-%description swat -l ru
-ðÁËÅÔ samba-swat ×ËÌÀÞÁÅÔ ÎÏ×ÙÊ SWAT (Samba Web Administration Tool),
-ÄÌÑ ÕÄÁÌÅÎÎÏÇÏ ÁÄÍÉÎÉÓÔÒÉÒÏ×ÁÎÉÑ ÆÁÊÌÁ smb.conf ÐÒÉ ÐÏÍÏÝÉ ×ÁÛÅÇÏ
-ÌÀÂÉÍÏÇÏ Web-ÂÒÁÕÚÅÒÁ.
+%description swat -l ru.UTF-8
+ÐŸÐ°ÐºÐµÑ‚ samba-swat Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ Ð½Ð¾Ð²Ñ‹Ð¹ SWAT (Samba Web Administration Tool),
+Ð´Ð»Ñ ÑƒÐ´Ð°Ð»ÐµÐ½Ð½Ð¾Ð³Ð¾ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð° smb.conf Ð¿Ñ€Ð¸ Ð¿Ð¾Ð¼Ð¾Ñ‰Ð¸ Ð²Ð°ÑˆÐµÐ³Ð¾
+Ð»ÑŽÐ±Ð¸Ð¼Ð¾Ð³Ð¾ Web-Ð±Ñ€Ð°ÑƒÐ·ÐµÑ€Ð°.
 
-%description swat -l uk
-ðÁËÅÔ samba-swat Í¦ÓÔÉÔØ ÎÏ×ÉÊ SWAT (Samba Web Administration Tool),
-ÄÌÑ ÄÉÓÔÁÎÃ¦ÊÎÏÇÏ ÁÄÍ¦Î¦ÓÔÒÕ×ÁÎÎÑ ÆÁÊÌÕ smb.conf ÚÁ ÄÏÐÏÍÏÇÏÀ ×ÁÛÏÇÏ
-ÕÌÀÂÌÅÎÏÇÏ Web-ÂÒÁÕÚÅÒÕ.
+%description swat -l uk.UTF-8
+ÐŸÐ°ÐºÐµÑ‚ samba-swat Ð¼Ñ–ÑÑ‚Ð¸Ñ‚ÑŒ Ð½Ð¾Ð²Ð¸Ð¹ SWAT (Samba Web Administration Tool),
+Ð´Ð»Ñ Ð´Ð¸ÑÑ‚Ð°Ð½Ñ†Ñ–Ð¹Ð½Ð¾Ð³Ð¾ Ð°Ð´Ð¼Ñ–Ð½Ñ–ÑÑ‚Ñ€ÑƒÐ²Ð°Ð½Ð½Ñ Ñ„Ð°Ð¹Ð»Ñƒ smb.conf Ð·Ð° Ð´Ð¾Ð¿Ð¾Ð¼Ð¾Ð³Ð¾ÑŽ Ð²Ð°ÑˆÐ¾Ð³Ð¾
+ÑƒÐ»ÑŽÐ±Ð»ÐµÐ½Ð¾Ð³Ð¾ Web-Ð±Ñ€Ð°ÑƒÐ·ÐµÑ€Ñƒ.
 
 %package client
 Summary:	Samba client programs
-Summary(es):	Cliente SMB de Samba
-Summary(ja):	Samba (SMB) ¥¯¥é¥¤¥¢¥ó¥È¥×¥í¥°¥é¥à
-Summary(pl):	Klienci serwera Samba
-Summary(pt_BR):	Cliente SMB do samba
-Summary(ru):	ëÌÉÅÎÔÓËÉÅ ÐÒÏÇÒÁÍÍÙ Samba (SMB)
-Summary(uk):	ëÌ¦¤ÎÔÓØË¦ ÐÒÏÇÒÁÍÉ Samba (SMB)
+Summary(es.UTF-8):   Cliente SMB de Samba
+Summary(ja.UTF-8):   Samba (SMB) ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãƒ—ãƒ­ã‚°ãƒ©ãƒ 
+Summary(pl.UTF-8):   Klienci serwera Samba
+Summary(pt_BR.UTF-8):   Cliente SMB do samba
+Summary(ru.UTF-8):   ÐšÐ»Ð¸ÐµÐ½Ñ‚ÑÐºÐ¸Ðµ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹ Samba (SMB)
+Summary(uk.UTF-8):   ÐšÐ»Ñ–Ñ”Ð½Ñ‚ÑÑŒÐºÑ– Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¸ Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %{?with_krb5:Requires:	heimdal-libs >= 0.7}
@@ -306,75 +306,75 @@ Samba-client provides some SMB clients, which complement the build-in
 SMB filesystem in Linux. These allow accessing of SMB shares and
 printing to SMB printers.
 
-%description client -l pt_BR
+%description client -l pt_BR.UTF-8
 O pacote samba-clientes prove alguns clientes SMB, que complementam o
 sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
-e também, à impressoras SMB.
+e tambÃ©m, Ã  impressoras SMB.
 
-%description client -l es
+%description client -l es.UTF-8
 Cliente SMB de Samba.
 
-%description client -l ja
-Samba-client ¤Ï Linux ¾å¤Ë´Þ¤Þ¤ì¤Æ¤¤¤ë SMB ¥Õ¥¡¥¤¥ë¥·¥¹¥Æ¥à¤òÊä¤¦ SMB
-¥¯¥é¥¤¥¢¥ó¥È¤òÄó¶¡¤·¤Þ¤¹¡£¤³¤ì¤é¤Ï SMB ¶¦Í­¤Î¥¢¥¯¥»¥¹¤È SMB
-¥×¥ê¥ó¥¿¤Ø¤Î°õºþ¤òµö²Ä¤·¤Þ¤¹¡£
+%description client -l ja.UTF-8
+Samba-client ã¯ Linux ä¸Šã«å«ã¾ã‚Œã¦ã„ã‚‹ SMB ãƒ•ã‚¡ã‚¤ãƒ«ã‚·ã‚¹ãƒ†ãƒ ã‚’è£œã† SMB
+ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚’æä¾›ã—ã¾ã™ã€‚ã“ã‚Œã‚‰ã¯ SMB å…±æœ‰ã®ã‚¢ã‚¯ã‚»ã‚¹ã¨ SMB
+ãƒ—ãƒªãƒ³ã‚¿ã¸ã®å°åˆ·ã‚’è¨±å¯ã—ã¾ã™ã€‚
 
-%description client -l pl
-Samba-client dostarcza programy uzupe³niaj±ce obs³ugê systemu plików
-SMB zawart± w j±drze. Pozwalaj± one na wspó³dzielenie zasobów SMB i
+%description client -l pl.UTF-8
+Samba-client dostarcza programy uzupeÅ‚niajÄ…ce obsÅ‚ugÄ™ systemu plikÃ³w
+SMB zawartÄ… w jÄ…drze. PozwalajÄ… one na wspÃ³Å‚dzielenie zasobÃ³w SMB i
 drukowanie w sieci SMB.
 
-%description client -l pt_BR
+%description client -l pt_BR.UTF-8
 O pacote samba-clientes prove alguns clientes SMB, que complementam o
 sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
-e também, à impressoras SMB.
+e tambÃ©m, Ã  impressoras SMB.
 
-%description client -l ru
-ðÁËÅÔ samba-client ÐÒÅÄÏÓÔÁ×ÌÑÅÔ ÎÅËÏÔÏÒÙÅ ËÌÉÅÎÔÙ SMB ÄÌÑ ÒÁÂÏÔÙ ÓÏ
-×ÓÔÒÏÅÎÎÏÊ ÆÁÊÌÏ×ÏÊ ÓÉÓÔÅÍÏÊ SMB × Linux. üÔÉ ËÌÉÅÎÔÙ ÐÏÚ×ÏÌÑÀÔ
-ÐÏÌÕÞÁÔØ ÄÏÓÔÕÐ Ë ÒÁÚÄÅÌÑÅÍÙÍ ËÁÔÁÌÏÇÁÍ SMB É ÐÅÞÁÔØ ÎÁ SMB-ÐÒÉÎÔÅÒÙ.
+%description client -l ru.UTF-8
+ÐŸÐ°ÐºÐµÑ‚ samba-client Ð¿Ñ€ÐµÐ´Ð¾ÑÑ‚Ð°Ð²Ð»ÑÐµÑ‚ Ð½ÐµÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ñ‹ SMB Ð´Ð»Ñ Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ ÑÐ¾
+Ð²ÑÑ‚Ñ€Ð¾ÐµÐ½Ð½Ð¾Ð¹ Ñ„Ð°Ð¹Ð»Ð¾Ð²Ð¾Ð¹ ÑÐ¸ÑÑ‚ÐµÐ¼Ð¾Ð¹ SMB Ð² Linux. Ð­Ñ‚Ð¸ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ñ‹ Ð¿Ð¾Ð·Ð²Ð¾Ð»ÑÑŽÑ‚
+Ð¿Ð¾Ð»ÑƒÑ‡Ð°Ñ‚ÑŒ Ð´Ð¾ÑÑ‚ÑƒÐ¿ Ðº Ñ€Ð°Ð·Ð´ÐµÐ»ÑÐµÐ¼Ñ‹Ð¼ ÐºÐ°Ñ‚Ð°Ð»Ð¾Ð³Ð°Ð¼ SMB Ð¸ Ð¿ÐµÑ‡Ð°Ñ‚ÑŒ Ð½Ð° SMB-Ð¿Ñ€Ð¸Ð½Ñ‚ÐµÑ€Ñ‹.
 
-%description client -l uk
-ðÁËÅÔ samba-client ÎÁÄÁ¤ ÄÅÑË¦ ËÌ¦¤ÎÔÉ SMB ÄÌÑ ÒÏÂÏÔÉ Ú¦ ×ÂÕÄÏ×ÁÎÏÀ
-ÆÁÊÌÏ×ÏÀ ÓÉÓÔÅÍÏÀ SMB × Linux. ã¦ ËÌ¦¤ÎÔÉ ÄÏÚ×ÏÌÑÀÔØ ÏÔÒÉÍÕ×ÁÔÉ ÄÏÓÔÕÐ
-ÄÏ ËÁÔÁÌÏÇ¦× ÓÐ¦ÌØÎÏÇÏ ×ÉËÏÒÉÓÔÁÎÎÑ SMB ÔÁ ÄÒÕË ÎÁ SMB-ÐÒ¦ÎÔÅÒÉ.
+%description client -l uk.UTF-8
+ÐŸÐ°ÐºÐµÑ‚ samba-client Ð½Ð°Ð´Ð°Ñ” Ð´ÐµÑÐºÑ– ÐºÐ»Ñ–Ñ”Ð½Ñ‚Ð¸ SMB Ð´Ð»Ñ Ñ€Ð¾Ð±Ð¾Ñ‚Ð¸ Ð·Ñ– Ð²Ð±ÑƒÐ´Ð¾Ð²Ð°Ð½Ð¾ÑŽ
+Ñ„Ð°Ð¹Ð»Ð¾Ð²Ð¾ÑŽ ÑÐ¸ÑÑ‚ÐµÐ¼Ð¾ÑŽ SMB Ð² Linux. Ð¦Ñ– ÐºÐ»Ñ–Ñ”Ð½Ñ‚Ð¸ Ð´Ð¾Ð·Ð²Ð¾Ð»ÑÑŽÑ‚ÑŒ Ð¾Ñ‚Ñ€Ð¸Ð¼ÑƒÐ²Ð°Ñ‚Ð¸ Ð´Ð¾ÑÑ‚ÑƒÐ¿
+Ð´Ð¾ ÐºÐ°Ñ‚Ð°Ð»Ð¾Ð³Ñ–Ð² ÑÐ¿Ñ–Ð»ÑŒÐ½Ð¾Ð³Ð¾ Ð²Ð¸ÐºÐ¾Ñ€Ð¸ÑÑ‚Ð°Ð½Ð½Ñ SMB Ñ‚Ð° Ð´Ñ€ÑƒÐº Ð½Ð° SMB-Ð¿Ñ€Ñ–Ð½Ñ‚ÐµÑ€Ð¸.
 
 %package common
 Summary:	Files used by both Samba servers and clients
-Summary(es):	Common files between samba and samba-clients
-Summary(ja):	Samba ¥µ¡¼¥Ð¡¼¤È¥¯¥é¥¤¥¢¥ó¥È¤Ç»ÈÍÑ¤µ¤ì¤ë¥×¥í¥°¥é¥à
-Summary(pl):	Pliki u¿ywane przez serwer i klientów Samba
-Summary(pt_BR):	Arquivos em comum entre samba e samba-clients
-Summary(ru):	æÁÊÌÙ, ÉÓÐÏÌØÚÕÅÍÙÅ ËÁË ÓÅÒ×ÅÒÏÍ, ÔÁË É ËÌÉÅÎÔÏÍ Samba
-Summary(uk):	æÁÊÌÉ, ÝÏ ×ÉËÏÒÉÓÔÏ×ÕÀÔØÓÑ ÑË ÓÅÒ×ÅÒÏÍ, ÔÁË ¦ ËÌ¦¤ÎÔÏÍ Samba
+Summary(es.UTF-8):   Common files between samba and samba-clients
+Summary(ja.UTF-8):   Samba ã‚µãƒ¼ãƒãƒ¼ã¨ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã§ä½¿ç”¨ã•ã‚Œã‚‹ãƒ—ãƒ­ã‚°ãƒ©ãƒ 
+Summary(pl.UTF-8):   Pliki uÅ¼ywane przez serwer i klientÃ³w Samba
+Summary(pt_BR.UTF-8):   Arquivos em comum entre samba e samba-clients
+Summary(ru.UTF-8):   Ð¤Ð°Ð¹Ð»Ñ‹, Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÐ¼Ñ‹Ðµ ÐºÐ°Ðº ÑÐµÑ€Ð²ÐµÑ€Ð¾Ð¼, Ñ‚Ð°Ðº Ð¸ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð¾Ð¼ Samba
+Summary(uk.UTF-8):   Ð¤Ð°Ð¹Ð»Ð¸, Ñ‰Ð¾ Ð²Ð¸ÐºÐ¾Ñ€Ð¸ÑÑ‚Ð¾Ð²ÑƒÑŽÑ‚ÑŒÑÑ ÑÐº ÑÐµÑ€Ð²ÐµÑ€Ð¾Ð¼, Ñ‚Ð°Ðº Ñ– ÐºÐ»Ñ–Ñ”Ð½Ñ‚Ð¾Ð¼ Samba
 Group:		Networking/Daemons
 
 %description common
 Samba-common provides files necessary for both the server and client
 packages of Samba.
 
-%description common -l ja
-Samba-common ¤Ï Samba ¤Î¥µ¡¼¥Ð¤È¥¯¥é¥¤¥¢¥ó¥È¤ÎÎ¾Êý¤Î¥Ñ¥Ã¥±¡¼¥¸¤Ç
-»ÈÍÑ¤µ¤ì¤ë¥Õ¥¡¥¤¥ë¤òÄó¶¡¤·¤Þ¤¹¡£
+%description common -l ja.UTF-8
+Samba-common ã¯ Samba ã®ã‚µãƒ¼ãƒã¨ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®ä¸¡æ–¹ã®ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã§
+ä½¿ç”¨ã•ã‚Œã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æä¾›ã—ã¾ã™ã€‚
 
-%description common -l pl
-Samba-common dostarcza pliki niezbêdne zarówno dla serwera jak i
-klientów Samba.
+%description common -l pl.UTF-8
+Samba-common dostarcza pliki niezbÄ™dne zarÃ³wno dla serwera jak i
+klientÃ³w Samba.
 
-%description common -l pt_BR
+%description common -l pt_BR.UTF-8
 Arquivos em comum entre os pacotes samba e samba-clients.
 
-%description common -l ru
-Samba-common ÓÏÄÅÒÖÉÔ ÆÁÊÌÙ, ÎÅÏÂÈÏÄÉÍÙÅ ÄÌÑ ÒÁÂÏÔÙ ËÁË ËÌÉÅÎÔÁ, ÔÁË É
-ÓÅÒ×ÅÒÁ Samba.
+%description common -l ru.UTF-8
+Samba-common ÑÐ¾Ð´ÐµÑ€Ð¶Ð¸Ñ‚ Ñ„Ð°Ð¹Ð»Ñ‹, Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ñ‹Ðµ Ð´Ð»Ñ Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ ÐºÐ°Ðº ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°, Ñ‚Ð°Ðº Ð¸
+ÑÐµÑ€Ð²ÐµÑ€Ð° Samba.
 
-%description common -l uk
-Samba-common Í¦ÓÔÉÔØ ÆÁÊÌÉ, ÎÅÏÂÈ¦ÄÎ¦ ÄÌÑ ÒÏÂÏÔÉ ÑË ËÌ¦¤ÎÔÁ, ÔÁË ¦
-ÓÅÒ×ÅÒÁ Samba.
+%description common -l uk.UTF-8
+Samba-common Ð¼Ñ–ÑÑ‚Ð¸Ñ‚ÑŒ Ñ„Ð°Ð¹Ð»Ð¸, Ð½ÐµÐ¾Ð±Ñ…Ñ–Ð´Ð½Ñ– Ð´Ð»Ñ Ñ€Ð¾Ð±Ð¾Ñ‚Ð¸ ÑÐº ÐºÐ»Ñ–Ñ”Ð½Ñ‚Ð°, Ñ‚Ð°Ðº Ñ–
+ÑÐµÑ€Ð²ÐµÑ€Ð° Samba.
 
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
-Summary(pl):	Demon samba-winbind, narzêdzia i dokumentacja
+Summary(pl.UTF-8):   Demon samba-winbind, narzÄ™dzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -383,14 +383,14 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Provides the winbind daemon and testing tools to allow authentication
 and group/user enumeration from a Windows or Samba domain controller.
 
-%description winbind -l pl
-Pakiet zawiera demona winbind oraz narzêdzia testowe. Umo¿liwia
-uwierzytelnianie i wyliczanie grup/u¿ytkowników z kontrolera domeny
+%description winbind -l pl.UTF-8
+Pakiet zawiera demona winbind oraz narzÄ™dzia testowe. UmoÅ¼liwia
+uwierzytelnianie i wyliczanie grup/uÅ¼ytkownikÃ³w z kontrolera domeny
 Windows lub Samba.
 
 %package -n nss_wins
 Summary:	Name Service Switch service for WINS
-Summary(pl):	Us³uga Name Service Switch dla WINS
+Summary(pl.UTF-8):   UsÅ‚uga Name Service Switch dla WINS
 Group:		Base
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
@@ -398,13 +398,13 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Provides the libnss_wins shared library which resolves NetBIOS names
 to IP addresses.
 
-%description -n nss_wins -l pl
-Biblioteka dzielona libnss_wins rozwi±zuj±ca nazwy NetBIOS na adresy
+%description -n nss_wins -l pl.UTF-8
+Biblioteka dzielona libnss_wins rozwiÄ…zujÄ…ca nazwy NetBIOS na adresy
 IP.
 
 %package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
-Summary(pl):	Modu³ PAM smbpass
+Summary(pl.UTF-8):   ModuÅ‚ PAM smbpass
 Group:		Base
 Obsoletes:	pam_smbpass
 
@@ -413,78 +413,78 @@ PAM module which can be used on conforming systems to keep the
 smbpasswd (Samba password) database in sync with the unix password
 file.
 
-%description -n pam-pam_smbpass -l pl
-Modu³ PAM, który mo¿e byæ u¿ywany do trzymania pliku smbpasswd (has³a
-Samby) zsynchronizowanego z has³ami uniksowymi.
+%description -n pam-pam_smbpass -l pl.UTF-8
+ModuÅ‚ PAM, ktÃ³ry moÅ¼e byÄ‡ uÅ¼ywany do trzymania pliku smbpasswd (hasÅ‚a
+Samby) zsynchronizowanego z hasÅ‚ami uniksowymi.
 
 %package -n libsmbclient
 Summary:	libsmbclient - samba client library
-Summary(pl):	libsmbclient - biblioteka klienta samby
+Summary(pl.UTF-8):   libsmbclient - biblioteka klienta samby
 Group:		Libraries
 
 %description -n libsmbclient
 libsmbclient - library that allows to use samba clients functions.
 
-%description -n libsmbclient -l pl
-libsmbclient - biblioteka pozwalaj±ca korzystaæ z funcji klienta
+%description -n libsmbclient -l pl.UTF-8
+libsmbclient - biblioteka pozwalajÄ…ca korzystaÄ‡ z funcji klienta
 samby.
 
 %package -n libsmbclient-devel
 Summary:	libsmbclient - samba client library
-Summary(pl):	libsmbclient - biblioteka klienta samby
-Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
+Summary(pl.UTF-8):   libsmbclient - biblioteka klienta samby
+Summary(pt_BR.UTF-8):   Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 
 %description -n libsmbclient-devel
 Header files for libsmbclient.
 
-%description -n libsmbclient-devel -l pl
-Pliki nag³ówkowe dla libsmbclient.
+%description -n libsmbclient-devel -l pl.UTF-8
+Pliki nagÅ‚Ã³wkowe dla libsmbclient.
 
-%description -n libsmbclient-devel -l pt_BR
-Arquivos de inclusão, bibliotecas e documentação necessários para
+%description -n libsmbclient-devel -l pt_BR.UTF-8
+Arquivos de inclusÃ£o, bibliotecas e documentaÃ§Ã£o necessÃ¡rios para
 desenvolver aplicativos clientes para o samba.
 
 %package -n libsmbclient-static
 Summary:	Static version of libsmbclient - samba client library
-Summary(pl):	Statyczna wersja libsmbclient - biblioteki klienta samby
-Summary(pt_BR):	Ferramentas de desenvolvimento para clientes samba
+Summary(pl.UTF-8):   Statyczna wersja libsmbclient - biblioteki klienta samby
+Summary(pt_BR.UTF-8):   Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 
 %description -n libsmbclient-static
 Static libsmbclient library.
 
-%description -n libsmbclient-static -l pl
+%description -n libsmbclient-static -l pl.UTF-8
 Statyczna biblioteka libsmbclient.
 
 %package devel
 Summary:	Header files for Samba
-Summary(pl):	Pliki nag³ówkowe Samby
+Summary(pl.UTF-8):   Pliki nagÅ‚Ã³wkowe Samby
 Group:		Development/Libraries
 
 %description devel
 Header files for Samba.
 
-%description devel -l pl
-Pliki nag³ówkowe Samby.
+%description devel -l pl.UTF-8
+Pliki nagÅ‚Ã³wkowe Samby.
 
 %package -n smbget
 Summary:	A utility for retrieving files using the SMB protocol
-Summary(pl):	Narzêdzie do pobierania plików protoko³em SMB
+Summary(pl.UTF-8):   NarzÄ™dzie do pobierania plikÃ³w protokoÅ‚em SMB
 Group:		Applications/Networking
 
 %description -n smbget
 wget-like utility for download files over SMB.
 
-%description -n smbget -l pl
-Narzêdzie podobne do wgeta do pobierania plików protoko³em SMB
-u¿ywanym w sieciach MS Windows.
+%description -n smbget -l pl.UTF-8
+NarzÄ™dzie podobne do wgeta do pobierania plikÃ³w protokoÅ‚em SMB
+uÅ¼ywanym w sieciach MS Windows.
 
 %package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
-Summary(pl):	Backend CUPS-a drukuj±cy na drukarkach SMB
+Summary(pl.UTF-8):   Backend CUPS-a drukujÄ…cy na drukarkach SMB
 Group:		Applications/Printing
 Requires:	%{name}-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
@@ -492,24 +492,24 @@ Requires:	cups >= 1:1.2.0
 %description -n cups-backend-smb
 CUPS backend for printing to SMB printers.
 
-%description -n cups-backend-smb -l pl
-Backend CUPS-a drukuj±cy na drukarkach SMB.
+%description -n cups-backend-smb -l pl.UTF-8
+Backend CUPS-a drukujÄ…cy na drukarkach SMB.
 
 %package -n python-samba
 Summary:	Samba python tools and libraries
-Summary(pl):	Narzêdzia i biblioteki pythona do samby
+Summary(pl.UTF-8):   NarzÄ™dzia i biblioteki pythona do samby
 Group:		Applications/Networking
 %pyrequires_eq	python-libs
 
 %description -n python-samba
 Samba python tools and libraries.
 
-%description -n python-samba -l pl
-Narzêdzia i biblioteki pythona do samby.
+%description -n python-samba -l pl.UTF-8
+NarzÄ™dzia i biblioteki pythona do samby.
 
 %package vfs-audit
 Summary:	VFS module to audit file access
-Summary(pl):	Modu³ VFS do monitorowania operacji na plikach
+Summary(pl.UTF-8):   ModuÅ‚ VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -520,17 +520,17 @@ following operations are logged:
  - directory opens/create/remove,
  - file open/close/rename/unlink/chmod.
 
-%description vfs-audit -l pl
-Proste modu³y do monitorowania dostêpu do plików na serwerze samba do
-do sysloga. Monitorowane s± nastêpuj±ce operacje:
- - pod³±czenie do/od³±czenie od zasobu,
+%description vfs-audit -l pl.UTF-8
+Proste moduÅ‚y do monitorowania dostÄ™pu do plikÃ³w na serwerze samba do
+do sysloga. Monitorowane sÄ… nastÄ™pujÄ…ce operacje:
+ - podÅ‚Ä…czenie do/odÅ‚Ä…czenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
- - otwarcie/zamkniêcie/zmiana nazwy/skasowanie/zmiana praw plików.
-Zawiera modu³y audit, extd_audit i full_audit.
+ - otwarcie/zamkniÄ™cie/zmiana nazwy/skasowanie/zmiana praw plikÃ³w.
+Zawiera moduÅ‚y audit, extd_audit i full_audit.
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
-Summary(pl):	Modu³ VFS zgodno¶ci z CAP (Columbia AppleTalk Program)
+Summary(pl.UTF-8):   ModuÅ‚ VFS zgodnoÅ›ci z CAP (Columbia AppleTalk Program)
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -539,26 +539,26 @@ Convert an incoming Shift-JIS character to the 3 byte hex
 representation used by the Columbia AppleTalk Program (CAP), i.e. :AB.
 This is used for compatibility between Samba and CAP.
 
-%description vfs-cap -l pl
+%description vfs-cap -l pl.UTF-8
 Zamienia znaki kodowane Shift-JIS do trzybajowej szestnastkowej
-reprezentacji u¿ywanej przez program Columbia AppleTalk Program (CAP).
+reprezentacji uÅ¼ywanej przez program Columbia AppleTalk Program (CAP).
 
 %package vfs-default_quota
 Summary:	VFS module to store default quotas in a specified quota record
-Summary(pl):	Modu³ VFS do zapisywania domy¶lnych limitów w okre¶lonym rekordzie
+Summary(pl.UTF-8):   ModuÅ‚ VFS do zapisywania domyÅ›lnych limitÃ³w w okreÅ›lonym rekordzie
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-default_quota
 This VFS modules stores default quotas in a specified quota record.
 
-%description vfs-default_quota -l pl
-Ten modu³ VFS zapisuje domy¶lne limity (quoty) w okre¶lonym rekordzie
-limitów.
+%description vfs-default_quota -l pl.UTF-8
+Ten moduÅ‚ VFS zapisuje domyÅ›lne limity (quoty) w okreÅ›lonym rekordzie
+limitÃ³w.
 
 %package vfs-expand_msdfs
 Summary:	VFS module for hosting a Microsoft Distributed File System Tree
-Summary(pl):	Modu³ VFS obs³ugi Microsoft Distributed File System
+Summary(pl.UTF-8):   ModuÅ‚ VFS obsÅ‚ugi Microsoft Distributed File System
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -571,18 +571,18 @@ physical locations of these resources on the network. It allows for
 higher availability, smoother storage expansion, load balancing, and
 so on.
 
-%description vfs-expand_msdfs -l pl
-Modu³ VFS do udostêpniania drzewa systemu plików Microsoft Distributed
+%description vfs-expand_msdfs -l pl.UTF-8
+ModuÅ‚ VFS do udostÄ™pniania drzewa systemu plikÃ³w Microsoft Distributed
 File System.
 
-Distributed File System (DFS) umo¿liwia rozdzielanie logicznego widoku
-plików i katalogów widocznych przez u¿ytkowników z fizycznego
-umiejscowienia tych zasobów w sieci. Pozwala to na wy¿sz± dostêpno¶æ,
-p³ynniejsze powiêkszanie przestrzeni, rozdzielanie obci±¿enia itp.
+Distributed File System (DFS) umoÅ¼liwia rozdzielanie logicznego widoku
+plikÃ³w i katalogÃ³w widocznych przez uÅ¼ytkownikÃ³w z fizycznego
+umiejscowienia tych zasobÃ³w w sieci. Pozwala to na wyÅ¼szÄ… dostÄ™pnoÅ›Ä‡,
+pÅ‚ynniejsze powiÄ™kszanie przestrzeni, rozdzielanie obciÄ…Å¼enia itp.
 
 %package vfs-fake_perms
 Summary:	VFS module to report read-only fires as writable
-Summary(pl):	Modu³ VFS udaj±cy, ¿e pliki tylko do odczytu s± zapisywalne
+Summary(pl.UTF-8):   ModuÅ‚ VFS udajÄ…cy, Å¼e pliki tylko do odczytu sÄ… zapisywalne
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -594,17 +594,17 @@ files and directories are writeable. This satisfies the client even
 though the files will never be overwritten as the client logs out or
 shuts down.
 
-%description vfs-fake_perms -l pl
-Ten modu³ pozwala na ustawienie plików i katalogów z wêdruj±cych
-profili (Roaming Profiles) jako tylko do odczytu. Modu³ ten w
-przypadku zainstalowania na udziale z profilami bêdzie zg³asza³
-klientom, ¿e pliki i katalogi z profilu s± zapisywane. To wystarczy
-klientom pomimo, ¿e pliki nie zostan± nigdy nadpisane przy logowaniu
+%description vfs-fake_perms -l pl.UTF-8
+Ten moduÅ‚ pozwala na ustawienie plikÃ³w i katalogÃ³w z wÄ™drujÄ…cych
+profili (Roaming Profiles) jako tylko do odczytu. ModuÅ‚ ten w
+przypadku zainstalowania na udziale z profilami bÄ™dzie zgÅ‚aszaÅ‚
+klientom, Å¼e pliki i katalogi z profilu sÄ… zapisywane. To wystarczy
+klientom pomimo, Å¼e pliki nie zostanÄ… nigdy nadpisane przy logowaniu
 lub wylogowywaniu klienta.
 
 %package vfs-netatalk
 Summary:	VFS module for ease co-existence of samba and netatalk
-Summary(pl):	Modu³ VFS u³atwiaj±cy wspó³pracê serwisów samba i netatalk
+Summary(pl.UTF-8):   ModuÅ‚ VFS uÅ‚atwiajÄ…cy wspÃ³Å‚pracÄ™ serwisÃ³w samba i netatalk
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -612,25 +612,25 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Package contains a netatalk VFS module for ease co-existence of Samba
 and netatalk file sharing services.
 
-%description vfs-netatalk -l pl
-Pakiet zawiera modu³ VFS netatalk umo¿liwiaj±cy wspó³pracê us³ug samba
-i netatalk przy udostêpnianiu zasobów.
+%description vfs-netatalk -l pl.UTF-8
+Pakiet zawiera moduÅ‚ VFS netatalk umoÅ¼liwiajÄ…cy wspÃ³Å‚pracÄ™ usÅ‚ug samba
+i netatalk przy udostÄ™pnianiu zasobÃ³w.
 
 %package vfs-recycle
 Summary:	VFS module to add recycle bin facility to a samba share
-Summary(pl):	Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby
+Summary(pl.UTF-8):   ModuÅ‚ VFS dodajÄ…cy moÅ¼liwoÅ›Ä‡ kosza do zasobu samby
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-recycle
 VFS module to add recycle bin facility to a samba share.
 
-%description vfs-recycle -l pl
-Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
+%description vfs-recycle -l pl.UTF-8
+ModuÅ‚ VFS dodajÄ…cy moÅ¼liwoÅ›Ä‡ kosza do zasobu samby.
 
 %package vfs-readonly
 Summary:	VFS module for read-only limitation for specified share
-Summary(pl):	Modu³ VFS do ograniczania okre¶lonego udzia³u tylko do odczytu
+Summary(pl.UTF-8):   ModuÅ‚ VFS do ograniczania okreÅ›lonego udziaÅ‚u tylko do odczytu
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -639,26 +639,26 @@ This module performs a read-only limitation for specified share (or
 all of them if it is loaded in a [global] section) based on period
 definition in smb.conf.
 
-%description vfs-readonly -l pl
-Ten modu³ wprowadza ograniczenie tylko do odczytu dla okre¶lonego
-udzia³u (lub wszystkich, je¶li jest wczytywany w sekcji [global]) w
-oparciu o definicje okresów w smb.conf.
+%description vfs-readonly -l pl.UTF-8
+Ten moduÅ‚ wprowadza ograniczenie tylko do odczytu dla okreÅ›lonego
+udziaÅ‚u (lub wszystkich, jeÅ›li jest wczytywany w sekcji [global]) w
+oparciu o definicje okresÃ³w w smb.conf.
 
 %package vfs-shadow_copy
 Summary:	VFS module to make automatic copy of data in samba share
-Summary(pl):	Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby
+Summary(pl.UTF-8):   ModuÅ‚ VFS do tworzenia automatycznych kopii danych w zasobach samby
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-shadow_copy
 VFS module to make automatic copy of data in samba share.
 
-%description vfs-shadow_copy -l pl
-Modu³ VFS do tworzenia automatycznych kopii danych w zasobach samby.
+%description vfs-shadow_copy -l pl.UTF-8
+ModuÅ‚ VFS do tworzenia automatycznych kopii danych w zasobach samby.
 
 %package vfs-vscan-antivir
 Summary:	On-access virus scanning for samba using AntiVir
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy AntiVir
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy AntiVir
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -667,14 +667,14 @@ Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 A vfs-module for samba to implement on-access scanning using the
 AntiVir antivirus software (which must be installed to use this).
 
-%description vfs-vscan-antivir -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego AntiVir
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-antivir -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego AntiVir
+(ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy ClamAV
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy ClamAV
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	clamav
@@ -684,14 +684,14 @@ Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
 A vfs-module for samba to implement on-access scanning using the
 ClamAV antivirus software (which must be installed to use this).
 
-%description vfs-vscan-clamav -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego ClamAV
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-clamav -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego ClamAV
+(ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-fprot
 Summary:	On-access virus scanning for samba using FPROT
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy FPROT
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy FPROT
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -701,14 +701,14 @@ Obsoletes:	vscan-fprot
 A vfs-module for samba to implement on-access scanning using the FPROT
 antivirus software (which must be installed to use this).
 
-%description vfs-vscan-fprot -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego FPROT
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-fprot -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego FPROT
+(ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-fsav
 Summary:	On-access virus scanning for samba using F-Secure AntiVirus
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy F-Secure AntiVirus
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy F-Secure AntiVirus
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -719,14 +719,14 @@ A vfs-module for samba to implement on-access scanning using the
 F-Secure AntiVirus antivirus software (which must be installed to use
 this).
 
-%description vfs-vscan-fsav -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego F-Secure
-AntiVirus (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-fsav -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego F-Secure
+AntiVirus (ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-kavp
 Summary:	On-access virus scanning for samba using Kaspersky AVP
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Kaspersky AVP
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy Kaspersky AVP
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -737,15 +737,15 @@ A vfs-module for samba to implement on-access scanning using the
 Kaspersky AVP antivirus software (which must be installed to use
 this).
 
-%description vfs-vscan-kavp -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-Kaspersky AVP (które musi byæ zainstalowane, aby wykorzystaæ ten
-modu³).
+%description vfs-vscan-kavp -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego
+Kaspersky AVP (ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten
+moduÅ‚).
 
 %package vfs-vscan-mcafee
 Summary:	On-access virus scanning for samba using mcafee
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy mcafee
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy mcafee
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 #Requires:	mcafee
@@ -756,14 +756,14 @@ Obsoletes:	vscan-mcafee
 A vfs-module for samba to implement on-access scanning using the
 mcafee antivirus software (which must be installed to use this).
 
-%description vfs-vscan-mcafee -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego mcafee
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-mcafee -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego mcafee
+(ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-mks
 Summary:	On-access virus scanning for samba using mks
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy mks
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy mks
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	mksd
@@ -774,14 +774,14 @@ Obsoletes:	vscan-mks
 A vfs-module for samba to implement on-access scanning using the mks
 antivirus software (which must be installed to use this).
 
-%description vfs-vscan-mks -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego mks
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-mks -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego mks
+(ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-openantivirus
 Summary:	On-access virus scanning for samba using OpenAntivirus
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy OpenAntiVirus
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy OpenAntiVirus
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -792,15 +792,15 @@ A vfs-module for samba to implement on-access scanning using the
 OpenAntivirus antivirus software (which must be installed to use
 this).
 
-%description vfs-vscan-openantivirus -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego
-OpenAntiVirus.org (które musi byæ zainstalowane, aby wykorzystaæ ten
-modu³).
+%description vfs-vscan-openantivirus -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego
+OpenAntiVirus.org (ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten
+moduÅ‚).
 
 %package vfs-vscan-sophos
 Summary:	On-access virus scanning for samba using Sophos
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Sophos
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy Sophos
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -810,14 +810,14 @@ Obsoletes:	vscan-sophos
 A vfs-module for samba to implement on-access scanning using the
 Sophos antivirus software (which must be installed to use this).
 
-%description vfs-vscan-sophos -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego Sophos
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-sophos -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego Sophos
+(ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-symantec
 Summary:	On-access virus scanning for samba using Symantec
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Symantec
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy Symantec
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -827,14 +827,14 @@ Obsoletes:	vscan-symantec
 A vfs-module for samba to implement on-access scanning using the
 Symantec antivirus software (which must be installed to use this).
 
-%description vfs-vscan-symantec -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego firmy
-Symantec (które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-symantec -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego firmy
+Symantec (ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package vfs-vscan-trend
 Summary:	On-access virus scanning for samba using Trend
-Summary(pl):	Skaner antywirusowy online wykorzystuj±cy Trend
+Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujÄ…cy Trend
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -844,14 +844,14 @@ Obsoletes:	vscan-trend
 A vfs-module for samba to implement on-access scanning using the Trend
 antivirus software (which must be installed to use this).
 
-%description vfs-vscan-trend -l pl
-Modu³ vfs do samby implementuj±cy skaning antywirusowy w czasie
-dostêpu do plików korzystaj±c z oprogramowania antywirusowego Trend
-(które musi byæ zainstalowane, aby wykorzystaæ ten modu³).
+%description vfs-vscan-trend -l pl.UTF-8
+ModuÅ‚ vfs do samby implementujÄ…cy skaning antywirusowy w czasie
+dostÄ™pu do plikÃ³w korzystajÄ…c z oprogramowania antywirusowego Trend
+(ktÃ³re musi byÄ‡ zainstalowane, aby wykorzystaÄ‡ ten moduÅ‚).
 
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
-Summary(pl):	Schemat LDAP dla samby
+Summary(pl.UTF-8):   Schemat LDAP dla samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
@@ -859,12 +859,12 @@ Requires:	openldap-servers
 %description -n openldap-schema-samba
 This package contains samba.schema for openldap.
 
-%description -n openldap-schema-samba -l pl
+%description -n openldap-schema-samba -l pl.UTF-8
 Ten pakiet zawiera schemat samby dla openldap-a.
 
 %package doc-html
 Summary:	Samba HTML documentation
-Summary(pl):	Documentacja samby w formacie HTML
+Summary(pl.UTF-8):   Documentacja samby w formacie HTML
 Group:		Documentation
 
 %description doc-html
@@ -899,12 +899,12 @@ clients.
 
 5. Man pages The Samba man pages in HTML.
 
-%description doc-html -l pl
+%description doc-html -l pl.UTF-8
 Documentacja samby w formacie HTML.
 
 %package doc-pdf
 Summary:	Samba documentation - PDF format
-Summary(pl):	Documentacja samby w formacie PDF
+Summary(pl.UTF-8):   Documentacja samby w formacie PDF
 Group:		Documentation
 
 %description doc-pdf
@@ -926,7 +926,7 @@ of Microsoft Windows networking, provides in-depth insight into the
 important configuration of Samba-3, and helps to put all of these
 into a useful framework.
 
-%description doc-pdf -l pl
+%description doc-pdf -l pl.UTF-8
 Documentacja samby w formacie PDF.
 
 %prep

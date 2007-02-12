@@ -14,21 +14,21 @@
 %endif
 %define		vscan_version 0.3.6b
 Summary:	SMB server
-Summary(cs.UTF-8):   Server SMB
-Summary(da.UTF-8):   SMB server
-Summary(de.UTF-8):   SMB-Server
-Summary(es.UTF-8):   El servidor SMB
-Summary(fi.UTF-8):   SMB-palvelin
-Summary(fr.UTF-8):   Serveur SMB
-Summary(it.UTF-8):   Server SMB
-Summary(ja.UTF-8):   Samba SMB サーバー
-Summary(ko.UTF-8):   삼바 SMB 서버
-Summary(pl.UTF-8):   Serwer SMB
-Summary(pt_BR.UTF-8):   Cliente e servidor SMB
-Summary(ru.UTF-8):   SMB клиент и сервер
-Summary(tr.UTF-8):   SMB sunucusu
-Summary(uk.UTF-8):   SMB клієнт та сервер
-Summary(zh_CN.UTF-8):   Samba 客户端和服务器
+Summary(cs.UTF-8):	Server SMB
+Summary(da.UTF-8):	SMB server
+Summary(de.UTF-8):	SMB-Server
+Summary(es.UTF-8):	El servidor SMB
+Summary(fi.UTF-8):	SMB-palvelin
+Summary(fr.UTF-8):	Serveur SMB
+Summary(it.UTF-8):	Server SMB
+Summary(ja.UTF-8):	Samba SMB サーバー
+Summary(ko.UTF-8):	삼바 SMB 서버
+Summary(pl.UTF-8):	Serwer SMB
+Summary(pt_BR.UTF-8):	Cliente e servidor SMB
+Summary(ru.UTF-8):	SMB клиент и сервер
+Summary(tr.UTF-8):	SMB sunucusu
+Summary(uk.UTF-8):	SMB клієнт та сервер
+Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.23d
 Release:	4
@@ -253,11 +253,11 @@ TCP-порту 901.
 
 %package swat
 Summary:	Samba Web Administration Tool
-Summary(es.UTF-8):   Samba SWAT and Web documentation
-Summary(pl.UTF-8):   Narzędzie administracyjne serwisu Samba
-Summary(pt_BR.UTF-8):   Samba SWAT e documentação Web
-Summary(ru.UTF-8):   Программа конфигурации SMB-сервера Samba
-Summary(uk.UTF-8):   Програма конфигурації SMB-сервера Samba
+Summary(es.UTF-8):	Samba SWAT and Web documentation
+Summary(pl.UTF-8):	Narzędzie administracyjne serwisu Samba
+Summary(pt_BR.UTF-8):	Samba SWAT e documentação Web
+Summary(ru.UTF-8):	Программа конфигурации SMB-сервера Samba
+Summary(uk.UTF-8):	Програма конфигурації SMB-сервера Samba
 Group:		Networking/Admin
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	inetdaemon
@@ -289,12 +289,12 @@ SWAT - ferramentada Web de configuração do Samba.
 
 %package client
 Summary:	Samba client programs
-Summary(es.UTF-8):   Cliente SMB de Samba
-Summary(ja.UTF-8):   Samba (SMB) クライアントプログラム
-Summary(pl.UTF-8):   Klienci serwera Samba
-Summary(pt_BR.UTF-8):   Cliente SMB do samba
-Summary(ru.UTF-8):   Клиентские программы Samba (SMB)
-Summary(uk.UTF-8):   Клієнтські програми Samba (SMB)
+Summary(es.UTF-8):	Cliente SMB de Samba
+Summary(ja.UTF-8):	Samba (SMB) クライアントプログラム
+Summary(pl.UTF-8):	Klienci serwera Samba
+Summary(pt_BR.UTF-8):	Cliente SMB do samba
+Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
+Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %{?with_krb5:Requires:	heimdal-libs >= 0.7}
@@ -341,12 +341,12 @@ e também, à impressoras SMB.
 
 %package common
 Summary:	Files used by both Samba servers and clients
-Summary(es.UTF-8):   Common files between samba and samba-clients
-Summary(ja.UTF-8):   Samba サーバーとクライアントで使用されるプログラム
-Summary(pl.UTF-8):   Pliki używane przez serwer i klientów Samba
-Summary(pt_BR.UTF-8):   Arquivos em comum entre samba e samba-clients
-Summary(ru.UTF-8):   Файлы, используемые как сервером, так и клиентом Samba
-Summary(uk.UTF-8):   Файли, що використовуються як сервером, так і клієнтом Samba
+Summary(es.UTF-8):	Common files between samba and samba-clients
+Summary(ja.UTF-8):	Samba サーバーとクライアントで使用されるプログラム
+Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
+Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
+Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
+Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
 
 %description common
@@ -374,7 +374,7 @@ Samba-common містить файли, необхідні для роботи �
 
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
-Summary(pl.UTF-8):   Demon samba-winbind, narzędzia i dokumentacja
+Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -390,7 +390,7 @@ Windows lub Samba.
 
 %package -n nss_wins
 Summary:	Name Service Switch service for WINS
-Summary(pl.UTF-8):   Usługa Name Service Switch dla WINS
+Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
@@ -404,7 +404,7 @@ IP.
 
 %package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
-Summary(pl.UTF-8):   Moduł PAM smbpass
+Summary(pl.UTF-8):	Moduł PAM smbpass
 Group:		Base
 Obsoletes:	pam_smbpass
 
@@ -419,7 +419,7 @@ Samby) zsynchronizowanego z hasłami uniksowymi.
 
 %package -n libsmbclient
 Summary:	libsmbclient - samba client library
-Summary(pl.UTF-8):   libsmbclient - biblioteka klienta samby
+Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Libraries
 
 %description -n libsmbclient
@@ -431,8 +431,8 @@ samby.
 
 %package -n libsmbclient-devel
 Summary:	libsmbclient - samba client library
-Summary(pl.UTF-8):   libsmbclient - biblioteka klienta samby
-Summary(pt_BR.UTF-8):   Ferramentas de desenvolvimento para clientes samba
+Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
+Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 
@@ -448,8 +448,8 @@ desenvolver aplicativos clientes para o samba.
 
 %package -n libsmbclient-static
 Summary:	Static version of libsmbclient - samba client library
-Summary(pl.UTF-8):   Statyczna wersja libsmbclient - biblioteki klienta samby
-Summary(pt_BR.UTF-8):   Ferramentas de desenvolvimento para clientes samba
+Summary(pl.UTF-8):	Statyczna wersja libsmbclient - biblioteki klienta samby
+Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 
@@ -461,7 +461,7 @@ Statyczna biblioteka libsmbclient.
 
 %package devel
 Summary:	Header files for Samba
-Summary(pl.UTF-8):   Pliki nagłówkowe Samby
+Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
 
 %description devel
@@ -472,7 +472,7 @@ Pliki nagłówkowe Samby.
 
 %package -n smbget
 Summary:	A utility for retrieving files using the SMB protocol
-Summary(pl.UTF-8):   Narzędzie do pobierania plików protokołem SMB
+Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
 Group:		Applications/Networking
 
 %description -n smbget
@@ -484,7 +484,7 @@ używanym w sieciach MS Windows.
 
 %package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
-Summary(pl.UTF-8):   Backend CUPS-a drukujący na drukarkach SMB
+Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
 Requires:	%{name}-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
@@ -497,7 +497,7 @@ Backend CUPS-a drukujący na drukarkach SMB.
 
 %package -n python-samba
 Summary:	Samba python tools and libraries
-Summary(pl.UTF-8):   Narzędzia i biblioteki pythona do samby
+Summary(pl.UTF-8):	Narzędzia i biblioteki pythona do samby
 Group:		Applications/Networking
 %pyrequires_eq	python-libs
 
@@ -509,7 +509,7 @@ Narzędzia i biblioteki pythona do samby.
 
 %package vfs-audit
 Summary:	VFS module to audit file access
-Summary(pl.UTF-8):   Moduł VFS do monitorowania operacji na plikach
+Summary(pl.UTF-8):	Moduł VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -530,7 +530,7 @@ Zawiera moduły audit, extd_audit i full_audit.
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
-Summary(pl.UTF-8):   Moduł VFS zgodności z CAP (Columbia AppleTalk Program)
+Summary(pl.UTF-8):	Moduł VFS zgodności z CAP (Columbia AppleTalk Program)
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -545,7 +545,7 @@ reprezentacji używanej przez program Columbia AppleTalk Program (CAP).
 
 %package vfs-default_quota
 Summary:	VFS module to store default quotas in a specified quota record
-Summary(pl.UTF-8):   Moduł VFS do zapisywania domyślnych limitów w określonym rekordzie
+Summary(pl.UTF-8):	Moduł VFS do zapisywania domyślnych limitów w określonym rekordzie
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -558,7 +558,7 @@ limitów.
 
 %package vfs-expand_msdfs
 Summary:	VFS module for hosting a Microsoft Distributed File System Tree
-Summary(pl.UTF-8):   Moduł VFS obsługi Microsoft Distributed File System
+Summary(pl.UTF-8):	Moduł VFS obsługi Microsoft Distributed File System
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -582,7 +582,7 @@ płynniejsze powiększanie przestrzeni, rozdzielanie obciążenia itp.
 
 %package vfs-fake_perms
 Summary:	VFS module to report read-only fires as writable
-Summary(pl.UTF-8):   Moduł VFS udający, że pliki tylko do odczytu są zapisywalne
+Summary(pl.UTF-8):	Moduł VFS udający, że pliki tylko do odczytu są zapisywalne
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -604,7 +604,7 @@ lub wylogowywaniu klienta.
 
 %package vfs-netatalk
 Summary:	VFS module for ease co-existence of samba and netatalk
-Summary(pl.UTF-8):   Moduł VFS ułatwiający współpracę serwisów samba i netatalk
+Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów samba i netatalk
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -618,7 +618,7 @@ i netatalk przy udostępnianiu zasobów.
 
 %package vfs-recycle
 Summary:	VFS module to add recycle bin facility to a samba share
-Summary(pl.UTF-8):   Moduł VFS dodający możliwość kosza do zasobu samby
+Summary(pl.UTF-8):	Moduł VFS dodający możliwość kosza do zasobu samby
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -630,7 +630,7 @@ Moduł VFS dodający możliwość kosza do zasobu samby.
 
 %package vfs-readonly
 Summary:	VFS module for read-only limitation for specified share
-Summary(pl.UTF-8):   Moduł VFS do ograniczania określonego udziału tylko do odczytu
+Summary(pl.UTF-8):	Moduł VFS do ograniczania określonego udziału tylko do odczytu
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -646,7 +646,7 @@ oparciu o definicje okresów w smb.conf.
 
 %package vfs-shadow_copy
 Summary:	VFS module to make automatic copy of data in samba share
-Summary(pl.UTF-8):   Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
+Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -658,7 +658,7 @@ Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
 
 %package vfs-vscan-antivir
 Summary:	On-access virus scanning for samba using AntiVir
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący AntiVir
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący AntiVir
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -674,7 +674,7 @@ dostępu do plików korzystając z oprogramowania antywirusowego AntiVir
 
 %package vfs-vscan-clamav
 Summary:	On-access virus scanning for samba using ClamAV
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący ClamAV
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący ClamAV
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	clamav
@@ -691,7 +691,7 @@ dostępu do plików korzystając z oprogramowania antywirusowego ClamAV
 
 %package vfs-vscan-fprot
 Summary:	On-access virus scanning for samba using FPROT
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący FPROT
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący FPROT
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -708,7 +708,7 @@ dostępu do plików korzystając z oprogramowania antywirusowego FPROT
 
 %package vfs-vscan-fsav
 Summary:	On-access virus scanning for samba using F-Secure AntiVirus
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący F-Secure AntiVirus
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący F-Secure AntiVirus
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -726,7 +726,7 @@ AntiVirus (które musi być zainstalowane, aby wykorzystać ten moduł).
 
 %package vfs-vscan-kavp
 Summary:	On-access virus scanning for samba using Kaspersky AVP
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący Kaspersky AVP
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Kaspersky AVP
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -745,7 +745,7 @@ moduł).
 
 %package vfs-vscan-mcafee
 Summary:	On-access virus scanning for samba using mcafee
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący mcafee
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący mcafee
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 #Requires:	mcafee
@@ -763,7 +763,7 @@ dostępu do plików korzystając z oprogramowania antywirusowego mcafee
 
 %package vfs-vscan-mks
 Summary:	On-access virus scanning for samba using mks
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący mks
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący mks
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	mksd
@@ -781,7 +781,7 @@ dostępu do plików korzystając z oprogramowania antywirusowego mks
 
 %package vfs-vscan-openantivirus
 Summary:	On-access virus scanning for samba using OpenAntivirus
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący OpenAntiVirus
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący OpenAntiVirus
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -800,7 +800,7 @@ moduł).
 
 %package vfs-vscan-sophos
 Summary:	On-access virus scanning for samba using Sophos
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący Sophos
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Sophos
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -817,7 +817,7 @@ dostępu do plików korzystając z oprogramowania antywirusowego Sophos
 
 %package vfs-vscan-symantec
 Summary:	On-access virus scanning for samba using Symantec
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący Symantec
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Symantec
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -834,7 +834,7 @@ Symantec (które musi być zainstalowane, aby wykorzystać ten moduł).
 
 %package vfs-vscan-trend
 Summary:	On-access virus scanning for samba using Trend
-Summary(pl.UTF-8):   Skaner antywirusowy online wykorzystujący Trend
+Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Trend
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
@@ -851,7 +851,7 @@ dostępu do plików korzystając z oprogramowania antywirusowego Trend
 
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
-Summary(pl.UTF-8):   Schemat LDAP dla samby
+Summary(pl.UTF-8):	Schemat LDAP dla samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
@@ -864,7 +864,7 @@ Ten pakiet zawiera schemat samby dla openldap-a.
 
 %package doc-html
 Summary:	Samba HTML documentation
-Summary(pl.UTF-8):   Documentacja samby w formacie HTML
+Summary(pl.UTF-8):	Documentacja samby w formacie HTML
 Group:		Documentation
 
 %description doc-html
@@ -904,7 +904,7 @@ Documentacja samby w formacie HTML.
 
 %package doc-pdf
 Summary:	Samba documentation - PDF format
-Summary(pl.UTF-8):   Documentacja samby w formacie PDF
+Summary(pl.UTF-8):	Documentacja samby w formacie PDF
 Group:		Documentation
 
 %description doc-pdf

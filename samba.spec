@@ -4,12 +4,12 @@
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
-%bcond_without	krb5		# without Kerberos5/Heimdal support
+%bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
 
-# ADS requires krb5 and LDAP
-%if !%{with krb5} || !%{with ldap}
+# ADS requires kerberos5 and LDAP
+%if !%{with kerberos5} || !%{with ldap}
 %undefine	with_ads
 %endif
 %define		vscan_version 0.3.6b
@@ -31,7 +31,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.24
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -58,7 +58,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
-%{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
+%{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	iconv
 BuildRequires:	libnscd-devel
 BuildRequires:	libmagic-devel
@@ -296,7 +296,7 @@ Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
 Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-%{?with_krb5:Requires:	heimdal-libs >= 0.7}
+%{?with_kerberos5:Requires:	krb5-libs}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 
@@ -976,7 +976,7 @@ cd source
 	--with-fhs \
 	%{?with_python:--with-python} \
 	--with%{!?with_ldap:out}-ldap \
-	--with%{!?with_krb5:out}-krb5
+	--with%{!?with_kerberos5:out}-krb5
 
 %{__make} proto
 %{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest

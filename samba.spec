@@ -1170,7 +1170,7 @@ fi
 %attr(750,root,root) %dir /var/log/samba/cores
 %attr(750,root,root) %dir /var/log/samba/cores/smbd
 %attr(750,root,root) %dir /var/log/samba/cores/nmbd
-%attr(750,root,root) %dir /var/log/archiv/samba
+%attr(750,root,root) %dir /var/log/archive/samba
 %attr(1777,root,root) %dir /var/spool/samba
 %if %{with ldap}
 %doc examples/LDAP

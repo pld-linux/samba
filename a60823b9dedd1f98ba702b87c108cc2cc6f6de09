@@ -1,0 +1,8 @@
+- added fix_link_libs patch which fix link libraries list for each binary
+  (now each binaries depends on only neccessary libraries),
+- fixed init script:
+  - now this is /bin/sh script,
+  - added reload target,
+- added making /etc/security in %install,
+- added /var/log/archive/samba directory for archiving by logrotate old log
+  giles (modified samba.logrotate for this).

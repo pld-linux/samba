@@ -36,10 +36,7 @@ unset TMP || :
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0
 
-RETVAL=0
-# See how we were called.
-case "$1" in
-  start)
+start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/smb ]; then
 		msg_starting smbd
@@ -52,8 +49,9 @@ case "$1" in
 	else
 		msg_already_running smb
 	fi
-	;;
-  stop)
+}
+
+stop() {
 	# Stop daemons.
 	if [ -f /var/lock/subsys/smb ]; then
 		msg_stopping smbd
@@ -64,6 +62,16 @@ case "$1" in
 	else
 		msg_not_running smb
 	fi
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
 	;;
   status)
 	status smbd
@@ -74,9 +82,8 @@ case "$1" in
 	smbstatus
 	;;
   restart)
-	$0 stop
-	$0 start
-	exit $?
+	stop
+	start
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/smb ]; then

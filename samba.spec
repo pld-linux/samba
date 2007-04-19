@@ -52,6 +52,7 @@ Patch1:		%{name}-FHS.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
 Patch4:		%{name}-libsmbclient-libnscd_link.patch
+Patch5:		%{name}-doc.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -75,6 +76,7 @@ BuildRequires:	rpm-pythonprov
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
+BuildRequires:	sed >= 4.0
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -936,6 +938,8 @@ Documentacja samby w formacie PDF.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
 tar xjf %{SOURCE7}

@@ -1,0 +1,309 @@
+diff -Nur -x '*~' b.samba-3.0.24/docs/htmldocs/index.html n.samba-3.0.24/docs/htmldocs/index.html
+--- b.samba-3.0.24/docs/htmldocs/index.html	2006-11-14 11:08:50.000000000 +0100
++++ n.samba-3.0.24/docs/htmldocs/index.html	2007-04-19 23:17:15.000000000 +0200
+@@ -27,15 +27,11 @@
+  <td valign="top"><i>Using Samba</i>, Second Edition is a comprehensive guide to Samba administration. It covers all versions of Samba from 2.0 to 2.2, including selected features from an alpha version of 3.0, as well as the SWAT graphical configuration tool. Updated for Windows 2000, ME, and XP, the book also explores Samba's new role as a primary domain controller and domain member server, its support for the use of Windows NT/2000/XP authentication and filesystem security on the host Unix system, and accessing shared files and printers from Unix clients.</td>
+ </tr>
+ <tr>
+- <td valign="top"><a href="manpages.html">Man pages</a></td>
++ <td valign="top"><a href="manpages/manpages.html">Man pages</a></td>
+  <td valign="top">The Samba man pages in HTML.</td>
+ </tr>
+ <tr>
+- <td valign="top"><a href="../../WHATSNEW.txt">WHATSNEW</a></td>
++ <td valign="top"><a href="../samba-common-%SAMBAVERSION%/WHATSNEW.txt.gz">WHATSNEW</a></td>
+   <td valign="top">Samba Release Notes.</td>
+ </tr>
+-<tr>
+- <td valign="top"><a href="../../README.VENDOR">README.VENDOR</a></td>
+-  <td valign="top">VENDOR specific information.</td>
+-</tr>
+ </table></body></html>
+diff -Nur -x '*~' b.samba-3.0.24/docs/htmldocs/Samba3-ByExample/samba.css n.samba-3.0.24/docs/htmldocs/Samba3-ByExample/samba.css
+--- b.samba-3.0.24/docs/htmldocs/Samba3-ByExample/samba.css	2006-11-14 11:04:24.000000000 +0100
++++ n.samba-3.0.24/docs/htmldocs/Samba3-ByExample/samba.css	2007-04-19 22:57:31.000000000 +0200
+@@ -1,32 +1,32 @@
+ BODY {
+-	font-family: helvetica, arial, lucida sans, sans-serif;
++	font-family: verdana, helvetica, arial, lucida sans, sans-serif;
+ 	background-color: white;
+ }
+ 
+ H1, H2, H3 {
+-	color: blue;
++	color: black;
+ 	font-size: 120%;
+ 	padding: 2px;
+ 	margin-top: 0px;
+ }
+ 
+ H1 {
+-	background-color: #EEEEFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H2 {
+-	background-color: #DDDDFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H3 {
+-	background-color: #CCCCFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H4 {
+-	color: blue;
++	color: black;
+ }
+ 
+ TR.qandadiv TD {
+@@ -37,17 +37,6 @@
+ 	font-size: 80%;
+ }
+ 
+-A:link {
+-	color: #36F;
+-}
+-
+-A:visited {
+-	color: #96C;
+-}
+-
+-A:active {
+-	color: #F63;
+-}
+ 
+ TR.question {
+ 	color: #33C;
+@@ -69,7 +58,7 @@
+ 
+ DIV.note, DIV.warning, DIV.caution, DIV.tip, DIV.important {
+ 	border: dashed 1px;
+-	background-color: #EEEEFF;
++	background-color: #EEEEEE;
+ 	width: 40em;
+ }
+ 
+diff -Nur -x '*~' b.samba-3.0.24/docs/htmldocs/Samba3-Developers-Guide/samba.css n.samba-3.0.24/docs/htmldocs/Samba3-Developers-Guide/samba.css
+--- b.samba-3.0.24/docs/htmldocs/Samba3-Developers-Guide/samba.css	2006-11-14 11:05:44.000000000 +0100
++++ n.samba-3.0.24/docs/htmldocs/Samba3-Developers-Guide/samba.css	2007-04-19 22:57:26.000000000 +0200
+@@ -1,32 +1,32 @@
+ BODY {
+-	font-family: helvetica, arial, lucida sans, sans-serif;
++	font-family: verdana, helvetica, arial, lucida sans, sans-serif;
+ 	background-color: white;
+ }
+ 
+ H1, H2, H3 {
+-	color: blue;
++	color: black;
+ 	font-size: 120%;
+ 	padding: 2px;
+ 	margin-top: 0px;
+ }
+ 
+ H1 {
+-	background-color: #EEEEFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H2 {
+-	background-color: #DDDDFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H3 {
+-	background-color: #CCCCFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H4 {
+-	color: blue;
++	color: black;
+ }
+ 
+ TR.qandadiv TD {
+@@ -37,17 +37,6 @@
+ 	font-size: 80%;
+ }
+ 
+-A:link {
+-	color: #36F;
+-}
+-
+-A:visited {
+-	color: #96C;
+-}
+-
+-A:active {
+-	color: #F63;
+-}
+ 
+ TR.question {
+ 	color: #33C;
+@@ -69,7 +58,7 @@
+ 
+ DIV.note, DIV.warning, DIV.caution, DIV.tip, DIV.important {
+ 	border: dashed 1px;
+-	background-color: #EEEEFF;
++	background-color: #EEEEEE;
+ 	width: 40em;
+ }
+ 
+diff -Nur -x '*~' b.samba-3.0.24/docs/htmldocs/Samba3-HOWTO/samba.css n.samba-3.0.24/docs/htmldocs/Samba3-HOWTO/samba.css
+--- b.samba-3.0.24/docs/htmldocs/Samba3-HOWTO/samba.css	2006-11-14 11:05:50.000000000 +0100
++++ n.samba-3.0.24/docs/htmldocs/Samba3-HOWTO/samba.css	2007-04-19 22:57:18.000000000 +0200
+@@ -1,32 +1,32 @@
+ BODY {
+-	font-family: helvetica, arial, lucida sans, sans-serif;
++	font-family: verdana, helvetica, arial, lucida sans, sans-serif;
+ 	background-color: white;
+ }
+ 
+ H1, H2, H3 {
+-	color: blue;
++	color: black;
+ 	font-size: 120%;
+ 	padding: 2px;
+ 	margin-top: 0px;
+ }
+ 
+ H1 {
+-	background-color: #EEEEFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H2 {
+-	background-color: #DDDDFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H3 {
+-	background-color: #CCCCFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H4 {
+-	color: blue;
++	color: black;
+ }
+ 
+ TR.qandadiv TD {
+@@ -37,17 +37,6 @@
+ 	font-size: 80%;
+ }
+ 
+-A:link {
+-	color: #36F;
+-}
+-
+-A:visited {
+-	color: #96C;
+-}
+-
+-A:active {
+-	color: #F63;
+-}
+ 
+ TR.question {
+ 	color: #33C;
+@@ -69,7 +58,7 @@
+ 
+ DIV.note, DIV.warning, DIV.caution, DIV.tip, DIV.important {
+ 	border: dashed 1px;
+-	background-color: #EEEEFF;
++	background-color: #EEEEEE;
+ 	width: 40em;
+ }
+ 
+diff -Nur -x '*~' b.samba-3.0.24/docs/htmldocs/samba.css n.samba-3.0.24/docs/htmldocs/samba.css
+--- b.samba-3.0.24/docs/htmldocs/samba.css	2006-11-14 11:03:02.000000000 +0100
++++ n.samba-3.0.24/docs/htmldocs/samba.css	2007-04-19 23:02:16.000000000 +0200
+@@ -1,32 +1,32 @@
+ BODY {
+-	font-family: helvetica, arial, lucida sans, sans-serif;
++	font-family: verdana, helvetica, arial, lucida sans, sans-serif;
+ 	background-color: white;
+ }
+ 
+ H1, H2, H3 {
+-	color: blue;
++	color: black;
+ 	font-size: 120%;
+ 	padding: 2px;
+ 	margin-top: 0px;
+ }
+ 
+ H1 {
+-	background-color: #EEEEFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H2 {
+-	background-color: #DDDDFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H3 {
+-	background-color: #CCCCFF;
+-	color: blue;
++	background-color: #EEEEEE;
++	color: black;
+ }
+ 
+ H4 {
+-	color: blue;
++	color: black;
+ }
+ 
+ TR.qandadiv TD {
+@@ -37,17 +37,6 @@
+ 	font-size: 80%;
+ }
+ 
+-A:link {
+-	color: #36F;
+-}
+-
+-A:visited {
+-	color: #96C;
+-}
+-
+-A:active {
+-	color: #F63;
+-}
+ 
+ TR.question {
+ 	color: #33C;
+@@ -69,7 +58,7 @@
+ 
+ DIV.note, DIV.warning, DIV.caution, DIV.tip, DIV.important {
+ 	border: dashed 1px;
+-	background-color: #EEEEFF;
++	background-color: #EEEEEE;
+ 	width: 40em;
+ }
+ 

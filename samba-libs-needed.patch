@@ -1,0 +1,11 @@
+--- samba-3.0.24/source/Makefile.in.orig	2007-06-06 19:58:02.000000000 +0200
++++ samba-3.0.24/source/Makefile.in	2007-06-06 21:41:44.123092868 +0200
+@@ -1386,7 +1386,7 @@
+ 
+ bin/pam_smbpass.@SHLIBEXT@: $(PAM_SMBPASS_PICOOBJ)
+ 	@echo "Linking shared library $@"
+-	@$(SHLD) $(LDSHFLAGS) -o $@ $(PAM_SMBPASS_PICOOBJ) -lpam $(DYNEXP) $(LIBS) $(LDAP_LIBS) $(KRB5LIBS)
++	@$(SHLD) $(LDSHFLAGS) -o $@ $(PAM_SMBPASS_PICOOBJ) -lpam $(DYNEXP) $(LIBS) $(LDAP_LIBS) $(KRB5LIBS) $(PASSDB_LIBS) $(NSCD_LIBS)
+ 
+ bin/tdbbackup@EXEEXT@: $(TDBBACKUP_OBJ) bin/.dummy
+ 	@echo Linking $@

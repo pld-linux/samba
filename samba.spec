@@ -1,5 +1,9 @@
 # TODO:
 # - look into other distro specs for valid %descriptions for samba 3
+# - linking breakage:
+# libmsrpc.so.0:
+#	undefined symbol: smbc_attr_server      (./libmsrpc.so.0)
+# maybe more
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -31,7 +35,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.24
-Release:	3
+Release:	3.2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -53,6 +57,7 @@ Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
 Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
+Patch6:		%{name}-libs-needed.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -939,6 +944,7 @@ Documentacja samby w formacie PDF.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

@@ -1,5 +1,16 @@
 # TODO:
 # - look into other distro specs for valid %descriptions for samba 3
+# - pl for vfs-readahead
+# - unpackaged man pages for modules that are not built by default,
+#   maybe we should build them?
+#   /usr/share/man/man8/vfs_cacheprime.8.gz
+#   /usr/share/man/man8/vfs_catia.8.gz
+#   /usr/share/man/man8/vfs_commit.8.gz
+#   /usr/share/man/man8/vfs_extd_audit.8.gz
+#   /usr/share/man/man8/vfs_full_audit.8.gz
+#   /usr/share/man/man8/vfs_gpfs.8.gz
+#   /usr/share/man/man8/vfs_notify_fam.8.gz
+#   /usr/share/man/man8/vfs_prealloc.8.gz
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -12,7 +23,7 @@
 %if !%{with krb5} || !%{with ldap}
 %undefine	with_ads
 %endif
-%define		vscan_version 0.3.6b
+%define		vscan_version 0.3.6c-beta4
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -30,28 +41,27 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
-Version:	3.0.24
-Release:	1
+Version:	3.0.25a
+Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	89273f67a6d8067cbbecefaa13747153
+# Source0-md5:	cbd33bb5d904ccd8a294a4019743745d
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
 Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
-Source7:	http://dl.sourceforge.net/openantivirus/%{name}-vscan-%{vscan_version}.tar.bz2
-# Source7-md5:	900502ba36b80620229b94e5129bc856
+Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.tar.gz
+# Source7-md5:	c40acad9691ef5284a164c024124ca78
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-lib64.patch
 Patch1:		%{name}-FHS.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
-Patch4:		%{name}-libsmbclient-libnscd_link.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -60,8 +70,8 @@ BuildRequires:	automake
 BuildRequires:	dmapi-devel
 %{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	iconv
-BuildRequires:	libnscd-devel
 BuildRequires:	libmagic-devel
+BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
@@ -628,6 +638,31 @@ VFS module to add recycle bin facility to a samba share.
 %description vfs-recycle -l pl
 Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 
+%package vfs-readahead
+Summary:	VFS module for pre-loading the kernel buffer cache
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-readahead
+This VFS module detects read requests at multiples of a given offset
+(hex 0x80000 by default) and then tells the kernel via either the
+readahead system call (on Linux) or the posix_fadvise system call to
+pre-fetch this data into the buffer cache.
+
+This module is useful for Windows Vista clients reading data using the
+Windows Explorer program, which asynchronously does multiple file read
+requests at offset boundaries of 0x80000 bytes.
+
+The offset multiple used is given by the readahead:offset option,
+which defaults to 0x80000.
+
+The size of the disk read operations performed by vfs_readahead is
+determined by the readahead:length option. By default this is set to
+the same value as the readahead:offset option and if not set
+explicitly will use the current value of readahead:offset.
+
+This module is stackable.
+
 %package vfs-readonly
 Summary:	VFS module for read-only limitation for specified share
 Summary(pl):	Modu³ VFS do ograniczania okre¶lonego udzia³u tylko do odczytu
@@ -870,32 +905,29 @@ Group:		Documentation
 %description doc-html
 Samba HTML documentation, consists of:
 
-1. SAMBA Developers Guide
-This book is a collection of documents that might be useful for
-people developing samba or those interested in doing so. It's nothing
-more than a collection of documents written by samba developers about
-the internals of various parts of samba and the SMB protocol. It's
-still (and will always be) incomplete.
+1. SAMBA Developers Guide This book is a collection of documents that
+might be useful for people developing samba or those interested in
+doing so. It's nothing more than a collection of documents written by
+samba developers about the internals of various parts of samba and the
+SMB protocol. It's still (and will always be) incomplete.
 
-2. Samba-3 by Example
-Practical Exercises in Successful Samba Deployment.
+2. Samba-3 by Example Practical Exercises in Successful Samba
+Deployment.
 
-3. The Official Samba-3 HOWTO and Reference Guide
-This book provides example configurations, it documents key aspects
-of Microsoft Windows networking, provides in-depth insight into the
-important configuration of Samba-3, and helps to put all of these
-into a useful framework.
+3. The Official Samba-3 HOWTO and Reference Guide This book provides
+example configurations, it documents key aspects of Microsoft Windows
+networking, provides in-depth insight into the important configuration
+of Samba-3, and helps to put all of these into a useful framework.
 
-4. Using Samba, 2nd Edition
-Using Samba, Second Edition is a comprehensive guide to Samba
-administration. It covers all versions of Samba from 2.0 to 2.2,
-including selected features from an alpha version of 3.0, as well as
-the SWAT graphical configuration tool. Updated for Windows 2000, ME,
-and XP, the book also explores Samba's new role as a primary domain
-controller and domain member server, its support for the use of
-Windows NT/2000/XP authentication and filesystem security on the host
-Unix system, and accessing shared files and printers from Unix
-clients.
+4. Using Samba, 2nd Edition Using Samba, Second Edition is a
+comprehensive guide to Samba administration. It covers all versions of
+Samba from 2.0 to 2.2, including selected features from an alpha
+version of 3.0, as well as the SWAT graphical configuration tool.
+Updated for Windows 2000, ME, and XP, the book also explores Samba's
+new role as a primary domain controller and domain member server, its
+support for the use of Windows NT/2000/XP authentication and
+filesystem security on the host Unix system, and accessing shared
+files and printers from Unix clients.
 
 5. Man pages The Samba man pages in HTML.
 
@@ -910,21 +942,19 @@ Group:		Documentation
 %description doc-pdf
 Samba PDF documentation, consists of:
 
-1. SAMBA Developers Guide
-This book is a collection of documents that might be useful for
-people developing samba or those interested in doing so. It's nothing
-more than a collection of documents written by samba developers about
-the internals of various parts of samba and the SMB protocol. It's
-still (and will always be) incomplete.
+1. SAMBA Developers Guide This book is a collection of documents that
+might be useful for people developing samba or those interested in
+doing so. It's nothing more than a collection of documents written by
+samba developers about the internals of various parts of samba and the
+SMB protocol. It's still (and will always be) incomplete.
 
-2. Samba-3 by Example
-Practical Exercises in Successful Samba Deployment.
+2. Samba-3 by Example Practical Exercises in Successful Samba
+Deployment.
 
-3. The Official Samba-3 HOWTO and Reference Guide
-This book provides example configurations, it documents key aspects
-of Microsoft Windows networking, provides in-depth insight into the
-important configuration of Samba-3, and helps to put all of these
-into a useful framework.
+3. The Official Samba-3 HOWTO and Reference Guide This book provides
+example configurations, it documents key aspects of Microsoft Windows
+networking, provides in-depth insight into the important configuration
+of Samba-3, and helps to put all of these into a useful framework.
 
 %description doc-pdf -l pl
 Documentacja samby w formacie PDF.
@@ -937,16 +967,15 @@ Documentacja samby w formacie PDF.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 cd examples/VFS
-tar xjf %{SOURCE7}
+tar xzf %{SOURCE7}
 mv README{,.vfs}
 
 %build
 cd source
 %{__libtoolize}
-%{__autoconf}
+%{__autoconf} -I lib/replace
 
 # Removed options (default or not supported by configure script)
 #	--with-mmap \
@@ -971,7 +1000,6 @@ cd source
 	--with-quotas \
 	--with-readline \
 	--with-smbmount \
-	--with-smbwrapper \
 	--with-swatdir=%{_datadir}/swat \
 	--with-syslog \
 	--with-utmp \
@@ -983,7 +1011,10 @@ cd source
 %{__make} proto
 %{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest
 
-cd ../examples/VFS
+cd ../examples/libsmbclient/smbwrapper
+%{__make}
+
+cd ../../VFS
 %{__autoconf}
 %configure \
 	CFLAGS="%{rpmcflags} -fPIC"
@@ -1037,11 +1068,17 @@ ln -s libmsrpc.so.0 $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
+# smbwrapper
+install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so.0
+ln -s smbwrapper.so.0 $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
+install examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
+install docs/manpages/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
+
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{smbwrapper,tdb,nsswitch}
 cp -a source/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a source/smbwrapper/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/smbwrapper
-cp -a source/tdb/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+cp -a examples/libsmbclient/smbwrapper/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/smbwrapper
+cp -a source/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
 cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 
 # vscan modules
@@ -1202,6 +1239,7 @@ fi
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/smbmnt
 %attr(755,root,root) %{_bindir}/smbmount
+%attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtree
 %attr(755,root,root) %{_bindir}/smbumount
 %{_mandir}/man1/smbtree.1*
@@ -1240,6 +1278,7 @@ fi
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
+%attr(755,root,root) %{_libdir}/%{name}/libsmbsharemodes.so
 %{_libdir}/%{name}/*.dat
 %dir %{_libdir}/%{name}/auth
 %attr(755,root,root) %{_libdir}/%{name}/auth/script.so
@@ -1254,6 +1293,13 @@ fi
 %{_mandir}/man5/lmhosts.5*
 %{_mandir}/man5/smb.conf.5*
 %{_mandir}/man8/pdbedit.8*
+%{_mandir}/man8/eventlogadm.8*
+%{_mandir}/man8/idmap_ad.8*
+%{_mandir}/man8/idmap_ldap.8*
+%{_mandir}/man8/idmap_nss.8*
+%{_mandir}/man8/idmap_rid.8*
+%{_mandir}/man8/idmap_tdb.8*
+%{_mandir}/man8/tdbtool.8*
 
 %files swat
 %defattr(644,root,root,755)
@@ -1271,6 +1317,7 @@ fi
 %lang(tr) %{_datadir}/swat/lang/tr
 %lang(de) %{_libdir}/%{name}/de.msg
 %{_libdir}/%{name}/en.msg
+%lang(fr) %{_libdir}/%{name}/fi.msg
 %lang(fr) %{_libdir}/%{name}/fr.msg
 %lang(it) %{_libdir}/%{name}/it.msg
 %lang(ja) %{_libdir}/%{name}/ja.msg
@@ -1298,12 +1345,14 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libmsrpc.so.*
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/smbwrapper.so.*
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libmsrpc.so
 %attr(755,root,root) %{_libdir}/libsmbclient.so
+%attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_includedir}/libmsrpc.h
 %{_includedir}/libsmbclient.h
 
@@ -1335,14 +1384,17 @@ fi
 %attr(755,root,root) %{_vfsdir}/audit.so
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
 %attr(755,root,root) %{_vfsdir}/full_audit.so
+%{_mandir}/man8/vfs_audit.8*
 
 %files vfs-cap
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/cap.so
+%{_mandir}/man8/vfs_cap.8*
 
 %files vfs-default_quota
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/default_quota.so
+%{_mandir}/man8/vfs_default_quota.8*
 
 %files vfs-expand_msdfs
 %defattr(644,root,root,755)
@@ -1351,22 +1403,32 @@ fi
 %files vfs-fake_perms
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/fake_perms.so
+%{_mandir}/man8/vfs_fake_perms.8*
 
 %files vfs-netatalk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/netatalk.so
+%{_mandir}/man8/vfs_netatalk.8*
+
+%files vfs-readahead
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/readahead.so
+%{_mandir}/man8/vfs_readahead.8*
 
 %files vfs-readonly
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/readonly.so
+%{_mandir}/man8/vfs_readonly.8*
 
 %files vfs-recycle
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/recycle.so
+%{_mandir}/man8/vfs_recycle.8*
 
 %files vfs-shadow_copy
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/shadow_copy.so
+%{_mandir}/man8/vfs_shadow_copy.8*
 
 %files vfs-vscan-antivir
 %defattr(644,root,root,755)

@@ -9,12 +9,3 @@
  
  bin/smbclient@EXEEXT@: $(CLIENT_OBJ) @BUILD_POPT@ bin/.dummy
  	@echo Linking $@
-@@ -1101,7 +1101,7 @@
- 
- bin/libsmbclient.@SHLIBEXT@: $(LIBSMBCLIENT_PICOBJS)
- 	@echo Linking libsmbclient shared library $@
--	@$(SHLD) $(LDSHFLAGS) -o $@ $(LIBSMBCLIENT_PICOBJS) $(LDFLAGS) $(LIBS) \
-+	@$(SHLD) $(LDSHFLAGS) -o $@ $(LIBSMBCLIENT_PICOBJS) $(LDFLAGS) $(LIBS) $(NSCD_LIBS) \
- 		$(KRB5LIBS) $(LDAP_LIBS) \
- 		@SONAMEFLAG@`basename $@`.$(LIBSMBCLIENT_MAJOR)
- 

@@ -10,10 +10,7 @@
 #   /usr/share/man/man8/vfs_gpfs.8.gz
 #   /usr/share/man/man8/vfs_notify_fam.8.gz
 #   /usr/share/man/man8/vfs_prealloc.8.gz
-# - linking breakage:
-# libmsrpc.so.0:
-#	undefined symbol: smbc_attr_server      (./libmsrpc.so.0)
-# maybe more
+# - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -62,6 +59,7 @@ Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.ta
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-lib64.patch
+Patch1:		%{name}-smbwrapper.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
 Patch4:		%{name}-libsmbclient-libnscd_link.patch
@@ -975,6 +973,7 @@ Documentacja samby w formacie PDF.
 %if "%{_lib}" == "lib64"
 %patch0 -p1
 %endif
+%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -1018,7 +1017,10 @@ cd source
 
 cd ../examples
 # TODO: -L, optflags
-%{__make} -C libsmbclient/smbwrapper
+%{__make} -C libsmbclient/smbwrapper \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \\\$(SMBINCLUDE)" \
+	LDFLAGS="-L../source/bin"
 
 cd VFS
 %{__autoconf}

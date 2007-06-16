@@ -1,6 +1,22 @@
 --- samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c.orig	2006-01-25 00:46:42.000000000 +0100
 +++ samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c	2007-06-16 18:38:00.453640544 +0200
-@@ -1109,7 +1109,7 @@ int utimes(const char *name, const struc
+@@ -62,6 +62,7 @@
+ #include <dirent.h>
+ #include <signal.h>
+ #include <stdarg.h>
++#include <string.h>
+ #ifdef __USE_GNU
+ # define SMBW_USE_GNU
+ #endif
+@@ -73,6 +74,7 @@
+ #include <errno.h>
+ #include "libsmbclient.h"
+ #include "bsd-strlfunc.h"
++#include "smbw.h"
+ #include "wrapper.h"
+ 
+ /*
+@@ -1109,7 +1111,7 @@ int utimes(const char *name, const struc
          return (* smbw_libc.utimes)((char *) name, (struct timeval *) tvp);
  }
  

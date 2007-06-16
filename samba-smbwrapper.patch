@@ -1,0 +1,44 @@
+--- samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c.orig	2006-01-25 00:46:42.000000000 +0100
++++ samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c	2007-06-16 18:38:00.453640544 +0200
+@@ -1109,7 +1109,7 @@ int utimes(const char *name, const struc
+         return (* smbw_libc.utimes)((char *) name, (struct timeval *) tvp);
+ }
+ 
+-int readlink(const char *path, char *buf, size_t bufsize)
++ssize_t readlink(const char *path, char *buf, size_t bufsize)
+ {
+         check_init("readlink");
+         
+--- samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.c.orig	2006-01-25 00:46:42.000000000 +0100
++++ samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.c	2007-06-16 18:38:16.791148140 +0200
+@@ -548,7 +548,7 @@ int smbw_access(const char *name, int mo
+ /***************************************************** 
+ a wrapper for readlink() - needed for correct errno setting
+ *******************************************************/
+-int smbw_readlink(const char *fname, char *buf, size_t bufsize)
++ssize_t smbw_readlink(const char *fname, char *buf, size_t bufsize)
+ {
+ 	struct SMBW_stat st;
+ 	int ret;
+--- samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.h.orig	2006-01-25 00:46:42.000000000 +0100
++++ samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.h	2007-06-16 18:38:36.022138015 +0200
+@@ -123,7 +123,7 @@ typedef struct SMBW_libc
+         int (* unlink)(char *name);
+         int (* utime)(char *name, struct utimbuf *tvp);
+         int (* utimes)(char *name, struct timeval *tvp);
+-        int (* readlink)(char *path, char *buf, size_t bufsize);
++        ssize_t (* readlink)(char *path, char *buf, size_t bufsize);
+         int (* rename)(char *oldname, char *newname);
+         int (* rmdir)(char *name);
+         int (* symlink)(char *topath, char *frompath);
+--- samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.h.orig	2006-01-25 00:46:42.000000000 +0100
++++ samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.h	2007-06-16 18:38:49.349490680 +0200
+@@ -79,7 +79,7 @@ ssize_t smbw_pwrite(int fd, void *buf, s
+ int smbw_close(int fd);
+ int smbw_fcntl(int fd, int cmd, long arg);
+ int smbw_access(const char *name, int mode);
+-int smbw_readlink(const char *path, char *buf, size_t bufsize);
++ssize_t smbw_readlink(const char *path, char *buf, size_t bufsize);
+ int smbw_unlink(const char *fname);
+ int smbw_rename(const char *oldname, const char *newname);
+ int smbw_utime(const char *fname, void *buf);

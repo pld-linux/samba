@@ -63,13 +63,7 @@
  pammodulesdir="\${LIBDIR}/security"
  configdir="\${LIBDIR}"
  swatdir="\${prefix}/swat"
-@@ -40,12 +40,12 @@
- [  --with-fhs              Use FHS-compliant paths (default=no)],
- [ case "$withval" in
-   yes)
--    lockdir="\${VARDIR}/lib/samba"
-+    lockdir="\${VARDIR}/lib64/samba"
-     piddir="\${VARDIR}/run"
+@@ -45,7 +35,7 @@
      mandir="\${prefix}/share/man"
      logfilebase="\${VARDIR}/log/samba"
      privatedir="\${CONFIGDIR}/private"
@@ -78,17 +72,6 @@
      configdir="\${sysconfdir}/samba"
      swatdir="\${DATADIR}/samba/swat"
      ;;
-@@ -231,8 +231,8 @@
- ])
- 
- SAMBA_CPPFLAGS="-Iinclude -I${srcdir-.}/include  -I. -I${srcdir-.}"
--SAMBA_CPPFLAGS="${SAMBA_CPPFLAGS} -I${srcdir-.}/lib/replace"
--SAMBA_CPPFLAGS="${SAMBA_CPPFLAGS} -I${srcdir-.}/lib/talloc"
-+SAMBA_CPPFLAGS="${SAMBA_CPPFLAGS} -I${srcdir-.}/lib64/replace"
-+SAMBA_CPPFLAGS="${SAMBA_CPPFLAGS} -I${srcdir-.}/lib64/talloc"
- SAMBA_CPPFLAGS="${SAMBA_CPPFLAGS} -I${srcdir-.}/tdb/include"
- SAMBA_CPPFLAGS="${SAMBA_CPPFLAGS} -I${srcdir-.}/libaddns"
- SAMBA_CPPFLAGS="${SAMBA_CPPFLAGS} -I${srcdir-.}/librpc"
 @@ -1132,7 +1132,7 @@
      _cppflags=${CPPFLAGS}
  

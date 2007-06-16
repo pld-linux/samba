@@ -62,7 +62,6 @@ Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.ta
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-lib64.patch
-Patch1:		%{name}-FHS.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
 #Patch4:		%{name}-libsmbclient-libnscd_link.patch
@@ -976,7 +975,6 @@ Documentacja samby w formacie PDF.
 %if "%{_lib}" == "lib64"
 %patch0 -p1
 %endif
-%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch5 -p1

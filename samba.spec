@@ -27,7 +27,7 @@
 %if !%{with kerberos5} || !%{with ldap}
 %undefine	with_ads
 %endif
-%define		vscan_version 0.3.6b-beta4
+%define		vscan_version 0.3.6c-beta4
 Summary:	SMB server
 Summary(cs.UTF-8):	Server SMB
 Summary(da.UTF-8):	SMB server

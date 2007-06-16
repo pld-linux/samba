@@ -45,7 +45,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.25a
-Release:	3.2
+Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -64,7 +64,7 @@ Source9:	winbind.sysconfig
 Patch0:		%{name}-lib64.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
-#Patch4:		%{name}-libsmbclient-libnscd_link.patch
+Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 URL:		http://www.samba.org/
@@ -977,6 +977,7 @@ Documentacja samby w formacie PDF.
 %endif
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
@@ -989,15 +990,6 @@ mv README{,.vfs}
 cd source
 %{__libtoolize}
 %{__autoconf} -I lib/replace
-
-# Removed options (default or not supported by configure script)
-#	--with-mmap \
-#	--with-netatalk \
-#	--without-smbwrapper \
-#	--with-sslinc=%{_prefix} \
-#	--with-vfs \
-#	--with-tdbsam \
-#	%{?with_ipv6:--with-ipv6} \
 
 %configure \
 	--with-rootsbindir=/sbin \
@@ -1046,13 +1038,11 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
 
-cd source
-%{__make} install \
+%{__make} -C source install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
-install script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
-cd ..
+install source/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
 ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs
 
@@ -1074,24 +1064,22 @@ install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
-install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libmsrpc.so $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so.0
-install source/bin/libmsrpc.a $RPM_BUILD_ROOT%{_libdir}/libmsrpc.a
 ln -s libmsrpc.so.0 $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so
+install source/bin/libmsrpc.a $RPM_BUILD_ROOT%{_libdir}/libmsrpc.a
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # smbwrapper
-install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so.0
-ln -s smbwrapper.so.0 $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
+install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
 install examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
 install docs/manpages/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # these are needed to build samba-pdbsql
-install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{smbwrapper,tdb,nsswitch}
+install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}
 cp -a source/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a examples/libsmbclient/smbwrapper/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/smbwrapper
 cp -a source/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
 cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 
@@ -1256,6 +1244,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtree
 %attr(755,root,root) %{_bindir}/smbumount
+%attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
 %{_mandir}/man8/smbmnt.8*
@@ -1292,6 +1281,7 @@ fi
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
+# how this one is used? SONAME is libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/%{name}/libsmbsharemodes.so
 %{_libdir}/%{name}/*.dat
 %dir %{_libdir}/%{name}/auth
@@ -1359,14 +1349,12 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libmsrpc.so.*
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
-%attr(755,root,root) %{_libdir}/smbwrapper.so.*
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libmsrpc.so
 %attr(755,root,root) %{_libdir}/libsmbclient.so
-%attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_includedir}/libmsrpc.h
 %{_includedir}/libsmbclient.h
 

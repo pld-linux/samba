@@ -1,6 +1,5 @@
 # TODO:
 # - look into other distro specs for valid %descriptions for samba 3
-# - pl for vfs-readahead
 # - unpackaged man pages for modules that are not built by default,
 #   maybe we should build them?
 #   /usr/share/man/man8/vfs_cacheprime.8.gz
@@ -646,6 +645,7 @@ Moduł VFS dodający możliwość kosza do zasobu samby.
 
 %package vfs-readahead
 Summary:       VFS module for pre-loading the kernel buffer cache
+Summary(pl.UTF-8):	Moduł VFS do wczesnego odczytu danych do bufora cache jądra
 Group:         Networking/Daemons
 Requires:      %{name} = %{epoch}:%{version}-%{release}
 
@@ -659,15 +659,16 @@ This module is useful for Windows Vista clients reading data using the
 Windows Explorer program, which asynchronously does multiple file read
 requests at offset boundaries of 0x80000 bytes.
 
-The offset multiple used is given by the readahead:offset option,
-which defaults to 0x80000.
+%description vfs-readahead -l pl.UTF-8
+Ten moduł VFS wykrywa żądania odczytu spod wielokrotności podanych
+pozycji (domyślnie 0x80000 szesnastkowo) i instruuje jądro poprzez
+wywołanie systemowe readahead (pod Linuksem) lub posix_fadvise do
+wczesnego odczytu tych danych do bufora cache.
 
-The size of the disk read operations performed by vfs_readahead is
-determined by the readahead:length option. By default this is set to
-the same value as the readahead:offset option and if not set
-explicitly will use the current value of readahead:offset.
-
-This module is stackable.
+Ten moduł jest przydatny dla klientów Windows Vista odczytujących dane
+przy użyciu programu Windows Explorer, który asynchronicznie wykonuje
+wiele żądań odczytu plików spod pozycji o wielokrotnościach 0x80000
+bajtów.
 
 %package vfs-readonly
 Summary:	VFS module for read-only limitation for specified share

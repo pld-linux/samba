@@ -42,7 +42,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.25a
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -1019,8 +1019,7 @@ cd ../examples
 # TODO: -L, optflags
 %{__make} -C libsmbclient/smbwrapper \
 	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \\\$(SMBINCLUDE)" \
-	LDFLAGS="-L../source/bin"
+	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \\\$(SMBINCLUDE)"
 
 cd VFS
 %{__autoconf}

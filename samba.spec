@@ -1016,7 +1016,6 @@ cd source
 %{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest
 
 cd ../examples
-# TODO: -L, optflags
 %{__make} -C libsmbclient/smbwrapper \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \\\$(SMBINCLUDE)"

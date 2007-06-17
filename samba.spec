@@ -1,6 +1,5 @@
 # TODO:
 # - look into other distro specs for valid %descriptions for samba 3
-# - pl for vfs-readahead
 # - unpackaged man pages for modules that are not built by default,
 #   maybe we should build them?
 #   /usr/share/man/man8/vfs_cacheprime.8.gz
@@ -11,6 +10,7 @@
 #   /usr/share/man/man8/vfs_gpfs.8.gz
 #   /usr/share/man/man8/vfs_notify_fam.8.gz
 #   /usr/share/man/man8/vfs_prealloc.8.gz
+# - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -19,8 +19,8 @@
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
 
-# ADS requires krb5 and LDAP
-%if !%{with krb5} || !%{with ldap}
+# ADS requires kerberos5 and LDAP
+%if !%{with kerberos5} || !%{with ldap}
 %undefine	with_ads
 %endif
 %define		vscan_version 0.3.6c-beta4
@@ -42,7 +42,7 @@ Summary(uk):	SMB ËÌ¦¤ÎÔ ÔÁ ÓÅÒ×ÅÒ
 Summary(zh_CN):	Samba ¿Í»§¶ËºÍ·þÎñÆ÷
 Name:		samba
 Version:	3.0.25a
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -59,9 +59,12 @@ Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.ta
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-lib64.patch
-Patch1:		%{name}-FHS.patch
+Patch1:		%{name}-smbwrapper.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
+Patch4:		%{name}-libsmbclient-libnscd_link.patch
+Patch5:		%{name}-doc.patch
+Patch6:		%{name}-libs-needed.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -85,6 +88,7 @@ BuildRequires:	rpm-pythonprov
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
+BuildRequires:	sed >= 4.0
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -640,6 +644,7 @@ Modu³ VFS dodaj±cy mo¿liwo¶æ kosza do zasobu samby.
 
 %package vfs-readahead
 Summary:	VFS module for pre-loading the kernel buffer cache
+Summary(pl):	Modu³ VFS do wczesnego odczytu danych do bufora cache j±dra
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -653,15 +658,16 @@ This module is useful for Windows Vista clients reading data using the
 Windows Explorer program, which asynchronously does multiple file read
 requests at offset boundaries of 0x80000 bytes.
 
-The offset multiple used is given by the readahead:offset option,
-which defaults to 0x80000.
+%description vfs-readahead -l pl.UTF-8
+Ten modu³ VFS wykrywa ¿±dania odczytu spod wielokrotno¶ci podanych
+pozycji (domy¶lnie 0x80000 szesnastkowo) i instruuje j±dro poprzez
+wywo³anie systemowe readahead (pod Linuksem) lub posix_fadvise do
+wczesnego odczytu tych danych do bufora cache.
 
-The size of the disk read operations performed by vfs_readahead is
-determined by the readahead:length option. By default this is set to
-the same value as the readahead:offset option and if not set
-explicitly will use the current value of readahead:offset.
-
-This module is stackable.
+Ten modu³ jest przydatny dla klientów Windows Vista odczytuj±cych dane
+przy u¿yciu programu Windows Explorer, który asynchronicznie wykonuje
+wiele ¿±dañ odczytu plików spod pozycji o wielokrotno¶ciach 0x80000
+bajtów.
 
 %package vfs-readonly
 Summary:	VFS module for read-only limitation for specified share
@@ -967,6 +973,10 @@ Documentacja samby w formacie PDF.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
 tar xzf %{SOURCE7}
@@ -976,15 +986,6 @@ mv README{,.vfs}
 cd source
 %{__libtoolize}
 %{__autoconf} -I lib/replace
-
-# Removed options (default or not supported by configure script)
-#	--with-mmap \
-#	--with-netatalk \
-#	--without-smbwrapper \
-#	--with-sslinc=%{_prefix} \
-#	--with-vfs \
-#	--with-tdbsam \
-#	%{?with_ipv6:--with-ipv6} \
 
 %configure \
 	--with-rootsbindir=/sbin \
@@ -1011,10 +1012,12 @@ cd source
 %{__make} proto
 %{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest
 
-cd ../examples/libsmbclient/smbwrapper
-%{__make}
+cd ../examples
+%{__make} -C libsmbclient/smbwrapper \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \\\$(SMBINCLUDE)"
 
-cd ../../VFS
+cd VFS
 %{__autoconf}
 %configure \
 	CFLAGS="%{rpmcflags} -fPIC"
@@ -1032,13 +1035,11 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
 
-cd source
-%{__make} install \
+%{__make} -C source install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
-install script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
-cd ..
+install source/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
 ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs
 
@@ -1060,24 +1061,22 @@ install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
-install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 mv $RPM_BUILD_ROOT%{_libdir}/samba/libmsrpc.so $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so.0
-install source/bin/libmsrpc.a $RPM_BUILD_ROOT%{_libdir}/libmsrpc.a
 ln -s libmsrpc.so.0 $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so
+install source/bin/libmsrpc.a $RPM_BUILD_ROOT%{_libdir}/libmsrpc.a
 
 install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # smbwrapper
-install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so.0
-ln -s smbwrapper.so.0 $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
+install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
 install examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
 install docs/manpages/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # these are needed to build samba-pdbsql
-install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{smbwrapper,tdb,nsswitch}
+install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}
 cp -a source/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a examples/libsmbclient/smbwrapper/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/smbwrapper
 cp -a source/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
 cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 
@@ -1242,6 +1241,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtree
 %attr(755,root,root) %{_bindir}/smbumount
+%attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
 %{_mandir}/man8/smbmnt.8*
@@ -1278,6 +1278,7 @@ fi
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
+# how this one is used? SONAME is libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/%{name}/libsmbsharemodes.so
 %{_libdir}/%{name}/*.dat
 %dir %{_libdir}/%{name}/auth
@@ -1317,7 +1318,7 @@ fi
 %lang(tr) %{_datadir}/swat/lang/tr
 %lang(de) %{_libdir}/%{name}/de.msg
 %{_libdir}/%{name}/en.msg
-%lang(fr) %{_libdir}/%{name}/fi.msg
+%lang(fi) %{_libdir}/%{name}/fi.msg
 %lang(fr) %{_libdir}/%{name}/fr.msg
 %lang(it) %{_libdir}/%{name}/it.msg
 %lang(ja) %{_libdir}/%{name}/ja.msg
@@ -1345,14 +1346,12 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libmsrpc.so.*
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
-%attr(755,root,root) %{_libdir}/smbwrapper.so.*
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libmsrpc.so
 %attr(755,root,root) %{_libdir}/libsmbclient.so
-%attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_includedir}/libmsrpc.h
 %{_includedir}/libsmbclient.h
 

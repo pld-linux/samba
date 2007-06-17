@@ -15,7 +15,7 @@
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
-%bcond_without	krb5		# without Kerberos5/Heimdal support
+%bcond_without	kerberos5	# without Kerberos5/Heimdal support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
 
@@ -71,7 +71,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
-%{?with_krb5:BuildRequires:	heimdal-devel >= 0.7}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
@@ -311,7 +311,7 @@ Summary(ru):	Клиентские программы Samba (SMB)
 Summary(uk):	Кл╕╓нтськ╕ програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-%{?with_krb5:Requires:	heimdal-libs >= 0.7}
+%{?with_kerberos5:Requires:	heimdal-libs >= 0.7}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 
@@ -1007,7 +1007,7 @@ cd source
 	--with-fhs \
 	%{?with_python:--with-python} \
 	--with%{!?with_ldap:out}-ldap \
-	--with%{!?with_krb5:out}-krb5
+	--with%{!?with_kerberos5:out}-krb5
 
 %{__make} proto
 %{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest

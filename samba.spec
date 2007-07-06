@@ -11,10 +11,6 @@
 #   /usr/share/man/man8/vfs_notify_fam.8.gz
 #   /usr/share/man/man8/vfs_prealloc.8.gz
 # - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
-# - ac-amd64 build fail:
-#wrapper.c:1115: error: conflicting types for `readlink'
-#/usr/include/unistd.h:740: error: previous declaration of `readlink'
-#make: *** [wrapper.o] Error 1
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support

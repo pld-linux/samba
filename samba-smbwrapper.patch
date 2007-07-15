@@ -1,44 +1,49 @@
---- samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c.orig	2006-01-25 00:46:42.000000000 +0100
-+++ samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c	2007-06-16 18:38:00.453640544 +0200
-@@ -1109,7 +1109,7 @@ int utimes(const char *name, const struc
-         return (* smbw_libc.utimes)((char *) name, (struct timeval *) tvp);
- }
+diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/Makefile samba-3.0.25a/examples/libsmbclient/smbwrapper/Makefile
+--- samba-3.0.25a.org/examples/libsmbclient/smbwrapper/Makefile	2006-01-25 00:46:42.000000000 +0100
++++ samba-3.0.25a/examples/libsmbclient/smbwrapper/Makefile	2007-06-17 17:43:30.088457851 +0200
+@@ -3,7 +3,7 @@
  
--int readlink(const char *path, char *buf, size_t bufsize)
-+ssize_t readlink(const char *path, char *buf, size_t bufsize)
- {
-         check_init("readlink");
+ CFLAGS = -I$(SAMBA_INCL) $(EXTLIB_INCL)
+ 
+-LDFLAGS = -L/usr/local/samba/lib
++LDFLAGS = -L../../../source/bin
+ 
+ SMBINCLUDE = -I../../../source/include
+ CFLAGS= -fpic -g -O0 $(DEFS) $(SMBINCLUDE)
+diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/wrapper.c samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c
+--- samba-3.0.25a.org/examples/libsmbclient/smbwrapper/wrapper.c	2006-01-25 00:46:42.000000000 +0100
++++ samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c	2007-06-17 17:39:16.085693163 +0200
+@@ -62,6 +62,7 @@
+ #include <dirent.h>
+ #include <signal.h>
+ #include <stdarg.h>
++#include <string.h>
+ #ifdef __USE_GNU
+ # define SMBW_USE_GNU
+ #endif
+@@ -73,6 +74,7 @@
+ #include <errno.h>
+ #include "libsmbclient.h"
+ #include "bsd-strlfunc.h"
++#include "smbw.h"
+ #include "wrapper.h"
+ 
+ /*
+@@ -488,7 +490,7 @@
+          * function and smbw.c et al.  Functions that return other than an
+          * integer value, however, MUST have their return value defined.
+          */
+-        off64_t         smbw_lseek();
++        /* off64_t         smbw_lseek(); */
          
---- samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.c.orig	2006-01-25 00:46:42.000000000 +0100
-+++ samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.c	2007-06-16 18:38:16.791148140 +0200
-@@ -548,7 +548,7 @@ int smbw_access(const char *name, int mo
- /***************************************************** 
- a wrapper for readlink() - needed for correct errno setting
- *******************************************************/
--int smbw_readlink(const char *fname, char *buf, size_t bufsize)
-+ssize_t smbw_readlink(const char *fname, char *buf, size_t bufsize)
- {
- 	struct SMBW_stat st;
- 	int ret;
---- samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.h.orig	2006-01-25 00:46:42.000000000 +0100
-+++ samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.h	2007-06-16 18:38:36.022138015 +0200
-@@ -123,7 +123,7 @@ typedef struct SMBW_libc
-         int (* unlink)(char *name);
-         int (* utime)(char *name, struct utimbuf *tvp);
-         int (* utimes)(char *name, struct timeval *tvp);
--        int (* readlink)(char *path, char *buf, size_t bufsize);
-+        ssize_t (* readlink)(char *path, char *buf, size_t bufsize);
-         int (* rename)(char *oldname, char *newname);
-         int (* rmdir)(char *name);
-         int (* symlink)(char *topath, char *frompath);
---- samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.h.orig	2006-01-25 00:46:42.000000000 +0100
-+++ samba-3.0.25a/examples/libsmbclient/smbwrapper/smbw.h	2007-06-16 18:38:49.349490680 +0200
-@@ -79,7 +79,7 @@ ssize_t smbw_pwrite(int fd, void *buf, s
- int smbw_close(int fd);
- int smbw_fcntl(int fd, int cmd, long arg);
- int smbw_access(const char *name, int mode);
--int smbw_readlink(const char *path, char *buf, size_t bufsize);
-+ssize_t smbw_readlink(const char *path, char *buf, size_t bufsize);
- int smbw_unlink(const char *fname);
- int smbw_rename(const char *oldname, const char *newname);
- int smbw_utime(const char *fname, void *buf);
+         if (smbw_fd(fd)) {
+ 		return (off_t) smbw_lseek(fd, offset, whence);
+@@ -518,7 +520,7 @@
+          * function and smbw.c et al.  Functions that return other than an
+          * integer value, however, MUST have their return value defined.
+          */
+-        off64_t         smbw_lseek();
++        /* off64_t         smbw_lseek(); */
+         
+ 	if (smbw_fd(fd))
+ 		ret = smbw_lseek(fd, offset, whence);

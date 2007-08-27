@@ -1,0 +1,27 @@
+--- source/python/py_smb.c.org	2007-08-27 21:21:07.498179786 +0200
++++ ./source/python/py_smb.c	2007-08-27 21:21:38.052496494 +0200
+@@ -47,8 +47,8 @@
+ 		return NULL;
+ 
+ 	ZERO_STRUCT(ip);
+-
+-	if (!cli_connect(cli, server, &ip))
++	
++	if (!NT_STATUS_IS_OK(cli_connect(cli, server, &ip)))
+ 		return NULL;
+ 
+ 	return new_cli_state_object(cli);
+--- ./examples/VFS/samba-vscan-0.3.6c-beta4/global/vscan-message.c.org	2007-08-27 21:28:22.878958972 +0200
++++ ./examples/VFS/samba-vscan-0.3.6c-beta4/global/vscan-message.c	2007-08-27 21:28:47.792820091 +0200
+@@ -80,9 +80,9 @@
+        	make_nmb_name(&called , remote_machine, name_type);
+ 
+ #if (SMB_VFS_INTERFACE_VERSION >= 21)
+-       	if (!(cli=cli_initialise()) || (cli_set_port(cli, port) == 0) || !cli_connect(cli, remote_machine, &ip)) {
++       	if (!(cli=cli_initialise()) || (cli_set_port(cli, port) == 0) || !NT_STATUS_IS_OK(cli_connect(cli, remote_machine, &ip))) {
+ #else
+-       	if (!(cli=cli_initialise(NULL)) || (cli_set_port(cli, port) == 0) || !cli_connect(cli, remote_machine, &ip)) {
++       	if (!(cli=cli_initialise(NULL)) || (cli_set_port(cli, port) == 0) || !NT_STATUS_IS_OK(cli_connect(cli, remote_machine, &ip))) {
+ #endif
+                	DEBUG(5,("Connection to %s failed\n", remote_machine));
+                	return 1;

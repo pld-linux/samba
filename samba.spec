@@ -93,7 +93,7 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	logrotate
+Requires:	logrotate >= 3.7.4
 Requires:	pam >= 0.66
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7

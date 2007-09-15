@@ -42,7 +42,7 @@ Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.25b
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -65,6 +65,7 @@ Patch3:		%{name}-pthread.patch
 Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
+Patch7:		http://www.samba.org/samba/ftp/patches/security/samba-3.0.25-CVE-2007-4138.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -976,6 +977,7 @@ Documentacja samby w formacie PDF.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

@@ -41,13 +41,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.25c
-Release:	3
+Version:	3.0.26a
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	87950694270b86cbc1b2074cb53dd1aa
+# Source0-md5:	16b47e6add332e5ac4523fc88c381d06
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -66,7 +66,6 @@ Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-cli_connect.patch
-Patch8:		http://www.samba.org/samba/ftp/patches/security/samba-3.0.25-CVE-2007-4138.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -989,7 +988,6 @@ mv README{,.vfs}
 cd ../..
 
 %patch7 -p0
-%patch8 -p1
 
 %build
 cd source

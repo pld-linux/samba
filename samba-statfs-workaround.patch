@@ -1,0 +1,26 @@
+--- samba-3.0.3pre1/source/include/includes.h.orig	2004-03-22 23:47:39.757378568 +0100
++++ samba-3.0.3pre1/source/include/includes.h	2004-03-22 23:48:58.753369352 +0100
+@@ -338,9 +338,12 @@
+ 
+ #ifdef HAVE_SYS_CAPABILITY_H
+ 
+-#if defined(BROKEN_REDHAT_7_SYSTEM_HEADERS) && !defined(_I386_STATFS_H) && !defined(_PPC_STATFS_H)
++#if defined(BROKEN_REDHAT_7_SYSTEM_HEADERS)
+ #define _I386_STATFS_H
+ #define _PPC_STATFS_H
++#define _ALPHA_STATFS_H
++#define _SPARC_STATFS_H
++#define _SPARC_BITOPS_H
+ #define BROKEN_REDHAT_7_STATFS_WORKAROUND
+ #endif
+ 
+@@ -349,6 +352,9 @@
+ #ifdef BROKEN_REDHAT_7_STATFS_WORKAROUND
+ #undef _I386_STATFS_H
+ #undef _PPC_STATFS_H
++#undef _ALPHA_STATFS_H
++#undef _SPARC_STATFS_H
++#undef _SPARC_BITOPS_H
+ #undef BROKEN_REDHAT_7_STATFS_WORKAROUND
+ #endif
+ 

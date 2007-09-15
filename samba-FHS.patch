@@ -1,0 +1,11 @@
+--- samba-3.0.8pre2/source/configure.in.orig	2004-10-28 11:05:39.866591528 +0200
++++ samba-3.0.8pre2/source/configure.in	2004-10-28 11:05:59.382624640 +0200
+@@ -35,7 +35,7 @@
+ [  --with-fhs              Use FHS-compliant paths (default=no)],
+ [ case "$withval" in
+   yes)
+-    lockdir="\${VARDIR}/lib/samba"
++    lockdir="\${VARDIR}/lock/samba"
+     piddir="\${VARDIR}/run"
+     mandir="\${prefix}/share/man"
+     logfilebase="\${VARDIR}/log/samba"

@@ -1,7 +1,7 @@
 /var/log/samba/log.* {
 	notifempty
 	missingok
-	olddir /var/log/archive/samba
+	olddir /var/log/archiv/samba
 	postrotate
 		/bin/killall -HUP nmbd smbd
 	endscript

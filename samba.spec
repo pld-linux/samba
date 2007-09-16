@@ -23,7 +23,7 @@
 %if !%{with kerberos5} || !%{with ldap}
 %undefine	with_ads
 %endif
-%define		vscan_version 0.3.6c-beta4
+%define		vscan_version 0.3.6c-beta5
 Summary:	SMB server
 Summary(cs.UTF-8):	Server SMB
 Summary(da.UTF-8):	SMB server
@@ -42,7 +42,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.26a
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -55,7 +55,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.tar.gz
-# Source7-md5:	c40acad9691ef5284a164c024124ca78
+# Source7-md5:	8f1dd119172e04e6d7c2d05526a4cf8b
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-lib64.patch
@@ -1033,8 +1033,6 @@ cd VFS
 cd samba-vscan-%{vscan_version}
 cp -f /usr/share/automake/config.sub .
 %configure
-# -pie + -Wl,--as-needed == unresolved symbols
-sed -i -e 's#-pie##g' Makefile
 %{__make} all
 
 %install

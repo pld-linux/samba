@@ -23,7 +23,7 @@
 %if !%{with kerberos5} || !%{with ldap}
 %undefine	with_ads
 %endif
-%define		vscan_version 0.3.6c-beta4
+%define		vscan_version 0.3.6c-beta5
 Summary:	SMB server
 Summary(cs):	Server SMB
 Summary(da):	SMB server
@@ -41,13 +41,13 @@ Summary(tr):	SMB sunucusu
 Summary(uk):	SMB 颂Δ卧 粤 优易乓
 Summary(zh_CN):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.25b
-Release:	2
+Version:	3.0.26a
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	e4979a6aa6f18f0e36bacc25cab7b02d
+# Source0-md5:	16b47e6add332e5ac4523fc88c381d06
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -55,7 +55,7 @@ Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
 Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.tar.gz
-# Source7-md5:	c40acad9691ef5284a164c024124ca78
+# Source7-md5:	8f1dd119172e04e6d7c2d05526a4cf8b
 Source8:	winbind.init
 Source9:	winbind.sysconfig
 Patch0:		%{name}-lib64.patch
@@ -65,7 +65,6 @@ Patch3:		%{name}-pthread.patch
 Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
-Patch7:		http://www.samba.org/samba/ftp/patches/security/samba-3.0.25-CVE-2007-4138.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -977,7 +976,6 @@ Documentacja samby w formacie PDF.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

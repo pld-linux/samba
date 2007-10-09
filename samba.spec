@@ -42,7 +42,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.26a
-Release:	2
+Release:	2.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -65,7 +65,7 @@ Patch3:		%{name}-pthread.patch
 Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
-Patch7:		%{name}-cli_connect.patch
+Patch7:		%{name}-lprng-no-dot-printers.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -980,14 +980,13 @@ Documentacja samby w formacie PDF.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
 tar xzf %{SOURCE7}
 mv README{,.vfs}
 cd ../..
-
-%patch7 -p0
 
 %build
 cd source

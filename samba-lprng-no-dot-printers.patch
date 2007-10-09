@@ -29,7 +29,7 @@ diff -ur samba-3.0.26a/source/printing/pcap.c samba-3.0.26a-lprng/source/printin
  		name[MAXPRINTERLEN] = 0;
  
 +		/* skip .name in case of LPRng */
-+		if (printing == PRINT_LPRNG && *name = '.')
++		if (printing == PRINT_LPRNG && *name == '.')
 +			continue;
 +
  		if (*name && !pcap_cache_add(name, comment)) {

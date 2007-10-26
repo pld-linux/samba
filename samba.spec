@@ -42,7 +42,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.26a
-Release:	3
+Release:	4
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -66,6 +66,7 @@ Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
+Patch8:		%{name}-pam_smbpass-syslog.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -80,7 +81,7 @@ BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d
-BuildRequires:	pam-devel > 0.66
+BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 %if %{with python}
@@ -94,7 +95,7 @@ BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
-Requires:	pam >= 0.66
+Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
@@ -981,6 +982,7 @@ Documentacja samby w formacie PDF.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

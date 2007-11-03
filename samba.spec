@@ -79,7 +79,7 @@ BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
-%{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
+%{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	popt-devel

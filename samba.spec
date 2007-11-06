@@ -73,7 +73,6 @@ BuildRequires:	automake
 BuildRequires:	dmapi-devel
 %{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	iconv
-BuildRequires:	keyutils-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d

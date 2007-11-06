@@ -1392,6 +1392,8 @@ fi
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
 %attr(755,root,root) %{_vfsdir}/full_audit.so
 %{_mandir}/man8/vfs_audit.8*
+%{_mandir}/man8/vfs_extd_audit.8*
+%{_mandir}/man8/vfs_full_audit.8*
 
 %files vfs-cap
 %defattr(644,root,root,755)

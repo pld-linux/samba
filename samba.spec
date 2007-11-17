@@ -71,8 +71,8 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
-%{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	iconv
+%{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
@@ -538,7 +538,7 @@ do sysloga. Monitorowane są następujące operacje:
  - podłączenie do/odłączenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
  - otwarcie/zamknięcie/zmiana nazwy/skasowanie/zmiana praw plików.
-Zawiera moduły audit, extd_audit i full_audit.
+   Zawiera moduły audit, extd_audit i full_audit.
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
@@ -641,10 +641,10 @@ VFS module to add recycle bin facility to a samba share.
 Moduł VFS dodający możliwość kosza do zasobu samby.
 
 %package vfs-readahead
-Summary:       VFS module for pre-loading the kernel buffer cache
+Summary:	VFS module for pre-loading the kernel buffer cache
 Summary(pl.UTF-8):	Moduł VFS do wczesnego odczytu danych do bufora cache jądra
-Group:         Networking/Daemons
-Requires:      %{name} = %{epoch}:%{version}-%{release}
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-readahead
 This VFS module detects read requests at multiples of a given offset
@@ -909,32 +909,29 @@ Group:		Documentation
 %description doc-html
 Samba HTML documentation, consists of:
 
-1. SAMBA Developers Guide
-This book is a collection of documents that might be useful for
-people developing samba or those interested in doing so. It's nothing
-more than a collection of documents written by samba developers about
-the internals of various parts of samba and the SMB protocol. It's
-still (and will always be) incomplete.
+1. SAMBA Developers Guide This book is a collection of documents that
+might be useful for people developing samba or those interested in
+doing so. It's nothing more than a collection of documents written by
+samba developers about the internals of various parts of samba and the
+SMB protocol. It's still (and will always be) incomplete.
 
-2. Samba-3 by Example
-Practical Exercises in Successful Samba Deployment.
+2. Samba-3 by Example Practical Exercises in Successful Samba
+Deployment.
 
-3. The Official Samba-3 HOWTO and Reference Guide
-This book provides example configurations, it documents key aspects
-of Microsoft Windows networking, provides in-depth insight into the
-important configuration of Samba-3, and helps to put all of these
-into a useful framework.
+3. The Official Samba-3 HOWTO and Reference Guide This book provides
+example configurations, it documents key aspects of Microsoft Windows
+networking, provides in-depth insight into the important configuration
+of Samba-3, and helps to put all of these into a useful framework.
 
-4. Using Samba, 2nd Edition
-Using Samba, Second Edition is a comprehensive guide to Samba
-administration. It covers all versions of Samba from 2.0 to 2.2,
-including selected features from an alpha version of 3.0, as well as
-the SWAT graphical configuration tool. Updated for Windows 2000, ME,
-and XP, the book also explores Samba's new role as a primary domain
-controller and domain member server, its support for the use of
-Windows NT/2000/XP authentication and filesystem security on the host
-Unix system, and accessing shared files and printers from Unix
-clients.
+4. Using Samba, 2nd Edition Using Samba, Second Edition is a
+comprehensive guide to Samba administration. It covers all versions of
+Samba from 2.0 to 2.2, including selected features from an alpha
+version of 3.0, as well as the SWAT graphical configuration tool.
+Updated for Windows 2000, ME, and XP, the book also explores Samba's
+new role as a primary domain controller and domain member server, its
+support for the use of Windows NT/2000/XP authentication and
+filesystem security on the host Unix system, and accessing shared
+files and printers from Unix clients.
 
 5. Man pages The Samba man pages in HTML.
 
@@ -949,21 +946,19 @@ Group:		Documentation
 %description doc-pdf
 Samba PDF documentation, consists of:
 
-1. SAMBA Developers Guide
-This book is a collection of documents that might be useful for
-people developing samba or those interested in doing so. It's nothing
-more than a collection of documents written by samba developers about
-the internals of various parts of samba and the SMB protocol. It's
-still (and will always be) incomplete.
+1. SAMBA Developers Guide This book is a collection of documents that
+might be useful for people developing samba or those interested in
+doing so. It's nothing more than a collection of documents written by
+samba developers about the internals of various parts of samba and the
+SMB protocol. It's still (and will always be) incomplete.
 
-2. Samba-3 by Example
-Practical Exercises in Successful Samba Deployment.
+2. Samba-3 by Example Practical Exercises in Successful Samba
+Deployment.
 
-3. The Official Samba-3 HOWTO and Reference Guide
-This book provides example configurations, it documents key aspects
-of Microsoft Windows networking, provides in-depth insight into the
-important configuration of Samba-3, and helps to put all of these
-into a useful framework.
+3. The Official Samba-3 HOWTO and Reference Guide This book provides
+example configurations, it documents key aspects of Microsoft Windows
+networking, provides in-depth insight into the important configuration
+of Samba-3, and helps to put all of these into a useful framework.
 
 %description doc-pdf -l pl.UTF-8
 Documentacja samby w formacie PDF.

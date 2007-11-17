@@ -659,15 +659,15 @@ Windows Explorer program, which asynchronously does multiple file read
 requests at offset boundaries of 0x80000 bytes.
 
 %description vfs-readahead -l pl.UTF-8
-Ten modu≥ VFS wykrywa ø±dania odczytu spod wielokrotno∂ci podanych
-pozycji (domy∂lnie 0x80000 szesnastkowo) i instruuje j±dro poprzez
-wywo≥anie systemowe readahead (pod Linuksem) lub posix_fadvise do
+Ten modu≈Ç VFS wykrywa ≈ºƒÖdania odczytu spod wielokrotno≈õci podanych
+pozycji (domy≈õlnie 0x80000 szesnastkowo) i instruuje jƒÖdro poprzez
+wywo≈Çanie systemowe readahead (pod Linuksem) lub posix_fadvise do
 wczesnego odczytu tych danych do bufora cache.
 
-Ten modu≥ jest przydatny dla klientÛw Windows Vista odczytuj±cych dane
-przy uøyciu programu Windows Explorer, ktÛry asynchronicznie wykonuje
-wiele ø±daÒ odczytu plikÛw spod pozycji o wielokrotno∂ciach 0x80000
-bajtÛw.
+Ten modu≈Ç jest przydatny dla klient√≥w Windows Vista odczytujƒÖcych dane
+przy u≈ºyciu programu Windows Explorer, kt√≥ry asynchronicznie wykonuje
+wiele ≈ºƒÖda≈Ñ odczytu plik√≥w spod pozycji o wielokrotno≈õciach 0x80000
+bajt√≥w.
 
 %package vfs-readonly
 Summary:	VFS module for read-only limitation for specified share

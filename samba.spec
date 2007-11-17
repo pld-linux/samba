@@ -267,6 +267,7 @@ TCP-порту 901.
 
 %package swat
 Summary:	Samba Web Administration Tool
+Summary(es.UTF-8):	Samba SWAT and Web documentation
 Summary(pl.UTF-8):	Narzędzie administracyjne serwisu Samba
 Summary(pt_BR.UTF-8):	Samba SWAT e documentação Web
 Summary(ru.UTF-8):	Программа конфигурации SMB-сервера Samba
@@ -354,6 +355,7 @@ e também, à impressoras SMB.
 
 %package common
 Summary:	Files used by both Samba servers and clients
+Summary(es.UTF-8):	Common files between samba and samba-clients
 Summary(ja.UTF-8):	Samba サーバーとクライアントで使用されるプログラム
 Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
 Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients

@@ -2,20 +2,18 @@
 # - look into other distro specs for valid %descriptions for samba 3
 # - unpackaged man pages for modules that are not built by default,
 #   maybe we should build them?
-#   /usr/share/man/man8/vfs_cacheprime.8.gz
-#   /usr/share/man/man8/vfs_catia.8.gz
-#   /usr/share/man/man8/vfs_commit.8.gz
-#   /usr/share/man/man8/vfs_extd_audit.8.gz
-#   /usr/share/man/man8/vfs_full_audit.8.gz
-#   /usr/share/man/man8/vfs_gpfs.8.gz
-#   /usr/share/man/man8/vfs_notify_fam.8.gz
-#   /usr/share/man/man8/vfs_prealloc.8.gz
+#   /usr/share/man/man8/vfs_cacheprime.8*
+#   /usr/share/man/man8/vfs_catia.8*
+#   /usr/share/man/man8/vfs_commit.8*
+#   /usr/share/man/man8/vfs_gpfs.8*
+#   /usr/share/man/man8/vfs_notify_fam.8*
+#   /usr/share/man/man8/vfs_prealloc.8*
 # - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
-%bcond_without	kerberos5	# without Kerberos V support
+%bcond_without	kerberos5	# without Kerberos5/Heimdal support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
 
@@ -41,13 +39,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.26a
-Release:	3
+Version:	3.0.27
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	16b47e6add332e5ac4523fc88c381d06
+# Source0-md5:	cff7854ea5947882954f30d2657e1a9d
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -66,13 +64,14 @@ Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
+Patch8:		%{name}-pam_smbpass-syslog.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
@@ -311,7 +310,7 @@ Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
 Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-%{?with_kerberos5:Requires:	krb5-libs}
+%{?with_kerberos5:Requires:	heimdal-libs >= 0.7}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 
@@ -539,7 +538,7 @@ do sysloga. Monitorowane są następujące operacje:
  - podłączenie do/odłączenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
  - otwarcie/zamknięcie/zmiana nazwy/skasowanie/zmiana praw plików.
-Zawiera moduły audit, extd_audit i full_audit.
+   Zawiera moduły audit, extd_audit i full_audit.
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
@@ -642,10 +641,10 @@ VFS module to add recycle bin facility to a samba share.
 Moduł VFS dodający możliwość kosza do zasobu samby.
 
 %package vfs-readahead
-Summary:       VFS module for pre-loading the kernel buffer cache
+Summary:	VFS module for pre-loading the kernel buffer cache
 Summary(pl.UTF-8):	Moduł VFS do wczesnego odczytu danych do bufora cache jądra
-Group:         Networking/Daemons
-Requires:      %{name} = %{epoch}:%{version}-%{release}
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-readahead
 This VFS module detects read requests at multiples of a given offset
@@ -910,32 +909,29 @@ Group:		Documentation
 %description doc-html
 Samba HTML documentation, consists of:
 
-1. SAMBA Developers Guide
-This book is a collection of documents that might be useful for
-people developing samba or those interested in doing so. It's nothing
-more than a collection of documents written by samba developers about
-the internals of various parts of samba and the SMB protocol. It's
-still (and will always be) incomplete.
+1. SAMBA Developers Guide This book is a collection of documents that
+might be useful for people developing samba or those interested in
+doing so. It's nothing more than a collection of documents written by
+samba developers about the internals of various parts of samba and the
+SMB protocol. It's still (and will always be) incomplete.
 
-2. Samba-3 by Example
-Practical Exercises in Successful Samba Deployment.
+2. Samba-3 by Example Practical Exercises in Successful Samba
+Deployment.
 
-3. The Official Samba-3 HOWTO and Reference Guide
-This book provides example configurations, it documents key aspects
-of Microsoft Windows networking, provides in-depth insight into the
-important configuration of Samba-3, and helps to put all of these
-into a useful framework.
+3. The Official Samba-3 HOWTO and Reference Guide This book provides
+example configurations, it documents key aspects of Microsoft Windows
+networking, provides in-depth insight into the important configuration
+of Samba-3, and helps to put all of these into a useful framework.
 
-4. Using Samba, 2nd Edition
-Using Samba, Second Edition is a comprehensive guide to Samba
-administration. It covers all versions of Samba from 2.0 to 2.2,
-including selected features from an alpha version of 3.0, as well as
-the SWAT graphical configuration tool. Updated for Windows 2000, ME,
-and XP, the book also explores Samba's new role as a primary domain
-controller and domain member server, its support for the use of
-Windows NT/2000/XP authentication and filesystem security on the host
-Unix system, and accessing shared files and printers from Unix
-clients.
+4. Using Samba, 2nd Edition Using Samba, Second Edition is a
+comprehensive guide to Samba administration. It covers all versions of
+Samba from 2.0 to 2.2, including selected features from an alpha
+version of 3.0, as well as the SWAT graphical configuration tool.
+Updated for Windows 2000, ME, and XP, the book also explores Samba's
+new role as a primary domain controller and domain member server, its
+support for the use of Windows NT/2000/XP authentication and
+filesystem security on the host Unix system, and accessing shared
+files and printers from Unix clients.
 
 5. Man pages The Samba man pages in HTML.
 
@@ -950,21 +946,19 @@ Group:		Documentation
 %description doc-pdf
 Samba PDF documentation, consists of:
 
-1. SAMBA Developers Guide
-This book is a collection of documents that might be useful for
-people developing samba or those interested in doing so. It's nothing
-more than a collection of documents written by samba developers about
-the internals of various parts of samba and the SMB protocol. It's
-still (and will always be) incomplete.
+1. SAMBA Developers Guide This book is a collection of documents that
+might be useful for people developing samba or those interested in
+doing so. It's nothing more than a collection of documents written by
+samba developers about the internals of various parts of samba and the
+SMB protocol. It's still (and will always be) incomplete.
 
-2. Samba-3 by Example
-Practical Exercises in Successful Samba Deployment.
+2. Samba-3 by Example Practical Exercises in Successful Samba
+Deployment.
 
-3. The Official Samba-3 HOWTO and Reference Guide
-This book provides example configurations, it documents key aspects
-of Microsoft Windows networking, provides in-depth insight into the
-important configuration of Samba-3, and helps to put all of these
-into a useful framework.
+3. The Official Samba-3 HOWTO and Reference Guide This book provides
+example configurations, it documents key aspects of Microsoft Windows
+networking, provides in-depth insight into the important configuration
+of Samba-3, and helps to put all of these into a useful framework.
 
 %description doc-pdf -l pl.UTF-8
 Documentacja samby w formacie PDF.
@@ -981,6 +975,7 @@ Documentacja samby w formacie PDF.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -1390,6 +1385,8 @@ fi
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
 %attr(755,root,root) %{_vfsdir}/full_audit.so
 %{_mandir}/man8/vfs_audit.8*
+%{_mandir}/man8/vfs_extd_audit.8*
+%{_mandir}/man8/vfs_full_audit.8*
 
 %files vfs-cap
 %defattr(644,root,root,755)

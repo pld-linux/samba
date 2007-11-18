@@ -2,14 +2,12 @@
 # - look into other distro specs for valid %descriptions for samba 3
 # - unpackaged man pages for modules that are not built by default,
 #   maybe we should build them?
-#   /usr/share/man/man8/vfs_cacheprime.8.gz
-#   /usr/share/man/man8/vfs_catia.8.gz
-#   /usr/share/man/man8/vfs_commit.8.gz
-#   /usr/share/man/man8/vfs_extd_audit.8.gz
-#   /usr/share/man/man8/vfs_full_audit.8.gz
-#   /usr/share/man/man8/vfs_gpfs.8.gz
-#   /usr/share/man/man8/vfs_notify_fam.8.gz
-#   /usr/share/man/man8/vfs_prealloc.8.gz
+#   /usr/share/man/man8/vfs_cacheprime.8*
+#   /usr/share/man/man8/vfs_catia.8*
+#   /usr/share/man/man8/vfs_commit.8*
+#   /usr/share/man/man8/vfs_gpfs.8*
+#   /usr/share/man/man8/vfs_notify_fam.8*
+#   /usr/share/man/man8/vfs_prealloc.8*
 # - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
 #
 # Conditional build:
@@ -41,13 +39,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.26a
+Version:	3.0.27
 Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	16b47e6add332e5ac4523fc88c381d06
+# Source0-md5:	cff7854ea5947882954f30d2657e1a9d
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -65,6 +63,8 @@ Patch3:		%{name}-pthread.patch
 Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
+Patch7:		%{name}-lprng-no-dot-printers.patch
+Patch8:		%{name}-pam_smbpass-syslog.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -92,7 +92,7 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	logrotate
+Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.66
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
@@ -974,11 +974,14 @@ Documentacja samby w formacie PDF.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
 tar xzf %{SOURCE7}
 mv README{,.vfs}
+cd ../..
 
 %build
 cd source
@@ -1029,7 +1032,7 @@ cp -f /usr/share/automake/config.sub .
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT{/var/{log,log/archiv,spool}/samba,/var/lib/samba/printing} \
+	$RPM_BUILD_ROOT{/var/{log,log/archive,spool}/samba,/var/lib/samba/printing} \
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
 
@@ -1206,7 +1209,7 @@ fi
 %attr(750,root,root) %dir /var/log/samba/cores
 %attr(750,root,root) %dir /var/log/samba/cores/smbd
 %attr(750,root,root) %dir /var/log/samba/cores/nmbd
-%attr(750,root,root) %dir /var/log/archiv/samba
+%attr(750,root,root) %dir /var/log/archive/samba
 %attr(1777,root,root) %dir /var/spool/samba
 %if %{with ldap}
 %doc examples/LDAP
@@ -1382,6 +1385,8 @@ fi
 %attr(755,root,root) %{_vfsdir}/extd_audit.so
 %attr(755,root,root) %{_vfsdir}/full_audit.so
 %{_mandir}/man8/vfs_audit.8*
+%{_mandir}/man8/vfs_extd_audit.8*
+%{_mandir}/man8/vfs_full_audit.8*
 
 %files vfs-cap
 %defattr(644,root,root,755)

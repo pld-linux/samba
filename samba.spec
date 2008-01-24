@@ -16,6 +16,7 @@
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
+%bcond_with		mks		# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
 %if !%{with kerberos5} || !%{with ldap}
@@ -40,7 +41,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.28
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -1429,12 +1430,14 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mcdaemon.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mcdaemon.so
 
+%if %{with mks}
 %ifarch %{ix86} %{x8664}
 %files vfs-vscan-mks
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mks32.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mksd.so
+%endif
 %endif
 
 %files vfs-vscan-openantivirus

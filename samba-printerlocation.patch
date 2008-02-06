@@ -1,0 +1,374 @@
+diff -ur samba-3.0.25.orig/source/param/loadparm.c samba-3.0.25/source/param/loadparm.c
+--- samba-3.0.25.orig/source/param/loadparm.c	2007-04-21 03:48:07.000000000 +0200
++++ samba-3.0.25/source/param/loadparm.c	2007-05-15 09:06:42.000000000 +0200
+@@ -359,6 +359,7 @@
+ 	char *szHideFiles;
+ 	char *szVetoOplockFiles;
+ 	char *comment;
++	char *location;
+ 	char *force_user;
+ 	char *force_group;
+ 	char **readlist;
+@@ -500,6 +501,7 @@
+ 	NULL,			/* szHideFiles */
+ 	NULL,			/* szVetoOplockFiles */
+ 	NULL,			/* comment */
++	NULL,			/* location */
+ 	NULL,			/* force user */
+ 	NULL,			/* force group */
+ 	NULL,			/* readlist */
+@@ -2044,6 +2046,7 @@
+ FN_LOCAL_STRING(lp_magicscript, szMagicScript)
+ FN_LOCAL_STRING(lp_magicoutput, szMagicOutput)
+ FN_LOCAL_STRING(lp_comment, comment)
++FN_LOCAL_STRING(lp_location, location)
+ FN_LOCAL_STRING(lp_force_user, force_user)
+ FN_LOCAL_STRING(lp_force_group, force_group)
+ FN_LOCAL_LIST(lp_readlist, readlist)
+@@ -4114,7 +4117,7 @@
+  Auto-load one printer.
+ ***************************************************************************/
+ 
+-void lp_add_one_printer(char *name, char *comment)
++void lp_add_one_printer(char *name, char *comment, char *location)
+ {
+ 	int printers = lp_servicenumber(PRINTERS_NAME);
+ 	int i;
+@@ -4123,6 +4126,7 @@
+ 		lp_add_printer(name, printers);
+ 		if ((i = lp_servicenumber(name)) >= 0) {
+ 			string_set(&ServicePtrs[i]->comment, comment);
++			string_set(&ServicePtrs[i]->location, location);
+ 			ServicePtrs[i]->autoloaded = True;
+ 		}
+ 	}
+diff -ur samba-3.0.25.orig/source/printing/nt_printing.c samba-3.0.25/source/printing/nt_printing.c
+--- samba-3.0.25.orig/source/printing/nt_printing.c	2007-05-11 00:09:34.000000000 +0200
++++ samba-3.0.25/source/printing/nt_printing.c	2007-05-15 13:58:02.000000000 +0200
+@@ -3291,7 +3291,39 @@
+ 	}
+ 
+ 	ads_destroy(&ads);
+-	ads_kdestroy("MEMORY:prtpub_cache");
++	return WERR_OK;
++}
++
++WERROR update_published_printer(NT_PRINTER_INFO_LEVEL *printer)
++{
++	ADS_STATUS ads_rc;
++	ADS_STRUCT *ads = NULL;
++
++	if (!(printer->info_2->attributes & PRINTER_ATTRIBUTE_PUBLISHED))
++		return WERR_OK;
++		
++	ads = ads_init(NULL, NULL, NULL);
++	if (!ads) {
++		DEBUG(3, ("ads_init() failed\n"));
++		return WERR_SERVER_UNAVAILABLE;
++	}
++	setenv(KRB5_ENV_CCNAME, "MEMORY:prtpub_cache", 1);
++	SAFE_FREE(ads->auth.password);
++	ads->auth.password = secrets_fetch_machine_password(lp_workgroup(),
++		NULL, NULL);
++
++	/* ads_connect() will find the DC for us */					    
++	ads_rc = ads_connect(ads);
++	if (!ADS_ERR_OK(ads_rc)) {
++		DEBUG(3, ("ads_connect failed: %s\n", ads_errstr(ads_rc)));
++		ads_destroy(&ads);
++		ads_kdestroy("MEMORY:prtpub_cache");
++		return WERR_ACCESS_DENIED;
++	}
++
++	nt_printer_publish_ads(ads, printer);
++
++	ads_destroy(&ads);
+ 	return WERR_OK;
+ }
+ 
+@@ -3769,7 +3801,7 @@
+ 	fstrcpy(info->printprocessor, "winprint");
+ 	fstrcpy(info->datatype, "RAW");
+ 
+-#ifdef HAVE_CUPS
++#ifdef HAVE_CUPS_BLOAT
+ 	if ( (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {		
+ 		/* Pull the location and comment strings from cups if we don't
+ 		   already have one */
+@@ -3873,7 +3905,7 @@
+ 
+ 	fstrcpy(info->printername, printername);
+ 
+-#ifdef HAVE_CUPS
++#ifdef HAVE_CUPS_BLOAT
+ 	if ( (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {		
+ 		/* Pull the location and comment strings from cups if we don't
+ 		   already have one */
+diff -ur samba-3.0.25.orig/source/printing/pcap.c samba-3.0.25/source/printing/pcap.c
+--- samba-3.0.25.orig/source/printing/pcap.c	2005-10-18 04:44:57.000000000 +0200
++++ samba-3.0.25/source/printing/pcap.c	2007-05-15 09:06:42.000000000 +0200
+@@ -67,12 +67,13 @@
+ typedef struct pcap_cache {
+ 	char *name;
+ 	char *comment;
++	char *location;
+ 	struct pcap_cache *next;
+ } pcap_cache_t;
+ 
+ static pcap_cache_t *pcap_cache = NULL;
+ 
+-BOOL pcap_cache_add(const char *name, const char *comment)
++BOOL pcap_cache_add(const char *name, const char *comment, const char *location)
+ {
+ 	pcap_cache_t *p;
+ 
+@@ -81,6 +82,7 @@
+ 
+ 	p->name = SMB_STRDUP(name);
+ 	p->comment = (comment && *comment) ? SMB_STRDUP(comment) : NULL;
++	p->location = (location && *location) ? SMB_STRDUP(location) : NULL;
+ 
+ 	p->next = pcap_cache;
+ 	pcap_cache = p;
+@@ -97,6 +99,7 @@
+ 
+ 		SAFE_FREE(p->name);
+ 		SAFE_FREE(p->comment);
++		SAFE_FREE(p->location);
+ 		SAFE_FREE(p);
+ 	}
+ }
+@@ -210,7 +213,7 @@
+ 		if (printing == PRINT_LPRNG && *name == '.')
+ 			continue;
+ 
+-		if (*name && !pcap_cache_add(name, comment)) {
++		if (*name && !pcap_cache_add(name, comment, NULL)) {
+ 			x_fclose(pcap_file);
+ 			goto done;
+ 		}
+@@ -252,12 +255,12 @@
+ 
+ XXX: I'm not sure if this comment still applies.. Anyone?  -Rob
+ ***************************************************************************/
+-void pcap_printer_fn(void (*fn)(char *, char *))
++void pcap_printer_fn(void (*fn)(char *, char *, char *))
+ {
+ 	pcap_cache_t *p;
+ 
+ 	for (p = pcap_cache; p != NULL; p = p->next)
+-		fn(p->name, p->comment);
++		fn(p->name, p->comment, p->location);
+ 
+ 	return;
+ }
+diff -ur samba-3.0.25.orig/source/printing/print_aix.c samba-3.0.25/source/printing/print_aix.c
+--- samba-3.0.25.orig/source/printing/print_aix.c	2005-02-25 18:59:28.000000000 +0100
++++ samba-3.0.25/source/printing/print_aix.c	2007-05-15 09:06:42.000000000 +0200
+@@ -75,7 +75,7 @@
+ 				/* name is found without stanza device  */
+ 				/* probably a good printer ???		*/
+ 				iEtat = 0;
+-				if (!pcap_cache_add(name, NULL)) {
++				if (!pcap_cache_add(name, NULL, NULL)) {
+ 					safe_free(line);
+ 					x_fclose(pfile);
+ 					return False;
+@@ -89,7 +89,7 @@
+ 			} else if (strstr_m(line, "device")) {
+ 				/* it's a good virtual printer */
+ 				iEtat = 0;
+-				if (!pcap_cache_add(name, NULL)) {
++				if (!pcap_cache_add(name, NULL, NULL)) {
+ 					safe_free(line);
+ 					x_fclose(pfile);
+ 					return False;
+diff -ur samba-3.0.25.orig/source/printing/print_cups.c samba-3.0.25/source/printing/print_cups.c
+--- samba-3.0.25.orig/source/printing/print_cups.c	2007-04-09 19:30:57.000000000 +0200
++++ samba-3.0.25/source/printing/print_cups.c	2007-05-15 09:06:42.000000000 +0200
+@@ -83,11 +83,13 @@
+ 	ipp_attribute_t	*attr;		/* Current attribute */
+ 	cups_lang_t	*language = NULL;	/* Default language */
+ 	char		*name,		/* printer-name attribute */
+-			*info;		/* printer-info attribute */
++			*info,		/* printer-info attribute */
++			*location;		/* printer-location attribute */
+ 	static const char *requested[] =/* Requested attributes */
+ 			{
+ 			  "printer-name",
+ 			  "printer-info"
++			  "printer-location"
+ 			};       
+ 	BOOL ret = False;
+ 
+@@ -161,6 +163,7 @@
+ 
+ 		name       = NULL;
+ 		info       = NULL;
++		location   = NULL;
+ 
+ 		while (attr != NULL && attr->group_tag == IPP_TAG_PRINTER) {
+         		if (strcmp(attr->name, "printer-name") == 0 &&
+@@ -171,6 +174,10 @@
+ 			    attr->value_tag == IPP_TAG_TEXT)
+ 				info = attr->values[0].string.text;
+ 
++				if (strcmp(attr->name, "printer-location") == 0 &&
++					attr->value_tag == IPP_TAG_TEXT)
++				location = attr->values[0].string.text;
++
+         		attr = attr->next;
+ 		}
+ 
+@@ -181,7 +188,7 @@
+ 		if (name == NULL)
+ 			break;
+ 
+-		if (!pcap_cache_add(name, info)) {
++		if (!pcap_cache_add(name, info, location)) {
+ 			goto out;
+ 		}
+ 	}
+@@ -241,6 +248,7 @@
+ 
+ 		name       = NULL;
+ 		info       = NULL;
++		location   = NULL;
+ 
+ 		while (attr != NULL && attr->group_tag == IPP_TAG_PRINTER) {
+         		if (strcmp(attr->name, "printer-name") == 0 &&
+@@ -251,6 +259,10 @@
+ 			    attr->value_tag == IPP_TAG_TEXT)
+ 				info = attr->values[0].string.text;
+ 
++				if (strcmp(attr->name, "printer-location") == 0 &&
++			    attr->value_tag == IPP_TAG_TEXT)
++				info = attr->values[0].string.text;
++
+         		attr = attr->next;
+ 		}
+ 
+@@ -261,7 +273,7 @@
+ 		if (name == NULL)
+ 			break;
+ 
+-		if (!pcap_cache_add(name, info)) {
++		if (!pcap_cache_add(name, info, location)) {
+ 			goto out;
+ 		}
+ 	}
+diff -ur samba-3.0.25.orig/source/printing/print_iprint.c samba-3.0.25/source/printing/print_iprint.c
+--- samba-3.0.25.orig/source/printing/print_iprint.c	2007-03-01 05:54:09.000000000 +0100
++++ samba-3.0.25/source/printing/print_iprint.c	2007-05-15 09:06:42.000000000 +0200
+@@ -297,7 +297,7 @@
+ 		*/
+ 
+ 		if (name != NULL && !secure && smb_enabled) 
+-			pcap_cache_add(name, info);
++			pcap_cache_add(name, info, NULL);
+ 	}
+ 
+  out:
+diff -ur samba-3.0.25.orig/source/printing/print_svid.c samba-3.0.25/source/printing/print_svid.c
+--- samba-3.0.25.orig/source/printing/print_svid.c	2005-12-02 20:21:45.000000000 +0100
++++ samba-3.0.25/source/printing/print_svid.c	2007-05-15 09:06:42.000000000 +0200
+@@ -111,7 +111,7 @@
+ 			*tmp = '\0';
+ 		
+ 		/* add it to the cache */
+-		if (!pcap_cache_add(name, NULL)) {
++		if (!pcap_cache_add(name, NULL, NULL)) {
+ 			file_lines_free(lines);
+ 			return False;
+ 		}
+diff -ur samba-3.0.25.orig/source/rpcclient/cmd_spoolss.c samba-3.0.25/source/rpcclient/cmd_spoolss.c
+--- samba-3.0.25.orig/source/rpcclient/cmd_spoolss.c	2007-05-11 00:09:33.000000000 +0200
++++ samba-3.0.25/source/rpcclient/cmd_spoolss.c	2007-05-15 10:38:35.000000000 +0200
+@@ -476,19 +476,23 @@
+ 	fstring 	printername,
+ 			servername,
+ 			user,
+-			comment;
++			comment,
++		    location;
+ 
+-	if (argc == 1 || argc > 3) {
+-		printf("Usage: %s printername comment\n", argv[0]);
++	if (argc == 1 || argc > 4) {
++		printf("Usage: %s printername comment [location]\n", argv[0]);
+ 
+ 		return WERR_OK;
+ 	}
+ 
+ 	/* Open a printer handle */
+-	if (argc == 3) {
++	if (argc >= 3) {
+ 		fstrcpy(comment, argv[2]);
+ 	}
+-
++	if (argc == 4) {
++		fstrcpy(location, argv[3]);
++	}
++	
+ 	slprintf(servername, sizeof(servername)-1, "\\\\%s", cli->cli->desthost);
+ 	strupper_m(servername);
+ 	slprintf(printername, sizeof(servername)-1, "%s\\%s", servername, argv[1]);
+@@ -513,12 +517,15 @@
+ 
+ 	/* Modify the comment. */
+ 	init_unistr(&ctr.printers_2->comment, comment);
++	/* Modify the location. */
++	if (argc == 4) 
++		init_unistr(&ctr.printers_2->location, location);
+ 	ctr.printers_2->devmode = NULL;
+ 	ctr.printers_2->secdesc = NULL;
+ 
+ 	result = rpccli_spoolss_setprinter(cli, mem_ctx, &pol, info_level, &ctr, 0);
+ 	if (W_ERROR_IS_OK(result))
+-		printf("Success in setting comment.\n");
++		printf("Success in setting comment%s.\n", argc==4?" and location":"");
+ 
+  done:
+ 	if (opened_hnd)
+diff -ur samba-3.0.25.orig/source/rpc_server/srv_spoolss_nt.c samba-3.0.25/source/rpc_server/srv_spoolss_nt.c
+--- samba-3.0.25.orig/source/rpc_server/srv_spoolss_nt.c	2007-05-11 00:09:35.000000000 +0200
++++ samba-3.0.25/source/rpc_server/srv_spoolss_nt.c	2007-05-15 11:44:07.000000000 +0200
+@@ -2901,7 +2901,10 @@
+ 	pstring temp;
+ 	uint32 len;
+ 
+-	len = rpcstr_push(temp, printer->info_2->location,sizeof(temp)-2, STR_TERMINATE);
++	if (*printer->info_2->location == '\0')
++		len = rpcstr_push(temp, lp_location(snum), sizeof(temp)-2, STR_TERMINATE);
++	else
++		len = rpcstr_push(temp, printer->info_2->location,sizeof(temp)-2, STR_TERMINATE);
+ 
+ 	data->notify_data.data.length = len;
+ 	if (len) {
+@@ -4204,8 +4207,10 @@
+ 		init_unistr(&printer->comment, lp_comment(snum));			/* comment */	
+ 	else
+ 		init_unistr(&printer->comment, ntprinter->info_2->comment); /* saved comment. */
+-
+-	init_unistr(&printer->location, ntprinter->info_2->location);		/* location */	
++	if (*ntprinter->info_2->location == '\0')
++		init_unistr(&printer->location, lp_location(snum));			/* location */	
++	else
++		init_unistr(&printer->location, ntprinter->info_2->location);		/* location */	
+ 	init_unistr(&printer->sepfile, ntprinter->info_2->sepfile);		/* separator file */
+ 	init_unistr(&printer->printprocessor, ntprinter->info_2->printprocessor);/* print processor */
+ 	init_unistr(&printer->datatype, ntprinter->info_2->datatype);		/* datatype */	
+@@ -6341,6 +6346,13 @@
+ 	/* Update printer info */
+ 	result = mod_a_printer(printer, 2);
+ 
++	/* Update ADS entry */
++	if (W_ERROR_IS_OK(result) && lp_security() == SEC_ADS &&
++		( !strequal(printer->info_2->comment, old_printer->info_2->comment)
++		  || !strequal(printer->info_2->location, old_printer->info_2->location)
++		  || !strequal(printer->info_2->printername, old_printer->info_2->printername))) {
++		update_published_printer (printer);
++	}
+ done:
+ 	free_a_printer(&printer, 2);
+ 	free_a_printer(&old_printer, 2);

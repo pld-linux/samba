@@ -425,7 +425,7 @@ Obsoletes:	pam_smbpass
 
 %description -n pam-pam_smbpass
 PAM module which can be used on conforming systems to keep the
-smbpasswd (Samba password) database in sync with the unix password
+smbpasswd (Samba password) database in sync with the Unix password
 file.
 
 %description -n pam-pam_smbpass -l pl.UTF-8

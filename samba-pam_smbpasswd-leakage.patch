@@ -130,6 +130,16 @@ diff -ur samba-3.0.28/source/pam_smbpass/pam_smb_passwd.c samba-3.0.28-leak/sour
          return retval;
  
      } else if (flags & PAM_UPDATE_AUTHTOK) {
+@@ -217,6 +217,9 @@
+         return retval;
+ 
+     } else if (flags & PAM_UPDATE_AUTHTOK) {
++        /* Samba initialization. */
++        load_case_tables();
++        in_client = True;
+ 
+         /*
+          * obtain the proposed password
 @@ -236,6 +244,7 @@
              _log_err(pamh, LOG_NOTICE, "password: user not authenticated");
              TALLOC_FREE(sampass);

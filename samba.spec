@@ -13,7 +13,7 @@
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
-%bcond_without	kerberos5	# without Kerberos V support
+%bcond_without	kerberos5	# without Kerberos5/Heimdal support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
 %bcond_with		mks		# with vfs-mks (mksd dependency not distributale)
@@ -40,13 +40,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.28
-Release:	5
+Version:	3.0.28a
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	8761cd7c02833d959fbebd4f69895075
+# Source0-md5:	59754cb0c19da6e65c42d0a163c5885a
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -65,23 +65,24 @@ Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
-Patch8:		%{name}-pam_smbpass-syslog.patch
-Patch9:		%{name}-cap.patch
+Patch8:		%{name}-cap.patch
+Patch9:		%{name}-printerlocation.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
+BuildRequires:	fam-devel
 BuildRequires:	iconv
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	ncurses-devel >= 5.2
-%{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
+%{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d
-BuildRequires:	pam-devel >= 0.99.8.1
+BuildRequires:	pam-devel > 0.66
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 %if %{with python}
@@ -95,7 +96,7 @@ BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
-Requires:	pam >= 0.99.8.1
+Requires:	pam >= 0.66
 Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
@@ -312,7 +313,7 @@ Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
 Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-%{?with_kerberos5:Requires:	krb5-libs}
+%{?with_kerberos5:Requires:	heimdal-libs >= 0.7}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 
@@ -424,7 +425,7 @@ Obsoletes:	pam_smbpass
 
 %description -n pam-pam_smbpass
 PAM module which can be used on conforming systems to keep the
-smbpasswd (Samba password) database in sync with the unix password
+smbpasswd (Samba password) database in sync with the Unix password
 file.
 
 %description -n pam-pam_smbpass -l pl.UTF-8
@@ -616,6 +617,21 @@ przypadku zainstalowania na udziale z profilami będzie zgłaszał
 klientom, że pliki i katalogi z profilu są zapisywane. To wystarczy
 klientom pomimo, że pliki nie zostaną nigdy nadpisane przy logowaniu
 lub wylogowywaniu klienta.
+
+%package vfs-notify_fam
+Summary:	VFS module to implement  file  change  notifications
+Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-notify_fam
+The vfs_notify_fam module makes use of the system FAM (File Alteration
+Monitor) daemon to implement file change notifications for Windows
+clients.
+
+%description vfs-notify_fam -l pl.UTF-8
+Ten moduł używa demona FAM (File Alteration Monitor) do implementacji
+informowania o zmianach w plikach dla klientów Windows.
 
 %package vfs-netatalk
 Summary:	VFS module for ease co-existence of samba and netatalk
@@ -1370,6 +1386,11 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/fake_perms.so
 %{_mandir}/man8/vfs_fake_perms.8*
+
+%files vfs-notify_fam
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/notify_fam.so
+%{_mandir}/man8/vfs_notify_fam.8*
 
 %files vfs-netatalk
 %defattr(644,root,root,755)

@@ -16,6 +16,7 @@
 %bcond_without	kerberos5	# without Kerberos5/Heimdal support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
+%bcond_with		mks		# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
 %if !%{with kerberos5} || !%{with ldap}
@@ -39,13 +40,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.28
+Version:	3.0.28a
 Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	8761cd7c02833d959fbebd4f69895075
+# Source0-md5:	59754cb0c19da6e65c42d0a163c5885a
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -64,15 +65,17 @@ Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
-Patch8:		%{name}-pam_smbpass-syslog.patch
+Patch8:		%{name}-cap.patch
+Patch9:		%{name}-printerlocation.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
-%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
+BuildRequires:	fam-devel
 BuildRequires:	iconv
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
@@ -422,7 +425,7 @@ Obsoletes:	pam_smbpass
 
 %description -n pam-pam_smbpass
 PAM module which can be used on conforming systems to keep the
-smbpasswd (Samba password) database in sync with the unix password
+smbpasswd (Samba password) database in sync with the Unix password
 file.
 
 %description -n pam-pam_smbpass -l pl.UTF-8
@@ -538,7 +541,8 @@ do sysloga. Monitorowane są następujące operacje:
  - podłączenie do/odłączenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
  - otwarcie/zamknięcie/zmiana nazwy/skasowanie/zmiana praw plików.
-   Zawiera moduły audit, extd_audit i full_audit.
+
+Zawiera moduły audit, extd_audit i full_audit.
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
@@ -613,6 +617,21 @@ przypadku zainstalowania na udziale z profilami będzie zgłaszał
 klientom, że pliki i katalogi z profilu są zapisywane. To wystarczy
 klientom pomimo, że pliki nie zostaną nigdy nadpisane przy logowaniu
 lub wylogowywaniu klienta.
+
+%package vfs-notify_fam
+Summary:	VFS module to implement  file  change  notifications
+Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-notify_fam
+The vfs_notify_fam module makes use of the system FAM (File Alteration
+Monitor) daemon to implement file change notifications for Windows
+clients.
+
+%description vfs-notify_fam -l pl.UTF-8
+Ten moduł używa demona FAM (File Alteration Monitor) do implementacji
+informowania o zmianach w plikach dla klientów Windows.
 
 %package vfs-netatalk
 Summary:	VFS module for ease co-existence of samba and netatalk
@@ -907,33 +926,7 @@ Summary(pl.UTF-8):	Documentacja samby w formacie HTML
 Group:		Documentation
 
 %description doc-html
-Samba HTML documentation, consists of:
-
-1. SAMBA Developers Guide This book is a collection of documents that
-might be useful for people developing samba or those interested in
-doing so. It's nothing more than a collection of documents written by
-samba developers about the internals of various parts of samba and the
-SMB protocol. It's still (and will always be) incomplete.
-
-2. Samba-3 by Example Practical Exercises in Successful Samba
-Deployment.
-
-3. The Official Samba-3 HOWTO and Reference Guide This book provides
-example configurations, it documents key aspects of Microsoft Windows
-networking, provides in-depth insight into the important configuration
-of Samba-3, and helps to put all of these into a useful framework.
-
-4. Using Samba, 2nd Edition Using Samba, Second Edition is a
-comprehensive guide to Samba administration. It covers all versions of
-Samba from 2.0 to 2.2, including selected features from an alpha
-version of 3.0, as well as the SWAT graphical configuration tool.
-Updated for Windows 2000, ME, and XP, the book also explores Samba's
-new role as a primary domain controller and domain member server, its
-support for the use of Windows NT/2000/XP authentication and
-filesystem security on the host Unix system, and accessing shared
-files and printers from Unix clients.
-
-5. Man pages The Samba man pages in HTML.
+Samba HTML documentation.
 
 %description doc-html -l pl.UTF-8
 Documentacja samby w formacie HTML.
@@ -944,21 +937,7 @@ Summary(pl.UTF-8):	Documentacja samby w formacie PDF
 Group:		Documentation
 
 %description doc-pdf
-Samba PDF documentation, consists of:
-
-1. SAMBA Developers Guide This book is a collection of documents that
-might be useful for people developing samba or those interested in
-doing so. It's nothing more than a collection of documents written by
-samba developers about the internals of various parts of samba and the
-SMB protocol. It's still (and will always be) incomplete.
-
-2. Samba-3 by Example Practical Exercises in Successful Samba
-Deployment.
-
-3. The Official Samba-3 HOWTO and Reference Guide This book provides
-example configurations, it documents key aspects of Microsoft Windows
-networking, provides in-depth insight into the important configuration
-of Samba-3, and helps to put all of these into a useful framework.
+Samba PDF documentation.
 
 %description doc-pdf -l pl.UTF-8
 Documentacja samby w formacie PDF.
@@ -976,6 +955,7 @@ Documentacja samby w formacie PDF.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -1407,6 +1387,11 @@ fi
 %attr(755,root,root) %{_vfsdir}/fake_perms.so
 %{_mandir}/man8/vfs_fake_perms.8*
 
+%files vfs-notify_fam
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/notify_fam.so
+%{_mandir}/man8/vfs_notify_fam.8*
+
 %files vfs-netatalk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/netatalk.so
@@ -1468,12 +1453,14 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mcdaemon.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mcdaemon.so
 
+%if %{with mks}
 %ifarch %{ix86} %{x8664}
 %files vfs-vscan-mks
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mks32.conf
 %attr(755,root,root) %{_vfsdir}/vscan-mksd.so
+%endif
 %endif
 
 %files vfs-vscan-openantivirus

@@ -41,7 +41,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.28a
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons

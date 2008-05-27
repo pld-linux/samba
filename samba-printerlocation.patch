@@ -42,10 +42,9 @@ diff -ur samba-3.0.25.orig/source/param/loadparm.c samba-3.0.25/source/param/loa
  			ServicePtrs[i]->autoloaded = True;
  		}
  	}
-diff -ur samba-3.0.25.orig/source/printing/nt_printing.c samba-3.0.25/source/printing/nt_printing.c
---- samba-3.0.25.orig/source/printing/nt_printing.c	2007-05-11 00:09:34.000000000 +0200
-+++ samba-3.0.25/source/printing/nt_printing.c	2007-05-15 13:58:02.000000000 +0200
-@@ -3291,7 +3291,39 @@
+--- samba-3.0.29/source/printing/nt_printing.c.orig	2008-05-21 22:06:46.000000000 +0200
++++ samba-3.0.29/source/printing/nt_printing.c	2008-05-27 17:36:02.366490355 +0200
+@@ -3300,7 +3300,39 @@
  	}
  
  	ads_destroy(&ads);
@@ -86,22 +85,22 @@ diff -ur samba-3.0.25.orig/source/printing/nt_printing.c samba-3.0.25/source/pri
  	return WERR_OK;
  }
  
-@@ -3769,7 +3801,7 @@
+@@ -3782,7 +3814,7 @@
  	fstrcpy(info->printprocessor, "winprint");
  	fstrcpy(info->datatype, "RAW");
  
 -#ifdef HAVE_CUPS
 +#ifdef HAVE_CUPS_BLOAT
- 	if ( (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {		
+ 	if (get_loc_com && (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {		
  		/* Pull the location and comment strings from cups if we don't
  		   already have one */
-@@ -3873,7 +3905,7 @@
+@@ -3891,7 +3923,7 @@
  
  	fstrcpy(info->printername, printername);
  
 -#ifdef HAVE_CUPS
 +#ifdef HAVE_CUPS_BLOAT
- 	if ( (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {		
+ 	if (get_loc_com && (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {		
  		/* Pull the location and comment strings from cups if we don't
  		   already have one */
 diff -ur samba-3.0.25.orig/source/printing/pcap.c samba-3.0.25/source/printing/pcap.c

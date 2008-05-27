@@ -1,0 +1,14 @@
+--- samba/source/smbd/oplock_linux.c.org	2008-01-29 10:29:45.433133448 +0100
++++ samba/source/smbd/oplock_linux.c	2008-01-29 10:30:10.751085239 +0100
+@@ -34,11 +34,6 @@
+ 	uint32 inheritable;
+ } data;
+ 
+-extern int capget(struct cap_user_header * hdrp,
+-		  struct cap_user_data * datap);
+-extern int capset(struct cap_user_header * hdrp,
+-		  const struct cap_user_data * datap);
+-
+ static SIG_ATOMIC_T signals_received;
+ #define FD_PENDING_SIZE 100
+ static SIG_ATOMIC_T fd_pending_array[FD_PENDING_SIZE];

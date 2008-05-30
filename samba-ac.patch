@@ -1,0 +1,22 @@
+--- samba-3.0.30/source/lib/replace/configure.ac	2008-05-30 10:39:00.000000000 +0200
++++ samba-3.0.30/source/lib/replace/configure.ac	2008-05-30 10:39:12.000000000 +0200
+@@ -3,7 +3,7 @@
+ AC_CONFIG_SRCDIR([replace.c])
+ AC_CONFIG_HEADER(config.h)
+ 
+-AC_LIBREPLACE_ALL_CHECKS
++dnl AC_LIBREPLACE_ALL_CHECKS
+ 
+ if test "$ac_cv_prog_gcc" = yes; then
+    CFLAGS="$CFLAGS -Wall"
+--- samba-3.0.30/source/configure.in	2008-05-28 14:41:11.000000000 +0200
++++ samba-3.0.30/source/configure.in	2008-05-30 10:42:50.000000000 +0200
+@@ -338,7 +338,7 @@
+ 
+ CFLAGS="${CFLAGS} -D_SAMBA_BUILD_=3"
+ 
+-AC_LIBREPLACE_CC_CHECKS
++dnl AC_LIBREPLACE_CC_CHECKS
+ 
+ m4_include(lib/socket_wrapper/config.m4)
+ 

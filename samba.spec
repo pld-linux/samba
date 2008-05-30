@@ -16,7 +16,7 @@
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
-%bcond_with		mks		# with vfs-mks (mksd dependency not distributale)
+%bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
 %if !%{with kerberos5} || !%{with ldap}
@@ -41,7 +41,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.30
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -67,6 +67,7 @@ Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
 Patch8:		%{name}-cap.patch
 Patch9:		%{name}-printerlocation.patch
+Patch10:	%{name}-ac.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -956,6 +957,7 @@ Documentacja samby w formacie PDF.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

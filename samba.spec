@@ -40,13 +40,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.29
+Version:	3.0.30
 Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	ac338e28f159e59a8d25cb1d0895cf8e
+Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
+# Source0-md5:	d647ec1f34414fa8691f74536dcccfb5
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -967,7 +967,7 @@ cd ../..
 cd source
 %{__libtoolize}
 %{__autoconf} -I lib/replace
-
+cp -f /usr/share/automake/config.sub .
 %configure \
 	--with-rootsbindir=/sbin \
 	--with-pammodulesdir=/%{_lib}/security \

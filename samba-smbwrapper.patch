@@ -37,22 +37,6 @@ diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/smbw.h samba-3.0.25
 diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/wrapper.c samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c
 --- samba-3.0.25a.org/examples/libsmbclient/smbwrapper/wrapper.c	2006-01-25 00:46:42.000000000 +0100
 +++ samba-3.0.25a/examples/libsmbclient/smbwrapper/wrapper.c	2007-06-17 17:39:16.085693163 +0200
-@@ -62,6 +62,7 @@
- #include <dirent.h>
- #include <signal.h>
- #include <stdarg.h>
-+#include <string.h>
- #ifdef __USE_GNU
- # define SMBW_USE_GNU
- #endif
-@@ -73,6 +74,7 @@
- #include <errno.h>
- #include "libsmbclient.h"
- #include "bsd-strlfunc.h"
-+#include "smbw.h"
- #include "wrapper.h"
- 
- /*
 @@ -488,7 +490,7 @@
           * function and smbw.c et al.  Functions that return other than an
           * integer value, however, MUST have their return value defined.

@@ -15,7 +15,6 @@
 %bcond_without	cups		# without CUPS support
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
-%bcond_without	python		# without python libs/utils
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
@@ -40,13 +39,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.30
-Release:	2
+Version:	3.2.1
+Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	d647ec1f34414fa8691f74536dcccfb5
+# Source0-md5:	ed2b790b035e508177aa2d1547af383d
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -61,7 +60,7 @@ Patch0:		%{name}-lib64.patch
 Patch1:		%{name}-smbwrapper.patch
 Patch2:		%{name}-c++-nofail.patch
 Patch3:		%{name}-pthread.patch
-Patch4:		%{name}-libsmbclient-libnscd_link.patch
+Patch4:		%{name}-nscd.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
@@ -86,10 +85,6 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
-%if %{with python}
-BuildRequires:	python-devel
-BuildRequires:	rpm-pythonprov
-%endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
@@ -510,18 +505,6 @@ CUPS backend for printing to SMB printers.
 
 %description -n cups-backend-smb -l pl.UTF-8
 Backend CUPS-a drukujący na drukarkach SMB.
-
-%package -n python-samba
-Summary:	Samba python tools and libraries
-Summary(pl.UTF-8):	Narzędzia i biblioteki pythona do samby
-Group:		Applications/Networking
-%pyrequires_eq	python-libs
-
-%description -n python-samba
-Samba python tools and libraries.
-
-%description -n python-samba -l pl.UTF-8
-Narzędzia i biblioteki pythona do samby.
 
 %package vfs-audit
 Summary:	VFS module to audit file access
@@ -946,18 +929,21 @@ Documentacja samby w formacie PDF.
 %prep
 %setup -q
 %if "%{_lib}" == "lib64"
-%patch0 -p1
+#%patch0 -p1
 %endif
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
+#%patch5 -p1
+#%patch6 -p1
 %patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
+# OBSOLETE
+#%patch8 -p1
+#?
+#%patch9 -p1
+#?
+#%patch10 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -968,8 +954,7 @@ cd ../..
 %build
 cd source
 %{__libtoolize}
-%{__autoconf} -I lib/replace
-cp -f /usr/share/automake/config.sub .
+%{__autoconf} -Im4 -Ilib/replace
 %configure \
 	--with-rootsbindir=/sbin \
 	--with-pammodulesdir=/%{_lib}/security \
@@ -983,12 +968,10 @@ cp -f /usr/share/automake/config.sub .
 	--with-privatedir=%{_sysconfdir}/samba \
 	--with-quotas \
 	--with-readline \
-	--with-smbmount \
 	--with-swatdir=%{_datadir}/swat \
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
-	%{?with_python:--with-python} \
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_kerberos5:out}-krb5
 
@@ -1081,12 +1064,6 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 
 # we have this utility in tdb package
 rm -f $RPM_BUILD_ROOT{%{_bindir}/tdbdump,%{_mandir}/man8/tdbdump.8*}
-
-# python stuff
-%if %{with python}
-install -d $RPM_BUILD_ROOT%{py_sitedir}
-cp -R source/build/lib.*/samba $RPM_BUILD_ROOT%{py_sitedir}
-%endif
 
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
 
@@ -1308,16 +1285,6 @@ fi
 %lang(pl) %{_libdir}/%{name}/pl.msg
 %lang(tr) %{_libdir}/%{name}/tr.msg
 %{_mandir}/man8/swat.8*
-
-%if %{with python}
-%files -n python-samba
-%defattr(644,root,root,755)
-%dir %{py_sitedir}/samba
-%attr(755,root,root) %{py_sitedir}/samba/*.so
-%{py_sitedir}/samba/*.py
-%doc source/python/{README,gprinterdata,gtdbtool,gtkdictbrowser.py}
-%doc source/python/examples
-%endif
 
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)

@@ -16,7 +16,7 @@
 %bcond_without	kerberos5	# without Kerberos5/Heimdal support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	python		# without python libs/utils
-%bcond_with		mks		# with vfs-mks (mksd dependency not distributale)
+%bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
 %if !%{with kerberos5} || !%{with ldap}
@@ -40,13 +40,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.0.29
+Version:	3.0.32
 Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	http://us1.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	ac338e28f159e59a8d25cb1d0895cf8e
+Source0:	http://download.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
+# Source0-md5:	be13b8dbe2785212dba49e7ced352f30
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -65,8 +65,7 @@ Patch4:		%{name}-libsmbclient-libnscd_link.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
-Patch8:		%{name}-cap.patch
-Patch9:		%{name}-printerlocation.patch
+Patch8:		%{name}-printerlocation.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -955,7 +954,6 @@ Documentacja samby w formacie PDF.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -1053,7 +1051,7 @@ install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 # smbwrapper
 install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
 install examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
-install docs/manpages/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install examples/libsmbclient/smbwrapper/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}

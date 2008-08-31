@@ -1,3 +1,11 @@
+--- samba/examples/libsmbclient/smbwrapper/Makefile~	2008-08-31 22:06:33.924988276 +0200
++++ samba/examples/libsmbclient/smbwrapper/Makefile	2008-08-31 22:14:39.501606988 +0200
+@@ -1,4 +1,4 @@
+-LIBS = -lwbclient -lsmbclient -ldl
++LIBS = -lwbclient -lsmbclient -ltalloc -ldl
+ DEFS = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
+ 
+ CFLAGS = -I$(SAMBA_INCL) $(EXTLIB_INCL)
 diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/Makefile samba-3.0.25a/examples/libsmbclient/smbwrapper/Makefile
 --- samba-3.0.25a.org/examples/libsmbclient/smbwrapper/Makefile	2006-01-25 00:46:42.000000000 +0100
 +++ samba-3.0.25a/examples/libsmbclient/smbwrapper/Makefile	2007-06-17 17:43:30.088457851 +0200

@@ -16,6 +16,7 @@
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
+%bcond_with	vscan
 
 # ADS requires kerberos5 and LDAP
 %if !%{with kerberos5} || !%{with ldap}
@@ -39,13 +40,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.2.1
+Version:	3.2.3
 Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	ed2b790b035e508177aa2d1547af383d
+# Source0-md5:	c1630a57ac0ec24bc364c6d11c93ec35
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -103,6 +104,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_vfsdir		%{_libdir}/%{name}/vfs
 %define		_sambahome	/home/services/samba
+%define		_sambalibdir	%{_libdir}/%{name}
 %if %{with cups}
 %define		cups_serverbin	%{_prefix}/lib/cups
 %endif
@@ -956,6 +958,7 @@ cd source
 %{__libtoolize}
 %{__autoconf} -Im4 -Ilib/replace
 %configure \
+	--libdir=%{_sambalibdir} \
 	--with-rootsbindir=/sbin \
 	--with-pammodulesdir=/%{_lib}/security \
 	--with-acl-support \
@@ -984,15 +987,19 @@ cd ../examples
 	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \\\$(SMBINCLUDE)"
 
 cd VFS
+%{__autoheader}
 %{__autoconf}
 %configure \
 	CFLAGS="%{rpmcflags} -fPIC"
 %{__make}
 
+%if %{with vscan}
 cd samba-vscan-%{vscan_version}
 cp -f /usr/share/automake/config.sub .
 %configure
+ln -s ../../../source/lib .
 %{__make} all
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -1026,29 +1033,25 @@ install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
-mv $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so.0
-ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+mv $RPM_BUILD_ROOT%{_libdir}/samba/lib*.so* $RPM_BUILD_ROOT%{_libdir}
 install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
-mv $RPM_BUILD_ROOT%{_libdir}/samba/libmsrpc.so $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so.0
-ln -s libmsrpc.so.0 $RPM_BUILD_ROOT%{_libdir}/libmsrpc.so
-install source/bin/libmsrpc.a $RPM_BUILD_ROOT%{_libdir}/libmsrpc.a
-
-install source/include/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 # smbwrapper
 install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
 install examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
-install docs/manpages/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install examples/libsmbclient/smbwrapper/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}
 cp -a source/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a source/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+cp -a source/lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
 cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 
+%if %{with vscan}
 # vscan modules
 install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
 install examples/VFS/samba-vscan-%{vscan_version}/{antivir,clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure,nai}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
+%endif
 
 touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
@@ -1134,6 +1137,7 @@ fi
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
+%attr(755,root,root) %{_bindir}/ldb*
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
@@ -1149,6 +1153,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
+%{_mandir}/man1/ldb*.1*
 %{_mandir}/man1/log2pcap.1*
 %{_mandir}/man1/smbstatus.1*
 %{_mandir}/man1/smbcontrol.1*
@@ -1196,17 +1201,11 @@ fi
 %attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) /sbin/umount.cifs
 %attr(755,root,root) %{_bindir}/net
-%attr(755,root,root) %{_bindir}/smbmnt
-%attr(755,root,root) %{_bindir}/smbmount
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtree
-%attr(755,root,root) %{_bindir}/smbumount
 %attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
-%{_mandir}/man8/smbmnt.8*
-%{_mandir}/man8/smbmount.8*
-%{_mandir}/man8/smbumount.8*
 %{_mandir}/man8/*mount.cifs.8*
 %attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/smbcacls
@@ -1293,16 +1292,16 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libmsrpc.so.*
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/libwbclient.so.*
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libmsrpc.so
 %attr(755,root,root) %{_libdir}/libsmbclient.so
-%{_includedir}/libmsrpc.h
+%attr(755,root,root) %{_libdir}/libwbclient.so
 %{_includedir}/libsmbclient.h
+%{_includedir}/wbclient.h
 
 %files devel
 %defattr(644,root,root,755)
@@ -1310,7 +1309,6 @@ fi
 
 %files -n libsmbclient-static
 %defattr(644,root,root,755)
-%{_libdir}/libmsrpc.a
 %{_libdir}/libsmbclient.a
 
 %files -n smbget
@@ -1385,6 +1383,7 @@ fi
 %attr(755,root,root) %{_vfsdir}/shadow_copy.so
 %{_mandir}/man8/vfs_shadow_copy.8*
 
+%if %{with vscan}
 %files vfs-vscan-antivir
 %defattr(644,root,root,755)
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
@@ -1454,6 +1453,7 @@ fi
 #%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
+%endif
 
 %if %{with ldap}
 %files -n openldap-schema-samba

@@ -1,0 +1,21 @@
+diff -urN samba-3.2.1.org/source/Makefile.in samba-3.2.1/source/Makefile.in
+--- samba-3.2.1.org/source/Makefile.in	2008-08-05 08:22:33.000000000 +0200
++++ samba-3.2.1/source/Makefile.in	2008-08-17 23:24:32.085914644 +0200
+@@ -1356,7 +1356,7 @@
+ 	@$(CC) $(FLAGS) -o $@ $(LDFLAGS) $(PASSDB_LIBS) $(RPCCLIENT_OBJ) \
+ 		$(DYNEXP) $(TERMLDFLAGS) $(TERMLIBS) $(LIBS) $(POPT_LIBS) \
+ 		$(KRB5LIBS) $(LDAP_LIBS) $(LIBTALLOC_LIBS) $(LIBTDB_LIBS) \
+-		$(WINBIND_LIBS)
++		$(WINBIND_LIBS) $(NSCD_LIBS)
+ 
+ bin/smbclient@EXEEXT@: $(BINARY_PREREQS) $(CLIENT_OBJ) @BUILD_POPT@ @LIBTALLOC_SHARED@ @LIBTDB_SHARED@ @LIBWBCLIENT_SHARED@
+ 	@echo Linking $@
+@@ -1563,7 +1563,7 @@
+ 	@echo Linking $@
+ 	@$(CC) $(FLAGS) -o $@ $(LDBEDIT_OBJ) $(DYNEXP) $(LDFLAGS) \
+ 		$(LIBS) $(POPT_LIBS) $(LDAP_LIBS) \
+-		$(LIBTALLOC_LIBS) $(LIBTDB_LIBS) $(WINBIND_LIBS)
++		$(LIBTALLOC_LIBS) $(LIBTDB_LIBS) $(WINBIND_LIBS) $(NSCD_LIBS)
+ 
+ bin/ldbsearch: $(BINARY_PREREQS) $(LDBSEARCH_OBJ) @BUILD_POPT@ @LIBTALLOC_SHARED@ @LIBTDB_SHARED@ @LIBWBCLIENT_SHARED@
+ 	@echo Linking $@

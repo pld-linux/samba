@@ -2,7 +2,7 @@
 +++ samba/examples/libsmbclient/smbwrapper/Makefile	2008-08-31 22:14:39.501606988 +0200
 @@ -1,4 +1,4 @@
 -LIBS = -lwbclient -lsmbclient -ldl
-+LIBS = -lwbclient -lsmbclient -ltalloc -ldl
++LIBS = -lwbclient -ltdb -lsmbclient -ltalloc -ldl
  DEFS = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
  
  CFLAGS = -I$(SAMBA_INCL) $(EXTLIB_INCL)

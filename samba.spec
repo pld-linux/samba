@@ -68,6 +68,7 @@ Patch7:		%{name}-lprng-no-dot-printers.patch
 Patch8:		%{name}-cap.patch
 Patch9:		%{name}-printerlocation.patch
 Patch10:	%{name}-ac.patch
+Patch11:	%{name}-link.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -946,6 +947,7 @@ Documentacja samby w formacie PDF.
 #%patch9 -p1
 #?
 #%patch10 -p1
+%patch11 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

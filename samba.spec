@@ -1199,6 +1199,8 @@ fi
 
 %files client
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/cifs.upcall
+%{_mandir}/man8/cifs.upcall.8*
 %attr(755,root,root) /sbin/mount.smbfs
 %attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) /sbin/umount.cifs
@@ -1240,7 +1242,7 @@ fi
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
 # how this one is used? SONAME is libsmbsharemodes.so.0
-%attr(755,root,root) %{_libdir}/%{name}/libsmbsharemodes.so
+%attr(755,root,root) %{_libdir}/libsmbsharemodes.so
 %{_libdir}/%{name}/*.dat
 %dir %{_libdir}/%{name}/auth
 %attr(755,root,root) %{_libdir}/%{name}/auth/script.so

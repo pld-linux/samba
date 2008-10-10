@@ -1199,31 +1199,31 @@ fi
 
 %files client
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_sbindir}/cifs.upcall
-%{_mandir}/man8/cifs.upcall.8*
 %attr(755,root,root) /sbin/mount.smbfs
 %attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) /sbin/umount.cifs
+%attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/net
-%attr(755,root,root) %{_bindir}/smbsh
-%attr(755,root,root) %{_bindir}/smbtree
-%attr(755,root,root) %{_libdir}/smbwrapper.so
-%{_mandir}/man1/smbtree.1*
-%{_mandir}/man8/net.8*
-%{_mandir}/man8/*mount.cifs.8*
 %attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
+%attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtar
+%attr(755,root,root) %{_bindir}/smbtree
+%attr(755,root,root) %{_sbindir}/cifs.upcall
+%attr(755,root,root) %{_libdir}/smbwrapper.so
+%{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup.1*
+%{_mandir}/man1/rpcclient.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbclient.1*
-%{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbsh.1*
-%attr(755,root,root) %{_bindir}/rpcclient
-%{_mandir}/man1/rpcclient.1*
-%attr(755,root,root) %{_bindir}/findsmb
-%{_mandir}/man1/findsmb.1*
+%{_mandir}/man1/smbtar.1*
+%{_mandir}/man1/smbtree.1*
+%{_mandir}/man8/cifs.upcall.8*
+%{_mandir}/man8/net.8*
+%{_mandir}/man8/*mount.cifs.8*
 
 %files common
 %defattr(644,root,root,755)

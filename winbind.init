@@ -34,7 +34,7 @@ TMPDIR="/tmp"; export TMPDIR
 
 # return true if 'idmap uid' or 'idmap gid' is set in samba config
 configtest() {
-	egrep -qvi '^idmap [ug]id' /etc/samba/smb.conf
+	egrep -qi '^idmap [ug]id' /etc/samba/smb.conf
 }
 
 start() {

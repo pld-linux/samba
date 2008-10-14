@@ -40,12 +40,14 @@ start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/smb ]; then
 		msg_starting smbd
-		daemon smbd -D
+		daemon /usr/sbin/smbd -D
 		RETVAL=$?
 		msg_starting nmbd
-		daemon nmbd -D
+		daemon /usr/sbin/nmbd -D
 		[ $RETVAL -eq 0 ] && RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/smb
+		if [ $RETVAL -eq 0 ]; then
+			touch /var/lock/subsys/smb
+		fi
 	else
 		msg_already_running smb
 	fi

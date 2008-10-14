@@ -32,13 +32,9 @@ TMPDIR="/tmp"; export TMPDIR
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0
 
-RETVAL=0
-# See how we were called.
-case "$1" in
-  start)
-	# Check if the service is already running?
+start() {
 	if [ ! -f /var/lock/subsys/winbind ]; then
-	  	if [ "`grep -i 'idmap uid' /etc/samba/smb.conf | egrep -v [\#\;]`" -a "`grep -i 'idmap gid' /etc/samba/smb.conf | egrep -v [\#\;]`" ]; then
+		if [ "`grep -i 'idmap uid' /etc/samba/smb.conf | egrep -v [\#\;]`" -a "`grep -i 'idmap gid' /etc/samba/smb.conf | egrep -v [\#\;]`" ]; then
 			msg_starting winbindd
 			daemon winbindd
 			RETVAL=$?
@@ -50,9 +46,9 @@ case "$1" in
 	else
 		msg_already_running winbindd
 	fi
-	;;
-  stop)
-	# Stop daemon.
+}
+
+stop() {
 	if [ -f /var/lock/subsys/winbind ]; then
 		msg_stopping winbindd
 		killproc winbindd
@@ -60,15 +56,30 @@ case "$1" in
 	else
 		msg_not_running winbindd
 	fi
+}
+
+condrestart() {
+	if [ -f /var/lock/subsys/winbind ]; then
+		stop
+		start
+	else
+		msg_not_running winbindd
+		RETVAL=$1
+	fi
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
 	;;
-  status)
-	status winbindd
-	RETVAL=$?
+  stop)
+	stop
 	;;
   restart)
-	$0 stop
-	$0 start
-	exit $?
+	stop
+	start
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/winbind ]; then
@@ -80,8 +91,15 @@ case "$1" in
 		exit 7
 	fi
 	;;
+  try-restart)
+	condrestart 0
+	;;
+  status)
+	status winbindd
+	RETVAL=$?
+	;;
   *)
-	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|status}"
 	exit 3
 esac
 

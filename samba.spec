@@ -1034,8 +1034,6 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 
 install source/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
-ln -sf %{_bindir}/smbmount $RPM_BUILD_ROOT/sbin/mount.smbfs
-
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
@@ -1217,7 +1215,6 @@ fi
 
 %files client
 %defattr(644,root,root,755)
-%attr(755,root,root) /sbin/mount.smbfs
 %attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) /sbin/umount.cifs
 %attr(755,root,root) %{_bindir}/findsmb
@@ -1259,8 +1256,6 @@ fi
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
-# how this one is used? SONAME is libsmbsharemodes.so.0
-%attr(755,root,root) %{_libdir}/libsmbsharemodes.so
 %{_libdir}/%{name}/*.dat
 %dir %{_libdir}/%{name}/auth
 %attr(755,root,root) %{_libdir}/%{name}/auth/script.so

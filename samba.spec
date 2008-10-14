@@ -69,6 +69,7 @@ Patch8:		%{name}-cap.patch
 Patch9:		%{name}-printerlocation.patch
 Patch10:	%{name}-ac.patch
 Patch11:	%{name}-link.patch
+Patch12:	%{name}-install.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -472,6 +473,22 @@ Static libsmbclient library.
 
 %description -n libsmbclient-static -l pl.UTF-8
 Statyczna biblioteka libsmbclient.
+
+%package -n libtalloc
+Summary:	The talloc library
+Group:		Libraries
+
+%description -n libtalloc
+The talloc library from the Samba suite.
+
+%package -n libtalloc-devel
+Summary:	Developer tools for the talloc library
+Group:		Development/Libraries
+Requires:	libtalloc = %{epoch}:%{version}-%{release}
+
+%description -n libtalloc-devel
+The libtalloc-devel package contains the header files and libraries needed to
+develop programs that link against the talloc library in the Samba suite.
 
 %package devel
 Summary:	Header files for Samba
@@ -948,6 +965,7 @@ Documentacja samby w formacie PDF.
 #?
 #%patch10 -p1
 %patch11 -p1
+%patch12 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -1306,6 +1324,14 @@ fi
 %attr(755,root,root) %{_libdir}/libwbclient.so
 %{_includedir}/libsmbclient.h
 %{_includedir}/wbclient.h
+
+%files -n libtalloc
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libtalloc.so.*
+
+%files -n libtalloc-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libtalloc.so
 
 %files devel
 %defattr(644,root,root,755)

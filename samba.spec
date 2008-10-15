@@ -9,6 +9,9 @@
 #   /usr/share/man/man8/vfs_notify_fam.8*
 #   /usr/share/man/man8/vfs_prealloc.8*
 # - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
+# - package libs:
+#	libnetapi
+#	libsmbsharemodes
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -1327,6 +1330,7 @@ fi
 %files -n libtalloc-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtalloc.so
+%{_includedir}/talloc.h
 
 %files devel
 %defattr(644,root,root,755)

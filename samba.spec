@@ -12,6 +12,7 @@
 # - package libs:
 #	libnetapi
 #	libsmbsharemodes
+# - MERGE vfs modules into main package, what was the point of splitting these?
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -44,7 +45,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.2.4
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -1167,6 +1168,11 @@ fi
 
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
+%attr(755,root,root) %{_vfsdir}/fileid.so
+%attr(755,root,root) %{_vfsdir}/shadow_copy2.so
+%attr(755,root,root) %{_vfsdir}/streams_xattr.so
+%attr(755,root,root) %{_vfsdir}/syncops.so
+%attr(755,root,root) %{_vfsdir}/xattr_tdb.so
 
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
@@ -1183,7 +1189,9 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/tdbbackup.8*
+%{_mandir}/man8/vfs_xattr_tdb.8*
 
 %dir %{_sambahome}
 %dir /var/lib/samba

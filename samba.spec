@@ -45,7 +45,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.2.4
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -367,6 +367,7 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
+Requires:	tdb >= 1.1.0
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -1088,7 +1089,7 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 # we have this utility in tdb package
-rm -f $RPM_BUILD_ROOT{%{_bindir}/tdbdump,%{_mandir}/man8/tdbdump.8*}
+rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump},%{_mandir}/man8/tdb{backup,dump}.8*}
 
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
 
@@ -1163,7 +1164,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
-%attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbtool_samba
 
 %dir %{_libdir}/%{name}/pdb
@@ -1190,7 +1190,6 @@ fi
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/vfs_streams_xattr.8*
-%{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
 %dir %{_sambahome}

@@ -45,7 +45,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.2.4
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -317,6 +317,7 @@ Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
 Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	krb5-libs}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs

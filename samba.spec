@@ -44,13 +44,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.2.4
-Release:	3
+Version:	3.2.5
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	7870a6bb3a025c6081cd56688acd494a
+# Source0-md5:	0f7539e09803ae60a2912e70adf1c747
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd

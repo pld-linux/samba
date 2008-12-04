@@ -100,7 +100,7 @@ diff -ur samba-3.0.25.orig/source/param/loadparm.c samba-3.0.25/source/param/loa
  
 -#ifdef HAVE_CUPS
 +#ifdef HAVE_CUPS_BLOAT
- 	if (get_loc_com && (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {		
+ 	if (get_loc_com && (enum printing_types)lp_printing(snum) == PRINT_CUPS ) {
  		/* Pull the location and comment strings from cups if we don't
  		   already have one */
 diff -ur samba-3.0.25.orig/source/printing/pcap.c samba-3.0.25/source/printing/pcap.c
@@ -116,8 +116,8 @@ diff -ur samba-3.0.25.orig/source/printing/pcap.c samba-3.0.25/source/printing/p
  
  static pcap_cache_t *pcap_cache = NULL;
  
--BOOL pcap_cache_add(const char *name, const char *comment)
-+BOOL pcap_cache_add(const char *name, const char *comment, const char *location)
+-bool pcap_cache_add(const char *name, const char *comment)
++bool pcap_cache_add(const char *name, const char *comment, const char *location)
  {
  	pcap_cache_t *p;
  
@@ -172,7 +172,7 @@ diff -ur samba-3.0.25.orig/source/printing/print_aix.c samba-3.0.25/source/print
 +				if (!pcap_cache_add(name, NULL, NULL)) {
  					safe_free(line);
  					x_fclose(pfile);
- 					return False;
+ 					TALLOC_FREE(ctx);
 @@ -89,7 +89,7 @@
  			} else if (strstr_m(line, "device")) {
  				/* it's a good virtual printer */
@@ -181,7 +181,7 @@ diff -ur samba-3.0.25.orig/source/printing/print_aix.c samba-3.0.25/source/print
 +				if (!pcap_cache_add(name, NULL, NULL)) {
  					safe_free(line);
  					x_fclose(pfile);
- 					return False;
+ 					TALLOC_FREE(ctx);
 diff -ur samba-3.0.25.orig/source/printing/print_cups.c samba-3.0.25/source/printing/print_cups.c
 --- samba-3.0.25.orig/source/printing/print_cups.c	2007-04-09 19:30:57.000000000 +0200
 +++ samba-3.0.25/source/printing/print_cups.c	2007-05-15 09:06:42.000000000 +0200
@@ -198,7 +198,7 @@ diff -ur samba-3.0.25.orig/source/printing/print_cups.c samba-3.0.25/source/prin
  			  "printer-info"
 +			  "printer-location"
  			};       
- 	BOOL ret = False;
+ 	bool ret = False;
  
 @@ -161,6 +163,7 @@
  
@@ -333,30 +333,30 @@ diff -ur samba-3.0.25.orig/source/rpc_server/srv_spoolss_nt.c samba-3.0.25/sourc
 --- samba-3.0.25.orig/source/rpc_server/srv_spoolss_nt.c	2007-05-11 00:09:35.000000000 +0200
 +++ samba-3.0.25/source/rpc_server/srv_spoolss_nt.c	2007-05-15 11:44:07.000000000 +0200
 @@ -2901,7 +2901,10 @@
- 	pstring temp;
+ 	smb_ucs2_t *temp = NULL;
  	uint32 len;
  
--	len = rpcstr_push(temp, printer->info_2->location,sizeof(temp)-2, STR_TERMINATE);
+-	len = rpcstr_push_talloc(mem_ctx, &temp, printer->info_2->location);
 +	if (*printer->info_2->location == '\0')
-+		len = rpcstr_push(temp, lp_location(snum), sizeof(temp)-2, STR_TERMINATE);
++		len = rpcstr_push_talloc(mem_ctx, &temp, lp_location(snum));
 +	else
-+		len = rpcstr_push(temp, printer->info_2->location,sizeof(temp)-2, STR_TERMINATE);
- 
- 	data->notify_data.data.length = len;
- 	if (len) {
++		len = rpcstr_push_talloc(mem_ctx, &temp, printer->info_2->location);
+ 	if (len == (uint32)-1) {
+ 		len = 0;
+ 	}
 @@ -4204,8 +4207,10 @@
- 		init_unistr(&printer->comment, lp_comment(snum));			/* comment */	
+ 		init_unistr(&printer->comment, lp_comment(snum));			/* comment */
  	else
  		init_unistr(&printer->comment, ntprinter->info_2->comment); /* saved comment. */
 -
--	init_unistr(&printer->location, ntprinter->info_2->location);		/* location */	
+-	init_unistr(&printer->location, ntprinter->info_2->location);		/* location */
 +	if (*ntprinter->info_2->location == '\0')
-+		init_unistr(&printer->location, lp_location(snum));			/* location */	
++		init_unistr(&printer->location, lp_location(snum));			/* location */
 +	else
-+		init_unistr(&printer->location, ntprinter->info_2->location);		/* location */	
++		init_unistr(&printer->location, ntprinter->info_2->location);		/* location */
  	init_unistr(&printer->sepfile, ntprinter->info_2->sepfile);		/* separator file */
  	init_unistr(&printer->printprocessor, ntprinter->info_2->printprocessor);/* print processor */
- 	init_unistr(&printer->datatype, ntprinter->info_2->datatype);		/* datatype */	
+ 	init_unistr(&printer->datatype, ntprinter->info_2->datatype);		/* datatype */
 @@ -6341,6 +6346,13 @@
  	/* Update printer info */
  	result = mod_a_printer(printer, 2);

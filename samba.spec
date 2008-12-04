@@ -45,7 +45,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.2.5
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -966,8 +966,7 @@ Documentacja samby w formacie PDF.
 %patch7 -p1
 # OBSOLETE
 #%patch8 -p1
-#?
-#%patch9 -p1
+%patch9 -p1
 #?
 #%patch10 -p1
 %patch11 -p1

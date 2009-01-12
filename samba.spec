@@ -44,13 +44,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.2.5
-Release:	2
+Version:	3.2.7
+Release:	0.1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	0f7539e09803ae60a2912e70adf1c747
+# Source0-md5:	528677f261f3ed4a58f9483ca25ba6b2
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -69,11 +69,8 @@ Patch4:		%{name}-nscd.patch
 Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
-Patch8:		%{name}-cap.patch
 Patch9:		%{name}-printerlocation.patch
-Patch10:	%{name}-ac.patch
 Patch11:	%{name}-link.patch
-Patch12:	%{name}-install.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -964,13 +961,8 @@ Documentacja samby w formacie PDF.
 #%patch5 -p1
 #%patch6 -p1
 %patch7 -p1
-# OBSOLETE
-#%patch8 -p1
-%patch9 -p1
-#?
-#%patch10 -p1
+#%patch9 -p1
 %patch11 -p1
-%patch12 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -1170,6 +1162,8 @@ fi
 %dir %{_vfsdir}
 %attr(755,root,root) %{_vfsdir}/fileid.so
 %attr(755,root,root) %{_vfsdir}/shadow_copy2.so
+%attr(755,root,root) %{_vfsdir}/smb_traffic_analyzer.so
+%attr(755,root,root) %{_vfsdir}/streams_depot.so
 %attr(755,root,root) %{_vfsdir}/streams_xattr.so
 %attr(755,root,root) %{_vfsdir}/syncops.so
 %attr(755,root,root) %{_vfsdir}/xattr_tdb.so
@@ -1189,7 +1183,9 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/vfs_smb_traffic_analyzer.8*
 %{_mandir}/man8/vfs_streams_xattr.8*
+%{_mandir}/man8/vfs_streams_deopt.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
 %dir %{_sambahome}

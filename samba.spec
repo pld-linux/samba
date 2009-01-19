@@ -45,7 +45,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.2.7
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -61,16 +61,13 @@ Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.ta
 # Source7-md5:	8f1dd119172e04e6d7c2d05526a4cf8b
 Source8:	winbind.init
 Source9:	winbind.sysconfig
-Patch0:		%{name}-lib64.patch
-Patch1:		%{name}-smbwrapper.patch
-Patch2:		%{name}-c++-nofail.patch
-Patch3:		%{name}-pthread.patch
-Patch4:		%{name}-nscd.patch
-Patch5:		%{name}-doc.patch
-Patch6:		%{name}-libs-needed.patch
-Patch7:		%{name}-lprng-no-dot-printers.patch
-Patch9:		%{name}-printerlocation.patch
-Patch11:	%{name}-link.patch
+Patch0:		%{name}-smbwrapper.patch
+Patch1:		%{name}-c++-nofail.patch
+Patch2:		%{name}-pthread.patch
+Patch3:		%{name}-nscd.patch
+Patch4:		%{name}-lprng-no-dot-printers.patch
+Patch5:		%{name}-printerlocation.patch
+Patch6:		%{name}-link.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -951,18 +948,14 @@ Documentacja samby w formacie PDF.
 
 %prep
 %setup -q
-%if "%{_lib}" == "lib64"
-#%patch0 -p1
-%endif
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-#%patch5 -p1
-#%patch6 -p1
-%patch7 -p1
-#%patch9 -p1
-%patch11 -p1
+# why this isn't upstream?
+# %patch5 -p1
+%patch6 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -1185,7 +1178,7 @@ fi
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/vfs_smb_traffic_analyzer.8*
 %{_mandir}/man8/vfs_streams_xattr.8*
-%{_mandir}/man8/vfs_streams_deopt.8*
+%{_mandir}/man8/vfs_streams_depot.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
 %dir %{_sambahome}

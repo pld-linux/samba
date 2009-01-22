@@ -45,7 +45,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.2.7
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -66,8 +66,7 @@ Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
-Patch5:		%{name}-printerlocation.patch
-Patch6:		%{name}-link.patch
+Patch5:		%{name}-link.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -953,9 +952,7 @@ Documentacja samby w formacie PDF.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-# why this isn't upstream?
 %patch5 -p1
-%patch6 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

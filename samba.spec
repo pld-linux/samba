@@ -44,13 +44,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.2.7
-Release:	3
+Version:	3.3.0
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	528677f261f3ed4a58f9483ca25ba6b2
+# Source0-md5:	adb048dc3988055533e1ea5d91d81f99
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -965,7 +965,7 @@ cd source
 %{__libtoolize}
 %{__autoconf} -Im4 -Ilib/replace
 %configure \
-	--libdir=%{_sambalibdir} \
+	--with-modulesdir=%{_sambalibdir} \
 	--with-rootsbindir=/sbin \
 	--with-pammodulesdir=/%{_lib}/security \
 	--with-acl-support \
@@ -1038,7 +1038,6 @@ install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
-mv $RPM_BUILD_ROOT%{_libdir}/samba/lib*.so* $RPM_BUILD_ROOT%{_libdir}
 install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 
 # smbwrapper
@@ -1073,11 +1072,16 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 # we have this utility in tdb package
 rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump},%{_mandir}/man8/tdb{backup,dump}.8*}
 
+# unneeded
+rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
+
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
 
 %if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %endif
+
+%find_lang pam_winbind
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1150,6 +1154,8 @@ fi
 
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
+%attr(755,root,root) %{_vfsdir}/acl_tdb.so
+%attr(755,root,root) %{_vfsdir}/acl_xattr.so
 %attr(755,root,root) %{_vfsdir}/fileid.so
 %attr(755,root,root) %{_vfsdir}/shadow_copy2.so
 %attr(755,root,root) %{_vfsdir}/smb_traffic_analyzer.so
@@ -1193,7 +1199,7 @@ fi
 %doc examples/LDAP
 %endif
 
-%files winbind
+%files winbind -f pam_winbind.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_bindir}/wbinfo

@@ -44,13 +44,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.3.0
-Release:	2
+Version:	3.3.1
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	adb048dc3988055533e1ea5d91d81f99
+# Source0-md5:	babe094be14886d265b1caa917d29aa7
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -1223,6 +1223,7 @@ fi
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/rpcclient
+%attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbsh
@@ -1233,6 +1234,7 @@ fi
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/rpcclient.1*
+%{_mandir}/man1/sharesec.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/smbsh.1*
@@ -1274,10 +1276,13 @@ fi
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/eventlogadm.8*
 %{_mandir}/man8/idmap_ad.8*
+%{_mandir}/man8/idmap_adex.8*
+%{_mandir}/man8/idmap_hash.8*
 %{_mandir}/man8/idmap_ldap.8*
 %{_mandir}/man8/idmap_nss.8*
 %{_mandir}/man8/idmap_rid.8*
 %{_mandir}/man8/idmap_tdb.8*
+%{_mandir}/man8/idmap_tdb2.8*
 %{_mandir}/man8/tdbtool.8*
 
 %files swat

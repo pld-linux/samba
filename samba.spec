@@ -1,4 +1,5 @@
 # TODO:
+# - drop tdb.spec and build tdb,tdb-devel,tdb-static package from samba
 # - look into other distro specs for valid %descriptions for samba 3
 # - unpackaged man pages for modules that are not built by default,
 #   maybe we should build them?
@@ -45,7 +46,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.3.1
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -361,7 +362,7 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-Requires:	tdb >= 1.1.0
+Requires:	tdb >= 1.1.3
 
 %description common
 Samba-common provides files necessary for both the server and client

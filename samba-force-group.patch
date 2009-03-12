@@ -1,0 +1,83 @@
+diff --git a/source/include/smb.h b/source/include/smb.h
+index a98d151..56d9461 100644
+--- a/source/include/smb.h
++++ b/source/include/smb.h
+@@ -597,6 +597,12 @@ typedef struct connection_struct {
+ 	 */
+ 	struct auth_serversupplied_info *server_info;
+ 
++	/*
++	 * If the "force group" parameter is set, this is the primary gid that
++	 * may be used in the users token, depending on the vuid using this tid.
++	 */
++	gid_t force_group_gid;
++
+ 	char client_address[INET6_ADDRSTRLEN]; /* String version of client IP address. */
+ 
+ 	uint16 vuid; /* vuid of user who *opened* this connection, or UID_FIELD_INVALID */
+diff --git a/source/smbd/conn.c b/source/smbd/conn.c
+index 7f34d2b..a6eafcf 100644
+--- a/source/smbd/conn.c
++++ b/source/smbd/conn.c
+@@ -145,6 +145,7 @@ find_again:
+ 		return NULL;
+ 	}
+ 	conn->cnum = i;
++	conn->force_group_gid = (gid_t)-1;
+ 
+ 	bitmap_set(bmap, i);
+ 
+diff --git a/source/smbd/service.c b/source/smbd/service.c
+index c39584a..5e75fce 100644
+--- a/source/smbd/service.c
++++ b/source/smbd/service.c
+@@ -834,6 +834,14 @@ static connection_struct *make_connection_snum(int snum, user_struct *vuser,
+ 			*pstatus = status;
+ 			return NULL;
+ 		}
++
++		/*
++		 * We need to cache this gid, to use within
++ 		 * change_to_user() separately from the conn->server_info
++ 		 * struct. We only use conn->server_info directly if
++ 		 * "force_user" was set.
++ 		 */
++		conn->force_group_gid = conn->server_info->utok.gid;
+ 	}
+ 
+ 	conn->vuid = (vuser != NULL) ? vuser->vuid : UID_FIELD_INVALID;
+diff --git a/source/smbd/uid.c b/source/smbd/uid.c
+index 119a155..02f8cc9 100644
+--- a/source/smbd/uid.c
++++ b/source/smbd/uid.c
+@@ -256,6 +256,8 @@ bool change_to_user(connection_struct *conn, uint16 vuid)
+ 
+ 	if((group_c = *lp_force_group(snum))) {
+ 
++		SMB_ASSERT(conn->force_group_gid != (gid_t)-1);
++
+ 		if(group_c == '+') {
+ 
+ 			/*
+@@ -268,15 +270,18 @@ bool change_to_user(connection_struct *conn, uint16 vuid)
+ 			int i;
+ 			for (i = 0; i < num_groups; i++) {
+ 				if (group_list[i]
+-				    == conn->server_info->utok.gid) {
+-					gid = conn->server_info->utok.gid;
++				    == conn->force_group_gid) {
++					conn->server_info->utok.gid =
++						conn->force_group_gid;
++					gid = conn->force_group_gid;
+ 					gid_to_sid(&conn->server_info->ptok
+ 						   ->user_sids[1], gid);
+ 					break;
+ 				}
+ 			}
+ 		} else {
+-			gid = conn->server_info->utok.gid;
++			conn->server_info->utok.gid = conn->force_group_gid;
++			gid = conn->force_group_gid;
+ 			gid_to_sid(&conn->server_info->ptok->user_sids[1],
+ 				   gid);
+ 		}

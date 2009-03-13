@@ -45,13 +45,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.3.1
-Release:	4
+Version:	3.3.2
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	babe094be14886d265b1caa917d29aa7
+# Source0-md5:	5c5178ea2c5d9bd5f6569285f2e0e6d7
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -68,8 +68,6 @@ Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
 Patch5:		%{name}-link.patch
-Patch6:		%{name}-dnssd.patch
-Patch7:		%{name}-force-group.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -956,8 +954,7 @@ Documentacja samby w formacie PDF.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
+
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS
@@ -1162,12 +1159,23 @@ fi
 %attr(755,root,root) %{_vfsdir}/acl_tdb.so
 %attr(755,root,root) %{_vfsdir}/acl_xattr.so
 %attr(755,root,root) %{_vfsdir}/fileid.so
+%attr(755,root,root) %{_vfsdir}/preopen.so
 %attr(755,root,root) %{_vfsdir}/shadow_copy2.so
 %attr(755,root,root) %{_vfsdir}/smb_traffic_analyzer.so
 %attr(755,root,root) %{_vfsdir}/streams_depot.so
 %attr(755,root,root) %{_vfsdir}/streams_xattr.so
 %attr(755,root,root) %{_vfsdir}/syncops.so
 %attr(755,root,root) %{_vfsdir}/xattr_tdb.so
+%{_mandir}/man8/vfs_acl_tdb.8*
+%{_mandir}/man8/vfs_acl_xattr.8*
+%{_mandir}/man8/vfs_fileid.8*
+%{_mandir}/man8/vfs_preopen.8*
+%{_mandir}/man8/vfs_shadow_copy2.8*
+%{_mandir}/man8/vfs_smb_traffic_analyzer.8*
+%{_mandir}/man8/vfs_streams_xattr.8*
+%{_mandir}/man8/vfs_streams_depot.8*
+%{_mandir}/man8/vfs_xattr_tdb.8*
+
 
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
@@ -1184,10 +1192,6 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
-%{_mandir}/man8/vfs_smb_traffic_analyzer.8*
-%{_mandir}/man8/vfs_streams_xattr.8*
-%{_mandir}/man8/vfs_streams_depot.8*
-%{_mandir}/man8/vfs_xattr_tdb.8*
 
 %dir %{_sambahome}
 %dir /var/lib/samba

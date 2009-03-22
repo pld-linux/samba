@@ -20,6 +20,7 @@
 %bcond_without	cups		# without CUPS support
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
+%bcond_with	dnssd		# switch back on after fixing https://bugzilla.samba.org/show_bug.cgi?id=6179
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 %bcond_with	vscan
 
@@ -46,7 +47,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.3.2
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -72,6 +73,7 @@ URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
+%{?with_dnssd:BuildRequires:	avahi-compat-libdns_sd-devel}
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
@@ -984,6 +986,7 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
+	%{!?with_dnssd:--disable-dnssd} \
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_kerberos5:out}-krb5
 

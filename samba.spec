@@ -20,7 +20,7 @@
 %bcond_without	cups		# without CUPS support
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
-%bcond_with	dnssd		# switch back on after fixing https://bugzilla.samba.org/show_bug.cgi?id=6179
+%bcond_without	avahi
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 %bcond_with	vscan
 
@@ -47,7 +47,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.3.2
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -69,11 +69,12 @@ Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
 Patch5:		%{name}-link.patch
+Patch6:		%{name}-bug-6198.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
-%{?with_dnssd:BuildRequires:	avahi-compat-libdns_sd-devel}
+%{?with_avahi:BuildRequires:	avahi-devel}
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
@@ -956,6 +957,7 @@ Documentacja samby w formacie PDF.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
@@ -986,7 +988,8 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
-	%{!?with_dnssd:--disable-dnssd} \
+	--enable-avahi \
+	--disable-dnssd \
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_kerberos5:out}-krb5
 

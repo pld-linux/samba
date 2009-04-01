@@ -46,13 +46,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.3.2
-Release:	3
+Version:	3.3.3
+Release:	1
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	5c5178ea2c5d9bd5f6569285f2e0e6d7
+# Source0-md5:	4d5835817416d1ffa30783af45c5a9ed
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -69,7 +69,6 @@ Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
 Patch5:		%{name}-link.patch
-Patch6:		%{name}-bug-6198.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -957,7 +956,6 @@ Documentacja samby w formacie PDF.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
@@ -1164,6 +1162,7 @@ fi
 %dir %{_vfsdir}
 %attr(755,root,root) %{_vfsdir}/acl_tdb.so
 %attr(755,root,root) %{_vfsdir}/acl_xattr.so
+%attr(755,root,root) %{_vfsdir}/dirsort.so
 %attr(755,root,root) %{_vfsdir}/fileid.so
 %attr(755,root,root) %{_vfsdir}/preopen.so
 %attr(755,root,root) %{_vfsdir}/shadow_copy2.so
@@ -1174,6 +1173,7 @@ fi
 %attr(755,root,root) %{_vfsdir}/xattr_tdb.so
 %{_mandir}/man8/vfs_acl_tdb.8*
 %{_mandir}/man8/vfs_acl_xattr.8*
+%{_mandir}/man8/vfs_dirsort.8*
 %{_mandir}/man8/vfs_fileid.8*
 %{_mandir}/man8/vfs_preopen.8*
 %{_mandir}/man8/vfs_shadow_copy2.8*

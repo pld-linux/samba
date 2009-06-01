@@ -49,7 +49,7 @@ Name:		samba
 Version:	3.3.4
 Release:	3
 Epoch:		1
-License:	GPL v2
+License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
 # Source0-md5:	1443165edb7cb3f56f1e77aec1ee3266

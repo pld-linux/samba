@@ -1,4 +1,5 @@
 /var/log/samba/log.* {
+	sharedscripts
 	notifempty
 	missingok
 	olddir /var/log/archive/samba

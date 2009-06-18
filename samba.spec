@@ -46,13 +46,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.3.4
-Release:	3
+Version:	3.3.5
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/%{name}-%{version}.tar.gz
-# Source0-md5:	1443165edb7cb3f56f1e77aec1ee3266
+# Source0-md5:	8fa0e3c5daaba4c2ce2fb871a5f3157a
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -991,7 +991,6 @@ cd source
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_kerberos5:out}-krb5
 
-%{__make} proto
 %{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest
 
 cd ../examples
@@ -1223,7 +1222,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
 %{_mandir}/man1/wbinfo*.1*
-%{_mandir}/man7/pam_winbind.7*
+%{_mandir}/man8/pam_winbind.8*
 %{_mandir}/man8/winbindd*.8*
 
 %files -n nss_wins

@@ -1,19 +1,3 @@
-# TODO:
-# - drop tdb.spec and build tdb,tdb-devel,tdb-static package from samba
-# - look into other distro specs for valid %descriptions for samba 3
-# - unpackaged man pages for modules that are not built by default,
-#   maybe we should build them?
-#   /usr/share/man/man8/vfs_cacheprime.8*
-#   /usr/share/man/man8/vfs_catia.8*
-#   /usr/share/man/man8/vfs_commit.8*
-#   /usr/share/man/man8/vfs_gpfs.8*
-#   /usr/share/man/man8/vfs_notify_fam.8*
-#   /usr/share/man/man8/vfs_prealloc.8*
-# - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
-# - package libs:
-#	libnetapi
-#	libsmbsharemodes
-# - MERGE vfs modules into main package, what was the point of splitting these?
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support

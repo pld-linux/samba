@@ -62,7 +62,7 @@ BuildRequires:	automake
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
 BuildRequires:	iconv
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
@@ -298,7 +298,7 @@ Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
-%{?with_kerberos5:Requires:	krb5-libs}
+%{?with_kerberos5:Requires:	heimdal-libs}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 

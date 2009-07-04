@@ -1010,11 +1010,11 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
 
-%{__make} -C source install \
+%{__make} -C source3 install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
-install source/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
+install source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
@@ -1025,15 +1025,15 @@ install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 install %{SOURCE9} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
-install source/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
+install source3/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
 ln -s libnss_winbind.so.2		$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
-install source/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
+install source3/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
 ln -s libnss_wins.so.2			$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
-install source/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
-install source/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
-install source/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
+install source3/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
+install source3/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
+install source3/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
-install source/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
+install source3/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 
 # smbwrapper
 install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
@@ -1042,9 +1042,9 @@ install examples/libsmbclient/smbwrapper/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}
-cp -a source/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a source/lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
-cp -a source/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
+cp -a source3/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
+cp -a source3/lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+cp -a source3/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 
 %if %{with vscan}
 # vscan modules

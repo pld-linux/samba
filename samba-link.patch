@@ -5,7 +5,7 @@
  	@echo Linking $@
  	@$(CC) -o $@ $(CIFS_UPCALL_OBJ) $(DYNEXP) $(LDFLAGS) \
 -		-lkeyutils $(LIBS) $(LIBSMBCLIENT_OBJ1) $(KRB5LIBS) \
-+		-lkeyutils $(LIBSMBCLIENT_OBJ1) $(LIBS) $(KRB5LIBS) \
++		-lkeyutils $(LIBSMBCLIENT_OBJ1) $(LIBS) $(KRB5LIBS) $(ZLIB_LIBS) \
  		$(LDAP_LIBS) $(LIBTALLOC_LIBS) $(LIBWBCLIENT_LIBS) \
  		$(LIBTDB_LIBS) $(NSCD_LIBS)
  

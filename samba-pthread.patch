@@ -1,6 +1,6 @@
-diff -uNr samba-3.0.20a.orig/source/configure.in samba-3.0.20a/source/configure.in
---- samba-3.0.20a.orig/source/configure.in	2005-10-01 15:00:01.000000000 +0200
-+++ samba-3.0.20a/source/configure.in	2005-10-01 15:00:59.000000000 +0200
+diff -uNr samba-3.0.20a.orig/source3/configure.in samba-3.0.20a/source3/configure.in
+--- samba-3.0.20a.orig/source3/configure.in	2005-10-01 15:00:01.000000000 +0200
++++ samba-3.0.20a/source3/configure.in	2005-10-01 15:00:59.000000000 +0200
 @@ -549,19 +549,19 @@
  				case "$ac_cv_gcc_compiler_version_number" in
  					*"gcc version 2.6"*|*"gcc version 2.7"*)

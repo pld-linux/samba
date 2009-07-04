@@ -30,13 +30,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.3.6
-Release:	2
+Version:	3.4.0
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	858cb6c640358be0e81297c5de615a3c
+# Source0-md5:	a7137736379daf9855814ae14c2c5e22
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -66,6 +66,7 @@ BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
+BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -949,14 +950,15 @@ mv README{,.vfs}
 cd ../..
 
 %build
-cd source
+cd source3
 %{__libtoolize}
-%{__autoconf} -Im4 -Ilib/replace
+%{__autoconf} -Im4 -I../m4 -I../lib/replace -Ilib/replace -I../source4
 %configure \
 	--with-modulesdir=%{_sambalibdir} \
 	--with-rootsbindir=/sbin \
 	--with-pammodulesdir=/%{_lib}/security \
 	--with-acl-support \
+	--with-aio-support \
 	--with-automount \
 	--with-libsmbclient \
 	--with-lockdir=/var/lib/samba \
@@ -970,6 +972,11 @@ cd source
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
+	--with-vfs-afsacl \
+	--without-included-popt \
+	--enable-merged-build \
+	--enable-automatic-dependencies \
+	--enable-dso \
 	--enable-avahi \
 	--disable-dnssd \
 	--with%{!?with_ldap:out}-ldap \

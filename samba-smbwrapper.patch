@@ -5,8 +5,8 @@ diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/Makefile samba-3.0.
  
  CFLAGS = -I$(SAMBA_INCL) $(EXTLIB_INCL)
  
--LDFLAGS = -L/usr/local/samba/lib -L../../../source/bin
-+LDFLAGS = -L../../../source/bin
+-LDFLAGS = -L/usr/local/samba/lib -L../../../source3/bin
++LDFLAGS = -L../../../source3/bin
  
  SMBINCLUDE = -I../../../source/include
  CFLAGS= -fpic -g -O0 $(DEFS) $(SMBINCLUDE)

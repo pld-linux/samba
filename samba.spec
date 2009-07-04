@@ -972,7 +972,6 @@ cd source3
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
-	--with-vfs-afsacl \
 	--without-included-popt \
 	--enable-merged-build \
 	--enable-automatic-dependencies \

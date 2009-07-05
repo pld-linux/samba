@@ -999,7 +999,7 @@ cd VFS
 cd samba-vscan-%{vscan_version}
 cp -f /usr/share/automake/config.sub .
 %configure
-ln -s ../../../source/lib .
+ln -s ../../../source3/lib .
 %{__make} all
 %endif
 
@@ -1025,9 +1025,9 @@ install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 install %{SOURCE9} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
-install source3/nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
+install nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
 ln -s libnss_winbind.so.2		$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
-install source3/nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
+install nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
 ln -s libnss_wins.so.2			$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
 install source3/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
 install source3/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
@@ -1043,8 +1043,8 @@ install examples/libsmbclient/smbwrapper/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}
 cp -a source3/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a source3/lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
-cp -a source3/nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
+cp -a lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+cp -a nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 
 %if %{with vscan}
 # vscan modules
@@ -1065,12 +1065,13 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 # we have this utility in tdb package
-rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump},%{_mandir}/man8/tdb{backup,dump}.8*}
+rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump}*,%{_mandir}/man8/tdb{backup,dump}.8*}
 
 # unneeded
 rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
 
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
+mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool4_samba
 
 %if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
@@ -1151,6 +1152,7 @@ fi
 %dir %{_vfsdir}
 %attr(755,root,root) %{_vfsdir}/acl_tdb.so
 %attr(755,root,root) %{_vfsdir}/acl_xattr.so
+%attr(755,root,root) %{_vfsdir}/aio_fork.so
 %attr(755,root,root) %{_vfsdir}/dirsort.so
 %attr(755,root,root) %{_vfsdir}/fileid.so
 %attr(755,root,root) %{_vfsdir}/preopen.so
@@ -1225,11 +1227,14 @@ fi
 %attr(755,root,root) /sbin/umount.cifs
 %attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/net4
 %attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
+%attr(755,root,root) %{_bindir}/smbclient4
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
@@ -1258,6 +1263,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
 %attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/ntlm_auth
+%attr(755,root,root) %{_bindir}/ntlm_auth4
 %attr(755,root,root) %{_bindir}/pdbedit
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/smbcquotas
@@ -1310,12 +1316,13 @@ fi
 %lang(ja) %{_libdir}/%{name}/ja.msg
 %lang(nl) %{_libdir}/%{name}/nl.msg
 %lang(pl) %{_libdir}/%{name}/pl.msg
+%lang(ru) %{_libdir}/%{name}/ru.msg
 %lang(tr) %{_libdir}/%{name}/tr.msg
 %{_mandir}/man8/swat.8*
 
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)
-%doc source/pam_smbpass/{CHAN*,README,TODO} source/pam_smbpass/samples
+%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
 %attr(755,root,root) /%{_lib}/security/pam_smbpass.so
 
 %files -n libsmbclient

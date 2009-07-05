@@ -73,6 +73,7 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
+BuildRequires:	python-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
@@ -933,6 +934,15 @@ Samba PDF documentation.
 %description doc-pdf -l pl.UTF-8
 Documentacja samby w formacie PDF.
 
+%package -n python-samba
+Summary:        Samba Module for Python
+Group:          Development/Languages/Python
+%pyrequires_eq  python
+Requires:       %{name}-common = %{epoch}:%{version}-%{release}
+
+%description -n python-samba
+Samba Module for Python.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -1070,14 +1080,21 @@ rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump}*,%{_mandir}/man8/tdb{backup,du
 # unneeded
 rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
 
+# tests
+rm -r $RPM_BUILD_ROOT%{_bindir}/{gentest4,locktest4,masktest4,nsstest4}
+
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
-mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool4_samba
+mv $RPM_BUILD_ROOT%{_bindir}/tdbtool4 $RPM_BUILD_ROOT%{_bindir}/tdbtool4_samba
 
 %if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %endif
 
 %find_lang pam_winbind
+
+%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
+%py_comp $RPM_BUILD_ROOT%{py_sitedir}
+find $RPM_BUILD_ROOT%{py_sitedir} -name "*.py" -o -name "*.a" -o -name "*.la" | xargs rm -f
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1142,7 +1159,12 @@ fi
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
+%attr(755,root,root) %{_bindir}/ad2oLschema4
+%attr(755,root,root) %{_bindir}/oLschema2ldif4
 %attr(755,root,root) %{_bindir}/ldb*
+%attr(755,root,root) %{_bindir}/reg*
+# "This utility disabled until rewritten"
+#%attr(755,root,root) %{_bindir}/setnttoken4
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
@@ -1209,6 +1231,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_bindir}/wbinfo
+%attr(755,root,root) %{_bindir}/wbinfo4
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
@@ -1225,6 +1248,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) /sbin/umount.cifs
+%attr(755,root,root) %{_bindir}/cifsdd4
 %attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/net4
@@ -1262,12 +1286,15 @@ fi
 %attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
 %attr(755,root,root) %{_bindir}/eventlogadm
+%attr(755,root,root) %{_bindir}/getntacl4
+%attr(755,root,root) %{_bindir}/ndrdump4
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/ntlm_auth4
 %attr(755,root,root) %{_bindir}/pdbedit
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/testparm
+%attr(755,root,root) %{_bindir}/testparm4
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/*.dat
@@ -1512,3 +1539,19 @@ fi
 %files doc-pdf
 %defattr(644,root,root,755)
 %doc docs/*.pdf
+
+%files -n python-samba
+%defattr(644,root,root,755)
+%attr(755,root,root) %{py_sitedir}/*.so
+%dir %{py_sitedir}/samba
+%attr(755,root,root) %{py_sitedir}/samba/*.so
+%{py_sitedir}/samba/*.py[co]
+%dir %{py_sitedir}/samba/dcerpc
+%{py_sitedir}/samba/dcerpc/*.py[co]
+%attr(755,root,root) %{py_sitedir}/samba/dcerpc/*.so
+%dir %{py_sitedir}/samba/tests
+%{py_sitedir}/samba/tests/*.py[co]
+%dir %{py_sitedir}/samba/tests/dcerpc
+%{py_sitedir}/samba/tests/dcerpc/*.py[co]
+%dir %{py_sitedir}/samba/torture
+%{py_sitedir}/samba/torture/*.py[co]

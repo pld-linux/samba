@@ -991,7 +991,7 @@ cd source3
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_kerberos5:out}-krb5
 
-%{__make} everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest
+%{__make} -j1 everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest
 
 cd ../examples
 %{__make} -C libsmbclient/smbwrapper \

@@ -1156,6 +1156,14 @@ if [ "$1" != "0" ]; then
 	/sbin/chkconfig --add smb
 fi
 
+%triggerpostun -- samba < 3.4.0
+%banner %{name} << EOF
+!!! WARNING !!! The default passdb backend has been changed to 'tdbsam'!
+That breaks existing setups using the 'smbpasswd' backend without explicit declaration!
+Please use 'passdb backend = smbpasswd' if you would like to stick to the 'smbpasswd'
+backend or convert your smbpasswd entries using e.g. 'pdbedit -i smbpasswd -e tdbsam'.
+EOF
+
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/nmbd

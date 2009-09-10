@@ -30,13 +30,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.4.1
-Release:	1
+Version:	3.4.0
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	f857c534148e28b686996d232da76cec
+# Source0-md5:	a7137736379daf9855814ae14c2c5e22
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -53,7 +53,7 @@ Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
 Patch5:		%{name}-link.patch
-#Patch6:		%{name}-pr6551.patch
+Patch6:		%{name}-pr6551.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -952,7 +952,7 @@ Samba Module for Python.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-#%patch6 -p1
+%patch6 -p1
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 

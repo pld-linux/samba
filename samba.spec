@@ -352,6 +352,7 @@ Summary(ru.UTF-8):	Файлы, используемые как сервером,
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
 Requires:	tdb >= 1.1.3
+Requires:	libtalloc >= %{version}-%{release}
 
 %description common
 Samba-common provides files necessary for both the server and client

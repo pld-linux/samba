@@ -64,6 +64,7 @@ BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
 BuildRequires:	iconv
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
+BuildRequires:	keyutils-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d

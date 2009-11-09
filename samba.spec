@@ -30,13 +30,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.4.0
-Release:	3
+Version:	3.4.3
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	a7137736379daf9855814ae14c2c5e22
+# Source0-md5:	322379680c12057f57685652a35a6b05
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -47,13 +47,14 @@ Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.ta
 # Source7-md5:	8f1dd119172e04e6d7c2d05526a4cf8b
 Source8:	winbind.init
 Source9:	winbind.sysconfig
+Source10:	%{name}-rfc3454.txt
 Patch0:		%{name}-smbwrapper.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
-Patch5:		%{name}-link.patch
-Patch6:		%{name}-pr6551.patch
+Patch5:		%{name}-python.patch
+Patch6:		%{name}-client-upcall-buildfix.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -90,6 +91,7 @@ Requires:	setup >= 2.4.6-7
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
+Obsoletes:	python-samba
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_vfsdir		%{_libdir}/%{name}/vfs
@@ -963,6 +965,8 @@ tar xzf %{SOURCE7}
 mv README{,.vfs}
 cd ../..
 
+install %{SOURCE10} source4/heimdal/lib/wind/rfc3454.txt
+
 %build
 cd source3
 %{__libtoolize}
@@ -1552,6 +1556,7 @@ EOF
 %defattr(644,root,root,755)
 %doc docs/*.pdf
 
+%if 0
 %files -n python-samba
 %defattr(644,root,root,755)
 %attr(755,root,root) %{py_sitedir}/*.so
@@ -1567,3 +1572,4 @@ EOF
 %{py_sitedir}/samba/tests/dcerpc/*.py[co]
 %dir %{py_sitedir}/samba/torture
 %{py_sitedir}/samba/torture/*.py[co]
+%endif

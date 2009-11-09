@@ -1,3 +1,6 @@
+# 
+# TODO:
+# - review python-samba
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support

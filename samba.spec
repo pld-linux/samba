@@ -1,4 +1,4 @@
-# 
+#
 # TODO:
 # - review python-samba
 # - drop tdb.spec and build tdb,tdb-devel,tdb-static package from samba
@@ -82,8 +82,9 @@ BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
-BuildRequires:	iconv
+BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
+BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
@@ -93,6 +94,7 @@ BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel >= 0.99.8.1
+BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	python-devel
@@ -100,6 +102,7 @@ BuildRequires:	python-modules
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
+BuildRequires:	tdb-devel
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -109,9 +112,9 @@ Requires:	rc-scripts
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
+Obsoletes:	python-samba
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
-Obsoletes:	python-samba
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_vfsdir		%{_libdir}/%{name}/vfs
@@ -323,8 +326,8 @@ Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
 Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs}
+Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 
@@ -374,8 +377,8 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-Requires:	tdb >= 1.1.3
 Requires:	libtalloc >= %{version}-%{release}
+Requires:	tdb >= 1.1.3
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -636,7 +639,7 @@ klientom pomimo, że pliki nie zostaną nigdy nadpisane przy logowaniu
 lub wylogowywaniu klienta.
 
 %package vfs-notify_fam
-Summary:	VFS module to implement  file  change  notifications
+Summary:	VFS module to implement file change notifications
 Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
@@ -960,10 +963,10 @@ Samba PDF documentation.
 Documentacja samby w formacie PDF.
 
 %package -n python-samba
-Summary:        Samba Module for Python
-Group:          Development/Languages/Python
-%pyrequires_eq  python
-Requires:       %{name}-common = %{epoch}:%{version}-%{release}
+Summary:	Samba Module for Python
+Group:		Development/Languages/Python
+%pyrequires_eq 	python
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description -n python-samba
 Samba Module for Python.

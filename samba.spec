@@ -24,6 +24,8 @@
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	avahi
+%bcond_without	merged_build	# without samba3+samba4 merge
+								# http://wiki.samba.org/index.php/Franky
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 %bcond_with	vscan
 
@@ -1014,10 +1016,10 @@ cd source3
 	--with-utmp \
 	--with-fhs \
 	--without-included-popt \
-	--enable-merged-build \
+	--%{?with_merged_build:en}%{!?with_merged_build:dis}able-merged-build \
 	--enable-automatic-dependencies \
 	--enable-dso \
-	--enable-avahi \
+	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \
 	--disable-dnssd \
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_kerberos5:out}-krb5
@@ -1112,10 +1114,14 @@ rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump}*,%{_mandir}/man8/tdb{backup,du
 rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
 
 # tests
+%if %{with merged_build}
 rm -r $RPM_BUILD_ROOT%{_bindir}/{gentest4,locktest4,masktest4,nsstest4}
+%endif
 
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
+%if %{with merged_build}
 mv $RPM_BUILD_ROOT%{_bindir}/tdbtool4 $RPM_BUILD_ROOT%{_bindir}/tdbtool4_samba
+%endif
 
 %if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
@@ -1198,12 +1204,14 @@ EOF
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
+%if %{with merged_build}
 %attr(755,root,root) %{_bindir}/ad2oLschema4
 %attr(755,root,root) %{_bindir}/oLschema2ldif4
-%attr(755,root,root) %{_bindir}/ldb*
 %attr(755,root,root) %{_bindir}/reg*
 # "This utility disabled until rewritten"
 #%attr(755,root,root) %{_bindir}/setnttoken4
+%endif
+%attr(755,root,root) %{_bindir}/ldb*
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
@@ -1270,7 +1278,9 @@ EOF
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_bindir}/wbinfo
+%if %{with merged_build}
 %attr(755,root,root) %{_bindir}/wbinfo4
+%endif
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
@@ -1285,23 +1295,26 @@ EOF
 
 %files client
 %defattr(644,root,root,755)
+%if %{with merged_build}
+%attr(755,root,root) %{_bindir}/cifsdd4
+%attr(755,root,root) %{_bindir}/net4
+%attr(755,root,root) %{_bindir}/nmblookup4
+%attr(755,root,root) %{_bindir}/smbclient4
+%attr(755,root,root) %{_sbindir}/cifs.upcall
+%{_mandir}/man8/cifs.upcall.8*
+%endif
 %attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) /sbin/umount.cifs
-%attr(755,root,root) %{_bindir}/cifsdd4
 %attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/net
-%attr(755,root,root) %{_bindir}/net4
 %attr(755,root,root) %{_bindir}/nmblookup
-%attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
-%attr(755,root,root) %{_bindir}/smbclient4
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
-%attr(755,root,root) %{_sbindir}/cifs.upcall
 %attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup.1*
@@ -1312,12 +1325,17 @@ EOF
 %{_mandir}/man1/smbsh.1*
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
-%{_mandir}/man8/cifs.upcall.8*
 %{_mandir}/man8/net.8*
 %{_mandir}/man8/*mount.cifs.8*
 
 %files common
 %defattr(644,root,root,755)
+%if %{with merged_build}
+%attr(755,root,root) %{_bindir}/getntacl4
+%attr(755,root,root) %{_bindir}/ndrdump4
+%attr(755,root,root) %{_bindir}/ntlm_auth4
+%attr(755,root,root) %{_bindir}/testparm4
+%endif
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/registry/*
 %doc docs/{history,THANKS}
@@ -1325,15 +1343,11 @@ EOF
 %attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
 %attr(755,root,root) %{_bindir}/eventlogadm
-%attr(755,root,root) %{_bindir}/getntacl4
-%attr(755,root,root) %{_bindir}/ndrdump4
 %attr(755,root,root) %{_bindir}/ntlm_auth
-%attr(755,root,root) %{_bindir}/ntlm_auth4
 %attr(755,root,root) %{_bindir}/pdbedit
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/testparm
-%attr(755,root,root) %{_bindir}/testparm4
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/*.dat

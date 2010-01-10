@@ -32,14 +32,23 @@ TMPDIR="/tmp"; export TMPDIR
 # Check that smb.conf exists.
 [ -f /etc/samba/smb.conf ] || exit 0
 
+# return true if 'idmap uid' or 'idmap gid' is set in samba config
+configtest() {
+	egrep -qi '^idmap [ug]id' /etc/samba/smb.conf
+}
+
 start() {
 	if [ ! -f /var/lock/subsys/winbind ]; then
-		msg_starting winbindd
-		daemon /usr/sbin/winbindd
-		RETVAL=$?
-		if [ $RETVAL -eq 0 ]; then
-			touch /var/lock/subsys/winbind
-			RETVAL=1
+		if configtest; then
+			msg_starting winbindd
+			daemon /usr/sbin/winbindd
+			RETVAL=$?
+			if [ $RETVAL -eq 0 ]; then
+				touch /var/lock/subsys/winbind
+				RETVAL=1
+			fi
+		else
+			nls "Winbind is not configured in /etc/samba/smb.conf, not starting"
 		fi
 	else
 		msg_already_running winbindd

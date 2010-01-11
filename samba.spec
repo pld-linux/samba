@@ -52,7 +52,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.4.4
-Release:	1
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -75,7 +75,6 @@ Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
 Patch5:		%{name}-python.patch
-Patch6:		%{name}-spoolss-mismerge.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -981,7 +980,6 @@ Samba Module for Python.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 

@@ -19,7 +19,7 @@
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
-%if !%{with kerberos5} || !%{with ldap}
+%if %{without kerberos5} || %{without ldap}
 %undefine	with_ads
 %endif
 %define		vscan_version 0.3.6c-beta5
@@ -41,7 +41,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.37
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -73,8 +73,8 @@ BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
-BuildRequires:	iconv
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
+BuildRequires:	iconv
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d

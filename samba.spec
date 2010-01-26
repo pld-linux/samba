@@ -1,7 +1,6 @@
 #
 # TODO:
 # - review python-samba
-# - drop tdb.spec and build tdb,tdb-devel,tdb-static package from samba
 # - look into other distro specs for valid %descriptions for samba 3
 # - unpackaged man pages for modules that are not built by default,
 #  maybe we should build them?
@@ -11,7 +10,6 @@
 #  /usr/share/man/man8/vfs_gpfs.8*
 #  /usr/share/man/man8/vfs_notify_fam.8*
 #  /usr/share/man/man8/vfs_prealloc.8*
-# - libmsrpc.so is broken (references smbc_attr_server() which is no longer exported from libsmbclient)
 # - package libs:
 #      libnetapi
 #      libsmbsharemodes
@@ -51,13 +49,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.4.4
+Version:	3.4.5
 Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	491a1bc9c94ad2f1e6d1c29da271b242
+# Source0-md5:	8e8a484782f2b7716b6c6bd9a7d2bf71
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -75,6 +73,7 @@ Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
 Patch5:		%{name}-python.patch
+Patch6:		%{name}-disable-unused.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -83,6 +82,7 @@ BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
+BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	iconv
@@ -103,7 +103,6 @@ BuildRequires:	python-modules
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
-BuildRequires:	tdb-devel
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -378,8 +377,8 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-Requires:	libtalloc >= %{version}-%{release}
-Requires:	tdb >= 1.1.3
+Requires:	libtalloc >= %{epoch}:%{version}-%{release}
+Requires:	tdb >= %{epoch}:%{version}-%{release}
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -506,6 +505,37 @@ Requires:	libtalloc = %{epoch}:%{version}-%{release}
 %description -n libtalloc-devel
 The libtalloc-devel package contains the header files and libraries needed to
 develop programs that link against the talloc library in the Samba suite.
+
+%package -n tdb
+Summary:	TDB - Trivial Database
+Summary(pl.UTF-8):	TDB - prosta baza danych
+Group:		Libraries
+Obsoletes:	tdb-extras
+
+%description -n tdb
+TDB is a Trivial Database. In concept, it is very much like GDBM, and
+BSD's DB except that it allows multiple simultaneous writers and uses
+locking internally to keep writers from trampling on each other. TDB
+is also extremely small.
+
+%description -n tdb -l pl.UTF-8
+TDB to Trivial Database, czyli prosta baza danych. W założeniach jest
+bardzo podobna do GDBM lub DB z BSD z wyjątkiem tego, że pozwala na
+zapis wielu procesom jednocześnie i używa wewnętrznie blokowania, aby
+nie pozwolić piszącym na zadeptanie się nawzajem. TDB jest ponadto
+ekstremalnie mała.
+
+%package  -n tdb-devel
+Summary:	Header files for TDB library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki TDB
+Group:		Development/Libraries
+Requires:	tdb = %{epoch}:%{version}-%{release}
+
+%description -n tdb-devel
+Header files for TDB library.
+
+%description -n tdb-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki TDB.
 
 %package devel
 Summary:	Header files for Samba
@@ -980,6 +1010,7 @@ Samba Module for Python.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
@@ -1105,20 +1136,12 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 > $RPM_BUILD_ROOT%{_sysconfdir}/samba/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
-# we have this utility in tdb package
-rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump}*,%{_mandir}/man8/tdb{backup,dump}.8*}
-
 # unneeded
 rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
 
 # tests
 %if %{with merged_build}
 rm -r $RPM_BUILD_ROOT%{_bindir}/{gentest4,locktest4,masktest4,nsstest4}
-%endif
-
-mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
-%if %{with merged_build}
-mv $RPM_BUILD_ROOT%{_bindir}/tdbtool4 $RPM_BUILD_ROOT%{_bindir}/tdbtool4_samba
 %endif
 
 %if %{with ldap}
@@ -1213,7 +1236,6 @@ EOF
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
-%attr(755,root,root) %{_bindir}/tdbtool_samba
 
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
@@ -1371,7 +1393,6 @@ EOF
 %{_mandir}/man8/idmap_rid.8*
 %{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/idmap_tdb2.8*
-%{_mandir}/man8/tdbtool.8*
 
 %files swat
 %defattr(644,root,root,755)
@@ -1424,6 +1445,26 @@ EOF
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtalloc.so
 %{_includedir}/talloc.h
+
+%files -n tdb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/tdbbackup
+%attr(755,root,root) %{_bindir}/tdbdump
+%attr(755,root,root) %{_bindir}/tdbtool
+%if %{with merged_build}
+%attr(755,root,root) %{_bindir}/tdbbackup4
+%attr(755,root,root) %{_bindir}/tdbdump4
+%attr(755,root,root) %{_bindir}/tdbtool4
+%endif
+%attr(755,root,root) %{_libdir}/libtdb.so.*
+%{_mandir}/man8/tdbbackup.8*
+%{_mandir}/man8/tdbdump.8*
+%{_mandir}/man8/tdbtool.8*
+
+%files -n tdb-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libtdb.so
+%{_includedir}/tdb.h
 
 %files devel
 %defattr(644,root,root,755)

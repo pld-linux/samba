@@ -61,6 +61,7 @@ BuildRequires:	automake
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
+BuildRequires:	gdbm-devel
 BuildRequires:	iconv
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	libmagic-devel
@@ -348,6 +349,7 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
+Requires:	libtalloc >= %{epoch}:%{version}-%{release}
 Requires:	tdb >= %{epoch}:%{version}-%{release}
 
 %description common
@@ -1165,7 +1167,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbcontrol
-%attr(755,root,root) %{_bindir}/tdbtool_samba
 
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
@@ -1307,7 +1308,6 @@ fi
 %{_mandir}/man8/idmap_rid.8*
 %{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/idmap_tdb2.8*
-%{_mandir}/man8/tdbtool.8*
 
 %files swat
 %defattr(644,root,root,755)

@@ -14,6 +14,9 @@
 #      libnetapi
 #      libsmbsharemodes
 # - MERGE vfs modules into main package, what was the point of splitting these?
+#
+# - printing is screwed in this branch:
+#	http://lists.samba.org/archive/samba/2010-January/153456.html
 
 #
 # Conditional build:

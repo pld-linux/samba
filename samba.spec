@@ -348,7 +348,7 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-Requires:	tdb >= 1.1.3
+Requires:	tdb >= %{epoch}:%{version}-%{release}
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -475,6 +475,37 @@ Requires:	libtalloc = %{epoch}:%{version}-%{release}
 %description -n libtalloc-devel
 The libtalloc-devel package contains the header files and libraries needed to
 develop programs that link against the talloc library in the Samba suite.
+
+%package -n tdb
+Summary:	TDB - Trivial Database
+Summary(pl.UTF-8):	TDB - prosta baza danych
+Group:		Libraries
+Obsoletes:	tdb-extras
+
+%description -n tdb
+TDB is a Trivial Database. In concept, it is very much like GDBM, and
+BSD's DB except that it allows multiple simultaneous writers and uses
+locking internally to keep writers from trampling on each other. TDB
+is also extremely small.
+
+%description -n tdb -l pl.UTF-8
+TDB to Trivial Database, czyli prosta baza danych. W założeniach jest
+bardzo podobna do GDBM lub DB z BSD z wyjątkiem tego, że pozwala na
+zapis wielu procesom jednocześnie i używa wewnętrznie blokowania, aby
+nie pozwolić piszącym na zadeptanie się nawzajem. TDB jest ponadto
+ekstremalnie mała.
+
+%package  -n tdb-devel
+Summary:	Header files for TDB library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki TDB
+Group:		Development/Libraries
+Requires:	tdb = %{epoch}:%{version}-%{release}
+
+%description -n tdb-devel
+Header files for TDB library.
+
+%description -n tdb-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki TDB.
 
 %package devel
 Summary:	Header files for Samba
@@ -1058,13 +1089,8 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 > $RPM_BUILD_ROOT%{_sysconfdir}/samba/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
-# we have this utility in tdb package
-rm -f $RPM_BUILD_ROOT{%{_bindir}/tdb{backup,dump},%{_mandir}/man8/tdb{backup,dump}.8*}
-
 # unneeded
 rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
-
-mv $RPM_BUILD_ROOT%{_bindir}/tdbtool $RPM_BUILD_ROOT%{_bindir}/tdbtool_samba
 
 %if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
@@ -1333,6 +1359,21 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtalloc.so
 %{_includedir}/talloc.h
+
+%files -n tdb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/tdbbackup
+%attr(755,root,root) %{_bindir}/tdbdump
+%attr(755,root,root) %{_bindir}/tdbtool
+%attr(755,root,root) %{_libdir}/libtdb.so.*
+%{_mandir}/man8/tdbbackup.8*
+%{_mandir}/man8/tdbdump.8*
+%{_mandir}/man8/tdbtool.8*
+
+%files -n tdb-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libtdb.so
+%{_includedir}/tdb.h
 
 %files devel
 %defattr(644,root,root,755)

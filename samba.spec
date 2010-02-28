@@ -14,9 +14,8 @@
 #      libnetapi
 #      libsmbsharemodes
 # - MERGE vfs modules into main package, what was the point of splitting these?
+# - remove vscan - project is dead - samba 3.5 will have vfs_scannedonly
 #
-# - printing is screwed in this branch:
-#	http://lists.samba.org/archive/samba/2010-January/153456.html
 
 #
 # Conditional build:
@@ -52,13 +51,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.4.5
+Version:	3.4.6
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	8e8a484782f2b7716b6c6bd9a7d2bf71
+# Source0-md5:	1090ea7e85b0b915c7e3c427d6457e36
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd

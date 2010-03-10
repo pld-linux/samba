@@ -51,13 +51,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.4.6
+Version:	3.5.0
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	1090ea7e85b0b915c7e3c427d6457e36
+# Source0-md5:	05e389aff7d3de16561006b35332a881
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -74,8 +74,6 @@ Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
-Patch5:		%{name}-python.patch
-Patch6:		%{name}-disable-unused.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -960,6 +958,26 @@ Moduł vfs do samby implementujący skaning antywirusowy w czasie
 dostępu do plików korzystając z oprogramowania antywirusowego Trend
 (które musi być zainstalowane, aby wykorzystać ten moduł).
 
+%package vfs-catia
+Summary:	VFS module to fix Catia CAD filenames
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-catia
+The Catia CAD package commonly creates filenames that use characters that are
+illegal in CIFS filenames. The vfs_catia VFS module implements a fixed
+character mapping so that these files can be shared with CIFS clients.
+
+%package vfs-scannedonly
+Summary:	Anti-virus solution as VFS module
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-scannedonly
+The vfs_scannedonly VFS module ensures that only files that have been scanned
+for viruses are visible and accessible to the end user. If non-scanned files
+are found an anti-virus scanning daemon is notified.
+
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
 Summary(pl.UTF-8):	Schemat LDAP dla samby
@@ -1011,8 +1029,6 @@ Samba Module for Python.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
@@ -1034,6 +1050,9 @@ cd source3
 	--with-acl-support \
 	--with-aio-support \
 	--with-automount \
+	--with-cifsmount \
+	--with-cifsumount \
+	--with-cifsupcall \
 	--with-libsmbclient \
 	--with-lockdir=/var/lib/samba \
 	--with-pam \
@@ -1139,7 +1158,7 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 # unneeded
-rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
+#rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
 
 # tests
 %if %{with merged_build}
@@ -1228,7 +1247,7 @@ EOF
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %if %{with merged_build}
-%attr(755,root,root) %{_bindir}/ad2oLschema4
+#%attr(755,root,root) %{_bindir}/ad2oLschema4
 %attr(755,root,root) %{_bindir}/oLschema2ldif4
 %attr(755,root,root) %{_bindir}/reg*
 # "This utility disabled until rewritten"
@@ -1300,9 +1319,9 @@ EOF
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_bindir}/wbinfo
-%if %{with merged_build}
-%attr(755,root,root) %{_bindir}/wbinfo4
-%endif
+#%if %{with merged_build}
+#%attr(755,root,root) %{_bindir}/wbinfo4
+#%endif
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
@@ -1322,6 +1341,10 @@ EOF
 %attr(755,root,root) %{_bindir}/net4
 %attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/smbclient4
+%attr(755,root,root) %{_bindir}/mount.cifs4
+%attr(755,root,root) %{_bindir}/umount.cifs4
+%attr(755,root,root) %{_bindir}/setnttoken4
+%attr(755,root,root) %{_bindir}/smbtorture4
 %attr(755,root,root) %{_sbindir}/cifs.upcall
 %{_mandir}/man8/cifs.upcall.8*
 %endif
@@ -1457,6 +1480,7 @@ EOF
 %attr(755,root,root) %{_bindir}/tdbbackup4
 %attr(755,root,root) %{_bindir}/tdbdump4
 %attr(755,root,root) %{_bindir}/tdbtool4
+%attr(755,root,root) %{_bindir}/tdbtorture4
 %endif
 %attr(755,root,root) %{_libdir}/libtdb.so.*
 %{_mandir}/man8/tdbbackup.8*
@@ -1619,6 +1643,16 @@ EOF
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-trend.conf
 %attr(755,root,root) %{_vfsdir}/vscan-trend.so
 %endif
+
+%files vfs-catia
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/catia.so
+%{_mandir}/man8/vfs_catia.8*
+
+%files vfs-scannedonly
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/scannedonly.so
+%{_mandir}/man8/vfs_scannedonly.8*
 
 %if %{with ldap}
 %files -n openldap-schema-samba

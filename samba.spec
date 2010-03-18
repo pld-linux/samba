@@ -30,9 +30,10 @@
 %bcond_with	vscan
 
 # ADS requires kerberos5 and LDAP
-%if !%{with kerberos5} || !%{with ldap}
+%if %{without kerberos5} || %{without ldap}
 %undefine	with_ads
 %endif
+
 %define		vscan_version 0.3.6c-beta5
 Summary:	SMB server
 Summary(cs.UTF-8):	Server SMB
@@ -52,7 +53,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.5.1
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -79,6 +80,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_avahi:BuildRequires:	avahi-devel}
+BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
 BuildRequires:	fam-devel
@@ -503,8 +505,9 @@ Group:		Development/Libraries
 Requires:	libtalloc = %{epoch}:%{version}-%{release}
 
 %description -n libtalloc-devel
-The libtalloc-devel package contains the header files and libraries needed to
-develop programs that link against the talloc library in the Samba suite.
+The libtalloc-devel package contains the header files and libraries
+needed to develop programs that link against the talloc library in the
+Samba suite.
 
 %package -n tdb
 Summary:	TDB - Trivial Database
@@ -964,9 +967,10 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-catia
-The Catia CAD package commonly creates filenames that use characters that are
-illegal in CIFS filenames. The vfs_catia VFS module implements a fixed
-character mapping so that these files can be shared with CIFS clients.
+The Catia CAD package commonly creates filenames that use characters
+that are illegal in CIFS filenames. The vfs_catia VFS module
+implements a fixed character mapping so that these files can be shared
+with CIFS clients.
 
 %package vfs-scannedonly
 Summary:	Anti-virus solution as VFS module
@@ -974,9 +978,9 @@ Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-scannedonly
-The vfs_scannedonly VFS module ensures that only files that have been scanned
-for viruses are visible and accessible to the end user. If non-scanned files
-are found an anti-virus scanning daemon is notified.
+The vfs_scannedonly VFS module ensures that only files that have been
+scanned for viruses are visible and accessible to the end user. If
+non-scanned files are found an anti-virus scanning daemon is notified.
 
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema

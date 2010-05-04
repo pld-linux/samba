@@ -53,7 +53,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.5.2
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -75,6 +75,7 @@ Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-pthread.patch
 Patch3:		%{name}-nscd.patch
 Patch4:		%{name}-lprng-no-dot-printers.patch
+Patch5:		%{name}-passdb-smbpasswd.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -1033,6 +1034,9 @@ Samba Module for Python.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%if "%{pld_release}" == "ti"
+%patch5 -p1
+%endif
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
@@ -1237,6 +1241,7 @@ if [ "$1" != "0" ]; then
 	/sbin/chkconfig --add smb
 fi
 
+%if "%{pld_release}" != "ti"
 %triggerpostun -- samba < 3.4.0
 %banner %{name} << EOF
 !!! WARNING !!! The default passdb backend has been changed to 'tdbsam'!
@@ -1244,6 +1249,7 @@ That breaks existing setups using the 'smbpasswd' backend without explicit decla
 Please use 'passdb backend = smbpasswd' if you would like to stick to the 'smbpasswd'
 backend or convert your smbpasswd entries using e.g. 'pdbedit -i smbpasswd -e tdbsam'.
 EOF
+%endif
 
 %files
 %defattr(644,root,root,755)

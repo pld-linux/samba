@@ -1338,6 +1338,7 @@ EOF
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
 %{_mandir}/man1/wbinfo*.1*
+%{_mandir}/man5/pam_winbind.conf.5*
 %{_mandir}/man8/pam_winbind.8*
 %{_mandir}/man8/winbindd*.8*
 

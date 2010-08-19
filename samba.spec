@@ -25,6 +25,7 @@
 %bcond_without	ldap		# without LDAP support
 %bcond_without	avahi
 %bcond_without	merged_build	# without samba3+samba4 merge
+%bcond_without	system_libtalloc
 								# http://wiki.samba.org/index.php/Franky
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 %bcond_with	vscan
@@ -33,6 +34,8 @@
 %if %{without kerberos5} || %{without ldap}
 %undefine	with_ads
 %endif
+
+%define	libtalloc_ver	2.0.1
 
 %define		vscan_version 0.3.6c-beta5
 Summary:	SMB server
@@ -92,6 +95,7 @@ BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
+%{?with_system_talloc:BuildRequires:	libtalloc-devel >= %{libtalloc_ver}}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
@@ -380,7 +384,11 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
+%if %{with system_libtalloc}
 Requires:	libtalloc >= %{epoch}:%{version}-%{release}
+%else
+Requires:	libtalloc >= %{libtalloc_ver}
+%endif
 Requires:	tdb >= %{epoch}:%{version}-%{release}
 
 %description common
@@ -1073,6 +1081,10 @@ cd source3
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
+%if %{with system_libtalloc}
+	--with-libtalloc=no \
+	--enable-external-libtalloc=yes \
+%endif
 	--without-included-popt \
 	--%{?with_merged_build:en}%{!?with_merged_build:dis}able-merged-build \
 	--enable-automatic-dependencies \
@@ -1474,6 +1486,7 @@ EOF
 %{_includedir}/libsmbclient.h
 %{_includedir}/wbclient.h
 
+%if %{without system_libtalloc}
 %files -n libtalloc
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtalloc.so.*
@@ -1482,6 +1495,7 @@ EOF
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtalloc.so
 %{_includedir}/talloc.h
+%endif
 
 %files -n tdb
 %defattr(644,root,root,755)

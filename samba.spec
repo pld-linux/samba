@@ -24,7 +24,7 @@
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	avahi
-%bcond_without	merged_build	# without samba3+samba4 merge
+%bcond_with	merged_build	# without samba3+samba4 merge
 %bcond_without	system_libtalloc
 								# http://wiki.samba.org/index.php/Franky
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)

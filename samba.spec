@@ -39,7 +39,7 @@
 %undefine	with_ads
 %endif
 
-%define	libtalloc_ver	2.0.1
+%define	libtalloc_ver	2:2.0.1
 
 %define		vscan_version 0.3.6c-beta5
 Summary:	SMB server

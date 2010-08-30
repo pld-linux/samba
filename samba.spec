@@ -388,7 +388,7 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-%if %{with system_libtalloc}
+%if %{without system_libtalloc}
 Requires:	libtalloc >= %{epoch}:%{version}-%{release}
 %else
 Requires:	libtalloc >= %{libtalloc_ver}

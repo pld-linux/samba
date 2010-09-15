@@ -59,13 +59,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.5.4
-Release:	3
+Version:	3.5.5
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	22c8c977eaa18be50f3878c6d0e0c2f0
+# Source0-md5:	278728aeeef9db7e27fa6a2ce5b43509
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -99,7 +99,7 @@ BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
-%{?with_system_talloc:BuildRequires:	libtalloc-devel >= %{libtalloc_ver}}
+%{?with_system_libtalloc:BuildRequires:	libtalloc-devel >= %{libtalloc_ver}}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
@@ -1373,8 +1373,6 @@ EOF
 %attr(755,root,root) %{_bindir}/umount.cifs4
 %attr(755,root,root) %{_bindir}/setnttoken4
 %attr(755,root,root) %{_bindir}/smbtorture4
-%attr(755,root,root) %{_sbindir}/cifs.upcall
-%{_mandir}/man8/cifs.upcall.8*
 %endif
 %attr(755,root,root) /sbin/mount.cifs
 %attr(755,root,root) /sbin/umount.cifs
@@ -1388,6 +1386,7 @@ EOF
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
+%attr(755,root,root) %{_sbindir}/cifs.upcall
 %attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup.1*
@@ -1400,6 +1399,7 @@ EOF
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
 %{_mandir}/man8/*mount.cifs.8*
+%{_mandir}/man8/cifs.upcall.8*
 
 %files common
 %defattr(644,root,root,755)

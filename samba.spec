@@ -25,11 +25,7 @@
 %bcond_without	ldap		# without LDAP support
 %bcond_without	avahi
 %bcond_with	merged_build	# without samba3+samba4 merge
-%if "%{pld_release}" == "ti"
-%bcond_with	system_libtalloc
-%else
 %bcond_without	system_libtalloc
-%endif
 								# http://wiki.samba.org/index.php/Franky
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 %bcond_with	vscan
@@ -60,7 +56,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.5.6
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons

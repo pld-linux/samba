@@ -343,11 +343,6 @@ Samba-client provides some SMB clients, which complement the build-in
 SMB filesystem in Linux. These allow accessing of SMB shares and
 printing to SMB printers.
 
-%description client -l pt_BR.UTF-8
-O pacote samba-clientes prove alguns clientes SMB, que complementam o
-sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
-e também, à impressoras SMB.
-
 %description client -l es.UTF-8
 Cliente SMB de Samba.
 

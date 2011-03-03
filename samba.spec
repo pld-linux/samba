@@ -14,7 +14,6 @@
 #      libnetapi
 #      libsmbsharemodes
 # - MERGE vfs modules into main package, what was the point of splitting these?
-# - remove vscan - project is dead - samba 3.5 will have vfs_scannedonly
 #
 
 #
@@ -28,7 +27,6 @@
 %bcond_without	system_libtalloc
 								# http://wiki.samba.org/index.php/Franky
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
-%bcond_with	vscan
 
 # ADS requires kerberos5 and LDAP
 %if %{without kerberos5} || %{without ldap}
@@ -55,24 +53,22 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.5.6
+Version:	3.5.7
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	bf6c09ea497a166df8bd672db1d8da8f
+# Source0-md5:	b04441da711df05a1525bf57b92c051b
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
 Source4:	%{name}.sysconfig
 Source5:	%{name}.logrotate
 Source6:	smb.conf
-Source7:	http://www.openantivirus.org/download/%{name}-vscan-%{vscan_version}.tar.gz
-# Source7-md5:	8f1dd119172e04e6d7c2d05526a4cf8b
-Source8:	winbind.init
-Source9:	winbind.sysconfig
-Source10:	%{name}-rfc3454.txt
+Source7:	winbind.init
+Source8:	winbind.sysconfig
+Source9:	%{name}-rfc3454.txt
 Patch0:		%{name}-smbwrapper.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-pthread.patch
@@ -772,199 +768,6 @@ VFS module to make automatic copy of data in samba share.
 %description vfs-shadow_copy -l pl.UTF-8
 Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
 
-%package vfs-vscan-antivir
-Summary:	On-access virus scanning for samba using AntiVir
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący AntiVir
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-
-%description vfs-vscan-antivir
-A vfs-module for samba to implement on-access scanning using the
-AntiVir antivirus software (which must be installed to use this).
-
-%description vfs-vscan-antivir -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego AntiVir
-(które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-clamav
-Summary:	On-access virus scanning for samba using ClamAV
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący ClamAV
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	clamav
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-
-%description vfs-vscan-clamav
-A vfs-module for samba to implement on-access scanning using the
-ClamAV antivirus software (which must be installed to use this).
-
-%description vfs-vscan-clamav -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego ClamAV
-(które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-fprot
-Summary:	On-access virus scanning for samba using FPROT
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący FPROT
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-fprot
-
-%description vfs-vscan-fprot
-A vfs-module for samba to implement on-access scanning using the FPROT
-antivirus software (which must be installed to use this).
-
-%description vfs-vscan-fprot -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego FPROT
-(które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-fsav
-Summary:	On-access virus scanning for samba using F-Secure AntiVirus
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący F-Secure AntiVirus
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-fsav
-
-%description vfs-vscan-fsav
-A vfs-module for samba to implement on-access scanning using the
-F-Secure AntiVirus antivirus software (which must be installed to use
-this).
-
-%description vfs-vscan-fsav -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego F-Secure
-AntiVirus (które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-kavp
-Summary:	On-access virus scanning for samba using Kaspersky AVP
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Kaspersky AVP
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-kavp
-
-%description vfs-vscan-kavp
-A vfs-module for samba to implement on-access scanning using the
-Kaspersky AVP antivirus software (which must be installed to use
-this).
-
-%description vfs-vscan-kavp -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego
-Kaspersky AVP (które musi być zainstalowane, aby wykorzystać ten
-moduł).
-
-%package vfs-vscan-mcafee
-Summary:	On-access virus scanning for samba using mcafee
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący mcafee
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-#Requires:	mcafee
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-mcafee
-
-%description vfs-vscan-mcafee
-A vfs-module for samba to implement on-access scanning using the
-mcafee antivirus software (which must be installed to use this).
-
-%description vfs-vscan-mcafee -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego mcafee
-(które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-mks
-Summary:	On-access virus scanning for samba using mks
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący mks
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	mksd
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-mks
-
-%description vfs-vscan-mks
-A vfs-module for samba to implement on-access scanning using the mks
-antivirus software (which must be installed to use this).
-
-%description vfs-vscan-mks -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego mks
-(które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-openantivirus
-Summary:	On-access virus scanning for samba using OpenAntivirus
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący OpenAntiVirus
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-openantivirus
-
-%description vfs-vscan-openantivirus
-A vfs-module for samba to implement on-access scanning using the
-OpenAntivirus antivirus software (which must be installed to use
-this).
-
-%description vfs-vscan-openantivirus -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego
-OpenAntiVirus.org (które musi być zainstalowane, aby wykorzystać ten
-moduł).
-
-%package vfs-vscan-sophos
-Summary:	On-access virus scanning for samba using Sophos
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Sophos
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-sophos
-
-%description vfs-vscan-sophos
-A vfs-module for samba to implement on-access scanning using the
-Sophos antivirus software (which must be installed to use this).
-
-%description vfs-vscan-sophos -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego Sophos
-(które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-symantec
-Summary:	On-access virus scanning for samba using Symantec
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Symantec
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-symantec
-
-%description vfs-vscan-symantec
-A vfs-module for samba to implement on-access scanning using the
-Symantec antivirus software (which must be installed to use this).
-
-%description vfs-vscan-symantec -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego firmy
-Symantec (które musi być zainstalowane, aby wykorzystać ten moduł).
-
-%package vfs-vscan-trend
-Summary:	On-access virus scanning for samba using Trend
-Summary(pl.UTF-8):	Skaner antywirusowy online wykorzystujący Trend
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Provides:	%{name}-vscan = %{epoch}:%{version}-%{release}
-Obsoletes:	vscan-trend
-
-%description vfs-vscan-trend
-A vfs-module for samba to implement on-access scanning using the Trend
-antivirus software (which must be installed to use this).
-
-%description vfs-vscan-trend -l pl.UTF-8
-Moduł vfs do samby implementujący skaning antywirusowy w czasie
-dostępu do plików korzystając z oprogramowania antywirusowego Trend
-(które musi być zainstalowane, aby wykorzystać ten moduł).
-
 %package vfs-catia
 Summary:	VFS module to fix Catia CAD filenames
 Group:		Networking/Daemons
@@ -1043,12 +846,11 @@ Samba Module for Python.
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
-cd examples/VFS
-tar xzf %{SOURCE7}
-mv README{,.vfs}
-cd ../..
+#cd examples/VFS
+#mv README{,.vfs}
+#cd ../..
 
-install %{SOURCE10} source4/heimdal/lib/wind/rfc3454.txt
+install %{SOURCE9} source4/heimdal/lib/wind/rfc3454.txt
 
 %build
 cd source3
@@ -1104,14 +906,6 @@ cd VFS
 	CFLAGS="%{rpmcflags} -fPIC"
 %{__make}
 
-%if %{with vscan}
-cd samba-vscan-%{vscan_version}
-cp -f /usr/share/automake/config.sub .
-%configure
-ln -s ../../../source3/lib .
-%{__make} all
-%endif
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
@@ -1131,8 +925,8 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
-install %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
-install %{SOURCE9} $RPM_BUILD_ROOT/etc/sysconfig/winbind
+install %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
+install %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
 install nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
 ln -s libnss_winbind.so.2		$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
@@ -1154,12 +948,6 @@ install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}
 cp -a source3/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
 cp -a lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
 cp -a nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
-
-%if %{with vscan}
-# vscan modules
-install examples/VFS/samba-vscan-%{vscan_version}/*.so $RPM_BUILD_ROOT%{_vfsdir}
-install examples/VFS/samba-vscan-%{vscan_version}/{antivir,clamav,fprot,icap,kaspersky,mks,openantivirus,sophos,trend,f-secure,nai}/*.conf $RPM_BUILD_ROOT%{_sysconfdir}/samba
-%endif
 
 touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
@@ -1592,78 +1380,6 @@ EOF
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/shadow_copy.so
 %{_mandir}/man8/vfs_shadow_copy.8*
-
-%if %{with vscan}
-%files vfs-vscan-antivir
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-antivir.conf
-%attr(755,root,root) %{_vfsdir}/vscan-antivir.so
-
-%files vfs-vscan-clamav
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-clamav.conf
-%attr(755,root,root) %{_vfsdir}/vscan-clamav.so
-
-%files vfs-vscan-fprot
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-fprotd.conf
-%attr(755,root,root) %{_vfsdir}/vscan-fprotd.so
-
-%files vfs-vscan-fsav
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-fsav.conf
-%attr(755,root,root) %{_vfsdir}/vscan-fsav.so
-
-%files vfs-vscan-kavp
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-kavp.conf
-%attr(755,root,root) %{_vfsdir}/vscan-kavp.so
-
-%files vfs-vscan-mcafee
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mcdaemon.conf
-%attr(755,root,root) %{_vfsdir}/vscan-mcdaemon.so
-
-%if %{with mks}
-%ifarch %{ix86} %{x8664}
-%files vfs-vscan-mks
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-mks32.conf
-%attr(755,root,root) %{_vfsdir}/vscan-mksd.so
-%endif
-%endif
-
-%files vfs-vscan-openantivirus
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-oav.conf
-%attr(755,root,root) %{_vfsdir}/vscan-oav.so
-
-%files vfs-vscan-sophos
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-sophos.conf
-%attr(755,root,root) %{_vfsdir}/vscan-sophos.so
-
-%files vfs-vscan-symantec
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-icap.conf
-%attr(755,root,root) %{_vfsdir}/vscan-icap.so
-
-%files vfs-vscan-trend
-%defattr(644,root,root,755)
-#%doc examples/VFS/%{name}-vscan-%{vscan_version}/{INSTALL,FAQ}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/vscan-trend.conf
-%attr(755,root,root) %{_vfsdir}/vscan-trend.so
-%endif
 
 %files vfs-catia
 %defattr(644,root,root,755)

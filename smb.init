@@ -9,13 +9,14 @@
 # processname:	nmbd
 # processname:	smbd
 
-export PATH=/bin:/sbin:/usr/bin:/usr/sbin
-
 # Source function library.
 . /etc/rc.d/init.d/functions
 
 # Source networking configuration.
 . /etc/sysconfig/network
+
+# Set default config
+CFGFILE="/etc/samba/smb.conf"
 
 # Demon specified configuration.
 . /etc/sysconfig/samba
@@ -33,17 +34,14 @@ fi
 TMPDIR="/tmp"; export TMPDIR
 unset TMP || :
 
-# Check that smb.conf exists.
-[ -f /etc/samba/smb.conf ] || exit 0
-
 start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/smb ]; then
 		msg_starting smbd
-		daemon /usr/sbin/smbd -D
+		daemon /usr/sbin/smbd -D -s $CFGFILE
 		RETVAL=$?
 		msg_starting nmbd
-		daemon /usr/sbin/nmbd -D
+		daemon /usr/sbin/nmbd -D $CFGFILE
 		[ $RETVAL -eq 0 ] && RETVAL=$?
 		if [ $RETVAL -eq 0 ]; then
 			touch /var/lock/subsys/smb

@@ -24,7 +24,7 @@ CFGFILE="/etc/samba/smb.conf"
 # Check that networking is up.
 if is_yes "${NETWORKING}"; then
 	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
-		msg_network_down smb
+		msg_network_down "Samba SMB/CIFS Server"
 		exit 1
 	fi
 else
@@ -36,42 +36,65 @@ unset TMP || :
 
 start() {
 	# Check if the service is already running?
-	if [ ! -f /var/lock/subsys/smb ]; then
-		msg_starting smbd
-		daemon /usr/sbin/smbd -D -s $CFGFILE
-		RETVAL=$?
-		msg_starting nmbd
-		daemon /usr/sbin/nmbd -D $CFGFILE
-		[ $RETVAL -eq 0 ] && RETVAL=$?
-		if [ $RETVAL -eq 0 ]; then
-			touch /var/lock/subsys/smb
-		fi
-	else
-		msg_already_running smb
+	if [ -f /var/lock/subsys/smb ]; then
+		msg_already_running "Samba SMB/CIFS Server"
+		return
+	fi
+
+	msg_starting "Samba SMB/CIFS Server"
+	daemon /usr/sbin/smbd -D -s $CFGFILE
+	RETVAL=$?
+	msg_starting "Samba NetBIOS Name Server"
+	daemon /usr/sbin/nmbd -D $CFGFILE
+	[ $RETVAL -eq 0 ] && RETVAL=$?
+	if [ $RETVAL -eq 0 ]; then
+		touch /var/lock/subsys/smb
 	fi
 }
 
 stop() {
 	# Stop daemons.
-	if [ -f /var/lock/subsys/smb ]; then
-		msg_stopping smbd
-		killproc smbd
-		msg_stopping nmbd
-		killproc nmbd
-		rm -f /var/lock/subsys/smb >/dev/null 2>&1
-	else
-		msg_not_running smb
+	if [ ! -f /var/lock/subsys/smb ]; then
+		msg_not_running "Samba SMB/CIFS Server"
+		return
 	fi
+
+	msg_stopping "Samba SMB/CIFS Server"
+	killproc smbd
+	msg_stopping "Samba NetBIOS Name Server"
+	killproc nmbd
+	rm -f /var/lock/subsys/smb >/dev/null 2>&1
+}
+
+reload() {
+	if [ ! -f /var/lock/subsys/smb ]; then
+		msg_not_running "Samba SMB/CIFS Server"
+		RETVAL=7
+		return
+	fi
+
+	msg_reloading "Samba SMB/CIFS Server"
+	killproc smbd -HUP
+	RETVAL=$?
 }
 
 condrestart() {
-	if [ -f /var/lock/subsys/smb ]; then
-		stop
-		start
-	else
-		msg_not_running smb
+	if [ ! -f /var/lock/subsys/smb ]; then
+		msg_not_running "Samba SMB/CIFS Server"
 		RETVAL=$1
+		return
 	fi
+
+	stop
+	start
+}
+
+rc_status() {
+	status smbd
+	RETVAL=$?
+	status nmbd
+	RET=$?
+	[ $RETVAL -eq 0 ] && RETVAL=$RET
 }
 
 RETVAL=0
@@ -91,22 +114,10 @@ case "$1" in
 	condrestart 0
 	;;
   reload|force-reload)
-	if [ -f /var/lock/subsys/smb ]; then
-		msg_reloading smb
-		killproc smbd -HUP
-		RETVAL=$?
-	else
-		msg_not_running smb
-		exit 7
-	fi
+	reload
 	;;
   status)
-	status smbd
-	RETVAL=$?
-	status nmbd
-	RET=$?
-	[ $RETVAL -eq 0 ] && RETVAL=$RET
-	smbstatus
+	rc_status
 	;;
   *)
 	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|status}"

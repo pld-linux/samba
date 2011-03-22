@@ -111,7 +111,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
-Requires:	rc-scripts
+Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}

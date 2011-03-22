@@ -19,6 +19,7 @@
 CFGFILE="/etc/samba/smb.conf"
 smbd_pidfile="/var/run/smbd.pid"
 nmbd_pidfile="/var/run/nmbd.pid"
+lockname=smb
 
 # Demon specified configuration.
 . /etc/sysconfig/samba
@@ -38,7 +39,7 @@ unset TMP || :
 
 start() {
 	# Check if the service is already running?
-	if [ -f /var/lock/subsys/smb ]; then
+	if [ -f /var/lock/subsys/$lockname ]; then
 		msg_already_running "Samba SMB/CIFS Server"
 		return
 	fi
@@ -50,13 +51,13 @@ start() {
 	daemon /usr/sbin/nmbd -D $CFGFILE
 	[ $RETVAL -eq 0 ] && RETVAL=$?
 	if [ $RETVAL -eq 0 ]; then
-		touch /var/lock/subsys/smb
+		touch /var/lock/subsys/$lockname
 	fi
 }
 
 stop() {
 	# Stop daemons.
-	if [ ! -f /var/lock/subsys/smb ]; then
+	if [ ! -f /var/lock/subsys/$lockname ]; then
 		msg_not_running "Samba SMB/CIFS Server"
 		return
 	fi
@@ -66,11 +67,11 @@ stop() {
 
 	msg_stopping "Samba NetBIOS Name Server"
 	killproc --pidfile $nmbd_pidfile nmbd
-	rm -f /var/lock/subsys/smb >/dev/null 2>&1
+	rm -f /var/lock/subsys/$lockname >/dev/null 2>&1
 }
 
 reload() {
-	if [ ! -f /var/lock/subsys/smb ]; then
+	if [ ! -f /var/lock/subsys/$lockname ]; then
 		msg_not_running "Samba SMB/CIFS Server"
 		RETVAL=7
 		return
@@ -82,7 +83,7 @@ reload() {
 }
 
 condrestart() {
-	if [ ! -f /var/lock/subsys/smb ]; then
+	if [ ! -f /var/lock/subsys/$lockname ]; then
 		msg_not_running "Samba SMB/CIFS Server"
 		RETVAL=$1
 		return

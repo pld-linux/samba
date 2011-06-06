@@ -83,7 +83,7 @@ BuildRequires:	automake
 BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
-BuildRequires:	fam-devel
+BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}

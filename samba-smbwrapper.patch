@@ -67,3 +67,14 @@ diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/wrapper.h samba-3.0
          int (* rename)(char *oldname, char *newname);
          int (* rmdir)(char *name);
          int (* symlink)(char *topath, char *frompath);
+--- samba-3.5.9/examples/libsmbclient/smbwrapper/Makefile~	2011-07-25 13:34:46.000000000 +0200
++++ samba-3.5.9/examples/libsmbclient/smbwrapper/Makefile	2011-07-25 13:50:38.081681589 +0200
+@@ -22,7 +22,7 @@
+ 	$(CC) -g \
+ 		-Wl,-init=smbw_initialize \
+ 		-shared \
+-		--export-all-symbols \
++		-fexport-all-symbols \
+ 		-o $(BIN)/smbwrapper.so \
+ 		$(SMBWRAPPER_OBJS) \
+ 		$(LDFLAGS) \

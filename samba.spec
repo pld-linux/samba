@@ -25,6 +25,7 @@
 %bcond_without	avahi
 %bcond_with	merged_build	# without samba3+samba4 merge
 %bcond_without	system_libtalloc
+%bcond_without	system_libtdb
 								# http://wiki.samba.org/index.php/Franky
 %bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 
@@ -33,7 +34,17 @@
 %undefine	with_ads
 %endif
 
-%define	libtalloc_ver	2:2.0.1
+%if %{with system_libtalloc}
+%define		libtalloc_ver	2:2.0.1
+%else
+%define		libtalloc_ver	%{epoch}:%{version}-%{release}
+%endif
+
+%if %{with system_libtdb}
+%define		libtdb_ver		1.2.9
+%else
+%define		libtdb_ver		%{epoch}:%{version}-%{release}
+%endif
 
 %define		vscan_version 0.3.6c-beta5
 Summary:	SMB server
@@ -54,7 +65,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.5.11
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -106,6 +117,7 @@ BuildRequires:	python-modules
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
+%{?with_system_libtdb:BuildRequires:	tdb-devel >= %{libtdb_ver}}
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -375,12 +387,8 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-%if %{without system_libtalloc}
-Requires:	libtalloc >= %{epoch}:%{version}-%{release}
-%else
 Requires:	libtalloc >= %{libtalloc_ver}
-%endif
-Requires:	tdb >= %{epoch}:%{version}-%{release}
+Requires:	tdb >= %{libtdb_ver}
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -882,6 +890,10 @@ cd source3
 	--with-libtalloc=no \
 	--enable-external-libtalloc=yes \
 %endif
+%if %{with system_libtdb}
+	--with-libtdb=no \
+	--enable-external-libtdb=yes \
+%endif
 	--without-included-popt \
 	--%{?with_merged_build:en}%{!?with_merged_build:dis}able-merged-build \
 	--enable-automatic-dependencies \
@@ -917,37 +929,40 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	DESTDIR=$RPM_BUILD_ROOT \
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
-install source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
+install -p source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
-install %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
-install %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
-install %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
+install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
+cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
+install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
+cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
+cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
+cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
+install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
+cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
-install nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
+install -p nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
 ln -s libnss_winbind.so.2		$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
-install nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
+install -p nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
 ln -s libnss_wins.so.2			$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
-install source3/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
-install source3/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
-install source3/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
+install -p source3/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
+install -p source3/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
+install -p source3/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
-install source3/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
+cp -a source3/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
 
 # smbwrapper
-install examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
-install examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
-install examples/libsmbclient/smbwrapper/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install -p examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
+install -p examples/libsmbclient/smbwrapper/smbsh $RPM_BUILD_ROOT%{_bindir}
+cp -p examples/libsmbclient/smbwrapper/smbsh.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 # these are needed to build samba-pdbsql
-install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/{tdb,nsswitch}
+install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
 cp -a source3/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
 cp -a nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
+%if %{without system_libtdb}
+install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+cp -a lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+%endif
 
 touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
@@ -971,6 +986,13 @@ rm -r $RPM_BUILD_ROOT%{_bindir}/{gentest4,locktest4,masktest4,nsstest4}
 
 %if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
+%endif
+
+%if %{with system_libtdb}
+# remove manuals of tdb if system lib used
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbbackup.8*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbdump.8*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbtool.8*
 %endif
 
 %find_lang pam_winbind
@@ -1280,6 +1302,7 @@ EOF
 %{_includedir}/talloc.h
 %endif
 
+%if %{without system_libtdb}
 %files -n tdb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/tdbbackup
@@ -1300,6 +1323,7 @@ EOF
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtdb.so
 %{_includedir}/tdb.h
+%endif
 
 %files devel
 %defattr(644,root,root,755)

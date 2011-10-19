@@ -10,13 +10,4 @@ diff -urN samba-3.2.1.org/source3/Makefile.in samba-3.2.1/source3/Makefile.in
  
  bin/smbclient@EXEEXT@: $(BINARY_PREREQS) $(CLIENT_OBJ) @BUILD_POPT@ @LIBTALLOC_TARGET@ @LIBTDB_TARGET@ @LIBWBCLIENT_TARGET@
  	@echo Linking $@
-@@ -1633,7 +1633,7 @@
- 	@echo Linking $@
- 	@$(CC) -o $@ $(LDBEDIT_OBJ) $(DYNEXP) $(LDFLAGS) \
- 		$(LIBS) $(POPT_LIBS) $(LDAP_LIBS) \
--		$(LIBTALLOC_LIBS) $(LIBTDB_LIBS)
-+		$(LIBTALLOC_LIBS) $(LIBTDB_LIBS) $(NSCD_LIBS)
- 
- bin/ldbsearch: $(BINARY_PREREQS) $(LDBSEARCH_OBJ) @BUILD_POPT@ @LIBTALLOC_TARGET@ @LIBTDB_TARGET@ @LIBWBCLIENT_TARGET@
- 	@echo Linking $@
 

@@ -64,13 +64,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.5.11
-Release:	2
+Version:	3.6.0
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	81bbd16048c6ca40baea8c59126ee385
+# Source0-md5:	e297e0ea7923c7de8d7c1d8fd0ec0a05
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -343,7 +343,6 @@ Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
-Obsoletes:	mount-cifs
 Obsoletes:	smbfs
 
 %description client
@@ -854,6 +853,10 @@ Samba Module for Python.
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
+# deprecated in gnutls 3.0
+%{__sed} -i -e "s/gnutls_transport_set_lowat(tls->session, 0);//"      source4/lib/tls/tls.c
+%{__sed} -i -e "s/gnutls_transport_set_lowat(tlss->tls_session, 0);//" source4/lib/tls/tls_tstream.c
+
 #cd examples/VFS
 #mv README{,.vfs}
 #cd ../..
@@ -861,6 +864,12 @@ Samba Module for Python.
 install %{SOURCE9} source4/heimdal/lib/wind/rfc3454.txt
 
 %build
+# use ld.bfd because gold doesn't understand linker script
+install -d our-ld
+ln -s %{_bindir}/ld.bfd our-ld/ld
+export PATH=$(pwd)/our-ld:$PATH
+
+
 cd source3
 %{__libtoolize}
 %{__autoconf} -Im4 -I../m4 -I../lib/replace -Ilib/replace -I../source4
@@ -871,9 +880,6 @@ cd source3
 	--with-acl-support \
 	--with-aio-support \
 	--with-automount \
-	--with-cifsmount \
-	--with-cifsumount \
-	--with-cifsupcall \
 	--with-libsmbclient \
 	--with-lockdir=/var/lib/samba \
 	--with-pam \
@@ -895,15 +901,13 @@ cd source3
 	--enable-external-libtdb=yes \
 %endif
 	--without-included-popt \
-	--%{?with_merged_build:en}%{!?with_merged_build:dis}able-merged-build \
-	--enable-automatic-dependencies \
 	--enable-dso \
 	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \
 	--disable-dnssd \
 	--with%{!?with_ldap:out}-ldap \
 	--with%{!?with_kerberos5:out}-krb5
 
-%{__make} -j1 everything pam_smbpass bin/smbget bin/mount.cifs bin/vfstest \
+%{__make} -j1 everything pam_smbpass bin/smbget bin/vfstest \
 	LD=ld
 
 cd ../examples
@@ -1081,27 +1085,34 @@ EOF
 # "This utility disabled until rewritten"
 #%attr(755,root,root) %{_bindir}/setnttoken4
 %endif
-%attr(755,root,root) %{_bindir}/ldb*
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
+%attr(755,root,root) %{_bindir}/smbta-util
 %attr(755,root,root) %{_bindir}/smbcontrol
 
+%dir %{_libdir}/%{name}/idmap
+%attr(755,root,root)  %{_libdir}/%{name}/idmap/autorid.so
+%{_mandir}/man8/idmap_autorid.8*
 %dir %{_libdir}/%{name}/pdb
 %dir %{_vfsdir}
 %attr(755,root,root) %{_vfsdir}/acl_tdb.so
 %attr(755,root,root) %{_vfsdir}/acl_xattr.so
 %attr(755,root,root) %{_vfsdir}/aio_fork.so
+%attr(755,root,root) %{_vfsdir}/crossrename.so
 %attr(755,root,root) %{_vfsdir}/dirsort.so
 %attr(755,root,root) %{_vfsdir}/fileid.so
+%attr(755,root,root) %{_vfsdir}/linux_xfs_sgid.so
 %attr(755,root,root) %{_vfsdir}/preopen.so
 %attr(755,root,root) %{_vfsdir}/shadow_copy2.so
 %attr(755,root,root) %{_vfsdir}/smb_traffic_analyzer.so
 %attr(755,root,root) %{_vfsdir}/streams_depot.so
 %attr(755,root,root) %{_vfsdir}/streams_xattr.so
 %attr(755,root,root) %{_vfsdir}/syncops.so
+%attr(755,root,root) %{_vfsdir}/time_audit.so
 %attr(755,root,root) %{_vfsdir}/xattr_tdb.so
 %{_mandir}/man8/vfs_acl_tdb.8*
 %{_mandir}/man8/vfs_acl_xattr.8*
+%{_mandir}/man8/vfs_crossrename.8*
 %{_mandir}/man8/vfs_dirsort.8*
 %{_mandir}/man8/vfs_fileid.8*
 %{_mandir}/man8/vfs_preopen.8*
@@ -1109,6 +1120,7 @@ EOF
 %{_mandir}/man8/vfs_smb_traffic_analyzer.8*
 %{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/vfs_streams_depot.8*
+%{_mandir}/man8/vfs_time_audit.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
 
@@ -1170,13 +1182,9 @@ EOF
 %attr(755,root,root) %{_bindir}/net4
 %attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/smbclient4
-%attr(755,root,root) %{_bindir}/mount.cifs4
-%attr(755,root,root) %{_bindir}/umount.cifs4
 %attr(755,root,root) %{_bindir}/setnttoken4
 %attr(755,root,root) %{_bindir}/smbtorture4
 %endif
-%attr(755,root,root) /sbin/mount.cifs
-%attr(755,root,root) /sbin/umount.cifs
 %attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/nmblookup
@@ -1187,7 +1195,6 @@ EOF
 %attr(755,root,root) %{_bindir}/smbsh
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
-%attr(755,root,root) %{_sbindir}/cifs.upcall
 %attr(755,root,root) %{_libdir}/smbwrapper.so
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup.1*
@@ -1199,8 +1206,6 @@ EOF
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
-%{_mandir}/man8/*mount.cifs.8*
-%{_mandir}/man8/cifs.upcall.8*
 
 %files common
 %defattr(644,root,root,755)

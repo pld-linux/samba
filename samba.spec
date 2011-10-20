@@ -35,7 +35,7 @@
 %endif
 
 %if %{with system_libtalloc}
-%define		libtalloc_ver	2:2.0.1
+%define		libtalloc_ver	2.0.1
 %else
 %define		libtalloc_ver	%{epoch}:%{version}-%{release}
 %endif
@@ -102,7 +102,6 @@ BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
-%{?with_system_libtalloc:BuildRequires:	libtalloc-devel >= %{libtalloc_ver}}
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
@@ -117,6 +116,7 @@ BuildRequires:	python-modules
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
+%{?with_system_libtalloc:BuildRequires:	talloc-devel >= %{libtalloc_ver}}
 %{?with_system_libtdb:BuildRequires:	tdb-devel >= %{libtdb_ver}}
 BuildRequires:	xfsprogs-devel
 Requires(post,preun):	/sbin/chkconfig
@@ -386,7 +386,7 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-Requires:	libtalloc >= %{libtalloc_ver}
+Requires:	talloc >= %{libtalloc_ver}
 Requires:	tdb >= %{libtdb_ver}
 
 %description common

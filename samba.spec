@@ -64,13 +64,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.6.0
+Version:	3.6.1
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	e297e0ea7923c7de8d7c1d8fd0ec0a05
+# Source0-md5:	5291717be0734e07dc07b6110e162e87
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -1130,7 +1130,6 @@ EOF
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
-%{_mandir}/man1/ldb*.1*
 %{_mandir}/man1/log2pcap.1*
 %{_mandir}/man1/smbstatus.1*
 %{_mandir}/man1/smbcontrol.1*

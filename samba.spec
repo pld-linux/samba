@@ -344,6 +344,7 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Obsoletes:	smbfs
+Suggests:	cifs-utils
 
 %description client
 Samba-client provides some SMB clients, which complement the build-in

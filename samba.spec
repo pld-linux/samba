@@ -41,7 +41,7 @@
 %endif
 
 %if %{with system_libtdb}
-%define		libtdb_ver		1.2.9
+%define		libtdb_ver		2:1.2.9
 %else
 %define		libtdb_ver		%{epoch}:%{version}-%{release}
 %endif

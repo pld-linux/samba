@@ -41,7 +41,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
 Version:	3.0.37
-Release:	3
+Release:	4
 Epoch:		1
 License:	GPL v2
 Group:		Networking/Daemons
@@ -66,7 +66,11 @@ Patch5:		%{name}-doc.patch
 Patch6:		%{name}-libs-needed.patch
 Patch7:		%{name}-lprng-no-dot-printers.patch
 Patch8:		%{name}-printerlocation.patch
-Patch9:		http://www.samba.org/samba/ftp/patches/security/samba-3.0.37-CVE-2010-2063.patch
+Patch9:		http://www.samba.org/samba/ftp/patches/security/%{name}-3.0.37-CVE-2010-2063.patch
+Patch10:	https://ftp.samba.org/pub/samba/patches/security/%{name}-3.0.37-CVE-2010-3069.patch
+# Patch10-md5:	675ecfd66015fb40bf4b98a8429314d0
+Patch11:	https://ftp.samba.org/pub/samba/patches/security/%{name}-3.0.37-CVE-2012-1182.patch
+# Patch11-md5:	1edad3a8e42fad2f7aaa2d9cd9082123
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -956,6 +960,8 @@ Documentacja samby w formacie PDF.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
+%patch11 -p1
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
 cd examples/VFS

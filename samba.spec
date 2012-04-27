@@ -116,6 +116,11 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 %define		schemadir	/usr/share/openldap/schema
 
+%define		filterout_ld	-Wl,--as-needed
+
+# libmsrpc.so.0: smbc_attr_server
+%define		skip_post_check_so	libmsrpc.so.0
+
 # CFLAGS modified (the second ./configure)
 %undefine	configure_cache
 

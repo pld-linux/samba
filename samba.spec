@@ -64,13 +64,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.6.6
+Version:	3.6.7
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	0bea52842d172231c0c0e23ee570d7af
+# Source0-md5:	b23be56c15dd52f64eb7ba54c0ea1ed5
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -916,7 +916,7 @@ cd source3
 cd ../examples
 %{__make} -C libsmbclient/smbwrapper \
 	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \\\$(SMBINCLUDE)"
+	CFLAGS="%{rpmcflags} -fPIC \$(DEFS) \$(SMBINCLUDE)"
 
 cd VFS
 %{__autoheader}

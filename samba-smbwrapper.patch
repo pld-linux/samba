@@ -74,7 +74,7 @@ diff -urN samba-3.0.25a.org/examples/libsmbclient/smbwrapper/wrapper.h samba-3.0
  		-Wl,-init=smbw_initialize \
  		-shared \
 -		--export-all-symbols \
-+		-fexport-all-symbols \
++		-Wl,-fexport-all-symbols \
  		-o $(BIN)/smbwrapper.so \
  		$(SMBWRAPPER_OBJS) \
  		$(LDFLAGS) \

@@ -64,13 +64,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.5.15
+Version:	3.5.18
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	2d72c044bdfd854ee2ab736326da3afd
+# Source0-md5:	4bdb6d7ef23369d1c7d0199f0ebe012a
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -851,6 +851,10 @@ Samba Module for Python.
 %if "%{pld_release}" == "ti"
 %patch5 -p1
 %endif
+
+# some error, proper fix probably needed
+# x86_64-pld-linux-gcc: error: unrecognized command line option '-fexport-all-symbols'
+%{__sed} -i -e 's,-fexport-all-symbols,,' examples/libsmbclient/smbwrapper/Makefile
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 

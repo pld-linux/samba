@@ -1,20 +1,4 @@
 #
-# TODO:
-# - review python-samba
-# - look into other distro specs for valid %descriptions for samba 3
-# - unpackaged man pages for modules that are not built by default,
-#  maybe we should build them?
-#  /usr/share/man/man8/vfs_cacheprime.8*
-#  /usr/share/man/man8/vfs_commit.8*
-#  /usr/share/man/man8/vfs_gpfs.8*
-#  /usr/share/man/man8/vfs_prealloc.8*
-# - package libs:
-#      libnetapi
-#      libsmbsharemodes
-# - MERGE vfs modules with no external dependencies into main package?
-#
-
-#
 # Conditional build:
 %bcond_without	ads			# ActiveDirectory support
 %bcond_without	cups			# CUPS support
@@ -36,19 +20,13 @@
 %if %{with system_libtalloc}
 %define		libtalloc_ver	2.0.5
 %else
-%define		libtalloc_ver	%{epoch}:%{version}-%{release}
+%define		libtalloc_ver	%{version}-%{release}
 %endif
 
 %if %{with system_libtdb}
 %define		libtdb_ver	2:1.2.9
 %else
-%define		libtdb_ver	%{epoch}:%{version}-%{release}
-%endif
-
-%if %{with system_libtevent}
-%define		libtevent_ver	0.9.11
-%else
-%define		libtevent_ver	%{epoch}:%{version}-%{release}
+%define		libtdb_ver		%{version}-%{release}
 %endif
 
 %define		virusfilter_version 0.1.3
@@ -68,14 +46,13 @@ Summary(ru.UTF-8):	SMB клиент и сервер
 Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
-Name:		samba
-Version:	3.6.22
-Release:	1
-Epoch:		1
+Name:		samba4
+Version:	4.0.0
+Release:	0.1
 License:	GPL v3
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	59add4bb178ebc188d857bc13a508c0b
+Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
+# Source0-md5:	93e9aad40893ba48d08e1b28e7efff72
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -132,7 +109,7 @@ BuildConflicts:	python-talloc-devel
 # same goes for python-ldb 1.1.14
 BuildConflicts:	python-ldb-devel
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts >= 0.4.0.12
@@ -315,7 +292,7 @@ Summary(pt_BR.UTF-8):	Samba SWAT e documentação Web
 Summary(ru.UTF-8):	Программа конфигурации SMB-сервера Samba
 Summary(uk.UTF-8):	Програма конфигурації SMB-сервера Samba
 Group:		Networking/Admin
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 Requires:	inetdaemon
 Requires:	rc-inetd >= 0.8.2
 Obsoletes:	swat
@@ -352,9 +329,10 @@ Summary(pt_BR.UTF-8):	Cliente SMB do samba
 Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
 Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs}
-Requires:	libsmbclient = %{epoch}:%{version}-%{release}
+Requires:	libsmbclient = %{version}-%{release}
+Obsoletes:	smbfs
 Suggests:	cifs-utils
 Obsoletes:	smbfs
 
@@ -431,7 +409,7 @@ Summary:	Samba-winbind daemon, utilities and documentation
 Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 
 %description winbind
 Provides the winbind daemon and testing tools to allow authentication
@@ -446,7 +424,7 @@ Windows lub Samba.
 Summary:	Name Service Switch service for WINS
 Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{version}-%{release}
 
 %description -n nss_wins
 Provides the libnss_wins shared library which resolves NetBIOS names
@@ -488,7 +466,7 @@ Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
-Requires:	libsmbclient = %{epoch}:%{version}-%{release}
+Requires:	libsmbclient = %{version}-%{release}
 
 %description -n libsmbclient-devel
 Header files for libsmbclient.
@@ -505,7 +483,7 @@ Summary:	Static version of libsmbclient - samba client library
 Summary(pl.UTF-8):	Statyczna wersja libsmbclient - biblioteki klienta samby
 Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
-Requires:	libsmbclient = %{epoch}:%{version}-%{release}
+Requires:	libsmbclient = %{version}-%{release}
 
 %description -n libsmbclient-static
 Static libsmbclient library.
@@ -523,7 +501,7 @@ The talloc library from the Samba suite.
 %package -n libtalloc-devel
 Summary:	Developer tools for the talloc library
 Group:		Development/Libraries
-Requires:	libtalloc = %{epoch}:%{version}-%{release}
+Requires:	libtalloc = %{version}-%{release}
 
 %description -n libtalloc-devel
 The libtalloc-devel package contains the header files and libraries
@@ -553,7 +531,7 @@ ekstremalnie mała.
 Summary:	Header files for TDB library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki TDB
 Group:		Development/Libraries
-Requires:	tdb = %{epoch}:%{version}-%{release}
+Requires:	tdb = %{version}-%{release}
 
 %description -n tdb-devel
 Header files for TDB library.
@@ -588,7 +566,7 @@ używanym w sieciach MS Windows.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
-Requires:	%{name}-client = %{epoch}:%{version}-%{release}
+Requires:	%{name}-client = %{version}-%{release}
 Requires:	cups >= 1:1.2.0
 
 %description -n cups-backend-smb
@@ -601,7 +579,7 @@ Backend CUPS-a drukujący na drukarkach SMB.
 Summary:	VFS modules to audit file access
 Summary(pl.UTF-8):	Moduły VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-audit
 A simple modules (audit, extd_audit, full_audit) to audit file access
@@ -622,7 +600,7 @@ operacje:
 Summary:	VFS module for CAP and samba compatibility
 Summary(pl.UTF-8):	Moduł VFS zgodności z CAP (Columbia AppleTalk Program)
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-cap
 Convert an incoming Shift-JIS character to the 3 byte hex
@@ -655,7 +633,7 @@ plików z innymi klientami CIFS.
 Summary:	VFS module to store default quotas in a specified quota record
 Summary(pl.UTF-8):	Moduł VFS do zapisywania domyślnych limitów w określonym rekordzie
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-default_quota
 This VFS modules stores default quotas in a specified quota record.
@@ -668,7 +646,7 @@ limitów.
 Summary:	VFS module for hosting a Microsoft Distributed File System Tree
 Summary(pl.UTF-8):	Moduł VFS obsługi Microsoft Distributed File System
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-expand_msdfs
 A VFS module for hosting a Microsoft Distributed File System Tree.
@@ -692,7 +670,7 @@ płynniejsze powiększanie przestrzeni, rozdzielanie obciążenia itp.
 Summary:	VFS module to report read-only fires as writable
 Summary(pl.UTF-8):	Moduł VFS udający, że pliki tylko do odczytu są zapisywalne
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-fake_perms
 This module allow Roaming Profile files and directories to be set (on
@@ -714,7 +692,7 @@ lub wylogowywaniu klienta.
 Summary:	VFS module to implement file change notifications
 Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-notify_fam
 The vfs_notify_fam module makes use of the system FAM (File Alteration
@@ -729,7 +707,7 @@ informowania o zmianach w plikach dla klientów Windows.
 Summary:	VFS module for ease co-existence of Samba and netatalk
 Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę usług Samba i netatalk
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-netatalk
 Package contains a netatalk VFS module for ease co-existence of Samba
@@ -743,7 +721,7 @@ i netatalk przy udostępnianiu zasobów.
 Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-recycle
 VFS module to add recycle bin facility to a samba share.
@@ -755,7 +733,7 @@ Moduł VFS dodający funkcję kosza do zasobu Samby.
 Summary:	VFS module for pre-loading the kernel buffer cache
 Summary(pl.UTF-8):	Moduł VFS do wczesnego odczytu danych do bufora cache jądra
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-readahead
 This VFS module detects read requests at multiples of a given offset
@@ -782,7 +760,7 @@ bajtów.
 Summary:	VFS module for read-only limitation for specified share
 Summary(pl.UTF-8):	Moduł VFS do ograniczania określonego udziału tylko do odczytu
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-readonly
 This module performs a read-only limitation for specified share (or
@@ -794,11 +772,34 @@ Ten moduł wprowadza ograniczenie tylko do odczytu dla określonego
 udziału (lub wszystkich, jeśli jest wczytywany w sekcji [global]) w
 oparciu o definicje okresów w smb.conf.
 
+%package vfs-shadow_copy
+Summary:	VFS module to make automatic copy of data in samba share
+Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}-%{release}
+
+%description vfs-shadow_copy
+VFS module to make automatic copy of data in samba share.
+
+%description vfs-shadow_copy -l pl.UTF-8
+Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
+
+%package vfs-catia
+Summary:	VFS module to fix Catia CAD filenames
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}-%{release}
+
+%description vfs-catia
+The Catia CAD package commonly creates filenames that use characters
+that are illegal in CIFS filenames. The vfs_catia VFS module
+implements a fixed character mapping so that these files can be shared
+with CIFS clients.
+
 %package vfs-scannedonly
 Summary:	Anti-virus solution as VFS module
 Summary(pl.UTF-8):	Rozwiązanie antywirusowe jako moduł VFS
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description vfs-scannedonly
 The vfs_scannedonly VFS module ensures that only files that have been
@@ -865,8 +866,8 @@ Documentacja samby w formacie PDF.
 Summary:	Samba modules for Python
 Summary(pl.UTF-8):	Moduły Samby dla Pythona
 Group:		Development/Languages/Python
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	python-libs
+%pyrequires_eq 	python
+Requires:	%{name}-common = %{version}-%{release}
 
 %description -n python-samba
 Samba modules for Python.
@@ -875,15 +876,12 @@ Samba modules for Python.
 Moduły Samby dla Pythona.
 
 %prep
-%setup -q
+%setup -q -n samba-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%if "%{pld_release}" == "ti"
-%patch5 -p1
-%endif
 
 %{__sed} -i 's#%SAMBAVERSION%#%{version}#' docs/htmldocs/index.html
 
@@ -1099,21 +1097,6 @@ if [ "$1" = "0" ]; then
 	%openldap_schema_unregister %{schemadir}/samba.schema
 	%service -q ldap restart
 fi
-
-%triggerpostun -- samba < 1.9.18p7
-if [ "$1" != "0" ]; then
-	/sbin/chkconfig --add smb
-fi
-
-%if "%{pld_release}" != "ti"
-%triggerpostun -- samba < 3.4.0
-%banner %{name} << EOF
-!!! WARNING !!! The default passdb backend has been changed to 'tdbsam'!
-That breaks existing setups using the 'smbpasswd' backend without explicit declaration!
-Please use 'passdb backend = smbpasswd' if you would like to stick to the 'smbpasswd'
-backend or convert your smbpasswd entries using e.g. 'pdbedit -i smbpasswd -e tdbsam'.
-EOF
-%endif
 
 %files
 %defattr(644,root,root,755)

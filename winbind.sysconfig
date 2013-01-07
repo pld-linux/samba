@@ -2,3 +2,8 @@
 
 # Define nice level for winbind 
 SERVICE_RUN_NICE_LEVEL="+5"
+
+## Type:           string
+## Default:        ""
+## ServiceRestart: winbind
+WINBINDOPTIONS=""

@@ -115,9 +115,7 @@ Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_vfsdir		%{_libdir}/%{name}/vfs
 %define		_sambahome	/home/services/samba
-%define		_sambalibdir	%{_libdir}/%{name}
 %if %{with cups}
 %define		cups_serverbin	%{_prefix}/lib/cups
 %endif
@@ -900,7 +898,8 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--sharedstatedir=%{_sharedstatedir} \
 	--mandir=%{_mandir} \
 	--infodir=%{_infodir} \
-	--with-modulesdir=%{_sambalibdir} \
+	--with-privatelibdir=%{_libdir}/samba \
+	--with-modulesdir=%{_libdir}/samba \
 	--with-pammodulesdir=/%{_lib}/security \
 	--with-lockdir=/var/lib/samba \
 	--with-privatedir=%{_sysconfdir}/samba \
@@ -935,15 +934,22 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
-	$RPM_BUILD_ROOT{/var/{log,log/archive,spool}/samba,/var/lib/samba/printing} \
+	$RPM_BUILD_ROOT{/var/{log/archive,spool}/samba,/var/lib/samba/printing} \
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
-	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir},%{_pkgconfigdir}}
+	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_libdir}/samba/vfs,%{_includedir},%{_sambahome},%{schemadir}} \
+	$RPM_BUILD_ROOT{%{systemdtmpfilesdir},%{systemdunitdir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
 install -p source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
+
+install packaging/systemd/samba.conf.tmp $RPM_BUILD_ROOT%{systemdtmpfilesdir}/samba.conf
+install packaging/systemd/nmb.service $RPM_BUILD_ROOT%{systemdunitdir}
+install packaging/systemd/samba.service $RPM_BUILD_ROOT%{systemdunitdir}
+install packaging/systemd/smb.service $RPM_BUILD_ROOT%{systemdunitdir}
+install packaging/systemd/winbind.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
@@ -1052,36 +1058,32 @@ fi
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
-#%attr(755,root,root) %{_bindir}/ad2oLschema4
-%attr(755,root,root) %{_bindir}/oLschema2ldif4
 %attr(755,root,root) %{_bindir}/reg*
-# "This utility disabled until rewritten"
-#%attr(755,root,root) %{_bindir}/setnttoken4
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbta-util
 %attr(755,root,root) %{_bindir}/smbcontrol
 
-%dir %{_libdir}/%{name}/idmap
-%attr(755,root,root)  %{_libdir}/%{name}/idmap/autorid.so
+%dir %{_libdir}/samba/idmap
+%attr(755,root,root)  %{_libdir}/samba/idmap/autorid.so
 %{_mandir}/man8/idmap_autorid.8*
-%dir %{_libdir}/%{name}/pdb
-%dir %{_vfsdir}
-%attr(755,root,root) %{_vfsdir}/acl_tdb.so
-%attr(755,root,root) %{_vfsdir}/acl_xattr.so
-%attr(755,root,root) %{_vfsdir}/aio_fork.so
-%attr(755,root,root) %{_vfsdir}/crossrename.so
-%attr(755,root,root) %{_vfsdir}/dirsort.so
-%attr(755,root,root) %{_vfsdir}/fileid.so
-%attr(755,root,root) %{_vfsdir}/linux_xfs_sgid.so
-%attr(755,root,root) %{_vfsdir}/preopen.so
-%attr(755,root,root) %{_vfsdir}/shadow_copy2.so
-%attr(755,root,root) %{_vfsdir}/smb_traffic_analyzer.so
-%attr(755,root,root) %{_vfsdir}/streams_depot.so
-%attr(755,root,root) %{_vfsdir}/streams_xattr.so
-%attr(755,root,root) %{_vfsdir}/syncops.so
-%attr(755,root,root) %{_vfsdir}/time_audit.so
-%attr(755,root,root) %{_vfsdir}/xattr_tdb.so
+%dir %{_libdir}/samba/pdb
+%dir %{_libdir}/samba/vfs
+%attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
+%attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
+%attr(755,root,root) %{_libdir}/samba/vfs/crossrename.so
+%attr(755,root,root) %{_libdir}/samba/vfs/dirsort.so
+%attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/preopen.so
+%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy2.so
+%attr(755,root,root) %{_libdir}/samba/vfs/smb_traffic_analyzer.so
+%attr(755,root,root) %{_libdir}/samba/vfs/streams_depot.so
+%attr(755,root,root) %{_libdir}/samba/vfs/streams_xattr.so
+%attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
+%attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %{_mandir}/man8/vfs_acl_tdb.8*
 %{_mandir}/man8/vfs_acl_xattr.8*
 %{_mandir}/man8/vfs_crossrename.8*
@@ -1147,21 +1149,14 @@ fi
 
 %files client
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/cifsdd4
-%attr(755,root,root) %{_bindir}/net4
 %attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/smbclient4
-%attr(755,root,root) %{_bindir}/setnttoken4
-%attr(755,root,root) %{_bindir}/smbtorture4
-%attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
-%attr(755,root,root) %{_bindir}/smbsh
-%attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup.1*
@@ -1169,20 +1164,13 @@ fi
 %{_mandir}/man1/sharesec.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbclient.1*
-%{_mandir}/man1/smbsh.1*
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
 
 %files common
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/getntacl4
-%attr(755,root,root) %{_bindir}/ndrdump4
-%attr(755,root,root) %{_bindir}/ntlm_auth4
-%attr(755,root,root) %{_bindir}/testparm4
-%doc README Manifest WHATSNEW.txt
-%doc Roadmap docs/registry/*
-%doc docs/{history,THANKS}
+%doc README WHATSNEW.txt Roadmap
 %dir %{_sysconfdir}/samba
 %attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
@@ -1193,12 +1181,9 @@ fi
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
-%dir %{_libdir}/%{name}
-%{_libdir}/%{name}/*.dat
-%dir %{_libdir}/%{name}/auth
-%attr(755,root,root) %{_libdir}/%{name}/auth/script.so
-%dir %{_libdir}/%{name}/charset
-%attr(755,root,root) %{_libdir}/%{name}/charset/*.so
+%dir %{_libdir}/samba
+%dir %{_libdir}/samba/auth
+%attr(755,root,root) %{_libdir}/samba/auth/script.so
 %{_mandir}/man1/ntlm_auth.1*
 %{_mandir}/man1/profiles.1*
 %{_mandir}/man1/smbcquotas.1*
@@ -1210,7 +1195,6 @@ fi
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/eventlogadm.8*
 %{_mandir}/man8/idmap_ad.8*
-%{_mandir}/man8/idmap_adex.8*
 %{_mandir}/man8/idmap_hash.8*
 %{_mandir}/man8/idmap_ldap.8*
 %{_mandir}/man8/idmap_nss.8*
@@ -1224,23 +1208,23 @@ fi
 %doc swat/help/*
 %attr(755,root,root) %{_sbindir}/swat
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/rc-inetd/swat
-%dir %{_datadir}/swat
-%{_datadir}/swat/help
-%{_datadir}/swat/images
-%{_datadir}/swat/include
-%dir %{_datadir}/swat/lang
-%lang(ja) %{_datadir}/swat/lang/ja
-%lang(tr) %{_datadir}/swat/lang/tr
-%lang(de) %{_libdir}/%{name}/de.msg
-%{_libdir}/%{name}/en.msg
-%lang(fi) %{_libdir}/%{name}/fi.msg
-%lang(fr) %{_libdir}/%{name}/fr.msg
-%lang(it) %{_libdir}/%{name}/it.msg
-%lang(ja) %{_libdir}/%{name}/ja.msg
-%lang(nl) %{_libdir}/%{name}/nl.msg
-%lang(pl) %{_libdir}/%{name}/pl.msg
-%lang(ru) %{_libdir}/%{name}/ru.msg
-%lang(tr) %{_libdir}/%{name}/tr.msg
+%dir %{_datadir}/samba/swat
+%{_datadir}/samba/swat/help
+%{_datadir}/samba/swat/images
+%{_datadir}/samba/swat/include
+%dir %{_datadir}/samba/swat/lang
+%lang(ja) %{_datadir}/samba/swat/lang/ja
+%lang(tr) %{_datadir}/samba/swat/lang/tr
+%lang(de) %{_datadir}/samba/codepages/de.msg
+%{_datadir}/samba/codepages/en.msg
+%lang(fi) %{_datadir}/samba/codepages/fi.msg
+%lang(fr) %{_datadir}/samba/codepages/fr.msg
+%lang(it) %{_datadir}/samba/codepages/it.msg
+%lang(ja) %{_datadir}/samba/codepages/ja.msg
+%lang(nl) %{_datadir}/samba/codepages/nl.msg
+%lang(pl) %{_datadir}/samba/codepages/pl.msg
+%lang(ru) %{_datadir}/samba/codepages/ru.msg
+%lang(tr) %{_datadir}/samba/codepages/tr.msg
 %{_mandir}/man8/swat.8*
 
 %files -n pam-pam_smbpass
@@ -1319,16 +1303,16 @@ fi
 
 %files vfs-audit
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/audit.so
-%attr(755,root,root) %{_vfsdir}/extd_audit.so
-%attr(755,root,root) %{_vfsdir}/full_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/extd_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/full_audit.so
 %{_mandir}/man8/vfs_audit.8*
 %{_mandir}/man8/vfs_extd_audit.8*
 %{_mandir}/man8/vfs_full_audit.8*
 
 %files vfs-cap
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/cap.so
+%attr(755,root,root) %{_libdir}/samba/vfs/cap.so
 %{_mandir}/man8/vfs_cap.8*
 
 %files vfs-catia
@@ -1338,46 +1322,56 @@ fi
 
 %files vfs-default_quota
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/default_quota.so
+%attr(755,root,root) %{_libdir}/samba/vfs/default_quota.so
 %{_mandir}/man8/vfs_default_quota.8*
 
 %files vfs-expand_msdfs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/expand_msdfs.so
+%attr(755,root,root) %{_libdir}/samba/vfs/expand_msdfs.so
 
 %files vfs-fake_perms
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/fake_perms.so
+%attr(755,root,root) %{_libdir}/samba/vfs/fake_perms.so
 %{_mandir}/man8/vfs_fake_perms.8*
 
 %files vfs-notify_fam
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/notify_fam.so
+%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
 %{_mandir}/man8/vfs_notify_fam.8*
 
 %files vfs-netatalk
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/netatalk.so
+%attr(755,root,root) %{_libdir}/samba/vfs/netatalk.so
 %{_mandir}/man8/vfs_netatalk.8*
 
 %files vfs-readahead
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/readahead.so
+%attr(755,root,root) %{_libdir}/samba/vfs/readahead.so
 %{_mandir}/man8/vfs_readahead.8*
 
 %files vfs-readonly
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/readonly.so
+%attr(755,root,root) %{_libdir}/samba/vfs/readonly.so
 %{_mandir}/man8/vfs_readonly.8*
 
 %files vfs-recycle
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/recycle.so
+%attr(755,root,root) %{_libdir}/samba/vfs/recycle.so
 %{_mandir}/man8/vfs_recycle.8*
+
+%files vfs-shadow_copy
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy.so
+%{_mandir}/man8/vfs_shadow_copy.8*
+
+%files vfs-catia
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/catia.so
+%{_mandir}/man8/vfs_catia.8*
 
 %files vfs-scannedonly
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/scannedonly.so
+%attr(755,root,root) %{_libdir}/samba/vfs/scannedonly.so
 %{_mandir}/man8/vfs_scannedonly.8*
 
 %files vfs-shadow_copy

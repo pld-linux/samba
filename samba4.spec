@@ -1,16 +1,14 @@
 #
 # Conditional build:
-%bcond_without	ads			# ActiveDirectory support
-%bcond_without	cups			# CUPS support
-%bcond_without	kerberos5		# Kerberos V support
-%bcond_without	ldap			# LDAP support
-%bcond_without	avahi			# Avahi support
-%bcond_with	merged_build		# samba3+samba4 merge
-%bcond_without	system_libtalloc	# system talloc
-%bcond_without	system_libtdb		# system tdb
-%bcond_without	system_libtevent	# system tevent
-						# http://wiki.samba.org/index.php/Franky
-%bcond_with	mks			# with vfs-mks (mksd dependency not distributale)
+%bcond_without	ads		# without ActiveDirectory support
+%bcond_without	cups		# without CUPS support
+%bcond_without	kerberos5	# without Kerberos V support
+%bcond_without	ldap		# without LDAP support
+%bcond_without	avahi
+%bcond_with	system_libtalloc
+%bcond_with	system_libtdb
+								# http://wiki.samba.org/index.php/Franky
+%bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
 %if %{without kerberos5} || %{without ldap}
@@ -18,13 +16,13 @@
 %endif
 
 %if %{with system_libtalloc}
-%define		libtalloc_ver	2.0.5
+%define		libtalloc_ver	2.0.7
 %else
 %define		libtalloc_ver	%{version}-%{release}
 %endif
 
 %if %{with system_libtdb}
-%define		libtdb_ver	2:1.2.9
+%define		libtdb_ver		2:1.2.10
 %else
 %define		libtdb_ver		%{version}-%{release}
 %endif
@@ -63,6 +61,7 @@ Source7:	winbind.init
 Source8:	winbind.sysconfig
 Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilter-%{virusfilter_version}.tar.bz2
 # Source10-md5:	a3a30d5fbf309d356e8c5833db680c17
+Patch0:		system-heimdal.patch
 Patch1:		samba-c++-nofail.patch
 Patch3:		samba-nscd.patch
 Patch4:		samba-lprng-no-dot-printers.patch
@@ -78,9 +77,10 @@ BuildRequires:	dmapi-devel
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
-%{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 1.5.3-1}
 BuildRequires:	iconv
 BuildRequires:	keyutils-devel
+BuildRequires:	libcom_err-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
@@ -101,10 +101,7 @@ BuildRequires:	sed >= 4.0
 %{?with_system_libtalloc:BuildRequires:	talloc-devel >= %{libtalloc_ver}}
 %{?with_system_libtdb:BuildRequires:	tdb-devel >= %{libtdb_ver}}
 BuildRequires:	xfsprogs-devel
-# python-talloc 2.0.7+ is API incompatible with samba3
-BuildConflicts:	python-talloc-devel
-# same goes for python-ldb 1.1.14
-BuildConflicts:	python-ldb-devel
+BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{version}-%{release}
 Requires:	logrotate >= 3.7-4
@@ -327,7 +324,7 @@ Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
 Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
 Group:		Applications/Networking
 Requires:	%{name}-common = %{version}-%{release}
-%{?with_kerberos5:Requires:	heimdal-libs}
+%{?with_kerberos5:Requires:	heimdal-libs >= 1.5.3-1}
 Requires:	libsmbclient = %{version}-%{release}
 Obsoletes:	smbfs
 Suggests:	cifs-utils
@@ -874,67 +871,65 @@ Moduły Samby dla Pythona.
 
 %prep
 %setup -q -n samba-%{version}
+%patch0 -p1
 %patch1 -p1
 %patch3 -p1
 %patch4 -p1
 
 %build
-# use ld.bfd because gold doesn't understand linker script
-install -d our-ld
-ln -s %{_bindir}/ld.bfd our-ld/ld
-export PATH=$(pwd)/our-ld:$PATH
-
-
-cd source3
-%{__libtoolize}
-%{__autoconf} -Im4 -I../m4 -I../lib/replace -Ilib/replace -I../source4
-%configure \
+LDFLAGS="${LDFLAGS:-%rpmldflags}" \
+CFLAGS="${CFLAGS:-%rpmcflags}" \
+CXXFLAGS="${CXXFLAGS:-%rpmcxxflags}" \
+FFLAGS="${FFLAGS:-%rpmcflags}" \
+FCFLAGS="${FCFLAGS:-%rpmcflags}" \
+CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
+%{?__cc:CC="%{__cc}"} \
+%{?__cxx:CXX="%{__cxx}"} \
+./configure \
+	--enable-fhs \
+	--prefix=%{_prefix} \
+	--exec-prefix=%{_exec_prefix} \
+	--bindir=%{_bindir} \
+	--sbindir=%{_sbindir} \
+	--sysconfdir=%{_sysconfdir} \
+	--datadir=%{_datadir} \
+	--includedir=%{_includedir} \
+	--libdir=%{_libdir} \
+	--libexecdir=%{_libexecdir} \
+	--localstatedir=%{_localstatedir} \
+	--sharedstatedir=%{_sharedstatedir} \
+	--mandir=%{_mandir} \
+	--infodir=%{_infodir} \
 	--with-modulesdir=%{_sambalibdir} \
-	--with-rootsbindir=/sbin \
 	--with-pammodulesdir=/%{_lib}/security \
+	--with-lockdir=/var/lib/samba \
+	--with-privatedir=%{_sysconfdir}/samba \
+	--disable-gnutls \
+	--disable-rpath-install \
+	--builtin-libraries=ccan \
+	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libtalloc:talloc},pytalloc,pytalloc-util,%{!?with_system_libtdb:tdb},pytdb,tevent,pytevent,ldb,pyldb,pyldb-util \
+	--private-libraries=smbclient,smbsharemodes,wbclient \
+	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2,pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4,auth_unix,auth_wbc,auth_server,auth_netlogond,auth_script,auth_samba4 \
 	--with-acl-support \
+	--with%{!?with_ads:out}-ads \
 	--with-aio-support \
 	--with-automount \
-	--with-libsmbclient \
-	--with-lockdir=/var/lib/samba \
+	--with-dmapi \
+	--with-dnsupdate \
+	--with-iconv \
+	--with%{!?with_ldap:out}-ldap \
 	--with-pam \
 	--with-pam_smbpass \
-	--with%{!?with_ads:out}-ads \
-	--with-privatedir=%{_sysconfdir}/samba \
 	--with-quotas \
-	--with-readline \
-	--with-swatdir=%{_datadir}/swat \
+	--with-sendfile-support \
+	--with-swat \
 	--with-syslog \
 	--with-utmp \
-	--with-fhs \
-%if %{with system_libtevent}
-	--with-libtevent=no \
-	--enable-external-libtevent=yes \
-%endif
-%if %{with system_libtalloc}
-	--with-libtalloc=no \
-	--enable-external-libtalloc=yes \
-%endif
-%if %{with system_libtdb}
-	--with-libtdb=no \
-	--enable-external-libtdb=yes \
-%endif
-	--%{?with_merged_build:en}%{!?with_merged_build:dis}able-smbtorture4 \
-	--without-included-popt \
-	--enable-dso \
+	--with-winbind \
 	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \
-	--disable-dnssd \
-	--with%{!?with_ldap:out}-ldap \
-	--with%{!?with_kerberos5:out}-krb5
+	--enable-cups \
+	--enable-iprint
 
-%{__make} -j1 everything pam_smbpass bin/smbget bin/vfstest \
-	LD=ld
-
-cd ../examples/VFS
-%{__autoheader}
-%{__autoconf}
-%configure \
-	CFLAGS="%{rpmcflags} -fPIC"
 %{__make}
 
 %install
@@ -944,7 +939,7 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir},%{_pkgconfigdir}}
 
-%{__make} -C source3 install \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
@@ -959,15 +954,9 @@ cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
-install -p nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
-ln -s libnss_winbind.so.2		$RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so
-install -p nsswitch/libnss_wins.so	$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
-ln -s libnss_wins.so.2			$RPM_BUILD_ROOT/%{_lib}/libnss_wins.so
-install -p source3/bin/wbinfo		$RPM_BUILD_ROOT%{_bindir}
-install -p source3/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
-install -p source3/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
-
-cp -a source3/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
+%{__mv} $RPM_BUILD_ROOT%{_libdir}/libnss_winbind.so* $RPM_BUILD_ROOT/%{_lib}
+%{__mv} $RPM_BUILD_ROOT%{_libdir}/libnss_wins.so* $RPM_BUILD_ROOT/%{_lib}
+install -p bin/vfstest $RPM_BUILD_ROOT%{_bindir}
 
 # these are needed to build samba-pdbsql
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
@@ -990,14 +979,6 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 > $RPM_BUILD_ROOT%{_sysconfdir}/samba/smbusers
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
-# unneeded
-#rm -r $RPM_BUILD_ROOT%{_datadir}/swat/using_samba
-
-# tests
-%if %{with merged_build}
-rm -r $RPM_BUILD_ROOT%{_bindir}/{gentest4,locktest4,masktest4,nsstest4}
-%endif
-
 %if %{with ldap}
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %endif
@@ -1008,8 +989,6 @@ install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbdump.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbtool.8*
 %endif
-
-%find_lang pam_winbind
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
@@ -1073,13 +1052,11 @@ fi
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
-%if %{with merged_build}
 #%attr(755,root,root) %{_bindir}/ad2oLschema4
 %attr(755,root,root) %{_bindir}/oLschema2ldif4
 %attr(755,root,root) %{_bindir}/reg*
 # "This utility disabled until rewritten"
 #%attr(755,root,root) %{_bindir}/setnttoken4
-%endif
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbta-util
@@ -1150,13 +1127,11 @@ fi
 %doc examples/LDAP
 %endif
 
-%files winbind -f pam_winbind.lang
+%files winbind
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) %{_bindir}/wbinfo
-#%if %{with merged_build}
 #%attr(755,root,root) %{_bindir}/wbinfo4
-#%endif
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(754,root,root) /etc/rc.d/init.d/winbind
@@ -1172,14 +1147,12 @@ fi
 
 %files client
 %defattr(644,root,root,755)
-%if %{with merged_build}
 %attr(755,root,root) %{_bindir}/cifsdd4
 %attr(755,root,root) %{_bindir}/net4
 %attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/smbclient4
 %attr(755,root,root) %{_bindir}/setnttoken4
 %attr(755,root,root) %{_bindir}/smbtorture4
-%endif
 %attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/nmblookup
@@ -1203,12 +1176,10 @@ fi
 
 %files common
 %defattr(644,root,root,755)
-%if %{with merged_build}
 %attr(755,root,root) %{_bindir}/getntacl4
 %attr(755,root,root) %{_bindir}/ndrdump4
 %attr(755,root,root) %{_bindir}/ntlm_auth4
 %attr(755,root,root) %{_bindir}/testparm4
-%endif
 %doc README Manifest WHATSNEW.txt
 %doc Roadmap docs/registry/*
 %doc docs/{history,THANKS}
@@ -1309,12 +1280,10 @@ fi
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
 %attr(755,root,root) %{_bindir}/tdbtool
-%if %{with merged_build}
 %attr(755,root,root) %{_bindir}/tdbbackup4
 %attr(755,root,root) %{_bindir}/tdbdump4
 %attr(755,root,root) %{_bindir}/tdbtool4
 %attr(755,root,root) %{_bindir}/tdbtorture4
-%endif
 %attr(755,root,root) %{_libdir}/libtdb.so.*
 %{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/tdbdump.8*

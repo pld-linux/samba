@@ -121,6 +121,8 @@ BuildRequires:	sed >= 4.0
 %{?with_system_libtalloc:BuildRequires:	talloc-devel >= %{libtalloc_ver}}
 %{?with_system_libtdb:BuildRequires:	tdb-devel >= %{libtdb_ver}}
 BuildRequires:	xfsprogs-devel
+# python-talloc 2.0.7+ is API incompatible with samba3
+BuildConflicts:	python-talloc-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4

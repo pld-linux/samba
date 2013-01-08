@@ -110,9 +110,10 @@ Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
-Obsoletes:	python-samba
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
+Obsoletes:	samba-doc-html
+Obsoletes:	samba-doc-pdf
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sambahome	/home/services/samba
@@ -459,6 +460,7 @@ Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	libsmbclient = %{version}-%{release}
+Obsoletes:	libsmbclient-static
 
 %description -n libsmbclient-devel
 Header files for libsmbclient.
@@ -469,19 +471,6 @@ Pliki nagłówkowe dla libsmbclient.
 %description -n libsmbclient-devel -l pt_BR.UTF-8
 Arquivos de inclusão, bibliotecas e documentação necessários para
 desenvolver aplicativos clientes para o samba.
-
-%package -n libsmbclient-static
-Summary:	Static version of libsmbclient - samba client library
-Summary(pl.UTF-8):	Statyczna wersja libsmbclient - biblioteki klienta samby
-Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
-Group:		Development/Libraries
-Requires:	libsmbclient = %{version}-%{release}
-
-%description -n libsmbclient-static
-Static libsmbclient library.
-
-%description -n libsmbclient-static -l pl.UTF-8
-Statyczna biblioteka libsmbclient.
 
 %package -n libtalloc
 Summary:	The talloc library
@@ -832,40 +821,14 @@ This package contains samba.schema for OpenLDAP.
 %description -n openldap-schema-samba -l pl.UTF-8
 Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 
-%package doc-html
-Summary:	Samba HTML documentation
-Summary(pl.UTF-8):	Documentacja samby w formacie HTML
-Group:		Documentation
-
-%description doc-html
-Samba HTML documentation.
-
-%description doc-html -l pl.UTF-8
-Documentacja samby w formacie HTML.
-
-%package doc-pdf
-Summary:	Samba documentation - PDF format
-Summary(pl.UTF-8):	Documentacja samby w formacie PDF
-Group:		Documentation
-
-%description doc-pdf
-Samba PDF documentation.
-
-%description doc-pdf -l pl.UTF-8
-Documentacja samby w formacie PDF.
-
-%package -n python-samba
-Summary:	Samba modules for Python
-Summary(pl.UTF-8):	Moduły Samby dla Pythona
+%package -n python-samba4
+Summary:	Samba Module for Python
 Group:		Development/Languages/Python
 %pyrequires_eq 	python
 Requires:	%{name}-common = %{version}-%{release}
 
-%description -n python-samba
-Samba modules for Python.
-
-%description -n python-samba -l pl.UTF-8
-Moduły Samby dla Pythona.
+%description -n python-samba4
+Samba Module for Python.
 
 %prep
 %setup -q -n samba-%{version}
@@ -1084,6 +1047,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
 %attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
+%{_datadir}/samba/setup
 %{_mandir}/man8/vfs_acl_tdb.8*
 %{_mandir}/man8/vfs_acl_xattr.8*
 %{_mandir}/man8/vfs_crossrename.8*
@@ -1234,28 +1198,26 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsmbclient.so.*
-%attr(755,root,root) %{_libdir}/libwbclient.so.*
+%attr(755,root,root) %{_libdir}/samba/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/samba/libwbclient.so.*
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsmbclient.so
-%attr(755,root,root) %{_libdir}/libwbclient.so
-%{_includedir}/libsmbclient.h
-%{_includedir}/wbclient.h
-%{_pkgconfigdir}/smbclient.pc
-%{_pkgconfigdir}/wbclient.pc
+#%attr(755,root,root) %{_libdir}/samba/libsmbclient.so
+#%attr(755,root,root) %{_libdir}/samba/libwbclient.so
+#%{_includedir}/libsmbclient.h
+#%{_includedir}/wbclient.h
 
 %if %{without system_libtalloc}
 %files -n libtalloc
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libtalloc.so.*
+%attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
 
 %files -n libtalloc-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libtalloc.so
-%{_includedir}/talloc.h
+#%attr(755,root,root) %{_libdir}/libtalloc.so
+#%{_includedir}/talloc.h
 %endif
 
 %if %{without system_libtdb}
@@ -1264,28 +1226,21 @@ fi
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
 %attr(755,root,root) %{_bindir}/tdbtool
-%attr(755,root,root) %{_bindir}/tdbbackup4
-%attr(755,root,root) %{_bindir}/tdbdump4
-%attr(755,root,root) %{_bindir}/tdbtool4
-%attr(755,root,root) %{_bindir}/tdbtorture4
-%attr(755,root,root) %{_libdir}/libtdb.so.*
+%attr(755,root,root) %{_libdir}/samba/libtdb.so.*
 %{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
 
 %files -n tdb-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libtdb.so
-%{_includedir}/tdb.h
+#%attr(755,root,root) %{_libdir}/libtdb.so
+#%{_includedir}/tdb.h
 %endif
 
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/%{name}
-
-%files -n libsmbclient-static
-%defattr(644,root,root,755)
-%{_libdir}/libsmbclient.a
+%{_includedir}/samba-4.0
 
 %files -n smbget
 %defattr(644,root,root,755)
@@ -1334,10 +1289,10 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/fake_perms.so
 %{_mandir}/man8/vfs_fake_perms.8*
 
-%files vfs-notify_fam
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
-%{_mandir}/man8/vfs_notify_fam.8*
+#%files vfs-notify_fam
+#%defattr(644,root,root,755)
+#%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
+#%{_mandir}/man8/vfs_notify_fam.8*
 
 %files vfs-netatalk
 %defattr(644,root,root,755)
@@ -1385,16 +1340,7 @@ fi
 %{schemadir}/samba.schema
 %endif
 
-%files doc-html
-%defattr(644,root,root,755)
-%doc docs/htmldocs/*
-
-%files doc-pdf
-%defattr(644,root,root,755)
-%doc docs/*.pdf
-
-%if 0
-%files -n python-samba
+%files -n python-samba4
 %defattr(644,root,root,755)
 %attr(755,root,root) %{py_sitedir}/*.so
 %dir %{py_sitedir}/samba
@@ -1403,10 +1349,33 @@ fi
 %dir %{py_sitedir}/samba/dcerpc
 %{py_sitedir}/samba/dcerpc/*.py[co]
 %attr(755,root,root) %{py_sitedir}/samba/dcerpc/*.so
+%dir %{py_sitedir}/samba/external
+%{py_sitedir}/samba/external/*.py[co]
+%dir %{py_sitedir}/samba/external/subunit
+%{py_sitedir}/samba/external/subunit/*.py[co]
+%dir %{py_sitedir}/samba/external/subunit/tests
+%{py_sitedir}/samba/external/subunit/tests/*.py[co]
+%dir %{py_sitedir}/samba/external/testtools
+%{py_sitedir}/samba/external/testtools/*.py[co]
+%dir %{py_sitedir}/samba/external/testtools/testresult
+%{py_sitedir}/samba/external/testtools/testresult/*.py[co]
+%dir %{py_sitedir}/samba/external/testtools/tests
+%{py_sitedir}/samba/external/testtools/tests/*.py[co]
+%dir %{py_sitedir}/samba/netcmd
+%{py_sitedir}/samba/netcmd/*.py[co]
+%dir %{py_sitedir}/samba/provision
+%{py_sitedir}/samba/provision/*.py[co]
+%dir %{py_sitedir}/samba/samba3
+%attr(755,root,root) %{py_sitedir}/samba/samba3/*.so
+%{py_sitedir}/samba/samba3/*.py[co]
 %dir %{py_sitedir}/samba/tests
 %{py_sitedir}/samba/tests/*.py[co]
+%dir %{py_sitedir}/samba/tests/blackbox
+%{py_sitedir}/samba/tests/blackbox/*.py[co]
+%dir %{py_sitedir}/samba/tests/samba_tool
+%{py_sitedir}/samba/tests/samba_tool/*.py[co]
 %dir %{py_sitedir}/samba/tests/dcerpc
 %{py_sitedir}/samba/tests/dcerpc/*.py[co]
-%dir %{py_sitedir}/samba/torture
-%{py_sitedir}/samba/torture/*.py[co]
-%endif
+%dir %{py_sitedir}/samba/web_server
+%{py_sitedir}/samba/web_server/*.py[co]
+%{py_sitedir}/tevent.py[co]

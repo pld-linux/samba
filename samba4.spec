@@ -5,26 +5,18 @@
 %bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	avahi
-%bcond_with	system_libtalloc
-%bcond_with	system_libtdb
-								# http://wiki.samba.org/index.php/Franky
-%bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
+%bcond_without	system_libs
 
 # ADS requires kerberos5 and LDAP
 %if %{without kerberos5} || %{without ldap}
 %undefine	with_ads
 %endif
 
-%if %{with system_libtalloc}
-%define		libtalloc_ver	2.0.7
-%else
-%define		libtalloc_ver	%{version}-%{release}
-%endif
-
-%if %{with system_libtdb}
-%define		libtdb_ver		2:1.2.10
-%else
-%define		libtdb_ver		%{version}-%{release}
+%if %{with system_libs}
+%define		talloc_ver	2.0.7
+%define		tdb_ver		2:1.2.10
+%define		ldb_ver		1.1.12
+%define		tevent_ver	0.9.17
 %endif
 
 %define		virusfilter_version 0.1.3
@@ -97,9 +89,15 @@ BuildRequires:	python-modules
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
-%{?with_system_libtevent:BuildRequires:	tevent-devel >= %{libtevent_ver}}
-%{?with_system_libtalloc:BuildRequires:	talloc-devel >= %{libtalloc_ver}}
-%{?with_system_libtdb:BuildRequires:	tdb-devel >= %{libtdb_ver}}
+%if %{with system_libs}
+BuildRequires:	talloc-devel >= %{talloc_ver}
+BuildRequires:	tdb-devel >= %{tdb_ver}
+BuildRequires:	tevent-devel >= %{tevent_ver}
+BuildRequires:	ldb-devel >= %{ldb_ver}
+BuildRequires:	python-ldb-devel >= %{ldb_ver}
+BuildRequires:	python-talloc-devel >= %{talloc_ver}
+BuildRequires:	python-tevent >= %{tevent_ver}
+%endif
 BuildRequires:	xfsprogs-devel
 BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
@@ -370,9 +368,8 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
-Requires:	tevent >= %{libtevent_ver}
-Requires:	talloc >= %{libtalloc_ver}
-Requires:	tdb >= %{libtdb_ver}
+Requires:	talloc >= %{talloc_ver}
+Requires:	tdb >= %{tdb_ver}
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -471,54 +468,6 @@ Pliki nagłówkowe dla libsmbclient.
 %description -n libsmbclient-devel -l pt_BR.UTF-8
 Arquivos de inclusão, bibliotecas e documentação necessários para
 desenvolver aplicativos clientes para o samba.
-
-%package -n libtalloc
-Summary:	The talloc library
-Group:		Libraries
-
-%description -n libtalloc
-The talloc library from the Samba suite.
-
-%package -n libtalloc-devel
-Summary:	Developer tools for the talloc library
-Group:		Development/Libraries
-Requires:	libtalloc = %{version}-%{release}
-
-%description -n libtalloc-devel
-The libtalloc-devel package contains the header files and libraries
-needed to develop programs that link against the talloc library in the
-Samba suite.
-
-%package -n tdb
-Summary:	TDB - Trivial Database
-Summary(pl.UTF-8):	TDB - prosta baza danych
-Group:		Libraries
-Obsoletes:	tdb-extras
-
-%description -n tdb
-TDB is a Trivial Database. In concept, it is very much like GDBM, and
-BSD's DB except that it allows multiple simultaneous writers and uses
-locking internally to keep writers from trampling on each other. TDB
-is also extremely small.
-
-%description -n tdb -l pl.UTF-8
-TDB to Trivial Database, czyli prosta baza danych. W założeniach jest
-bardzo podobna do GDBM lub DB z BSD z wyjątkiem tego, że pozwala na
-zapis wielu procesom jednocześnie i używa wewnętrznie blokowania, aby
-nie pozwolić piszącym na zadeptanie się nawzajem. TDB jest ponadto
-ekstremalnie mała.
-
-%package  -n tdb-devel
-Summary:	Header files for TDB library
-Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki TDB
-Group:		Development/Libraries
-Requires:	tdb = %{version}-%{release}
-
-%description -n tdb-devel
-Header files for TDB library.
-
-%description -n tdb-devel -l pl.UTF-8
-Pliki nagłówkowe biblioteki TDB.
 
 %package devel
 Summary:	Header files for Samba
@@ -869,7 +818,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--disable-gnutls \
 	--disable-rpath-install \
 	--builtin-libraries=ccan \
-	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libtalloc:talloc},pytalloc,pytalloc-util,%{!?with_system_libtdb:tdb},pytdb,tevent,pytevent,ldb,pyldb,pyldb-util \
+	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
 	--private-libraries=smbclient,smbsharemodes,wbclient \
 	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2,pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4,auth_unix,auth_wbc,auth_server,auth_netlogond,auth_script,auth_samba4 \
 	--with-acl-support \
@@ -1166,6 +1115,18 @@ fi
 %{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/idmap_tdb2.8*
 
+%if %{without system_libs}
+%attr(755,root,root) %{_bindir}/tdbbackup
+%attr(755,root,root) %{_bindir}/tdbdump
+%attr(755,root,root) %{_bindir}/tdbtool
+%attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
+%attr(755,root,root) %{_libdir}/samba/libtdb.so.*
+%{_mandir}/man8/tdbbackup.8*
+%{_mandir}/man8/tdbdump.8*
+%{_mandir}/man8/tdbtool.8*
+%endif
+
+
 %files swat
 %defattr(644,root,root,755)
 #%doc swat/README* swat/help/*
@@ -1208,34 +1169,6 @@ fi
 #%attr(755,root,root) %{_libdir}/samba/libwbclient.so
 #%{_includedir}/libsmbclient.h
 #%{_includedir}/wbclient.h
-
-%if %{without system_libtalloc}
-%files -n libtalloc
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
-
-%files -n libtalloc-devel
-%defattr(644,root,root,755)
-#%attr(755,root,root) %{_libdir}/libtalloc.so
-#%{_includedir}/talloc.h
-%endif
-
-%if %{without system_libtdb}
-%files -n tdb
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/tdbbackup
-%attr(755,root,root) %{_bindir}/tdbdump
-%attr(755,root,root) %{_bindir}/tdbtool
-%attr(755,root,root) %{_libdir}/samba/libtdb.so.*
-%{_mandir}/man8/tdbbackup.8*
-%{_mandir}/man8/tdbdump.8*
-%{_mandir}/man8/tdbtool.8*
-
-%files -n tdb-devel
-%defattr(644,root,root,755)
-#%attr(755,root,root) %{_libdir}/libtdb.so
-#%{_includedir}/tdb.h
-%endif
 
 %files devel
 %defattr(644,root,root,755)
@@ -1342,7 +1275,6 @@ fi
 
 %files -n python-samba4
 %defattr(644,root,root,755)
-%attr(755,root,root) %{py_sitedir}/*.so
 %dir %{py_sitedir}/samba
 %attr(755,root,root) %{py_sitedir}/samba/*.so
 %{py_sitedir}/samba/*.py[co]
@@ -1378,4 +1310,7 @@ fi
 %{py_sitedir}/samba/tests/dcerpc/*.py[co]
 %dir %{py_sitedir}/samba/web_server
 %{py_sitedir}/samba/web_server/*.py[co]
+%if %{without system_libs}
+%attr(755,root,root) %{py_sitedir}/*.so
 %{py_sitedir}/tevent.py[co]
+%endif

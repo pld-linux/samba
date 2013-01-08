@@ -872,17 +872,25 @@ cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
+# move lib{smb,wb}client where they always were for compatibility
+%{__mv} $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so.* $RPM_BUILD_ROOT%{_libdir}
+ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
+ln -s libwbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libwbclient.so
+%{__mv} $RPM_BUILD_ROOT%{_libdir}/samba/libwbclient.so.* $RPM_BUILD_ROOT%{_libdir}
+%{__mv} $RPM_BUILD_ROOT%{_includedir}/samba-4.0/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
+%{__mv} $RPM_BUILD_ROOT%{_includedir}/samba-4.0/wbclient.h $RPM_BUILD_ROOT%{_includedir}
+
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/libnss_winbind.so* $RPM_BUILD_ROOT/%{_lib}
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/libnss_wins.so* $RPM_BUILD_ROOT/%{_lib}
 install -p bin/vfstest $RPM_BUILD_ROOT%{_bindir}
 
 # these are needed to build samba-pdbsql
-install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
-cp -a source3/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}
-cp -a nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/nsswitch
+install -d $RPM_BUILD_ROOT%{_includedir}/samba/nsswitch
+cp -a source3/include/*.h $RPM_BUILD_ROOT%{_includedir}/samba
+cp -a nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/samba/nsswitch
 %if %{without system_libtdb}
-install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
-cp -a lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/tdb
+install -d $RPM_BUILD_ROOT%{_includedir}/samba/tdb
+cp -a lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/samba/tdb
 %endif
 
 touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
@@ -1160,20 +1168,20 @@ fi
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/libsmbclient.so.*
-%attr(755,root,root) %{_libdir}/samba/libwbclient.so.*
+%attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/libwbclient.so.*
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel
 %defattr(644,root,root,755)
-#%attr(755,root,root) %{_libdir}/samba/libsmbclient.so
-#%attr(755,root,root) %{_libdir}/samba/libwbclient.so
-#%{_includedir}/libsmbclient.h
-#%{_includedir}/wbclient.h
+%attr(755,root,root) %{_libdir}/libsmbclient.so
+%attr(755,root,root) %{_libdir}/libwbclient.so
+%{_includedir}/libsmbclient.h
+%{_includedir}/wbclient.h
 
 %files devel
 %defattr(644,root,root,755)
-%{_includedir}/%{name}
+%{_includedir}/samba
 %{_includedir}/samba-4.0
 
 %files -n smbget

@@ -95,13 +95,13 @@ BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
-BuildRequires:	talloc-devel >= %{talloc_ver}
-BuildRequires:	tdb-devel >= %{tdb_ver}
-BuildRequires:	tevent-devel >= %{tevent_ver}
 BuildRequires:	ldb-devel >= %{ldb_ver}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
+BuildRequires:	talloc-devel >= %{talloc_ver}
+BuildRequires:	tdb-devel >= %{tdb_ver}
+BuildRequires:	tevent-devel >= %{tevent_ver}
 %endif
 BuildRequires:	xfsprogs-devel
 BuildConflicts:	libbsd-devel
@@ -113,10 +113,10 @@ Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
-Obsoletes:	samba-pdb-xml
-Obsoletes:	samba-vfs-block
 Obsoletes:	samba-doc-html
 Obsoletes:	samba-doc-pdf
+Obsoletes:	samba-pdb-xml
+Obsoletes:	samba-vfs-block
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sambahome	/home/services/samba
@@ -328,7 +328,6 @@ Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs >= 1.5.3-1}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
-Obsoletes:	smbfs
 Suggests:	cifs-utils
 Obsoletes:	smbfs
 
@@ -809,8 +808,8 @@ Group:		Applications/System
 Requires:	%{name}-test = %{epoch}:%{version}-%{release}
 
 %description test-devel
-samba-test-devel provides testing devel files for both the server
-and client packages of Samba.
+samba-test-devel provides testing devel files for both the server and
+client packages of Samba.
 
 %package pidl
 Summary:	Perl IDL compiler
@@ -1085,12 +1084,12 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
-%dir /usr/lib64/samba/bind9
+%dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
-%dir /usr/lib64/samba/gensec
+%dir %{_libdir}/samba/gensec
 %attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
-%dir /usr/lib64/samba/hdb
+%dir %{_libdir}/samba/hdb
 %attr(755,root,root) %{_libdir}/samba/hdb/hdb_samba4.so
 %dir %{_libdir}/samba/idmap
 %attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
@@ -1098,7 +1097,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/idmap/hash.so
 %attr(755,root,root) %{_libdir}/samba/idmap/rid.so
 %attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
-%dir /usr/lib64/samba/ldb
+%dir %{_libdir}/samba/ldb
 %attr(755,root,root) %{_libdir}/samba/ldb/acl.so
 %attr(755,root,root) %{_libdir}/samba/ldb/aclread.so
 %attr(755,root,root) %{_libdir}/samba/ldb/anr.so
@@ -1139,7 +1138,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/subtree_rename.so
 %attr(755,root,root) %{_libdir}/samba/ldb/update_keytab.so
 %attr(755,root,root) %{_libdir}/samba/ldb/wins_ldb.so
-%dir /usr/lib64/samba/nss_info
+%dir %{_libdir}/samba/nss_info
 %attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
 %attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
 %attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
@@ -1149,11 +1148,11 @@ fi
 %attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
 %attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
 %attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
-%dir /usr/lib64/samba/process_model
+%dir %{_libdir}/samba/process_model
 %attr(755,root,root) %{_libdir}/samba/process_model/onefork.so
 %attr(755,root,root) %{_libdir}/samba/process_model/prefork.so
 %attr(755,root,root) %{_libdir}/samba/process_model/standard.so
-%dir /usr/lib64/samba/service
+%dir %{_libdir}/samba/service
 %attr(755,root,root) %{_libdir}/samba/service/cldap.so
 %attr(755,root,root) %{_libdir}/samba/service/dcerpc.so
 %attr(755,root,root) %{_libdir}/samba/service/dns.so
@@ -1478,7 +1477,7 @@ fi
 %attr(755,root,root) %{_libdir}/libwbclient.so
 %{_includedir}/libsmbclient.h
 %{_includedir}/wbclient.h
-/usr/lib64/pkgconfig/smbclient-raw.pc
+%{_pkgconfigdir}/smbclient-raw.pc
 
 %files devel
 %defattr(644,root,root,755)
@@ -1506,22 +1505,22 @@ fi
 %{_includedir}/samba
 %{_includedir}/samba-4.0
 %exclude %{_includedir}/samba-4.0/torture.h
-/usr/lib64/pkgconfig/dcerpc.pc
-/usr/lib64/pkgconfig/dcerpc_atsvc.pc
-/usr/lib64/pkgconfig/dcerpc_samr.pc
-/usr/lib64/pkgconfig/dcerpc_server.pc
-/usr/lib64/pkgconfig/gensec.pc
-/usr/lib64/pkgconfig/ndr.pc
-/usr/lib64/pkgconfig/ndr_krb5pac.pc
-/usr/lib64/pkgconfig/ndr_nbt.pc
-/usr/lib64/pkgconfig/ndr_standard.pc
-/usr/lib64/pkgconfig/netapi.pc
-/usr/lib64/pkgconfig/registry.pc
-/usr/lib64/pkgconfig/samba-credentials.pc
-/usr/lib64/pkgconfig/samba-hostconfig.pc
-/usr/lib64/pkgconfig/samba-policy.pc
-/usr/lib64/pkgconfig/samba-util.pc
-/usr/lib64/pkgconfig/samdb.pc
+%{_pkgconfigdir}/dcerpc.pc
+%{_pkgconfigdir}/dcerpc_atsvc.pc
+%{_pkgconfigdir}/dcerpc_samr.pc
+%{_pkgconfigdir}/dcerpc_server.pc
+%{_pkgconfigdir}/gensec.pc
+%{_pkgconfigdir}/ndr.pc
+%{_pkgconfigdir}/ndr_krb5pac.pc
+%{_pkgconfigdir}/ndr_nbt.pc
+%{_pkgconfigdir}/ndr_standard.pc
+%{_pkgconfigdir}/netapi.pc
+%{_pkgconfigdir}/registry.pc
+%{_pkgconfigdir}/samba-credentials.pc
+%{_pkgconfigdir}/samba-hostconfig.pc
+%{_pkgconfigdir}/samba-policy.pc
+%{_pkgconfigdir}/samba-util.pc
+%{_pkgconfigdir}/samdb.pc
 
 %files -n smbget
 %defattr(644,root,root,755)
@@ -1690,7 +1689,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtorture.so
 %{_includedir}/samba-4.0/torture.h
-%{_libdir}/pkgconfig/torture.pc
+%{_pkgconfigdir}/torture.pc
 
 %files pidl
 %defattr(644,root,root,755)

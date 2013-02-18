@@ -123,6 +123,8 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	xfsprogs-devel
 # python-talloc 2.0.7+ is API incompatible with samba3
 BuildConflicts:	python-talloc-devel
+# samen goes for python-ldb 1.1.14
+BuildConflicts:	python-ldb-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4

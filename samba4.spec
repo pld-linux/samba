@@ -38,7 +38,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba4
 Version:	4.0.0
-Release:	0.4
+Release:	0.5
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -92,7 +92,7 @@ BuildRequires:	python-dns
 BuildRequires:	python-modules
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	rpmbuild(macros) >= 1.304
+BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
@@ -111,6 +111,7 @@ Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
+Requires:	systemd-units >= 38
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Obsoletes:	samba-doc-html
@@ -412,6 +413,7 @@ Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	systemd-units >= 38
 
 %description winbind
 Provides the winbind daemon and testing tools to allow authentication
@@ -985,24 +987,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add smb
-if [ -f /var/lock/samba/connections.tdb -a ! -f /var/lib/samba/connections.tdb ]; then
-	echo >&2 "Moving old /var/lock/samba contents to /var/lib/samba"
-	/sbin/service smb stop >&2
-	mv -f /var/lock/samba/*.tdb /var/lib/samba 2>/dev/null || :
-	mv -f /var/lock/samba/*.dat /var/lib/samba 2>/dev/null || :
-	if [ -d /var/lock/samba/printing ]; then
-		mv -f /var/lock/samba/printing/*.tdb /var/lib/samba/printing 2>/dev/null || :
-	fi
-	/sbin/service smb start >&2
-else
-	%service smb restart "Samba daemons"
-fi
+%service smb restart "Samba daemons"
+#systemd_post smb.service nmb.service
+%systemd_post samba.service
 
 %preun
 if [ "$1" = "0" ]; then
 	%service smb stop
 	/sbin/chkconfig --del smb
 fi
+#systemd_preun smb.service nmb.service
+%systemd_preun samba.service
+
+%postun
+%systemd_reload
 
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
@@ -1010,12 +1008,17 @@ fi
 %post winbind
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
+%systemd_post winbind.service
 
 %preun winbind
 if [ "$1" = "0" ]; then
 	%service winbind stop
 	/sbin/chkconfig --del winbind
 fi
+%systemd_preun winbind.service
+
+%postun winbind
+%systemd_reload
 
 %post swat
 %service -q rc-inetd reload
@@ -1210,6 +1213,10 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
+%{systemdunitdir}/nmb.service
+%{systemdunitdir}/samba.service
+%{systemdunitdir}/smb.service
+%{systemdtmpfilesdir}/samba.conf
 %{_mandir}/man1/log2pcap.1*
 %{_mandir}/man1/smbstatus.1*
 %{_mandir}/man1/smbcontrol.1*
@@ -1246,6 +1253,7 @@ fi
 %attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
+%{systemdunitdir}/winbind.service
 %{_mandir}/man1/wbinfo*.1*
 %{_mandir}/man5/pam_winbind.conf.5*
 %{_mandir}/man7/winbind_krb5_locator.7*

@@ -1142,6 +1142,48 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libregistry.so.0
 %attr(755,root,root) %{_libdir}/samba/libdb-glue.so
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser.so
+%dir %{_libdir}/samba/ldb
+%attr(755,root,root) %{_libdir}/samba/ldb/acl.so
+%attr(755,root,root) %{_libdir}/samba/ldb/aclread.so
+%attr(755,root,root) %{_libdir}/samba/ldb/anr.so
+%attr(755,root,root) %{_libdir}/samba/ldb/descriptor.so
+%attr(755,root,root) %{_libdir}/samba/ldb/dirsync.so
+%attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_in.so
+%attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_out.so
+%attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_store.so
+%attr(755,root,root) %{_libdir}/samba/ldb/ildap.so
+%attr(755,root,root) %{_libdir}/samba/ldb/instancetype.so
+%attr(755,root,root) %{_libdir}/samba/ldb/lazy_commit.so
+%attr(755,root,root) %{_libdir}/samba/ldb/ldbsamba_extensions.so
+%attr(755,root,root) %{_libdir}/samba/ldb/linked_attributes.so
+%attr(755,root,root) %{_libdir}/samba/ldb/local_password.so
+%attr(755,root,root) %{_libdir}/samba/ldb/new_partition.so
+%attr(755,root,root) %{_libdir}/samba/ldb/objectclass.so
+%attr(755,root,root) %{_libdir}/samba/ldb/objectclass_attrs.so
+%attr(755,root,root) %{_libdir}/samba/ldb/objectguid.so
+%attr(755,root,root) %{_libdir}/samba/ldb/operational.so
+%attr(755,root,root) %{_libdir}/samba/ldb/partition.so
+%attr(755,root,root) %{_libdir}/samba/ldb/password_hash.so
+%attr(755,root,root) %{_libdir}/samba/ldb/ranged_results.so
+%attr(755,root,root) %{_libdir}/samba/ldb/repl_meta_data.so
+%attr(755,root,root) %{_libdir}/samba/ldb/resolve_oids.so
+%attr(755,root,root) %{_libdir}/samba/ldb/rootdse.so
+%attr(755,root,root) %{_libdir}/samba/ldb/samba3sam.so
+%attr(755,root,root) %{_libdir}/samba/ldb/samba3sid.so
+%attr(755,root,root) %{_libdir}/samba/ldb/samba_dsdb.so
+%attr(755,root,root) %{_libdir}/samba/ldb/samba_secrets.so
+%attr(755,root,root) %{_libdir}/samba/ldb/samldb.so
+%attr(755,root,root) %{_libdir}/samba/ldb/schema_data.so
+%attr(755,root,root) %{_libdir}/samba/ldb/schema_load.so
+%attr(755,root,root) %{_libdir}/samba/ldb/secrets_tdb_sync.so
+%attr(755,root,root) %{_libdir}/samba/ldb/show_deleted.so
+%attr(755,root,root) %{_libdir}/samba/ldb/simple_dn.so
+%attr(755,root,root) %{_libdir}/samba/ldb/simple_ldap_map.so
+%attr(755,root,root) %{_libdir}/samba/ldb/subtree_delete.so
+%attr(755,root,root) %{_libdir}/samba/ldb/subtree_rename.so
+%attr(755,root,root) %{_libdir}/samba/ldb/update_keytab.so
+%attr(755,root,root) %{_libdir}/samba/ldb/wins_ldb.so
+%attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
 # serverr
 
 %files winbind
@@ -1195,6 +1237,10 @@ fi
 %endif
 %attr(755,root,root) %{_libdir}/libdcerpc.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc.so.0
+%attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdcerpc-atsvc.so.0
+%attr(755,root,root) %{_libdir}/libdcerpc-samr.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdcerpc-samr.so.0
 %attr(755,root,root) %{_libdir}/libdcerpc-binding.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-binding.so.0
 %attr(755,root,root) %{_libdir}/libgensec.so.*.*.*
@@ -1217,6 +1263,8 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamdb.so.0
 %attr(755,root,root) %{_libdir}/libtevent-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
+%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %attr(755,root,root) %{_libdir}/samba/libauthkrb5.so
 %attr(755,root,root) %{_libdir}/samba/libutil_setid.so
 %attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
@@ -1242,6 +1290,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libasn1util.so
 %attr(755,root,root) %{_libdir}/samba/libsmb_transport.so
 %attr(755,root,root) %{_libdir}/samba/libiniparser.so
+%attr(755,root,root) %{_libdir}/samba/libldb-cmdline.so
 %dir %{_libdir}/samba
 %if %{without system_libs}
 %attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
@@ -1467,6 +1516,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
 %attr(755,root,root) %{_libdir}/samba/libidmap.so
 %{_mandir}/man8/idmap_ad.8*
+%{_mandir}/man8/idmap_autorid.8*
 %{_mandir}/man8/idmap_hash.8*
 %{_mandir}/man8/idmap_ldap.8*
 %{_mandir}/man8/idmap_nss.8*
@@ -1569,7 +1619,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/fake_perms.so
 %{_mandir}/man8/vfs_fake_perms.8*
 
-#%files -n samba3- vfs-notify_fam
+#%files -n samba3-vfs-notify_fam
 #%defattr(644,root,root,755)
 #%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
 #%{_mandir}/man8/vfs_notify_fam.8*
@@ -1650,78 +1700,6 @@ fi
 
 %files todo
 %defattr(644,root,root,755)
-# ?
-%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
-# registry-tools
-%attr(755,root,root) %{_bindir}/reg*
-
-%attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libdcerpc-atsvc.so.0
-%attr(755,root,root) %{_libdir}/libdcerpc-samr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libdcerpc-samr.so.0
-# py
-%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
-%attr(755,root,root) %{_libdir}/mit_samba.so
-# test
-%attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
-# test
-%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
-# py, 3
-%dir %{_libdir}/samba/gensec
-%attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
-%dir %{_libdir}/samba/ldb
-%attr(755,root,root) %{_libdir}/samba/ldb/acl.so
-%attr(755,root,root) %{_libdir}/samba/ldb/aclread.so
-%attr(755,root,root) %{_libdir}/samba/ldb/anr.so
-%attr(755,root,root) %{_libdir}/samba/ldb/descriptor.so
-%attr(755,root,root) %{_libdir}/samba/ldb/dirsync.so
-%attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_in.so
-%attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_out.so
-%attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_store.so
-%attr(755,root,root) %{_libdir}/samba/ldb/ildap.so
-%attr(755,root,root) %{_libdir}/samba/ldb/instancetype.so
-%attr(755,root,root) %{_libdir}/samba/ldb/lazy_commit.so
-%attr(755,root,root) %{_libdir}/samba/ldb/ldbsamba_extensions.so
-%attr(755,root,root) %{_libdir}/samba/ldb/linked_attributes.so
-%attr(755,root,root) %{_libdir}/samba/ldb/local_password.so
-%attr(755,root,root) %{_libdir}/samba/ldb/new_partition.so
-%attr(755,root,root) %{_libdir}/samba/ldb/objectclass.so
-%attr(755,root,root) %{_libdir}/samba/ldb/objectclass_attrs.so
-%attr(755,root,root) %{_libdir}/samba/ldb/objectguid.so
-%attr(755,root,root) %{_libdir}/samba/ldb/operational.so
-%attr(755,root,root) %{_libdir}/samba/ldb/partition.so
-%attr(755,root,root) %{_libdir}/samba/ldb/password_hash.so
-%attr(755,root,root) %{_libdir}/samba/ldb/ranged_results.so
-%attr(755,root,root) %{_libdir}/samba/ldb/repl_meta_data.so
-%attr(755,root,root) %{_libdir}/samba/ldb/resolve_oids.so
-%attr(755,root,root) %{_libdir}/samba/ldb/rootdse.so
-%attr(755,root,root) %{_libdir}/samba/ldb/samba3sam.so
-%attr(755,root,root) %{_libdir}/samba/ldb/samba3sid.so
-%attr(755,root,root) %{_libdir}/samba/ldb/samba_dsdb.so
-%attr(755,root,root) %{_libdir}/samba/ldb/samba_secrets.so
-%attr(755,root,root) %{_libdir}/samba/ldb/samldb.so
-%attr(755,root,root) %{_libdir}/samba/ldb/schema_data.so
-%attr(755,root,root) %{_libdir}/samba/ldb/schema_load.so
-%attr(755,root,root) %{_libdir}/samba/ldb/secrets_tdb_sync.so
-%attr(755,root,root) %{_libdir}/samba/ldb/show_deleted.so
-%attr(755,root,root) %{_libdir}/samba/ldb/simple_dn.so
-%attr(755,root,root) %{_libdir}/samba/ldb/simple_ldap_map.so
-%attr(755,root,root) %{_libdir}/samba/ldb/subtree_delete.so
-%attr(755,root,root) %{_libdir}/samba/ldb/subtree_rename.so
-%attr(755,root,root) %{_libdir}/samba/ldb/update_keytab.so
-%attr(755,root,root) %{_libdir}/samba/ldb/wins_ldb.so
-%dir %{_libdir}/samba/nss_info
-%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
-%dir %{_libdir}/samba/pdb
-%attr(755,root,root) %{_libdir}/samba/pdb/ldap.so
-%attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
-%attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
-%attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
-%{_mandir}/man8/idmap_autorid.8*
-
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
@@ -1749,9 +1727,24 @@ fi
 %doc examples/LDAP
 %endif
 
-# client?
-%attr(755,root,root) %{_libdir}/samba/libldb-cmdline.so
+# ?
+%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
+# registry-tools
+%attr(755,root,root) %{_bindir}/reg*
 
+%attr(755,root,root) %{_libdir}/mit_samba.so
+%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
+%dir %{_libdir}/samba/gensec
+%attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
+%dir %{_libdir}/samba/nss_info
+%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
+%dir %{_libdir}/samba/pdb
+%attr(755,root,root) %{_libdir}/samba/pdb/ldap.so
+%attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
+%attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
+%attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
 %dir %{_libdir}/samba/auth
 %attr(755,root,root) %{_libdir}/samba/auth/samba4.so
 %attr(755,root,root) %{_libdir}/samba/auth/unix.so

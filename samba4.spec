@@ -953,6 +953,9 @@ cd ..
 %{__rm} $RPM_BUILD_ROOT%{perl_vendorlib}/wscript_build
 %{__rm} -r $RPM_BUILD_ROOT%{perl_vendorlib}/Parse/Yapp
 
+# not ready for production, and no MIT kerberos in PLD
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/mit_samba.so
+
 install -p source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
 install packaging/systemd/samba.conf.tmp $RPM_BUILD_ROOT%{systemdtmpfilesdir}/samba.conf
@@ -1184,6 +1187,10 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/update_keytab.so
 %attr(755,root,root) %{_libdir}/samba/ldb/wins_ldb.so
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
+%dir %{_libdir}/samba/gensec
+%attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
+%{systemdunitdir}/samba.service
+%{systemdtmpfilesdir}/samba.conf
 # serverr
 
 %files winbind
@@ -1223,10 +1230,10 @@ fi
 %{_datadir}/samba/codepages/lowcase.dat
 %{_datadir}/samba/codepages/upcase.dat
 %{_datadir}/samba/codepages/valid.dat
-#%{_mandir}/man1/log2pcap.1*
 %{_mandir}/man8/samba-tool.8*
 %{_mandir}/man5/lmhosts.5*
 %{_mandir}/man5/smb.conf.5*
+%{_mandir}/man7/samba.7*
 %if %{without system_libs}
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
@@ -1457,6 +1464,7 @@ fi
 
 %files samba3
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %{_mandir}/man1/ntlm_auth.1*
 %{systemdunitdir}/nmb.service
@@ -1466,6 +1474,7 @@ fi
 %attr(755,root,root) %{_bindir}/nmblookup
 %{_mandir}/man1/nmblookup.1*
 %attr(755,root,root) %{_bindir}/dbwrap_tool
+%{_mandir}/man1/dbwrap_tool.1*
 %attr(755,root,root) %{_bindir}/eventlogadm
 %{_mandir}/man8/eventlogadm.8*
 %attr(755,root,root) %{_bindir}/net
@@ -1507,7 +1516,11 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
 %doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
 %attr(755,root,root) /%{_lib}/security/pam_smbpass.so
+%dir %{_libdir}/samba/auth
 %attr(755,root,root) %{_libdir}/samba/auth/script.so
+%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
+%attr(755,root,root) %{_libdir}/samba/auth/unix.so
+%attr(755,root,root) %{_libdir}/samba/auth/wbc.so
 %dir %{_libdir}/samba/idmap
 %attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
 %attr(755,root,root) %{_libdir}/samba/idmap/ad.so
@@ -1590,6 +1603,17 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libutil_reg.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
+%dir %{_libdir}/samba/pdb
+%attr(755,root,root) %{_libdir}/samba/pdb/ldap.so
+%attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
+%attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
+%attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
+%dir %{_libdir}/samba/nss_info
+%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
+%{_mandir}/man5/smbpasswd.5*
+%attr(754,root,root) /etc/rc.d/init.d/smb
 
 %files -n samba3-vfs-audit
 %defattr(644,root,root,755)
@@ -1701,16 +1725,10 @@ fi
 %files todo
 %defattr(644,root,root,755)
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
-%attr(754,root,root) /etc/rc.d/init.d/smb
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
-%{systemdunitdir}/samba.service
-%{systemdtmpfilesdir}/samba.conf
-%{_mandir}/man1/log2pcap.1*
-%{_mandir}/man5/smbpasswd.5*
-%{_mandir}/man7/samba.7*
 
 %dir %{_sambahome}
 %dir /var/lib/samba
@@ -1727,25 +1745,8 @@ fi
 %doc examples/LDAP
 %endif
 
-# ?
-%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 # registry-tools
 %attr(755,root,root) %{_bindir}/reg*
+%{_mandir}/man1/reg*.1*
 
-%attr(755,root,root) %{_libdir}/mit_samba.so
 %attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
-%dir %{_libdir}/samba/gensec
-%attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
-%dir %{_libdir}/samba/nss_info
-%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
-%dir %{_libdir}/samba/pdb
-%attr(755,root,root) %{_libdir}/samba/pdb/ldap.so
-%attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
-%attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
-%attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
-%dir %{_libdir}/samba/auth
-%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
-%attr(755,root,root) %{_libdir}/samba/auth/unix.so
-%attr(755,root,root) %{_libdir}/samba/auth/wbc.so

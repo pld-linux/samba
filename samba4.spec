@@ -516,6 +516,17 @@ Header files for Samba.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe Samby.
 
+%package -n samba3-devel
+Summary:	Header files for Samba
+Summary(pl.UTF-8):	Pliki nagłówkowe Samby
+Group:		Development/Libraries
+
+%description -n samba3-devel
+Header files for Samba.
+
+%description -n samba3-devel -l pl.UTF-8
+Pliki nagłówkowe Samby.
+
 %package -n samba3-smbget
 Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
@@ -977,15 +988,6 @@ ln -s libwbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libwbclient.so
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/libnss_wins.so* $RPM_BUILD_ROOT/%{_lib}
 install -p bin/vfstest $RPM_BUILD_ROOT%{_bindir}
 
-# these are needed to build samba-pdbsql
-install -d $RPM_BUILD_ROOT%{_includedir}/samba/nsswitch
-cp -a source3/include/*.h $RPM_BUILD_ROOT%{_includedir}/samba
-cp -a nsswitch/*.h $RPM_BUILD_ROOT%{_includedir}/samba/nsswitch
-%if %{without system_libtdb}
-install -d $RPM_BUILD_ROOT%{_includedir}/samba/tdb
-cp -a lib/tdb/include/*.h $RPM_BUILD_ROOT%{_includedir}/samba/tdb
-%endif
-
 touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
 echo '127.0.0.1 localhost' > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
@@ -1197,6 +1199,7 @@ fi
 
 %files -n nss_wins
 %defattr(644,root,root,755)
+%attr(755,root,root) /%{_lib}/libnss_wins*
 
 %files client
 %defattr(644,root,root,755)
@@ -1298,6 +1301,8 @@ fi
 
 %files -n pam-pam_smbpass
 %defattr(644,root,root,755)
+%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
+%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
 
 %files -n libsmbclient-raw
 %defattr(644,root,root,755)
@@ -1306,13 +1311,41 @@ fi
 
 %files -n libsmbclient-raw-devel
 %defattr(644,root,root,755)
+%{_includedir}/samba-4.0/gen_ndr/drsblobs.h
+%{_includedir}/samba-4.0/gen_ndr/drsuapi.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_drsblobs.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_drsuapi.h
+%{_includedir}/samba-4.0/ndr/ndr_drsblobs.h
+%{_includedir}/samba-4.0/ndr/ndr_drsuapi.h
+%{_includedir}/samba-4.0/read_smb.h
+%{_includedir}/samba-4.0/smb2.h
+%{_includedir}/samba-4.0/smb2_constants.h
+%{_includedir}/samba-4.0/smb2_create_blob.h
+%{_includedir}/samba-4.0/smb2_signing.h
+%{_includedir}/samba-4.0/smb_cli.h
+%{_includedir}/samba-4.0/smb_cliraw.h
+%{_includedir}/samba-4.0/smb_common.h
+%{_includedir}/samba-4.0/smb_composite.h
+%{_includedir}/samba-4.0/smb_constants.h
+%{_includedir}/samba-4.0/smb_raw.h
+%{_includedir}/samba-4.0/smb_raw_interfaces.h
+%{_includedir}/samba-4.0/smb_raw_signing.h
+%{_includedir}/samba-4.0/smb_raw_trans2.h
+%{_includedir}/samba-4.0/smb_request.h
+%{_includedir}/samba-4.0/smb_seal.h
+%{_includedir}/samba-4.0/smb_signing.h
+%{_includedir}/samba-4.0/smb_unix_ext.h
+%{_includedir}/samba-4.0/smb_util.h
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so
 %{_pkgconfigdir}/smbclient-raw.pc
 
 %files -n samba3-libsmbclient
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/libsmbconf.so.0
+%attr(755,root,root) %{_libdir}/libwbclient.so.*
 %{_mandir}/man7/libsmbclient.7*
+%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
 %attr(755,root,root) %{_libdir}/samba/libgse.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
 %attr(755,root,root) %{_libdir}/samba/liblibsmb.so
@@ -1324,42 +1357,118 @@ fi
 %files -n samba3-libsmbclient-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so
+%attr(755,root,root) %{_libdir}/libsmbconf.so
+%attr(755,root,root) %{_libdir}/libwbclient.so
 %{_includedir}/libsmbclient.h
 %{_includedir}/wbclient.h
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so
-%attr(755,root,root) %{_libdir}/libdcerpc-binding.so
-%attr(755,root,root) %{_libdir}/libdcerpc-samr.so
-%attr(755,root,root) %{_libdir}/libdcerpc-server.so
-%attr(755,root,root) %{_libdir}/libdcerpc.so
-%attr(755,root,root) %{_libdir}/libgensec.so
-%attr(755,root,root) %{_libdir}/libndr-krb5pac.so
-%attr(755,root,root) %{_libdir}/libndr-nbt.so
-%attr(755,root,root) %{_libdir}/libndr-standard.so
-%attr(755,root,root) %{_libdir}/libndr.so
-%attr(755,root,root) %{_libdir}/libregistry.so
-%attr(755,root,root) %{_libdir}/libsamba-credentials.so
-%attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
-%attr(755,root,root) %{_libdir}/libsamba-policy.so
-%attr(755,root,root) %{_libdir}/libsamba-util.so
-%attr(755,root,root) %{_libdir}/libsamdb.so
-%attr(755,root,root) %{_libdir}/libtevent-util.so
-%attr(755,root,root) %{_libdir}/libsmbconf.so
-%{_includedir}/samba
-%{_includedir}/samba-4.0
-%exclude %{_includedir}/samba-4.0/torture.h
-%{_pkgconfigdir}/dcerpc.pc
+%dir %{_includedir}/samba-4.0
+%{_includedir}/samba-4.0/charset.h
+%dir %{_includedir}/samba-4.0/core
+%{_includedir}/samba-4.0/core/doserr.h
+%{_includedir}/samba-4.0/core/error.h
+%{_includedir}/samba-4.0/core/ntstatus.h
+%{_includedir}/samba-4.0/core/werror.h
+%{_includedir}/samba-4.0/credentials.h
+%{_includedir}/samba-4.0/dcerpc.h
+%{_includedir}/samba-4.0/dcerpc_server.h
+%{_includedir}/samba-4.0/dlinklist.h
+%{_includedir}/samba-4.0/domain_credentials.h
+%dir %{_includedir}/samba-4.0/gen_ndr
+%{_includedir}/samba-4.0/gen_ndr/atsvc.h
+%{_includedir}/samba-4.0/gen_ndr/auth.h
+%{_includedir}/samba-4.0/gen_ndr/dcerpc.h
+%{_includedir}/samba-4.0/gen_ndr/epmapper.h
+%{_includedir}/samba-4.0/gen_ndr/krb5pac.h
+%{_includedir}/samba-4.0/gen_ndr/lsa.h
+%{_includedir}/samba-4.0/gen_ndr/mgmt.h
+%{_includedir}/samba-4.0/gen_ndr/misc.h
+%{_includedir}/samba-4.0/gen_ndr/nbt.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_atsvc_c.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_atsvc.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_dcerpc.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_epmapper_c.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_epmapper.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_krb5pac.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_mgmt_c.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_mgmt.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_misc.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_nbt.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_samr_c.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_samr.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_svcctl_c.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_svcctl.h
+%{_includedir}/samba-4.0/gen_ndr/netlogon.h
+%{_includedir}/samba-4.0/gen_ndr/samr.h
+%{_includedir}/samba-4.0/gen_ndr/security.h
+%{_includedir}/samba-4.0/gen_ndr/server_id.h
+%{_includedir}/samba-4.0/gen_ndr/svcctl.h
+%{_includedir}/samba-4.0/gensec.h
+%{_includedir}/samba-4.0/ldap_errors.h
+%{_includedir}/samba-4.0/ldap_message.h
+%{_includedir}/samba-4.0/ldap_ndr.h
+%{_includedir}/samba-4.0/ldap-util.h
+%{_includedir}/samba-4.0/ldb_wrap.h
+%{_includedir}/samba-4.0/ndr.h
+%dir %{_includedir}/samba-4.0/ndr
+%{_includedir}/samba-4.0/ndr/ndr_nbt.h
+%{_includedir}/samba-4.0/ndr/ndr_svcctl.h
+%{_includedir}/samba-4.0/param.h
+%{_includedir}/samba-4.0/policy.h
+%{_includedir}/samba-4.0/registry.h
+%{_includedir}/samba-4.0/roles.h
+%{_includedir}/samba-4.0/rpc_common.h
+%dir %{_includedir}/samba-4.0/samba
+%{_includedir}/samba-4.0/samba/session.h
+%{_includedir}/samba-4.0/samba_util.h
+%{_includedir}/samba-4.0/samba/version.h
+%{_includedir}/samba-4.0/share.h
+%{_includedir}/samba-4.0/tdr.h
+%{_includedir}/samba-4.0/tsocket.h
+%{_includedir}/samba-4.0/tsocket_internal.h
+%dir %{_includedir}/samba-4.0/util
+%{_includedir}/samba-4.0/util/attr.h
+%{_includedir}/samba-4.0/util/byteorder.h
+%{_includedir}/samba-4.0/util/data_blob.h
+%{_includedir}/samba-4.0/util/debug.h
+%{_includedir}/samba-4.0/util_ldb.h
+%{_includedir}/samba-4.0/util/memory.h
+%{_includedir}/samba-4.0/util/safe_string.h
+%{_includedir}/samba-4.0/util/string_wrappers.h
+%{_includedir}/samba-4.0/util/talloc_stack.h
+%{_includedir}/samba-4.0/util/tevent_ntstatus.h
+%{_includedir}/samba-4.0/util/tevent_unix.h
+%{_includedir}/samba-4.0/util/tevent_werror.h
+%{_includedir}/samba-4.0/util/time.h
+%{_includedir}/samba-4.0/util/xfile.h
+%{_libdir}/libdcerpc-atsvc.so
+%{_libdir}/libdcerpc-binding.so
+%{_libdir}/libdcerpc-samr.so
+%{_libdir}/libdcerpc-server.so
+%{_libdir}/libdcerpc.so
+%{_libdir}/libgensec.so
+%{_libdir}/libndr-krb5pac.so
+%{_libdir}/libndr-nbt.so
+%{_libdir}/libndr.so
+%{_libdir}/libndr-standard.so
+%{_libdir}/libregistry.so
+%{_libdir}/libsamba-credentials.so
+%{_libdir}/libsamba-hostconfig.so
+%{_libdir}/libsamba-policy.so
+%{_libdir}/libsamba-util.so
+%{_libdir}/libsamdb.so
+%{_libdir}/libtevent-util.so
 %{_pkgconfigdir}/dcerpc_atsvc.pc
+%{_pkgconfigdir}/dcerpc.pc
 %{_pkgconfigdir}/dcerpc_samr.pc
 %{_pkgconfigdir}/dcerpc_server.pc
 %{_pkgconfigdir}/gensec.pc
-%{_pkgconfigdir}/ndr.pc
 %{_pkgconfigdir}/ndr_krb5pac.pc
 %{_pkgconfigdir}/ndr_nbt.pc
+%{_pkgconfigdir}/ndr.pc
 %{_pkgconfigdir}/ndr_standard.pc
-%{_pkgconfigdir}/netapi.pc
 %{_pkgconfigdir}/registry.pc
 %{_pkgconfigdir}/samba-credentials.pc
 %{_pkgconfigdir}/samba-hostconfig.pc
@@ -1424,7 +1533,6 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libtorture.so.0
 %attr(755,root,root) %{_libdir}/samba/libsubunit.so
 %attr(755,root,root) %{_libdir}/samba/libdlz_bind9_for_torture.so
-#??? usr/lib/*/samba/libsmbclient.so.*
 %{_mandir}/man1/gentest.1*
 %{_mandir}/man1/locktest.1*
 %{_mandir}/man1/masktest.1*
@@ -1484,25 +1592,14 @@ fi
 %{systemdunitdir}/winbind.service
 %{_mandir}/man8/winbindd*.8*
 
-%attr(755,root,root) /%{_lib}/libnss_wins*
-%attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
-
-%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
-%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
-
-%attr(755,root,root) %{_libdir}/libwbclient.so.*
-%attr(755,root,root) %{_libdir}/libwbclient.so
-
 %attr(755,root,root) %{_libdir}/libnetapi.so
 %attr(755,root,root) %{_libdir}/libnetapi.so.0
 %attr(755,root,root) %{_libdir}/libpdb.so
 %attr(755,root,root) %{_libdir}/libpdb.so.0
-%attr(755,root,root) %{_libdir}/libsmbconf.so.0
 %attr(755,root,root) %{_libdir}/libsmbldap.so
 %attr(755,root,root) %{_libdir}/libsmbldap.so.0
 %attr(755,root,root) %{_libdir}/samba/libads.so
 %attr(755,root,root) %{_libdir}/samba/libauth.so
-%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
 %attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
 %attr(755,root,root) %{_libdir}/samba/libgpo.so
 %attr(755,root,root) %{_libdir}/samba/libinterfaces.so
@@ -1516,6 +1613,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
 %attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
+%attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
 %attr(755,root,root) %{_libdir}/samba/libutil_reg.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
@@ -1608,6 +1706,18 @@ fi
 %{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/vfs_time_audit.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
+
+%files -n samba3-devel
+%defattr(644,root,root,755)
+%{_includedir}/samba-4.0/netapi.h
+%{_includedir}/samba-4.0/smbconf.h
+%{_includedir}/samba-4.0/smb_share_modes.h
+%{_includedir}/samba-4.0/machine_sid.h
+%{_includedir}/samba-4.0/lookup_sid.h
+%{_includedir}/samba-4.0/passdb.h
+%{_includedir}/samba-4.0/smb_ldap.h
+%{_includedir}/samba-4.0/smbldap.h
+%{_pkgconfigdir}/netapi.pc
 
 %files -n samba3-vfs-audit
 %defattr(644,root,root,755)

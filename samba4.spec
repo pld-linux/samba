@@ -58,7 +58,7 @@ Patch0:		system-heimdal.patch
 Patch1:		samba-c++-nofail.patch
 Patch3:		samba-nscd.patch
 Patch4:		samba-lprng-no-dot-printers.patch
-Patch5:		samba-passdb-smbpasswd.patch
+Patch5:		samba-fam.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -405,13 +405,29 @@ Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	systemd-units >= 38
 
 %description winbind
 Provides the winbind daemon and testing tools to allow authentication
 and group/user enumeration from a Windows or Samba domain controller.
 
 %description winbind -l pl.UTF-8
+Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
+uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
+Windows lub Samba.
+
+%package -n samba3-winbind
+Summary:	Samba-winbind daemon, utilities and documentation
+Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
+Group:		Networking/Daemons
+Requires(post,preun):	/sbin/chkconfig
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	systemd-units >= 38
+
+%description -n samba3-winbind
+Provides the winbind daemon and testing tools to allow authentication
+and group/user enumeration from a Windows or Samba domain controller.
+
+%description -n samba3-winbind -l pl.UTF-8
 Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
 uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
 Windows lub Samba.
@@ -867,6 +883,7 @@ todo
 %patch1 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 LDFLAGS="${LDFLAGS:-%rpmldflags}" \
@@ -1196,6 +1213,13 @@ fi
 %{_mandir}/man5/pam_winbind.conf.5*
 %{_mandir}/man7/winbind_krb5_locator.7*
 %{_mandir}/man8/pam_winbind.8*
+
+%files -n samba3-winbind
+%attr(755,root,root) %{_sbindir}/winbindd
+%attr(754,root,root) /etc/rc.d/init.d/winbind
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
+%{systemdunitdir}/winbind.service
+%{_mandir}/man8/winbindd*.8*
 
 %files -n nss_wins
 %defattr(644,root,root,755)
@@ -1564,18 +1588,17 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %{systemdunitdir}/nmb.service
 %{systemdunitdir}/smb.service
-%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
-%attr(755,root,root) %{_bindir}/ntlm_auth
-%attr(755,root,root) %{_bindir}/smbclient
-%attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/dbwrap_tool
 %attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/pdbedit
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcacls
+%attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/smbpasswd
@@ -1583,25 +1606,17 @@ fi
 %attr(755,root,root) %{_bindir}/smbta-util
 %attr(755,root,root) %{_bindir}/smbtree
 %attr(755,root,root) %{_bindir}/testparm
+%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
-
-%attr(755,root,root) %{_sbindir}/winbindd
-%attr(754,root,root) /etc/rc.d/init.d/winbind
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
-%{systemdunitdir}/winbind.service
-%{_mandir}/man8/winbindd*.8*
-
-%attr(755,root,root) %{_libdir}/libnetapi.so
 %attr(755,root,root) %{_libdir}/libnetapi.so.0
-%attr(755,root,root) %{_libdir}/libpdb.so
 %attr(755,root,root) %{_libdir}/libpdb.so.0
-%attr(755,root,root) %{_libdir}/libsmbldap.so
 %attr(755,root,root) %{_libdir}/libsmbldap.so.0
 %attr(755,root,root) %{_libdir}/samba/libads.so
 %attr(755,root,root) %{_libdir}/samba/libauth.so
 %attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
 %attr(755,root,root) %{_libdir}/samba/libgpo.so
+%attr(755,root,root) %{_libdir}/samba/libidmap.so
 %attr(755,root,root) %{_libdir}/samba/libinterfaces.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
 %attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
@@ -1628,20 +1643,20 @@ fi
 %attr(755,root,root) %{_libdir}/samba/idmap/hash.so
 %attr(755,root,root) %{_libdir}/samba/idmap/rid.so
 %attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
-%attr(755,root,root) %{_libdir}/samba/libidmap.so
 %dir %{_libdir}/samba/vfs
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_posix.so
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_pthread.so
-%attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
-%attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_posix.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_pthread.so
+%attr(755,root,root) %{_libdir}/samba/vfs/commit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/crossrename.so
 %attr(755,root,root) %{_libdir}/samba/vfs/dirsort.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
+%attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/preopen.so
 %attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy2.so
 %attr(755,root,root) %{_libdir}/samba/vfs/smb_traffic_analyzer.so
@@ -1658,8 +1673,8 @@ fi
 %dir %{_libdir}/samba/nss_info
 %attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
 %attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
 %attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
 %{_mandir}/man1/dbwrap_tool.1*
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/ntlm_auth.1*
@@ -1695,6 +1710,7 @@ fi
 %{_mandir}/man8/vfs_aio_fork.8*
 %{_mandir}/man8/vfs_aio_linux.8*
 %{_mandir}/man8/vfs_aio_pthread.8*
+%{_mandir}/man8/vfs_commit.8*
 %{_mandir}/man8/vfs_crossrename.8*
 %{_mandir}/man8/vfs_dirsort.8*
 %{_mandir}/man8/vfs_fileid.8*
@@ -1709,6 +1725,9 @@ fi
 
 %files -n samba3-devel
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libnetapi.so
+%attr(755,root,root) %{_libdir}/libpdb.so
+%attr(755,root,root) %{_libdir}/libsmbldap.so
 %{_includedir}/samba-4.0/netapi.h
 %{_includedir}/samba-4.0/smbconf.h
 %{_includedir}/samba-4.0/smb_share_modes.h
@@ -1747,10 +1766,10 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/fake_perms.so
 %{_mandir}/man8/vfs_fake_perms.8*
 
-#%files -n samba3-vfs-notify_fam
-#%defattr(644,root,root,755)
-#%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
-#%{_mandir}/man8/vfs_notify_fam.8*
+%files -n samba3-vfs-notify_fam
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
+%{_mandir}/man8/vfs_notify_fam.8*
 
 %files -n samba3-vfs-netatalk
 %defattr(644,root,root,755)
@@ -1813,6 +1832,7 @@ fi
 %{_datadir}/samba/swat/include
 %dir %{_datadir}/samba/swat/lang
 %lang(ja) %{_datadir}/samba/swat/lang/ja
+%lang(ru) %{_datadir}/samba/swat/lang/ru
 %lang(tr) %{_datadir}/samba/swat/lang/tr
 %{_mandir}/man8/swat.8*
 %lang(de) %{_datadir}/samba/codepages/de.msg

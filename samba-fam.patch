@@ -1,0 +1,37 @@
+diff -ur samba-4.0.3/source3/modules/wscript_build samba-4.0.3-fam/source3/modules/wscript_build
+--- samba-4.0.3/source3/modules/wscript_build	2012-11-13 09:03:38.000000000 +0100
++++ samba-4.0.3-fam/source3/modules/wscript_build	2013-03-05 12:34:36.152060557 +0100
+@@ -321,6 +321,7 @@
+ bld.SAMBA3_MODULE('vfs_notify_fam',
+                  subsystem='vfs',
+                  source=VFS_NOTIFY_FAM_SRC,
++                 deps='fam',
+                  init_function='',
+                  internal_module=bld.SAMBA3_IS_STATIC_MODULE('vfs_notify_fam'),
+                  enabled=bld.SAMBA3_IS_ENABLED_MODULE('vfs_notify_fam'))
+diff -ur samba-4.0.3/source3/wscript samba-4.0.3-fam/source3/wscript
+--- samba-4.0.3/source3/wscript	2013-02-05 13:25:26.000000000 +0100
++++ samba-4.0.3-fam/source3/wscript	2013-03-05 13:04:20.084360657 +0100
+@@ -870,6 +870,12 @@
+ 
+     seteuid = False
+ 
++    conf.CHECK_HEADERS('fam.h')
++    if not conf.CONFIG_SET('HAVE_FAM_H'):
++        Logs.warn("fam.h not found")
++    if conf.CHECK_FUNCS_IN('FAMClose', 'fam'):
++        conf.DEFINE('HAVE_FAM', 1)
++
+ #
+ # Ensure we select the correct set of system calls on Linux.
+ #
+@@ -1742,6 +1748,9 @@
+     if conf.CONFIG_SET('HAVE_GPFS'):
+ 	default_shared_modules.extend(TO_LIST('vfs_gpfs'))
+ 
++    if conf.CONFIG_SET('HAVE_FAM'):
++	default_shared_modules.extend(TO_LIST('vfs_notify_fam'))
++
+     explicit_shared_modules = TO_LIST(Options.options.shared_modules, delimiter=',')
+     explicit_static_modules = TO_LIST(Options.options.static_modules, delimiter=',')
+ 

@@ -38,7 +38,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba4
 Version:	4.0.3
-Release:	0.9
+Release:	0.11
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -289,7 +289,7 @@ Summary(pt_BR.UTF-8):	Samba SWAT e documentação Web
 Summary(ru.UTF-8):	Программа конфигурации SMB-сервера Samba
 Summary(uk.UTF-8):	Програма конфигурації SMB-сервера Samba
 Group:		Networking/Admin
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 Requires:	inetdaemon
 Requires:	rc-inetd >= 0.8.2
 Obsoletes:	swat
@@ -420,7 +420,7 @@ Summary:	Samba-winbind daemon, utilities and documentation
 Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3-common = %{epoch}:%{version}-%{release}
 Requires:	systemd-units >= 38
 
 %description -n samba3-winbind
@@ -436,7 +436,7 @@ Windows lub Samba.
 Summary:	Name Service Switch service for WINS
 Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3-common = %{epoch}:%{version}-%{release}
 
 %description -n nss_wins
 Provides the libnss_wins shared library which resolves NetBIOS names
@@ -559,7 +559,7 @@ używanym w sieciach MS Windows.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
-Requires:	%{name}-client = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
 
 %description -n cups-backend-samba3-smb
@@ -572,7 +572,7 @@ Backend CUPS-a drukujący na drukarkach SMB.
 Summary:	VFS module to audit file access
 Summary(pl.UTF-8):	Moduł VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-audit
 A simple module to audit file access to the syslog facility. The
@@ -594,7 +594,7 @@ Zawiera moduły audit, extd_audit i full_audit.
 Summary:	VFS module for CAP and samba compatibility
 Summary(pl.UTF-8):	Moduł VFS zgodności z CAP (Columbia AppleTalk Program)
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-cap
 Convert an incoming Shift-JIS character to the 3 byte hex
@@ -609,7 +609,7 @@ reprezentacji używanej przez program Columbia AppleTalk Program (CAP).
 Summary:	VFS module to store default quotas in a specified quota record
 Summary(pl.UTF-8):	Moduł VFS do zapisywania domyślnych limitów w określonym rekordzie
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-default_quota
 This VFS modules stores default quotas in a specified quota record.
@@ -622,7 +622,7 @@ limitów.
 Summary:	VFS module for hosting a Microsoft Distributed File System Tree
 Summary(pl.UTF-8):	Moduł VFS obsługi Microsoft Distributed File System
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-expand_msdfs
 A VFS module for hosting a Microsoft Distributed File System Tree.
@@ -646,7 +646,7 @@ płynniejsze powiększanie przestrzeni, rozdzielanie obciążenia itp.
 Summary:	VFS module to report read-only fires as writable
 Summary(pl.UTF-8):	Moduł VFS udający, że pliki tylko do odczytu są zapisywalne
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-fake_perms
 This module allow Roaming Profile files and directories to be set (on
@@ -668,7 +668,7 @@ lub wylogowywaniu klienta.
 Summary:	VFS module to implement file change notifications
 Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-notify_fam
 The vfs_notify_fam module makes use of the system FAM (File Alteration
@@ -683,7 +683,7 @@ informowania o zmianach w plikach dla klientów Windows.
 Summary:	VFS module for ease co-existence of samba and netatalk
 Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów samba i netatalk
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-netatalk
 Package contains a netatalk VFS module for ease co-existence of Samba
@@ -697,7 +697,7 @@ i netatalk przy udostępnianiu zasobów.
 Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-recycle
 VFS module to add recycle bin facility to a samba share.
@@ -709,7 +709,7 @@ Moduł VFS dodający możliwość kosza do zasobu samby.
 Summary:	VFS module for pre-loading the kernel buffer cache
 Summary(pl.UTF-8):	Moduł VFS do wczesnego odczytu danych do bufora cache jądra
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-readahead
 This VFS module detects read requests at multiples of a given offset
@@ -736,7 +736,7 @@ bajtów.
 Summary:	VFS module for read-only limitation for specified share
 Summary(pl.UTF-8):	Moduł VFS do ograniczania określonego udziału tylko do odczytu
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-readonly
 This module performs a read-only limitation for specified share (or
@@ -752,7 +752,7 @@ oparciu o definicje okresów w smb.conf.
 Summary:	VFS module to make automatic copy of data in samba share
 Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-shadow_copy
 VFS module to make automatic copy of data in samba share.
@@ -763,7 +763,7 @@ Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
 %package -n samba3-vfs-catia
 Summary:	VFS module to fix Catia CAD filenames
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-catia
 The Catia CAD package commonly creates filenames that use characters
@@ -775,7 +775,7 @@ with CIFS clients.
 Summary:	Anti-virus solution as VFS module
 Summary(pl.UTF-8):	Rozwiązanie antywirusowe jako moduł VFS
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-scannedonly
 The vfs_scannedonly VFS module ensures that only files that have been
@@ -819,7 +819,7 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %package -n python-samba4
 Summary:	Samba Module for Python
 Group:		Development/Languages/Python
-%pyrequires_eq 	python
+%pyrequires_eq	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description -n python-samba4
@@ -828,7 +828,7 @@ Samba Module for Python.
 %package -n python-samba3
 Summary:	Samba Module for Python
 Group:		Development/Languages/Python
-%pyrequires_eq 	python
+%pyrequires_eq	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description -n python-samba3
@@ -868,6 +868,20 @@ Summary:	samba3
 Group:		Networking/Daemons
 
 %description samba3
+samba3
+
+%package samba3-common
+Summary:	samba3
+Group:		Networking/Daemons
+
+%description samba3-common
+samba3
+
+%package samba3-client
+Summary:	samba3
+Group:		Networking/Daemons
+
+%description samba3-client
 samba3
 
 %package todo
@@ -1101,8 +1115,6 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_upgradeprovision
 %attr(755,root,root) %{_libdir}/libdcerpc-server.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-server.so.0
-%attr(755,root,root) %{_libdir}/libregistry.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libregistry.so.0
 
 
 %attr(755,root,root) %{_libdir}/samba/libdb-glue.so
@@ -1261,6 +1273,8 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libndr-nbt.so.0
 %attr(755,root,root) %{_libdir}/libndr-standard.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-standard.so.0
+%attr(755,root,root) %{_libdir}/libregistry.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libregistry.so.0
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.0
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
@@ -1568,13 +1582,6 @@ fi
 %{_mandir}/man1/ndrdump.1*
 %{_mandir}/man1/smbtorture.1*
 
-%attr(755,root,root) %{_bindir}/vfstest
-%{_mandir}/man1/vfstest.1*
-# files to ignore in testsuite mode
-#%{_libdir}/samba/libnss_wrapper.so
-#%{_libdir}/samba/libsocket_wrapper.so
-#%{_libdir}/samba/libuid_wrapper.so
-
 %files test-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libtorture.so
@@ -1594,23 +1601,10 @@ fi
 %{systemdunitdir}/nmb.service
 %{systemdunitdir}/smb.service
 %attr(755,root,root) %{_bindir}/dbwrap_tool
-%attr(755,root,root) %{_bindir}/eventlogadm
-%attr(755,root,root) %{_bindir}/net
-%attr(755,root,root) %{_bindir}/nmblookup
-%attr(755,root,root) %{_bindir}/ntlm_auth
-%attr(755,root,root) %{_bindir}/pdbedit
-%attr(755,root,root) %{_bindir}/profiles
-%attr(755,root,root) %{_bindir}/rpcclient
-%attr(755,root,root) %{_bindir}/sharesec
-%attr(755,root,root) %{_bindir}/smbcacls
-%attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbcontrol
-%attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbta-util
-%attr(755,root,root) %{_bindir}/smbtree
-%attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
@@ -1634,9 +1628,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
 %attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
-%dir %{_libdir}/samba/auth
 %attr(755,root,root) %{_libdir}/samba/auth/samba4.so
-%attr(755,root,root) %{_libdir}/samba/auth/script.so
 %attr(755,root,root) %{_libdir}/samba/auth/unix.so
 %attr(755,root,root) %{_libdir}/samba/auth/wbc.so
 %dir %{_libdir}/samba/idmap
@@ -1678,21 +1670,9 @@ fi
 %attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
 %attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
 %{_mandir}/man1/dbwrap_tool.1*
-%{_mandir}/man1/nmblookup.1*
-%{_mandir}/man1/ntlm_auth.1*
-%{_mandir}/man1/profiles.1*
-%{_mandir}/man1/rpcclient.1*
-%{_mandir}/man1/sharesec.1*
-%{_mandir}/man1/smbcacls.1*
-%{_mandir}/man1/smbclient.1*
 %{_mandir}/man1/smbcontrol.1*
-%{_mandir}/man1/smbcquotas.1*
 %{_mandir}/man1/smbstatus.1*
-%{_mandir}/man1/smbtar.1*
-%{_mandir}/man1/smbtree.1*
-%{_mandir}/man1/testparm.1*
 %{_mandir}/man5/smbpasswd.5*
-%{_mandir}/man8/eventlogadm.8*
 %{_mandir}/man8/idmap_ad.8*
 %{_mandir}/man8/idmap_autorid.8*
 %{_mandir}/man8/idmap_hash.8*
@@ -1701,9 +1681,7 @@ fi
 %{_mandir}/man8/idmap_rid.8*
 %{_mandir}/man8/idmap_tdb2.8*
 %{_mandir}/man8/idmap_tdb.8*
-%{_mandir}/man8/net.8*
 %{_mandir}/man8/nmbd.8*
-%{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/smbta-util.8*
@@ -1724,6 +1702,42 @@ fi
 %{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/vfs_time_audit.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
+
+%files samba3-common
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/eventlogadm
+%attr(755,root,root) %{_bindir}/ntlm_auth
+%attr(755,root,root) %{_bindir}/pdbedit
+%attr(755,root,root) %{_bindir}/profiles
+%attr(755,root,root) %{_bindir}/smbcquotas
+%attr(755,root,root) %{_bindir}/testparm
+%attr(755,root,root) %{_bindir}/vfstest
+%dir %{_libdir}/samba/auth
+%attr(755,root,root) %{_libdir}/samba/auth/script.so
+%{_mandir}/man1/ntlm_auth.1*
+%{_mandir}/man1/profiles.1*
+%{_mandir}/man1/smbcquotas.1*
+%{_mandir}/man1/testparm.1*
+%{_mandir}/man1/vfstest.1*
+%{_mandir}/man8/eventlogadm.8*
+%{_mandir}/man8/pdbedit.8*
+
+%files samba3-client
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/rpcclient
+%attr(755,root,root) %{_bindir}/sharesec
+%attr(755,root,root) %{_bindir}/smbcacls
+%attr(755,root,root) %{_bindir}/smbclient
+%attr(755,root,root) %{_bindir}/smbtree
+%{_mandir}/man8/net.8*
+%{_mandir}/man1/nmblookup.1*
+%{_mandir}/man1/rpcclient.1*
+%{_mandir}/man1/sharesec.1*
+%{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbtree.1*
 
 %files -n samba3-devel
 %defattr(644,root,root,755)

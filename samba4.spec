@@ -38,7 +38,7 @@ Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba4
 Version:	4.0.3
-Release:	0.1
+Release:	0.9
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -916,7 +916,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--disable-gnutls \
 	--disable-rpath-install \
-	--builtin-libraries=ccan \
+	--builtin-libraries=replace,ccan \
 	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
 	--private-libraries=smbclient,smbsharemodes,wbclient \
 	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2,pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4,auth_unix,auth_wbc,auth_server,auth_netlogond,auth_script,auth_samba4 \
@@ -1103,33 +1103,16 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-server.so.0
 %attr(755,root,root) %{_libdir}/libregistry.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libregistry.so.0
-%attr(755,root,root) %{_libdir}/samba/libauth4.so
-%attr(755,root,root) %{_libdir}/samba/libauth_sam_reply.so
-%attr(755,root,root) %{_libdir}/samba/libauth_unix_token.so
-%attr(755,root,root) %{_libdir}/samba/libcliauth.so
-%attr(755,root,root) %{_libdir}/samba/libcli_cldap.so
-%attr(755,root,root) %{_libdir}/samba/libcli-ldap-common.so
-%attr(755,root,root) %{_libdir}/samba/libcli-ldap.so
-%attr(755,root,root) %{_libdir}/samba/libcli-nbt.so
-%attr(755,root,root) %{_libdir}/samba/libcli_smb_common.so
-%attr(755,root,root) %{_libdir}/samba/libcluster.so
+
+
 %attr(755,root,root) %{_libdir}/samba/libdb-glue.so
-%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libdfs_server_ad.so
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
 %attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
-%attr(755,root,root) %{_libdir}/samba/libLIBWBCLIENT_OLD.so
-%attr(755,root,root) %{_libdir}/samba/libMESSAGING.so
-%attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libntvfs.so
 %attr(755,root,root) %{_libdir}/samba/libpac.so
-%attr(755,root,root) %{_libdir}/samba/libposix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/libprocess_model.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-net.so
-%attr(755,root,root) %{_libdir}/samba/libsamba_python.so
 %attr(755,root,root) %{_libdir}/samba/libservice.so
 %attr(755,root,root) %{_libdir}/samba/libshares.so
-%attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser.so
 %dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
@@ -1234,7 +1217,6 @@ fi
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/nmblookup4.1*
 %{_mandir}/man1/reg*.1*
-%attr(755,root,root) %{_libdir}/samba/libcmdline-credentials.so
 
 %files common
 %defattr(644,root,root,755)
@@ -1292,6 +1274,30 @@ fi
 %attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %dir %{_libdir}/samba
+%attr(755,root,root) %{_libdir}/samba/libauth_unix_token.so
+%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba_python.so
+%attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser.so
+%attr(755,root,root) %{_libdir}/samba/libLIBWBCLIENT_OLD.so
+%attr(755,root,root) %{_libdir}/samba/libauth4.so
+%attr(755,root,root) %{_libdir}/samba/libcluster.so
+%attr(755,root,root) %{_libdir}/samba/libdfs_server_ad.so
+%attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libposix_eadb.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-net.so
+%attr(755,root,root) %{_libdir}/samba/libcli_cldap.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
+%attr(755,root,root) %{_libdir}/samba/libcli-nbt.so
+%attr(755,root,root) %{_libdir}/samba/libcliauth.so
+%attr(755,root,root) %{_libdir}/samba/libcli-ldap.so
+%attr(755,root,root) %{_libdir}/samba/libsamba3-util.so
+%attr(755,root,root) %{_libdir}/samba/libcli-ldap-common.so
+%attr(755,root,root) %{_libdir}/samba/libcli_smb_common.so
+%attr(755,root,root) %{_libdir}/samba/libutil_reg.so
+%attr(755,root,root) %{_libdir}/samba/libcmdline-credentials.so
+%attr(755,root,root) %{_libdir}/samba/libMESSAGING.so
+%attr(755,root,root) %{_libdir}/samba/libauth_sam_reply.so
+%attr(755,root,root) %{_libdir}/samba/libinterfaces.so
 %attr(755,root,root) %{_libdir}/samba/libaddns.so
 %attr(755,root,root) %{_libdir}/samba/libasn1util.so
 %attr(755,root,root) %{_libdir}/samba/libauthkrb5.so
@@ -1307,7 +1313,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libndr-samba.so
 %attr(755,root,root) %{_libdir}/samba/libnetif.so
 %attr(755,root,root) %{_libdir}/samba/libnpa_tstream.so
-%attr(755,root,root) %{_libdir}/samba/libreplace.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-security.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets.so
@@ -1617,21 +1622,18 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
 %attr(755,root,root) %{_libdir}/samba/libgpo.so
 %attr(755,root,root) %{_libdir}/samba/libidmap.so
-%attr(755,root,root) %{_libdir}/samba/libinterfaces.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
 %attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
 %attr(755,root,root) %{_libdir}/samba/libnss_info.so
 %attr(755,root,root) %{_libdir}/samba/libpopt_samba3.so
 %attr(755,root,root) %{_libdir}/samba/libprinting_migrate.so
-%attr(755,root,root) %{_libdir}/samba/libsamba3-util.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
 %attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
 %attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
-%attr(755,root,root) %{_libdir}/samba/libutil_reg.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
+%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
 %dir %{_libdir}/samba/auth
 %attr(755,root,root) %{_libdir}/samba/auth/samba4.so
 %attr(755,root,root) %{_libdir}/samba/auth/script.so
@@ -1868,5 +1870,3 @@ fi
 %if %{with ldap}
 %doc examples/LDAP
 %endif
-
-%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so

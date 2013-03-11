@@ -436,7 +436,7 @@ Windows lub Samba.
 Summary:	Name Service Switch service for WINS
 Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
-Requires:	%{name}-samba3-common = %{epoch}:%{version}-%{release}
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
 
 %description -n nss_wins
 Provides the libnss_wins shared library which resolves NetBIOS names
@@ -559,7 +559,7 @@ używanym w sieciach MS Windows.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
-Requires:	%{name}-samba3-client = %{epoch}:%{version}-%{release}
+Requires:	samba3-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
 
 %description -n cups-backend-samba3-smb
@@ -572,7 +572,7 @@ Backend CUPS-a drukujący na drukarkach SMB.
 Summary:	VFS module to audit file access
 Summary(pl.UTF-8):	Moduł VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-audit
 A simple module to audit file access to the syslog facility. The
@@ -594,7 +594,7 @@ Zawiera moduły audit, extd_audit i full_audit.
 Summary:	VFS module for CAP and samba compatibility
 Summary(pl.UTF-8):	Moduł VFS zgodności z CAP (Columbia AppleTalk Program)
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-cap
 Convert an incoming Shift-JIS character to the 3 byte hex
@@ -609,7 +609,7 @@ reprezentacji używanej przez program Columbia AppleTalk Program (CAP).
 Summary:	VFS module to store default quotas in a specified quota record
 Summary(pl.UTF-8):	Moduł VFS do zapisywania domyślnych limitów w określonym rekordzie
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-default_quota
 This VFS modules stores default quotas in a specified quota record.
@@ -622,7 +622,7 @@ limitów.
 Summary:	VFS module for hosting a Microsoft Distributed File System Tree
 Summary(pl.UTF-8):	Moduł VFS obsługi Microsoft Distributed File System
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-expand_msdfs
 A VFS module for hosting a Microsoft Distributed File System Tree.
@@ -646,7 +646,7 @@ płynniejsze powiększanie przestrzeni, rozdzielanie obciążenia itp.
 Summary:	VFS module to report read-only fires as writable
 Summary(pl.UTF-8):	Moduł VFS udający, że pliki tylko do odczytu są zapisywalne
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-fake_perms
 This module allow Roaming Profile files and directories to be set (on
@@ -668,7 +668,7 @@ lub wylogowywaniu klienta.
 Summary:	VFS module to implement file change notifications
 Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-notify_fam
 The vfs_notify_fam module makes use of the system FAM (File Alteration
@@ -683,7 +683,7 @@ informowania o zmianach w plikach dla klientów Windows.
 Summary:	VFS module for ease co-existence of samba and netatalk
 Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów samba i netatalk
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-netatalk
 Package contains a netatalk VFS module for ease co-existence of Samba
@@ -697,7 +697,7 @@ i netatalk przy udostępnianiu zasobów.
 Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-recycle
 VFS module to add recycle bin facility to a samba share.
@@ -709,7 +709,7 @@ Moduł VFS dodający możliwość kosza do zasobu samby.
 Summary:	VFS module for pre-loading the kernel buffer cache
 Summary(pl.UTF-8):	Moduł VFS do wczesnego odczytu danych do bufora cache jądra
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-readahead
 This VFS module detects read requests at multiples of a given offset
@@ -736,7 +736,7 @@ bajtów.
 Summary:	VFS module for read-only limitation for specified share
 Summary(pl.UTF-8):	Moduł VFS do ograniczania określonego udziału tylko do odczytu
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-readonly
 This module performs a read-only limitation for specified share (or
@@ -752,7 +752,7 @@ oparciu o definicje okresów w smb.conf.
 Summary:	VFS module to make automatic copy of data in samba share
 Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-shadow_copy
 VFS module to make automatic copy of data in samba share.
@@ -763,7 +763,7 @@ Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
 %package -n samba3-vfs-catia
 Summary:	VFS module to fix Catia CAD filenames
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-catia
 The Catia CAD package commonly creates filenames that use characters
@@ -775,7 +775,7 @@ with CIFS clients.
 Summary:	Anti-virus solution as VFS module
 Summary(pl.UTF-8):	Rozwiązanie antywirusowe jako moduł VFS
 Group:		Networking/Daemons
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 
 %description -n samba3-vfs-scannedonly
 The vfs_scannedonly VFS module ensures that only files that have been
@@ -863,25 +863,25 @@ Requires:	perl(Parse::Yapp)
 The samba4-pidl package contains the Perl IDL compiler used by Samba
 and Wireshark to parse IDL and similar protocols.
 
-%package samba3
+%package -n samba3
 Summary:	samba3
 Group:		Networking/Daemons
 
-%description samba3
+%description -n samba3
 samba3
 
-%package samba3-common
+%package -n samba3-common
 Summary:	samba3
 Group:		Networking/Daemons
 
-%description samba3-common
+%description -n samba3-common
 samba3
 
-%package samba3-client
+%package -n samba3-client
 Summary:	samba3
 Group:		Networking/Daemons
 
-%description samba3-client
+%description -n samba3-client
 samba3
 
 %package todo
@@ -1595,7 +1595,7 @@ fi
 %{_mandir}/man3/Parse::Pidl*.3*
 %{perl_vendorlib}/Parse/Pidl*
 
-%files samba3
+%files -n samba3
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %{systemdunitdir}/nmb.service
@@ -1703,7 +1703,7 @@ fi
 %{_mandir}/man8/vfs_time_audit.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
-%files samba3-common
+%files -n samba3-common
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/ntlm_auth
@@ -1722,7 +1722,7 @@ fi
 %{_mandir}/man8/eventlogadm.8*
 %{_mandir}/man8/pdbedit.8*
 
-%files samba3-client
+%files -n samba3-client
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/nmblookup

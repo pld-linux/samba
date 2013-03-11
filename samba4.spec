@@ -282,41 +282,6 @@ SWAT (Samba Web Administration Tool), котрий дозволяє віддал
 улюбленого WEB-броузера. Поки що він дозволений через inetd на
 TCP-порту 901.
 
-%package -n samba3-swat
-Summary:	Samba Web Administration Tool
-Summary(pl.UTF-8):	Narzędzie administracyjne serwisu Samba
-Summary(pt_BR.UTF-8):	Samba SWAT e documentação Web
-Summary(ru.UTF-8):	Программа конфигурации SMB-сервера Samba
-Summary(uk.UTF-8):	Програма конфигурації SMB-сервера Samba
-Group:		Networking/Admin
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
-Requires:	inetdaemon
-Requires:	rc-inetd >= 0.8.2
-Obsoletes:	swat
-
-%description -n samba3-swat
-swat allows a Samba administrator to configure the complex smb.conf
-file via a Web browser. In addition, a swat configuration page has
-help links to all the configurable options in the smb.conf file
-allowing an administrator to easily look up the effects of any change.
-
-%description -n samba3-swat -l pl.UTF-8
-swat pozwala na kompleksową konfigurację smb.conf przy pomocy
-przeglądarki WWW.
-
-%description -n samba3-swat -l pt_BR.UTF-8
-SWAT - ferramentada Web de configuração do Samba.
-
-%description -n samba3-swat -l ru.UTF-8
-Пакет samba-swat включает новый SWAT (Samba Web Administration Tool),
-для удаленного администрирования файла smb.conf при помощи вашего
-любимого Web-браузера.
-
-%description -n samba3-swat -l uk.UTF-8
-Пакет samba-swat містить новий SWAT (Samba Web Administration Tool),
-для дистанційного адміністрування файлу smb.conf за допомогою вашого
-улюбленого Web-браузеру.
-
 %package client
 Summary:	Samba client programs
 Summary(es.UTF-8):	Cliente SMB de Samba
@@ -415,52 +380,6 @@ Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
 uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
 Windows lub Samba.
 
-%package -n samba3-winbind
-Summary:	Samba-winbind daemon, utilities and documentation
-Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
-Group:		Networking/Daemons
-Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-samba3-common = %{epoch}:%{version}-%{release}
-Requires:	systemd-units >= 38
-
-%description -n samba3-winbind
-Provides the winbind daemon and testing tools to allow authentication
-and group/user enumeration from a Windows or Samba domain controller.
-
-%description -n samba3-winbind -l pl.UTF-8
-Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
-uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
-Windows lub Samba.
-
-%package -n nss_wins
-Summary:	Name Service Switch service for WINS
-Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
-Group:		Base
-Requires:	samba3-common = %{epoch}:%{version}-%{release}
-
-%description -n nss_wins
-Provides the libnss_wins shared library which resolves NetBIOS names
-to IP addresses.
-
-%description -n nss_wins -l pl.UTF-8
-Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
-IP.
-
-%package -n pam-pam_smbpass
-Summary:	PAM Samba Password Module
-Summary(pl.UTF-8):	Moduł PAM smbpass
-Group:		Base
-Obsoletes:	pam_smbpass
-
-%description -n pam-pam_smbpass
-PAM module which can be used on conforming systems to keep the
-smbpasswd (Samba password) database in sync with the Unix password
-file.
-
-%description -n pam-pam_smbpass -l pl.UTF-8
-Moduł PAM, który może być używany do trzymania pliku smbpasswd (hasła
-Samby) zsynchronizowanego z hasłami uniksowymi.
-
 %package -n libsmbclient-raw
 Summary:	libsmbclient-raw - samba client library
 Summary(pl.UTF-8):	libsmbclient-raw - biblioteka klienta samby
@@ -490,37 +409,6 @@ Pliki nagłówkowe dla libsmbclient-raw.
 Arquivos de inclusão, bibliotecas e documentação necessários para
 desenvolver aplicativos clientes para o samba.
 
-%package -n samba3-libsmbclient
-Summary:	libsmbclient - samba client library
-Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
-Group:		Libraries
-Obsoletes:	libsmbclient < 1:4.0.0-1
-
-%description -n samba3-libsmbclient
-libsmbclient - library that allows to use samba clients functions.
-
-%description -n samba3-libsmbclient -l pl.UTF-8
-libsmbclient - biblioteka pozwalająca korzystać z funcji klienta
-samby.
-
-%package -n samba3-libsmbclient-devel
-Summary:	libsmbclient - samba client library
-Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
-Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
-Group:		Development/Libraries
-Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
-Obsoletes:	libsmbclient-devel < 1:4.0.0-1
-
-%description -n samba3-libsmbclient-devel
-Header files for libsmbclient.
-
-%description -n samba3-libsmbclient-devel -l pl.UTF-8
-Pliki nagłówkowe dla libsmbclient.
-
-%description -n samba3-libsmbclient-devel -l pt_BR.UTF-8
-Arquivos de inclusão, bibliotecas e documentação necessários para
-desenvolver aplicativos clientes para o samba.
-
 %package devel
 Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
@@ -532,6 +420,80 @@ Header files for Samba.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe Samby.
 
+%package -n pam-pam_smbpass
+Summary:	PAM Samba Password Module
+Summary(pl.UTF-8):	Moduł PAM smbpass
+Group:		Base
+Obsoletes:	pam_smbpass
+
+%description -n pam-pam_smbpass
+PAM module which can be used on conforming systems to keep the
+smbpasswd (Samba password) database in sync with the Unix password
+file.
+
+%description -n pam-pam_smbpass -l pl.UTF-8
+Moduł PAM, który może być używany do trzymania pliku smbpasswd (hasła
+Samby) zsynchronizowanego z hasłami uniksowymi.
+
+%package pidl
+Summary:	Perl IDL compiler
+Group:		Development/Tools
+Requires:	perl(Parse::Yapp)
+
+%description pidl
+The samba4-pidl package contains the Perl IDL compiler used by Samba
+and Wireshark to parse IDL and similar protocols.
+
+%package -n python-samba4
+Summary:	Samba Module for Python
+Group:		Development/Languages/Python
+%pyrequires_eq	python
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+
+%description -n python-samba4
+Samba Module for Python.
+
+%package test
+Summary:	Testing tools for Samba servers and clients
+Group:		Applications/System
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
+
+%description test
+samba4-test provides testing tools for both the server and client
+packages of Samba.
+
+%package test-devel
+Summary:	Testing devel files for Samba servers and clients
+Group:		Applications/System
+Requires:	%{name}-test = %{epoch}:%{version}-%{release}
+
+%description test-devel
+samba-test-devel provides testing devel files for both the server and
+client packages of Samba.
+
+%package -n samba3
+Summary:	samba3
+Group:		Networking/Daemons
+
+%description -n samba3
+samba3
+
+%package -n samba3-client
+Summary:	samba3
+Group:		Networking/Daemons
+
+%description -n samba3-client
+samba3
+
+%package -n samba3-common
+Summary:	samba3
+Group:		Networking/Daemons
+
+%description -n samba3-common
+samba3
+
 %package -n samba3-devel
 Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
@@ -542,31 +504,6 @@ Header files for Samba.
 
 %description -n samba3-devel -l pl.UTF-8
 Pliki nagłówkowe Samby.
-
-%package -n samba3-smbget
-Summary:	A utility for retrieving files using the SMB protocol
-Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
-Group:		Applications/Networking
-
-%description -n samba3-smbget
-wget-like utility for download files over SMB.
-
-%description -n samba3-smbget -l pl.UTF-8
-Narzędzie podobne do wgeta do pobierania plików protokołem SMB
-używanym w sieciach MS Windows.
-
-%package -n cups-backend-samba3-smb
-Summary:	CUPS backend for printing to SMB printers
-Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
-Group:		Applications/Printing
-Requires:	samba3-client = %{epoch}:%{version}-%{release}
-Requires:	cups >= 1:1.2.0
-
-%description -n cups-backend-samba3-smb
-CUPS backend for printing to SMB printers.
-
-%description -n cups-backend-samba3-smb -l pl.UTF-8
-Backend CUPS-a drukujący na drukarkach SMB.
 
 %package -n samba3-vfs-audit
 Summary:	VFS module to audit file access
@@ -782,48 +719,127 @@ The vfs_scannedonly VFS module ensures that only files that have been
 scanned for viruses are visible and accessible to the end user. If
 non-scanned files are found an anti-virus scanning daemon is notified.
 
-%description vfs-scannedonly -l pl.UTF-8
-Moduł VFS vfs_scannedonly zapewnia, że tylko pliki, które zostały
-wcześniej przeskanowane pod kątem wirusów, są widoczne i dostępne dla
-użytkownika końcowego. Jeśli zostaną znalezione pliki nie
-przeskanowane, powiadamiany jest antywirusowy demon skanujący.
+%package -n samba3-smbget
+Summary:	A utility for retrieving files using the SMB protocol
+Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
+Group:		Applications/Networking
 
-%package vfs-shadow_copy
-Summary:	VFS module to make automatic copy of data in Samba share
-Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach Samby
+%description -n samba3-smbget
+wget-like utility for download files over SMB.
+
+%description -n samba3-smbget -l pl.UTF-8
+Narzędzie podobne do wgeta do pobierania plików protokołem SMB
+używanym w sieciach MS Windows.
+
+%package -n cups-backend-samba3-smb
+Summary:	CUPS backend for printing to SMB printers
+Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
+Group:		Applications/Printing
+Requires:	samba3-client = %{epoch}:%{version}-%{release}
+Requires:	cups >= 1:1.2.0
+
+%description -n cups-backend-samba3-smb
+CUPS backend for printing to SMB printers.
+
+%description -n cups-backend-samba3-smb -l pl.UTF-8
+Backend CUPS-a drukujący na drukarkach SMB.
+
+%package -n samba3-swat
+Summary:	Samba Web Administration Tool
+Summary(pl.UTF-8):	Narzędzie administracyjne serwisu Samba
+Summary(pt_BR.UTF-8):	Samba SWAT e documentação Web
+Summary(ru.UTF-8):	Программа конфигурации SMB-сервера Samba
+Summary(uk.UTF-8):	Програма конфигурації SMB-сервера Samba
+Group:		Networking/Admin
+Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	inetdaemon
+Requires:	rc-inetd >= 0.8.2
+Obsoletes:	swat
+
+%description -n samba3-swat
+swat allows a Samba administrator to configure the complex smb.conf
+file via a Web browser. In addition, a swat configuration page has
+help links to all the configurable options in the smb.conf file
+allowing an administrator to easily look up the effects of any change.
+
+%description -n samba3-swat -l pl.UTF-8
+swat pozwala na kompleksową konfigurację smb.conf przy pomocy
+przeglądarki WWW.
+
+%description -n samba3-swat -l pt_BR.UTF-8
+SWAT - ferramentada Web de configuração do Samba.
+
+%description -n samba3-swat -l ru.UTF-8
+Пакет samba-swat включает новый SWAT (Samba Web Administration Tool),
+для удаленного администрирования файла smb.conf при помощи вашего
+любимого Web-браузера.
+
+%description -n samba3-swat -l uk.UTF-8
+Пакет samba-swat містить новий SWAT (Samba Web Administration Tool),
+для дистанційного адміністрування файлу smb.conf за допомогою вашого
+улюбленого Web-браузеру.
+
+%package -n samba3-winbind
+Summary:	Samba-winbind daemon, utilities and documentation
+Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires(post,preun):	/sbin/chkconfig
+Requires:	%{name}-samba3-common = %{epoch}:%{version}-%{release}
+Requires:	systemd-units >= 38
 
-%description vfs-shadow_copy
-VFS module to make automatic copy of data in Samba share.
+%description -n samba3-winbind
+Provides the winbind daemon and testing tools to allow authentication
+and group/user enumeration from a Windows or Samba domain controller.
 
-%description vfs-shadow_copy -l pl.UTF-8
-Moduł VFS do tworzenia automatycznych kopii danych w zasobach Samby.
+%description -n samba3-winbind -l pl.UTF-8
+Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
+uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
+Windows lub Samba.
 
-%package -n openldap-schema-samba
-Summary:	Samba LDAP schema
-Summary(pl.UTF-8):	Schemat LDAP dla samby
-Group:		Networking/Daemons
-Requires(post,postun):	sed >= 4.0
-Requires:	openldap-servers
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%package -n nss_wins
+Summary:	Name Service Switch service for WINS
+Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
+Group:		Base
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
 
-%description -n openldap-schema-samba
-This package contains samba.schema for OpenLDAP.
+%description -n nss_wins
+Provides the libnss_wins shared library which resolves NetBIOS names
+to IP addresses.
 
-%description -n openldap-schema-samba -l pl.UTF-8
-Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
+%description -n nss_wins -l pl.UTF-8
+Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
+IP.
 
-%package -n python-samba4
-Summary:	Samba Module for Python
-Group:		Development/Languages/Python
-%pyrequires_eq	python
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+%package -n samba3-libsmbclient
+Summary:	libsmbclient - samba client library
+Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
+Group:		Libraries
+Obsoletes:	libsmbclient < 1:4.0.0-1
 
-%description -n python-samba4
-Samba Module for Python.
+%description -n samba3-libsmbclient
+libsmbclient - library that allows to use samba clients functions.
+
+%description -n samba3-libsmbclient -l pl.UTF-8
+libsmbclient - biblioteka pozwalająca korzystać z funcji klienta
+samby.
+
+%package -n samba3-libsmbclient-devel
+Summary:	libsmbclient - samba client library
+Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
+Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
+Group:		Development/Libraries
+Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
+Obsoletes:	libsmbclient-devel < 1:4.0.0-1
+
+%description -n samba3-libsmbclient-devel
+Header files for libsmbclient.
+
+%description -n samba3-libsmbclient-devel -l pl.UTF-8
+Pliki nagłówkowe dla libsmbclient.
+
+%description -n samba3-libsmbclient-devel -l pt_BR.UTF-8
+Arquivos de inclusão, bibliotecas e documentação necessários para
+desenvolver aplicativos clientes para o samba.
 
 %package -n python-samba3
 Summary:	Samba Module for Python
@@ -834,55 +850,18 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %description -n python-samba3
 Samba Module for Python.
 
-%package test
-Summary:	Testing tools for Samba servers and clients
-Group:		Applications/System
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
-
-%description test
-samba4-test provides testing tools for both the server and client
-packages of Samba.
-
-%package test-devel
-Summary:	Testing devel files for Samba servers and clients
-Group:		Applications/System
-Requires:	%{name}-test = %{epoch}:%{version}-%{release}
-
-%description test-devel
-samba-test-devel provides testing devel files for both the server and
-client packages of Samba.
-
-%package pidl
-Summary:	Perl IDL compiler
-Group:		Development/Tools
-Requires:	perl(Parse::Yapp)
-
-%description pidl
-The samba4-pidl package contains the Perl IDL compiler used by Samba
-and Wireshark to parse IDL and similar protocols.
-
-%package -n samba3
-Summary:	samba3
+%package -n openldap-schema-samba
+Summary:	Samba LDAP schema
+Summary(pl.UTF-8):	Schemat LDAP dla samby
 Group:		Networking/Daemons
+Requires(post,postun):	sed >= 4.0
+Requires:	openldap-servers
 
-%description -n samba3
-samba3
+%description -n openldap-schema-samba
+This package contains samba.schema for openldap.
 
-%package -n samba3-common
-Summary:	samba3
-Group:		Networking/Daemons
-
-%description -n samba3-common
-samba3
-
-%package -n samba3-client
-Summary:	samba3
-Group:		Networking/Daemons
-
-%description -n samba3-client
-samba3
+%description -n openldap-schema-samba -l pl.UTF-8
+Ten pakiet zawiera schemat samby dla openldap-a.
 
 %package todo
 Summary:	todo
@@ -1050,17 +1029,15 @@ find $RPM_BUILD_ROOT%{py_sitedir} -name "*.py" -o -name "*.a" -o -name "*.la" | 
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add smb
-%service smb restart "Samba daemons"
-#systemd_post smb.service nmb.service
+/sbin/chkconfig --add samba
+%service samba restart "Samba AD daemon"
 %systemd_post samba.service
 
 %preun
 if [ "$1" = "0" ]; then
-	%service smb stop
-	/sbin/chkconfig --del smb
+	%service samba stop
+	/sbin/chkconfig --del samba
 fi
-#systemd_preun smb.service nmb.service
 %systemd_preun samba.service
 
 %postun
@@ -1069,19 +1046,34 @@ fi
 %post common -p /sbin/ldconfig
 %postun common -p /sbin/ldconfig
 
-%post winbind
+%post -n samba3
+/sbin/chkconfig --add smb
+%service smb restart "Samba3 daemons"
+systemd_post smb.service nmb.service
+
+%preun -n samba3
+if [ "$1" = "0" ]; then
+	%service smb stop
+	/sbin/chkconfig --del samba
+fi
+%systemd_preun smb.service nmb.service
+
+%postun -n samba3
+%systemd_reload
+
+%post -n samba3-winbind
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
 
-%preun winbind
+%preun -n samba3-winbind
 if [ "$1" = "0" ]; then
 	%service winbind stop
 	/sbin/chkconfig --del winbind
 fi
 %systemd_preun winbind.service
 
-%postun winbind
+%postun -n samba3-winbind
 %systemd_reload
 
 %post -n samba3-swat
@@ -1115,8 +1107,6 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_upgradeprovision
 %attr(755,root,root) %{_libdir}/libdcerpc-server.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-server.so.0
-
-
 %attr(755,root,root) %{_libdir}/samba/libdb-glue.so
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
 %attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
@@ -1130,26 +1120,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
 %dir %{_libdir}/samba/hdb
 %attr(755,root,root) %{_libdir}/samba/hdb/hdb_samba4.so
-%dir %{_libdir}/samba/process_model
-%attr(755,root,root) %{_libdir}/samba/process_model/onefork.so
-%attr(755,root,root) %{_libdir}/samba/process_model/prefork.so
-%attr(755,root,root) %{_libdir}/samba/process_model/standard.so
-%dir %{_libdir}/samba/service
-%attr(755,root,root) %{_libdir}/samba/service/cldap.so
-%attr(755,root,root) %{_libdir}/samba/service/dcerpc.so
-%attr(755,root,root) %{_libdir}/samba/service/dns.so
-%attr(755,root,root) %{_libdir}/samba/service/dns_update.so
-%attr(755,root,root) %{_libdir}/samba/service/drepl.so
-%attr(755,root,root) %{_libdir}/samba/service/kcc.so
-%attr(755,root,root) %{_libdir}/samba/service/kdc.so
-%attr(755,root,root) %{_libdir}/samba/service/ldap.so
-%attr(755,root,root) %{_libdir}/samba/service/nbtd.so
-%attr(755,root,root) %{_libdir}/samba/service/ntp_signd.so
-%attr(755,root,root) %{_libdir}/samba/service/s3fs.so
-%attr(755,root,root) %{_libdir}/samba/service/smb.so
-%attr(755,root,root) %{_libdir}/samba/service/web.so
-%attr(755,root,root) %{_libdir}/samba/service/winbind.so
-%attr(755,root,root) %{_libdir}/samba/service/wrepl.so
 %dir %{_libdir}/samba/gensec
 %attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
 %dir %{_libdir}/samba/ldb
@@ -1193,32 +1163,29 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/subtree_rename.so
 %attr(755,root,root) %{_libdir}/samba/ldb/update_keytab.so
 %attr(755,root,root) %{_libdir}/samba/ldb/wins_ldb.so
+%dir %{_libdir}/samba/process_model
+%attr(755,root,root) %{_libdir}/samba/process_model/onefork.so
+%attr(755,root,root) %{_libdir}/samba/process_model/prefork.so
+%attr(755,root,root) %{_libdir}/samba/process_model/standard.so
+%dir %{_libdir}/samba/service
+%attr(755,root,root) %{_libdir}/samba/service/cldap.so
+%attr(755,root,root) %{_libdir}/samba/service/dcerpc.so
+%attr(755,root,root) %{_libdir}/samba/service/dns.so
+%attr(755,root,root) %{_libdir}/samba/service/dns_update.so
+%attr(755,root,root) %{_libdir}/samba/service/drepl.so
+%attr(755,root,root) %{_libdir}/samba/service/kcc.so
+%attr(755,root,root) %{_libdir}/samba/service/kdc.so
+%attr(755,root,root) %{_libdir}/samba/service/ldap.so
+%attr(755,root,root) %{_libdir}/samba/service/nbtd.so
+%attr(755,root,root) %{_libdir}/samba/service/ntp_signd.so
+%attr(755,root,root) %{_libdir}/samba/service/s3fs.so
+%attr(755,root,root) %{_libdir}/samba/service/smb.so
+%attr(755,root,root) %{_libdir}/samba/service/web.so
+%attr(755,root,root) %{_libdir}/samba/service/winbind.so
+%attr(755,root,root) %{_libdir}/samba/service/wrepl.so
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
 %{_mandir}/man8/samba.8*
-
-%files winbind
-%defattr(644,root,root,755)
-# winbind4
-%attr(755,root,root) %{_bindir}/wbinfo
-%attr(755,root,root) /%{_lib}/security/pam_winbind*
-%attr(755,root,root) /%{_lib}/libnss_winbind*
-%attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
-%{_mandir}/man1/wbinfo*.1*
-%{_mandir}/man5/pam_winbind.conf.5*
-%{_mandir}/man7/winbind_krb5_locator.7*
-%{_mandir}/man8/pam_winbind.8*
-
-%files -n samba3-winbind
-%attr(755,root,root) %{_sbindir}/winbindd
-%attr(754,root,root) /etc/rc.d/init.d/winbind
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
-%{systemdunitdir}/winbind.service
-%{_mandir}/man8/winbindd*.8*
-
-%files -n nss_wins
-%defattr(644,root,root,755)
-%attr(755,root,root) /%{_lib}/libnss_wins*
 
 %files client
 %defattr(644,root,root,755)
@@ -1342,10 +1309,16 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libtdb.so.*
 %endif
 
-%files -n pam-pam_smbpass
+%files winbind
 %defattr(644,root,root,755)
-%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
-%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
+%attr(755,root,root) %{_bindir}/wbinfo
+%attr(755,root,root) /%{_lib}/security/pam_winbind*
+%attr(755,root,root) /%{_lib}/libnss_winbind*
+%attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
+%{_mandir}/man1/wbinfo*.1*
+%{_mandir}/man5/pam_winbind.conf.5*
+%{_mandir}/man7/winbind_krb5_locator.7*
+%{_mandir}/man8/pam_winbind.8*
 
 %files -n libsmbclient-raw
 %defattr(644,root,root,755)
@@ -1381,29 +1354,6 @@ fi
 %{_includedir}/samba-4.0/smb_util.h
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so
 %{_pkgconfigdir}/smbclient-raw.pc
-
-%files -n samba3-libsmbclient
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsmbclient.so.*
-%attr(755,root,root) %{_libdir}/libsmbconf.so.0
-%attr(755,root,root) %{_libdir}/libwbclient.so.*
-%{_mandir}/man7/libsmbclient.7*
-%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
-%attr(755,root,root) %{_libdir}/samba/libgse.so
-%attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
-%attr(755,root,root) %{_libdir}/samba/liblibsmb.so
-%attr(755,root,root) %{_libdir}/samba/libmsrpc3.so
-%attr(755,root,root) %{_libdir}/samba/libsecrets3.so
-%attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
-%attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
-
-%files -n samba3-libsmbclient-devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsmbclient.so
-%attr(755,root,root) %{_libdir}/libsmbconf.so
-%attr(755,root,root) %{_libdir}/libwbclient.so
-%{_includedir}/libsmbclient.h
-%{_includedir}/wbclient.h
 
 %files devel
 %defattr(644,root,root,755)
@@ -1519,11 +1469,17 @@ fi
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
 
-%if %{with ldap}
-%files -n openldap-schema-samba
+%files -n pam-pam_smbpass
 %defattr(644,root,root,755)
-%{schemadir}/samba.schema
-%endif
+%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
+%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
+
+%files pidl
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pidl
+%{_mandir}/man1/pidl.1*
+%{_mandir}/man3/Parse::Pidl*.3*
+%{perl_vendorlib}/Parse/Pidl*
 
 %files -n python-samba4
 %defattr(644,root,root,755)
@@ -1558,13 +1514,6 @@ fi
 %{py_sitedir}/tevent.py[co]
 %endif
 
-%files -n python-samba3
-%defattr(644,root,root,755)
-%dir %{py_sitedir}/samba
-%dir %{py_sitedir}/samba/samba3
-%attr(755,root,root) %{py_sitedir}/samba/samba3/*.so
-%{py_sitedir}/samba/samba3/*.py[co]
-
 %files test
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/gentest
@@ -1587,13 +1536,6 @@ fi
 %attr(755,root,root) %{_libdir}/libtorture.so
 %{_includedir}/samba-4.0/torture.h
 %{_pkgconfigdir}/torture.pc
-
-%files pidl
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/pidl
-%{_mandir}/man1/pidl.1*
-%{_mandir}/man3/Parse::Pidl*.3*
-%{perl_vendorlib}/Parse/Pidl*
 
 %files -n samba3
 %defattr(644,root,root,755)
@@ -1703,6 +1645,23 @@ fi
 %{_mandir}/man8/vfs_time_audit.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
+%files -n samba3-client
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/rpcclient
+%attr(755,root,root) %{_bindir}/sharesec
+%attr(755,root,root) %{_bindir}/smbcacls
+%attr(755,root,root) %{_bindir}/smbclient
+%attr(755,root,root) %{_bindir}/smbtree
+%{_mandir}/man8/net.8*
+%{_mandir}/man1/nmblookup.1*
+%{_mandir}/man1/rpcclient.1*
+%{_mandir}/man1/sharesec.1*
+%{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbtree.1*
+
 %files -n samba3-common
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/eventlogadm
@@ -1721,23 +1680,6 @@ fi
 %{_mandir}/man1/vfstest.1*
 %{_mandir}/man8/eventlogadm.8*
 %{_mandir}/man8/pdbedit.8*
-
-%files -n samba3-client
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/net
-%attr(755,root,root) %{_bindir}/nmblookup
-%attr(755,root,root) %{_bindir}/rpcclient
-%attr(755,root,root) %{_bindir}/sharesec
-%attr(755,root,root) %{_bindir}/smbcacls
-%attr(755,root,root) %{_bindir}/smbclient
-%attr(755,root,root) %{_bindir}/smbtree
-%{_mandir}/man8/net.8*
-%{_mandir}/man1/nmblookup.1*
-%{_mandir}/man1/rpcclient.1*
-%{_mandir}/man1/sharesec.1*
-%{_mandir}/man1/smbcacls.1*
-%{_mandir}/man1/smbclient.1*
-%{_mandir}/man1/smbtree.1*
 
 %files -n samba3-devel
 %defattr(644,root,root,755)
@@ -1861,6 +1803,53 @@ fi
 %lang(pl) %{_datadir}/samba/codepages/pl.msg
 %lang(ru) %{_datadir}/samba/codepages/ru*
 %lang(tr) %{_datadir}/samba/codepages/tr.msg
+
+%files -n samba3-winbind
+%attr(755,root,root) %{_sbindir}/winbindd
+%attr(754,root,root) /etc/rc.d/init.d/winbind
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
+%{systemdunitdir}/winbind.service
+%{_mandir}/man8/winbindd*.8*
+
+%files -n nss_wins
+%defattr(644,root,root,755)
+%attr(755,root,root) /%{_lib}/libnss_wins*
+
+%files -n samba3-libsmbclient
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libsmbclient.so.*
+%attr(755,root,root) %{_libdir}/libsmbconf.so.0
+%attr(755,root,root) %{_libdir}/libwbclient.so.*
+%{_mandir}/man7/libsmbclient.7*
+%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
+%attr(755,root,root) %{_libdir}/samba/libgse.so
+%attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
+%attr(755,root,root) %{_libdir}/samba/liblibsmb.so
+%attr(755,root,root) %{_libdir}/samba/libmsrpc3.so
+%attr(755,root,root) %{_libdir}/samba/libsecrets3.so
+%attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
+%attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
+
+%files -n samba3-libsmbclient-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libsmbclient.so
+%attr(755,root,root) %{_libdir}/libsmbconf.so
+%attr(755,root,root) %{_libdir}/libwbclient.so
+%{_includedir}/libsmbclient.h
+%{_includedir}/wbclient.h
+
+%files -n python-samba3
+%defattr(644,root,root,755)
+%dir %{py_sitedir}/samba
+%dir %{py_sitedir}/samba/samba3
+%attr(755,root,root) %{py_sitedir}/samba/samba3/*.so
+%{py_sitedir}/samba/samba3/*.py[co]
+
+%if %{with ldap}
+%files -n openldap-schema-samba
+%defattr(644,root,root,755)
+%{schemadir}/*.schema
+%endif
 
 %files todo
 %defattr(644,root,root,755)

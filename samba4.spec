@@ -798,7 +798,7 @@ cd ..
 # Clean out crap left behind by the PIDL install
 %{__rm} $RPM_BUILD_ROOT%{perl_vendorlib}/wscript_build
 %{__rm} -r $RPM_BUILD_ROOT%{perl_vendorlib}/Parse/Yapp
-%{__rm} $RPM_BUILD_ROOT%{perl_vendorlib}/Parse/Pidl/.packlist
+%{__rm} $RPM_BUILD_ROOT%{perl_vendorarch}/auto/Parse/Pidl/.packlist
 
 # not ready for production, and no MIT kerberos in PLD
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/mit_samba.so
@@ -856,12 +856,12 @@ install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %endif
 
 # remove man pages for not installed commands
-%{__rm} %{_mandir}/man1/log2pcap.1*
-%{__rm} %{_mandir}/man1/smbtar.1*
-%{__rm} %{_mandir}/man8/vfs_cacheprime.8*
-%{__rm} %{_mandir}/man8/vfs_gpfs.8*
-%{__rm} %{_mandir}/man8/vfs_prealloc.8*
-%{__rm} %{_mandir}/man8/vfs_tsmsm.8*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/log2pcap.1*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/smbtar.1*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_cacheprime.8*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_gpfs.8*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_prealloc.8*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_tsmsm.8*
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}

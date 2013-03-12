@@ -93,6 +93,7 @@ BuildRequires:	xfsprogs-devel
 BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts >= 0.4.0.12
@@ -170,6 +171,17 @@ packages of Samba.
 %description common -l pl.UTF-8
 Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
 klientów Samby.
+
+%package common-server
+Summary:	Files used by both Samba3 PDC and Samba4 AD servers
+Summary(pl.UTF-8):	Pliki używane przez serwery Samba3 PDC i Samba4 AD
+Group:		Networking/Daemons
+
+%description common-server
+Files used by both Samba3 PDC and Samba4 AD servers.
+
+%description common-server -l pl.UTF-8
+Pliki używane przez serwery Samba3 PDC i Samba4 AD.
 
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
@@ -285,7 +297,8 @@ Summary:	SMB server
 Summary(pl.UTF-8):	Serwer SMB
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts >= 0.4.0.12
@@ -602,7 +615,7 @@ Backend CUPS-a drukujący na drukarkach SMB.
 Summary:	Samba Web Administration Tool
 Summary(pl.UTF-8):	Narzędzie administracyjne serwisu Samba
 Group:		Networking/Admin
-Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
+Requires:	samba3 = %{epoch}:%{version}-%{release}
 Requires:	inetdaemon
 Requires:	rc-inetd >= 0.8.2
 Obsoletes:	swat
@@ -622,7 +635,7 @@ Summary:	Samba-winbind daemon, utilities and documentation
 Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-samba3-common = %{epoch}:%{version}-%{release}
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	systemd-units >= 38
 
 %description -n samba3-winbind
@@ -678,7 +691,7 @@ Pliki nagłówkowe dla libsmbclient.
 Summary:	Samba Module for Python
 Group:		Development/Languages/Python
 %pyrequires_eq	python
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
 
 %description -n python-samba3
 Samba Module for Python.
@@ -695,13 +708,6 @@ This package contains samba.schema for openldap.
 
 %description -n openldap-schema-samba -l pl.UTF-8
 Ten pakiet zawiera schemat samby dla openldap-a.
-
-%package todo
-Summary:	todo
-Group:		Networking/Daemons
-
-%description todo
-todo
 
 %prep
 %setup -q -n samba-%{version}
@@ -1147,6 +1153,29 @@ fi
 %{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
+%endif
+
+%files common-server
+%defattr(644,root,root,755)
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
+
+%dir %{_sambahome}
+%dir /var/lib/samba
+%ghost /var/lib/samba/*.dat
+%dir /var/lib/samba/printing
+
+%attr(750,root,root) %dir /var/log/samba
+%attr(750,root,root) %dir /var/log/samba/cores
+%attr(750,root,root) %dir /var/log/samba/cores/smbd
+%attr(750,root,root) %dir /var/log/samba/cores/nmbd
+%attr(750,root,root) %dir /var/log/archive/samba
+%attr(1777,root,root) %dir /var/spool/samba
+%if %{with ldap}
+%doc examples/LDAP
 %endif
 
 %files winbind
@@ -1689,27 +1718,4 @@ fi
 %files -n openldap-schema-samba
 %defattr(644,root,root,755)
 %{schemadir}/*.schema
-%endif
-
-%files todo
-%defattr(644,root,root,755)
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
-
-%dir %{_sambahome}
-%dir /var/lib/samba
-%ghost /var/lib/samba/*.dat
-%dir /var/lib/samba/printing
-
-%attr(750,root,root) %dir /var/log/samba
-%attr(750,root,root) %dir /var/log/samba/cores
-%attr(750,root,root) %dir /var/log/samba/cores/smbd
-%attr(750,root,root) %dir /var/log/samba/cores/nmbd
-%attr(750,root,root) %dir /var/log/archive/samba
-%attr(1777,root,root) %dir /var/spool/samba
-%if %{with ldap}
-%doc examples/LDAP
 %endif

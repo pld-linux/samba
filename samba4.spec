@@ -24,7 +24,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.3
-Release:	0.11
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -897,7 +897,7 @@ fi
 %post -n samba3
 /sbin/chkconfig --add smb
 %service smb restart "Samba3 daemons"
-systemd_post smb.service nmb.service
+%systemd_post smb.service nmb.service
 
 %preun -n samba3
 if [ "$1" = "0" ]; then

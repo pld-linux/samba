@@ -20,22 +20,8 @@
 %endif
 
 %define		virusfilter_version 0.1.3
-Summary:	SMB server
-Summary(cs.UTF-8):	Server SMB
-Summary(da.UTF-8):	SMB server
-Summary(de.UTF-8):	SMB-Server
-Summary(es.UTF-8):	El servidor SMB
-Summary(fi.UTF-8):	SMB-palvelin
-Summary(fr.UTF-8):	Serveur SMB
-Summary(it.UTF-8):	Server SMB
-Summary(ja.UTF-8):	Samba SMB サーバー
-Summary(ko.UTF-8):	삼바 SMB 서버
-Summary(pl.UTF-8):	Serwer SMB
-Summary(pt_BR.UTF-8):	Cliente e servidor SMB
-Summary(ru.UTF-8):	SMB клиент и сервер
-Summary(tr.UTF-8):	SMB sunucusu
-Summary(uk.UTF-8):	SMB клієнт та сервер
-Summary(zh_CN.UTF-8):	Samba 客户端和服务器
+Summary:	Active Directory server
+Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.3
 Release:	0.11
@@ -137,94 +123,7 @@ also provides some SMB clients, which complement the built-in SMB
 filesystem in Linux. Samba uses NetBIOS over TCP/IP (NetBT) protocols
 and does NOT need NetBEUI (Microsoft Raw NetBIOS frame) protocol.
 
-This release is known as the "Locking Update" and has full support for
-Opportunistic File Locking. In addition this update includes native
-support for Microsoft encrypted passwords, improved browse list and
-WINS database management.
-
-Please refer to the WHATSNEW.txt document for fixup information. This
-binary release includes encrypted password support. Please read the
-smb.conf file for implementation details.
-
-%description -l cs.UTF-8
-Samba poskytuje server SMB, který lze použít pro poskytování síťových
-služeb klientům SMB (někdy nazývaných klienti "LAN manažer") včetně
-klientů různých verzí MS Windows, OS/2 a dalších linuxových strojů.
-Samba též poskytuje některé klienty SMB, kteří komplementují vestavěný
-souborový systém SMB v Linuxu. Samba používá protokoly NetBIOS přes
-TCP/IP (NetBT) a NEpotřebuje protokol NetBEUI (neformátovaný rámec
-NetBIOS od společnosti Microsoft.
-
-%description -l da.UTF-8
-Samba tilbyder en SMB server som kan bruges til at tilbyde netværk
-services til SMB (også kaldet "Lan Manager") klienter, incl.
-forskellige versioner af MS Windows, OS/2, og andre Linux maskiner.
-Samba tilbyder også SMB klienter, som udbygger det indbyggede SMB
-filsystem i Linux. Samba benytter NetBIOS over TCP/IP (NetBT)
-protocolen og kræver ikke NetBEUI (Microsoft Raw NetBIOS frame)
-protokollen.
-
-%description -l de.UTF-8
-Samba stellt einen SMB-Server zum Anbieten von Netzwerkdiensten für
-SMB-Clients (auch "Lan Manager" genannt) zur Verfügung, darunter
-verschiedenen Versionen von MS Windows-, OS/2- und anderen
-Linux-Rechnern. Samba enthält außerdem einige SMB-Clients, die das in
-Linux integrierte SMB-Dateisystem ergänzen. Samba benutzt
-NetBIOS-über-TCP/IP (NetBT)-Protokolle und benötigt KEIN NetBEUI
-(Microsoft Raw NetBIOS frame)-Protokoll.
-
-%description -l es.UTF-8
-Samba provee un servidor SMB que se puede usar para ofrecer servicios
-de red a clientes SMB (algunas veces se le llama de "Lan Manager"),
-incluyendo varias versiones de MS Windows, OS/2, y otras máquinas
-Linux. Samba también ofrece algunos clientes SMB, que complementan el
-sistema de archivos SMB de Linux. Samba usa el protocolo NetBIOS sobre
-TCP/IP (NetBT) y no necesita del protocolo NetBEUI (Microsoft Raw
-NetBIOS frame).
-
-%description -l fi.UTF-8
-Samba on SMB-palvelin, jota voidaan käyttää SMB-asiakasohjelmien
-verkkopalvelujen tarjoajana. SMB-protokollaa kutsutaan joskus "Lan
-Manager" protokollaksi ja asiakasohjelmat toimivat dosissa,
-Windowseissa, OS/2:ssa ja toisissa Linux-koneissa. Samban mukana on
-myös joitakin SMB-asiakasohjelmia, jotka täydentävät Linuxin
-kernelissä olevaa SMB-tiedostojärjestelmän tukea. Samba vaatii NetBIOS
-over TCP/IP (NetBT) protokollaa eikä tarvitse tai pysty käyttämään
-NetBEUI-protokollaa.
-
-%description -l it.UTF-8
-Samba fornisce un server SMB che puo` essere usato per fornire servizi
-di rete ai client SMB, incluse le versioni MS Windows, OS/2 e per
-altre macchine Linux. Samba fornisce anche i client SMB. Samba usa
-NetBIOS sopra TCP/IP e non ha bisogno del protocollo NetBEUI.
-
-%description -l ja.UTF-8
-Samba は MS Windows の様々なバージョン、OS/2 そして他の Linux マシン
-を含む SMB (たまに "Lan Manager" と呼ばれる)
-クライアントにネットワーク サービスを提供するために使用される SMB
-サーバを提供します。Samba は NetBIOS over TCP/IP (NetBT)
-プロトコルを使用し、 NetBEUI(Microsoft Raw NetBIOS frame)
-プロトコルは必要ありません。
-
-Samba ほとんど動作する NT ドメインコントロールの機能を特徴とし、
-好きなブラウザを使って samba の smb.conf ファイルをリモート管理する
-新しい SWAT (Samba Web Administration Tool) を含みます。
-目下のところこれは inetd を通して TCP ポート 901 で有効になります。
-
-%description -l ko.UTF-8
-삼바는 MS Windows, OS/2, 혹은 다른 리눅스 머신을 포함하는 SMB(혹은
-"Lan Manager"라고도 불림) 클라이언트를 네트워크 서비스 위해 사용할 수
-있는 SMB 서버를 제공한다. 삼바는 TCP/IP 프로토콜을 통해 NetBIOS를
-사용하고 NetBEUI (Microsoft Raw NetBIOS 프레임) 프로토콜은 필요하지
-않다.
-
-삼바-2.2 의 특징은 NT 도메인 컨트롤의 성능으로 작업을 하고, 새로운
-SWAT(Samba Web Administration Tool)로 웹브라우저를 사용하여 원격지에서
-삼바의 smb.conf 파일을 관리하도록 한다. 이러한 경우 inetd 데몬을 통해
-TCP 901 포트를 사용하게 된다.
-
-최근 정보로 WHATSNEW.txt 파일의 문서를 참고하도록 한다. 바이너리의
-릴리즈는 암호화된 패스워드를 제공한다.
+This package contains main Active Directory server daemon.
 
 %description -l pl.UTF-8
 Samba udostępnia serwer SMB, który może być użyty w celu dostarczenia
@@ -235,61 +134,11 @@ NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
 pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
 
-%description -l pt_BR.UTF-8
-O Samba provê um servidor SMB que pode ser usado para oferecer
-serviços de rede a clientes SMB (algumas vezes chamado de "Lan
-Manager"), incluindo várias versões de MS Windows, OS/2, e outras
-máquinas Linux. O Samba também fornece alguns clientes SMB, que
-complementam o sistema de arquivos SMB do Linux. O Samba usa o
-protocolo NetBIOS sobre TCP/IP (NetBT) e não necessita do protocolo
-NetBEUI (Microsoft Raw NetBIOS frame).
-
-O Samba inclui a maioria das características de um servidor de
-Controle de Domínios NT e o SWAT (Samba Web Administration Tool), que
-permite que o arquivo smb.conf seja gerenciado remotamente através de
-um navegador. Atualmente isto está sendo habilitado na porta TCP 901
-via inetd.
-
-%description -l ru.UTF-8
-Samba предоставляет SMB-сервер, который может быть использован для
-предоставления сетевых сервисов SMB (иногда называемым "Lan Manager")
-клиентам, включая разнообразные версии MS Windows, OS/2, и другие
-Linux-машины. Samba также предоставляет SMB-клиентов, которые работают
-со встроенной в Linux файловой системой SMB.
-
-Samba использует протокол NetBIOS over TCP/IP (NetBT) и не нуждается в
-протоколе NetBEUI (Microsoft Raw NetBIOS frame).
-
-Samba содержит практически работающую реализацию NT Domain Control и
-включает новый SWAT (Samba Web Administration Tool), который позволяет
-удаленно управлять конфигурационным файлом smb.conf при помощи вашего
-любимого WEB-броузера. Пока что он разрешен через inetd на TCP-порту
-901.
-
-%description -l uk.UTF-8
-Samba надає SMB-сервер, що може бути використаний для надання
-мережевих сервісів SMB (що їх іноді називають "Lan Manager") клієнтам,
-включаючи різноманітні версії MS Windows, OS/2, та інші Linux-машини.
-Samba також надає SMB-клієнтів, що працюють з вбудованою в Linux
-файловою системою SMB.
-
-Samba використовує протокол NetBIOS over TCP/IP (NetBT) та не потребує
-протоколу NetBEUI (Microsoft Raw NetBIOS frame).
-
-Samba містить майже працюючу реализацію NT Domain Control та новый
-SWAT (Samba Web Administration Tool), котрий дозволяє віддалено
-керувати конфігураційним файлом smb.conf за допомогою вашого
-улюбленого WEB-броузера. Поки що він дозволений через inetd на
-TCP-порту 901.
+Then pakiet dostarcza główny demon Active Directory.
 
 %package client
-Summary:	Samba client programs
-Summary(es.UTF-8):	Cliente SMB de Samba
-Summary(ja.UTF-8):	Samba (SMB) クライアントプログラム
-Summary(pl.UTF-8):	Klienci serwera Samba
-Summary(pt_BR.UTF-8):	Cliente SMB do samba
-Summary(ru.UTF-8):	Клиентские программы Samba (SMB)
-Summary(uk.UTF-8):	Клієнтські програми Samba (SMB)
+Summary:	Samba AD client programs
+Summary(pl.UTF-8):	Klienci serwera Samba AD
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs >= 1.5.3-1}
@@ -302,41 +151,14 @@ Samba-client provides some SMB clients, which complement the build-in
 SMB filesystem in Linux. These allow accessing of SMB shares and
 printing to SMB printers.
 
-%description client -l es.UTF-8
-Cliente SMB de Samba.
-
-%description client -l ja.UTF-8
-Samba-client は Linux 上に含まれている SMB ファイルシステムを補う SMB
-クライアントを提供します。これらは SMB 共有のアクセスと SMB
-プリンタへの印刷を許可します。
-
 %description client -l pl.UTF-8
 Samba-client dostarcza programy uzupełniające obsługę systemu plików
 SMB zawartą w jądrze. Pozwalają one na współdzielenie zasobów SMB i
 drukowanie w sieci SMB.
 
-%description client -l pt_BR.UTF-8
-O pacote samba-clientes prove alguns clientes SMB, que complementam o
-sistema de arquivos SMB do Linux. Eles permitem o acesso a shares SMB,
-e também, à impressoras SMB.
-
-%description client -l ru.UTF-8
-Пакет samba-client предоставляет некоторые клиенты SMB для работы со
-встроенной файловой системой SMB в Linux. Эти клиенты позволяют
-получать доступ к разделяемым каталогам SMB и печать на SMB-принтеры.
-
-%description client -l uk.UTF-8
-Пакет samba-client надає деякі клієнти SMB для роботи зі вбудованою
-файловою системою SMB в Linux. Ці клієнти дозволяють отримувати доступ
-до каталогів спільного використання SMB та друк на SMB-прінтери.
-
 %package common
 Summary:	Files used by both Samba servers and clients
-Summary(ja.UTF-8):	Samba サーバーとクライアントで使用されるプログラム
-Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
-Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
-Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
-Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
+Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
 Group:		Networking/Daemons
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
@@ -345,24 +167,9 @@ Requires:	tdb >= %{tdb_ver}
 Samba-common provides files necessary for both the server and client
 packages of Samba.
 
-%description common -l ja.UTF-8
-Samba-common は Samba のサーバとクライアントの両方のパッケージで
-使用されるファイルを提供します。
-
 %description common -l pl.UTF-8
 Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
 klientów Samby.
-
-%description common -l pt_BR.UTF-8
-Arquivos em comum entre os pacotes samba e samba-clients.
-
-%description common -l ru.UTF-8
-Samba-common содержит файлы, необходимые для работы как клиента, так и
-сервера Samba.
-
-%description common -l uk.UTF-8
-Samba-common містить файли, необхідні для роботи як клієнта, так і
-сервера Samba.
 
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
@@ -474,25 +281,72 @@ samba-test-devel provides testing devel files for both the server and
 client packages of Samba.
 
 %package -n samba3
-Summary:	samba3
+Summary:	SMB server
+Summary(pl.UTF-8):	Serwer SMB
 Group:		Networking/Daemons
+Requires(post,preun):	/sbin/chkconfig
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	logrotate >= 3.7-4
+Requires:	pam >= 0.99.8.1
+Requires:	rc-scripts >= 0.4.0.12
+Requires:	setup >= 2.4.6-7
+# smbd links with libcups
+%{?with_cups:Requires:	cups-lib >= 1:1.2.0}
+Obsoletes:	python-samba
+Obsoletes:	samba-pdb-xml
+Obsoletes:	samba-vfs-block
 
 %description -n samba3
-samba3
+Samba provides an SMB server which can be used to provide network
+services to SMB (sometimes called "Lan Manager") clients, including
+various versions of MS Windows, OS/2, and other Linux machines. Samba
+also provides some SMB clients, which complement the built-in SMB
+filesystem in Linux. Samba uses NetBIOS over TCP/IP (NetBT) protocols
+and does NOT need NetBEUI (Microsoft Raw NetBIOS frame) protocol.
+
+%description -l pl.UTF-8
+Samba udostępnia serwer SMB, który może być użyty w celu dostarczenia
+usług sieciowych (potocznie zwanych "Lan Manager"), dla klientów
+takich jak MS Windows, OS/2 a także maszyn linuksowych. W pakiecie
+znajduje się również oprogramowanie klienckie. Samba używa protokołu
+NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
+pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
+haseł w standardzie MS i zarządzania bazą WINS.
 
 %package -n samba3-client
-Summary:	samba3
-Group:		Networking/Daemons
+Summary:	Samba client programs
+Summary(pl.UTF-8):	Klienci serwera Samba
+Group:		Applications/Networking
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
+%{?with_kerberos5:Requires:	heimdal-libs}
+Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
+Obsoletes:	smbfs
+Suggests:	cifs-utils
 
 %description -n samba3-client
-samba3
+Samba-client provides some SMB clients, which complement the build-in
+SMB filesystem in Linux. These allow accessing of SMB shares and
+printing to SMB printers.
+
+%description client -l pl.UTF-8
+Samba-client dostarcza programy uzupełniające obsługę systemu plików
+SMB zawartą w jądrze. Pozwalają one na współdzielenie zasobów SMB i
+drukowanie w sieci SMB.
 
 %package -n samba3-common
-Summary:	samba3
+Summary:	Files used by both Samba servers and clients
+Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
 Group:		Networking/Daemons
+Requires:	talloc >= %{libtalloc_ver}
+Requires:	tdb >= %{libtdb_ver}
 
 %description -n samba3-common
-samba3
+Samba-common provides files necessary for both the server and client
+packages of Samba.
+
+%description common -l pl.UTF-8
+Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
+klientów Samba.
 
 %package -n samba3-devel
 Summary:	Header files for Samba
@@ -747,9 +601,6 @@ Backend CUPS-a drukujący na drukarkach SMB.
 %package -n samba3-swat
 Summary:	Samba Web Administration Tool
 Summary(pl.UTF-8):	Narzędzie administracyjne serwisu Samba
-Summary(pt_BR.UTF-8):	Samba SWAT e documentação Web
-Summary(ru.UTF-8):	Программа конфигурации SMB-сервера Samba
-Summary(uk.UTF-8):	Програма конфигурації SMB-сервера Samba
 Group:		Networking/Admin
 Requires:	%{name}-samba3 = %{epoch}:%{version}-%{release}
 Requires:	inetdaemon
@@ -765,19 +616,6 @@ allowing an administrator to easily look up the effects of any change.
 %description -n samba3-swat -l pl.UTF-8
 swat pozwala na kompleksową konfigurację smb.conf przy pomocy
 przeglądarki WWW.
-
-%description -n samba3-swat -l pt_BR.UTF-8
-SWAT - ferramentada Web de configuração do Samba.
-
-%description -n samba3-swat -l ru.UTF-8
-Пакет samba-swat включает новый SWAT (Samba Web Administration Tool),
-для удаленного администрирования файла smb.conf при помощи вашего
-любимого Web-браузера.
-
-%description -n samba3-swat -l uk.UTF-8
-Пакет samba-swat містить новий SWAT (Samba Web Administration Tool),
-для дистанційного адміністрування файлу smb.conf за допомогою вашого
-улюбленого Web-браузеру.
 
 %package -n samba3-winbind
 Summary:	Samba-winbind daemon, utilities and documentation
@@ -826,7 +664,6 @@ samby.
 %package -n samba3-libsmbclient-devel
 Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
-Summary(pt_BR.UTF-8):	Ferramentas de desenvolvimento para clientes samba
 Group:		Development/Libraries
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
 Obsoletes:	libsmbclient-devel < 1:4.0.0-1
@@ -836,10 +673,6 @@ Header files for libsmbclient.
 
 %description -n samba3-libsmbclient-devel -l pl.UTF-8
 Pliki nagłówkowe dla libsmbclient.
-
-%description -n samba3-libsmbclient-devel -l pt_BR.UTF-8
-Arquivos de inclusão, bibliotecas e documentação necessários para
-desenvolver aplicativos clientes para o samba.
 
 %package -n python-samba3
 Summary:	Samba Module for Python
@@ -965,6 +798,7 @@ cd ..
 # Clean out crap left behind by the PIDL install
 %{__rm} $RPM_BUILD_ROOT%{perl_vendorlib}/wscript_build
 %{__rm} -r $RPM_BUILD_ROOT%{perl_vendorlib}/Parse/Yapp
+%{__rm} $RPM_BUILD_ROOT%{perl_vendorlib}/Parse/Pidl/.packlist
 
 # not ready for production, and no MIT kerberos in PLD
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/mit_samba.so
@@ -1020,6 +854,14 @@ install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbdump.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbtool.8*
 %endif
+
+# remove man pages for not installed commands
+%{__rm} %{_mandir}/man1/log2pcap.1*
+%{__rm} %{_mandir}/man1/smbtar.1*
+%{__rm} %{_mandir}/man8/vfs_cacheprime.8*
+%{__rm} %{_mandir}/man8/vfs_gpfs.8*
+%{__rm} %{_mandir}/man8/vfs_prealloc.8*
+%{__rm} %{_mandir}/man8/vfs_tsmsm.8*
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}

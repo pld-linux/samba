@@ -24,7 +24,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.3
-Release:	0.4
+Release:	0.6
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -268,6 +268,7 @@ Summary:	Samba Module for Python
 Group:		Development/Languages/Python
 %pyrequires_eq	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Obsoletes:	python-samba
 
 %description -n python-samba4
 Samba Module for Python.
@@ -305,7 +306,6 @@ Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
-Obsoletes:	python-samba
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
 
@@ -686,15 +686,6 @@ Header files for libsmbclient.
 
 %description -n samba3-libsmbclient-devel -l pl.UTF-8
 Pliki nagłówkowe dla libsmbclient.
-
-%package -n python-samba3
-Summary:	Samba Module for Python
-Group:		Development/Languages/Python
-%pyrequires_eq	python
-Requires:	samba3-common = %{epoch}:%{version}-%{release}
-
-%description -n python-samba3
-Samba Module for Python.
 
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
@@ -1132,6 +1123,11 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libutil_setid.so
 %attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
 %attr(755,root,root) %{_libdir}/samba/libwinbind-client.so
+%dir %{_libdir}/samba/vfs
+%attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
+%attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
+%attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %dir %{_datadir}/samba
 %dir %{_datadir}/samba/codepages
 %{_datadir}/samba/codepages/lowcase.dat
@@ -1392,6 +1388,9 @@ fi
 %{py_sitedir}/samba/netcmd/*.py[co]
 %dir %{py_sitedir}/samba/provision
 %{py_sitedir}/samba/provision/*.py[co]
+%dir %{py_sitedir}/samba/samba3
+%attr(755,root,root) %{py_sitedir}/samba/samba3/*.so
+%{py_sitedir}/samba/samba3/*.py[co]
 %dir %{py_sitedir}/samba/tests
 %{py_sitedir}/samba/tests/*.py[co]
 %dir %{py_sitedir}/samba/tests/blackbox
@@ -1458,9 +1457,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/idmap/hash.so
 %attr(755,root,root) %{_libdir}/samba/idmap/rid.so
 %attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
-%dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
-%attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_posix.so
@@ -1468,10 +1465,8 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/commit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/crossrename.so
 %attr(755,root,root) %{_libdir}/samba/vfs/dirsort.so
-%attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
-%attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/preopen.so
 %attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy2.so
 %attr(755,root,root) %{_libdir}/samba/vfs/smb_traffic_analyzer.so
@@ -1479,7 +1474,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/streams_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
 %attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
-%attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %dir %{_libdir}/samba/pdb
 %attr(755,root,root) %{_libdir}/samba/pdb/ldap.so
 %attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
@@ -1706,13 +1700,6 @@ fi
 %attr(755,root,root) %{_libdir}/libwbclient.so
 %{_includedir}/libsmbclient.h
 %{_includedir}/wbclient.h
-
-%files -n python-samba3
-%defattr(644,root,root,755)
-%dir %{py_sitedir}/samba
-%dir %{py_sitedir}/samba/samba3
-%attr(755,root,root) %{py_sitedir}/samba/samba3/*.so
-%{py_sitedir}/samba/samba3/*.py[co]
 
 %if %{with ldap}
 %files -n openldap-schema-samba

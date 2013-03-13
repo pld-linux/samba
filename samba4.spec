@@ -24,7 +24,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.3
-Release:	0.1
+Release:	0.4
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -1086,7 +1086,7 @@ fi
 %attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %dir %{_libdir}/samba
-%attr(755,root,root) %{_libdir}/samba/libaddns.so
+%attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
 %attr(755,root,root) %{_libdir}/samba/libasn1util.so
 %attr(755,root,root) %{_libdir}/samba/libauth4.so
 %attr(755,root,root) %{_libdir}/samba/libauthkrb5.so
@@ -1100,7 +1100,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libcli_smb_common.so
 %attr(755,root,root) %{_libdir}/samba/libcluster.so
 %attr(755,root,root) %{_libdir}/samba/libcmdline-credentials.so
-%attr(755,root,root) %{_libdir}/samba/libdbwrap.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba.so
 %attr(755,root,root) %{_libdir}/samba/libdfs_server_ad.so
@@ -1122,12 +1121,10 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsamba3-util.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-net.so
-%attr(755,root,root) %{_libdir}/samba/libsamba_python.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-security.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets.so
 %attr(755,root,root) %{_libdir}/samba/libsamdb-common.so
 %attr(755,root,root) %{_libdir}/samba/libserver-role.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser.so
 %attr(755,root,root) %{_libdir}/samba/libsmb_transport.so
 %attr(755,root,root) %{_libdir}/samba/libtdb-wrap.so
@@ -1193,6 +1190,14 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsmbclient-raw.so.0
+%attr(755,root,root) %{_libdir}/libsmbconf.so.0
+%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
+%attr(755,root,root) %{_libdir}/samba/libgse.so
+%attr(755,root,root) %{_libdir}/samba/liblibsmb.so
+%attr(755,root,root) %{_libdir}/samba/libsecrets3.so
+%attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
+%attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
+%attr(755,root,root) %{_libdir}/samba/libaddns.so
 
 %files -n libsmbclient-raw-devel
 %defattr(644,root,root,755)
@@ -1222,6 +1227,7 @@ fi
 %{_includedir}/samba-4.0/smb_unix_ext.h
 %{_includedir}/samba-4.0/smb_util.h
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so
+%attr(755,root,root) %{_libdir}/libsmbconf.so
 %{_pkgconfigdir}/smbclient-raw.pc
 
 %files devel
@@ -1352,6 +1358,24 @@ fi
 
 %files -n python-samba4
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libnetapi.so.0
+%attr(755,root,root) %{_libdir}/libpdb.so.0
+%attr(755,root,root) %{_libdir}/libsmbldap.so.0
+%attr(755,root,root) %{_libdir}/samba/libads.so
+%attr(755,root,root) %{_libdir}/samba/libauth.so
+%attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
+%attr(755,root,root) %{_libdir}/samba/libdbwrap.so
+%attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
+%attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
+%attr(755,root,root) %{_libdir}/samba/libmsrpc3.so
+%attr(755,root,root) %{_libdir}/samba/libprinting_migrate.so
+%attr(755,root,root) %{_libdir}/samba/libsamba_python.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
+%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
+%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
+%attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
 %dir %{py_sitedir}/samba
 %attr(755,root,root) %{py_sitedir}/samba/*.so
 %{py_sitedir}/samba/*.py[co]
@@ -1419,29 +1443,15 @@ fi
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/smbd
-%attr(755,root,root) %{_libdir}/libnetapi.so.0
-%attr(755,root,root) %{_libdir}/libpdb.so.0
-%attr(755,root,root) %{_libdir}/libsmbldap.so.0
 %attr(755,root,root) %{_libdir}/samba/auth/samba4.so
 %attr(755,root,root) %{_libdir}/samba/auth/unix.so
 %attr(755,root,root) %{_libdir}/samba/auth/wbc.so
-%attr(755,root,root) %{_libdir}/samba/libads.so
-%attr(755,root,root) %{_libdir}/samba/libauth.so
-%attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
 %attr(755,root,root) %{_libdir}/samba/libgpo.so
 %attr(755,root,root) %{_libdir}/samba/libidmap.so
-%attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
 %attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
 %attr(755,root,root) %{_libdir}/samba/libnss_info.so
 %attr(755,root,root) %{_libdir}/samba/libpopt_samba3.so
-%attr(755,root,root) %{_libdir}/samba/libprinting_migrate.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
-%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
 %attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
-%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
-%attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
-%attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
 %dir %{_libdir}/samba/idmap
 %attr(755,root,root) %{_libdir}/samba/idmap/ad.so
 %attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
@@ -1687,22 +1697,12 @@ fi
 %files -n samba3-libsmbclient
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
-%attr(755,root,root) %{_libdir}/libsmbconf.so.0
 %attr(755,root,root) %{_libdir}/libwbclient.so.*
-%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
-%attr(755,root,root) %{_libdir}/samba/libgse.so
-%attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
-%attr(755,root,root) %{_libdir}/samba/liblibsmb.so
-%attr(755,root,root) %{_libdir}/samba/libmsrpc3.so
-%attr(755,root,root) %{_libdir}/samba/libsecrets3.so
-%attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
-%attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n samba3-libsmbclient-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so
-%attr(755,root,root) %{_libdir}/libsmbconf.so
 %attr(755,root,root) %{_libdir}/libwbclient.so
 %{_includedir}/libsmbclient.h
 %{_includedir}/wbclient.h

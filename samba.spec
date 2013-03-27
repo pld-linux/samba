@@ -934,7 +934,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
 	$RPM_BUILD_ROOT{/var/{log,log/archive,spool}/samba,/var/lib/samba/printing} \
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
-	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir}}
+	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_vfsdir},%{_includedir},%{_sambahome},%{schemadir},%{_pkgconfigdir}}
 
 %{__make} -C source3 install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -960,6 +960,9 @@ install -p source3/bin/smbget		$RPM_BUILD_ROOT%{_bindir}
 install -p source3/bin/vfstest		$RPM_BUILD_ROOT%{_bindir}
 
 cp -a source3/bin/libsmbclient.a $RPM_BUILD_ROOT%{_libdir}/libsmbclient.a
+
+cp -a source3/pkgconfig/smbclient.pc $RPM_BUILD_ROOT%{_pkgconfigdir}/smbclient.pc
+cp -a source3/pkgconfig/wbclient.pc $RPM_BUILD_ROOT%{_pkgconfigdir}/wbclient.pc
 
 # smbwrapper
 install -p examples/libsmbclient/smbwrapper/smbwrapper.so $RPM_BUILD_ROOT%{_libdir}/smbwrapper.so
@@ -1301,6 +1304,8 @@ EOF
 %attr(755,root,root) %{_libdir}/libwbclient.so
 %{_includedir}/libsmbclient.h
 %{_includedir}/wbclient.h
+%{_pkgconfigdir}/smbclient.pc
+%{_pkgconfigdir}/wbclient.pc
 
 %if %{without system_libtalloc}
 %files -n libtalloc

@@ -24,7 +24,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.3
-Release:	0.6
+Release:	0.7
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -53,12 +53,14 @@ BuildRequires:	automake
 BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
+BuildRequires:	docbook-style-xsl
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 1.5.3-1}
 BuildRequires:	iconv
 BuildRequires:	keyutils-devel
+BuildRequires:	libaio-devel
 BuildRequires:	libcom_err-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
@@ -79,6 +81,7 @@ BuildRequires:	python-modules
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.647
+BuildRequires:	rpm-pythonprov
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}

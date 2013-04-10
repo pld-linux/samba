@@ -271,6 +271,8 @@ Summary:	Samba Module for Python
 Group:		Development/Languages/Python
 %pyrequires_eq	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	python-dns
+Requires:	python-modules
 Obsoletes:	python-samba
 
 %description -n python-samba4
@@ -776,7 +778,7 @@ cd pidl
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd} \
+install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd,ld.so.conf.d} \
 	$RPM_BUILD_ROOT{/var/{log/archive,spool}/samba,/var/lib/samba/printing} \
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_libdir}/samba/vfs,%{_includedir},%{_sambahome},%{schemadir}} \
@@ -816,7 +818,7 @@ cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
-cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
+cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf.samba3
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
@@ -835,6 +837,8 @@ install -p bin/vfstest $RPM_BUILD_ROOT%{_bindir}
 touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
 echo '127.0.0.1 localhost' > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
+
+echo "%{_libdir}/samba" >$RPM_BUILD_ROOT/etc/ld.so.conf.d/samba.conf
 
 %if %{with cups}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
@@ -1042,10 +1046,10 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc README WHATSNEW.txt Roadmap
+/etc/ld.so.conf.d/samba.conf
 %attr(755,root,root) %{_bindir}/samba-tool
 %attr(755,root,root) %{_sbindir}/samba_kcc
 %dir %{_sysconfdir}/samba
-%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
 %attr(755,root,root) %{_libdir}/libdcerpc.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc.so.0
@@ -1540,6 +1544,7 @@ fi
 
 %files -n samba3-common
 %defattr(644,root,root,755)
+%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf.samba3
 %attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/pdbedit

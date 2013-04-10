@@ -16,20 +16,20 @@
 %define		talloc_ver	2.0.7
 %define		tdb_ver		2:1.2.10
 %define		ldb_ver		1.1.15
-%define		tevent_ver	0.9.17
+%define		tevent_ver	0.9.18
 %endif
 
 %define		virusfilter_version 0.1.3
 Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
-Version:	4.0.3
-Release:	0.7
+Version:	4.0.5
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	fdb093fb362109dae0ccadc314318da7
+# Source0-md5:	58ec2fec08872b72f8fd526f2da20a9e
 Source1:	smb.init
 Source2:	samba.pamd
 Source3:	swat.inetd
@@ -869,7 +869,7 @@ install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
-find $RPM_BUILD_ROOT%{py_sitedir} -name "*.py" -o -name "*.a" -o -name "*.la" | xargs rm -f
+%py_postclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -950,7 +950,6 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
-%attr(755,root,root) %{_sbindir}/samba_upgradeprovision
 %attr(755,root,root) %{_libdir}/libdcerpc-server.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-server.so.0
 %attr(755,root,root) %{_libdir}/samba/libdb-glue.so
@@ -1482,7 +1481,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
 %attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
 %dir %{_libdir}/samba/pdb
-%attr(755,root,root) %{_libdir}/samba/pdb/ldap.so
+%attr(755,root,root) %{_libdir}/samba/pdb/ldapsam.so
 %attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
 %attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
 %attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so

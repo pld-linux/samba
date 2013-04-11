@@ -45,6 +45,7 @@ Patch1:		samba-c++-nofail.patch
 Patch3:		samba-nscd.patch
 Patch4:		samba-lprng-no-dot-printers.patch
 Patch5:		samba-fam.patch
+Patch6:		systemd-pid-dir.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -712,6 +713,7 @@ Ten pakiet zawiera schemat samby dla openldap-a.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 LDFLAGS="${LDFLAGS:-%rpmldflags}" \

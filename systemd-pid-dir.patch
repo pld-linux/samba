@@ -1,0 +1,44 @@
+--- samba-4.0.5/packaging/systemd/nmb.service~	2012-10-16 09:33:05.000000000 +0200
++++ samba-4.0.5/packaging/systemd/nmb.service	2013-04-11 13:13:21.950445513 +0200
+@@ -4,7 +4,7 @@
+ 
+ [Service]
+ Type=forking
+-PIDFile=/run/nmbd.pid
++PIDFile=/run/samba/nmbd.pid
+ EnvironmentFile=-/etc/sysconfig/samba
+ ExecStart=/usr/sbin/nmbd $NMBDOPTIONS
+ ExecReload=/usr/bin/kill -HUP $MAINPID
+--- samba-4.0.5/packaging/systemd/samba.service~	2012-10-16 09:33:05.000000000 +0200
++++ samba-4.0.5/packaging/systemd/samba.service	2013-04-11 13:13:10.947024140 +0200
+@@ -4,7 +4,7 @@
+ 
+ [Service]
+ Type=forking
+-PIDFile=/run/samba.pid
++PIDFile=/run/samba/samba.pid
+ LimitNOFILE=16384
+ EnvironmentFile=-/etc/sysconfig/samba
+ ExecStart=/usr/sbin/samba $SAMBAOPTIONS
+--- samba-4.0.5/packaging/systemd/smb.service~	2012-10-16 09:33:05.000000000 +0200
++++ samba-4.0.5/packaging/systemd/smb.service	2013-04-11 13:13:04.546972940 +0200
+@@ -4,7 +4,7 @@
+ 
+ [Service]
+ Type=forking
+-PIDFile=/run/smbd.pid
++PIDFile=/run/samba/smbd.pid
+ LimitNOFILE=16384
+ EnvironmentFile=-/etc/sysconfig/samba
+ ExecStart=/usr/sbin/smbd $SMBDOPTIONS
+--- samba-4.0.5/packaging/systemd/winbind.service~	2012-10-16 09:33:05.000000000 +0200
++++ samba-4.0.5/packaging/systemd/winbind.service	2013-04-11 13:12:56.876911589 +0200
+@@ -4,7 +4,7 @@
+ 
+ [Service]
+ Type=forking
+-PIDFile=/run/winbindd.pid
++PIDFile=/run/samba/winbindd.pid
+ EnvironmentFile=-/etc/sysconfig/samba
+ ExecStart=/usr/sbin/winbindd "$WINBINDOPTIONS"
+ ExecReload=/usr/bin/kill -HUP $MAINPID

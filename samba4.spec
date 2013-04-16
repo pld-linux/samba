@@ -889,15 +889,15 @@ install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add samba
-%service samba restart "Samba AD daemon"
+#/sbin/chkconfig --add samba
+#%service samba restart "Samba AD daemon"
 %systemd_post samba.service
 
 %preun
-if [ "$1" = "0" ]; then
-	%service samba stop
-	/sbin/chkconfig --del samba
-fi
+#if [ "$1" = "0" ]; then
+#	%service samba stop
+#	/sbin/chkconfig --del samba
+#fi
 %systemd_preun samba.service
 
 %postun
@@ -914,7 +914,7 @@ fi
 %preun -n samba3-server
 if [ "$1" = "0" ]; then
 	%service smb stop
-	/sbin/chkconfig --del samba
+	/sbin/chkconfig --del smb
 fi
 %systemd_preun smb.service nmb.service
 

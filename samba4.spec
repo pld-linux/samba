@@ -24,7 +24,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.5
-Release:	0.1
+Release:	0.3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -58,6 +58,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
+BuildRequires:	gnutls-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 1.5.3-1}
 BuildRequires:	iconv
 BuildRequires:	keyutils-devel
@@ -69,7 +70,6 @@ BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
-BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	perl(ExtUtils::MakeMaker)
 BuildRequires:	perl(Parse::Yapp)
@@ -303,13 +303,8 @@ client packages of Samba.
 Summary:	SMB server
 Summary(pl.UTF-8):	Serwer SMB
 Group:		Networking/Daemons
-Requires(post,preun):	/sbin/chkconfig
 Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
-Requires:	logrotate >= 3.7-4
-Requires:	pam >= 0.99.8.1
-Requires:	rc-scripts >= 0.4.0.12
-Requires:	setup >= 2.4.6-7
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Obsoletes:	samba-pdb-xml
@@ -323,7 +318,7 @@ also provides some SMB clients, which complement the built-in SMB
 filesystem in Linux. Samba uses NetBIOS over TCP/IP (NetBT) protocols
 and does NOT need NetBEUI (Microsoft Raw NetBIOS frame) protocol.
 
-%description -l pl.UTF-8
+%description -n samba3 -l pl.UTF-8
 Samba udostępnia serwer SMB, który może być użyty w celu dostarczenia
 usług sieciowych (potocznie zwanych "Lan Manager"), dla klientów
 takich jak MS Windows, OS/2 a także maszyn linuksowych. W pakiecie
@@ -331,6 +326,24 @@ znajduje się również oprogramowanie klienckie. Samba używa protokołu
 NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
 pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
+
+%package -n samba3-server
+Summary:	SMB server initscripts
+Summary(pl.UTF-8):	Skrypty startowe serwera SMB
+Group:		Networking/Daemons
+Requires(post,preun):	/sbin/chkconfig
+Requires:	samba3 = %{epoch}:%{version}-%{release}
+Requires:	logrotate >= 3.7-4
+Requires:	rc-scripts >= 0.4.0.12
+Requires:	setup >= 2.4.6-7
+
+%description -n samba3-server
+This package contains startup scripts and services for old SMB server
+daemons (smbd, nmbd).
+
+%description -n samba3-server -l pl.UTF-8
+Ten pakiet zawiera skrypty startowe dla starych usług serwera SMB
+(smbd, nmbd).
 
 %package -n samba3-client
 Summary:	Samba client programs
@@ -347,7 +360,7 @@ Samba-client provides some SMB clients, which complement the build-in
 SMB filesystem in Linux. These allow accessing of SMB shares and
 printing to SMB printers.
 
-%description client -l pl.UTF-8
+%description -n samba3-client -l pl.UTF-8
 Samba-client dostarcza programy uzupełniające obsługę systemu plików
 SMB zawartą w jądrze. Pozwalają one na współdzielenie zasobów SMB i
 drukowanie w sieci SMB.
@@ -363,7 +376,7 @@ Requires:	tdb >= %{libtdb_ver}
 Samba-common provides files necessary for both the server and client
 packages of Samba.
 
-%description common -l pl.UTF-8
+%description -n samba3-common -l pl.UTF-8
 Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
 klientów Samba.
 
@@ -744,7 +757,6 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-pammodulesdir=/%{_lib}/security \
 	--with-lockdir=/var/lib/samba \
 	--with-privatedir=%{_sysconfdir}/samba \
-	--disable-gnutls \
 	--disable-rpath-install \
 	--builtin-libraries=replace,ccan \
 	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
@@ -820,7 +832,7 @@ cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
-cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf.samba3
+cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 
@@ -894,19 +906,19 @@ fi
 %post common -p /sbin/ldconfig
 %postun common -p /sbin/ldconfig
 
-%post -n samba3
+%post -n samba3-server
 /sbin/chkconfig --add smb
 %service smb restart "Samba3 daemons"
 %systemd_post smb.service nmb.service
 
-%preun -n samba3
+%preun -n samba3-server
 if [ "$1" = "0" ]; then
 	%service smb stop
 	/sbin/chkconfig --del samba
 fi
 %systemd_preun smb.service nmb.service
 
-%postun -n samba3
+%postun -n samba3-server
 %systemd_reload
 
 %post -n samba3-winbind
@@ -1439,9 +1451,6 @@ fi
 
 %files -n samba3
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/smb
-%{systemdunitdir}/nmb.service
-%{systemdunitdir}/smb.service
 %attr(755,root,root) %{_bindir}/dbwrap_tool
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/smbpasswd
@@ -1526,6 +1535,13 @@ fi
 %{_mandir}/man8/vfs_time_audit.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
+%files -n samba3-server
+%defattr(644,root,root,755)
+%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
+%attr(754,root,root) /etc/rc.d/init.d/smb
+%{systemdunitdir}/nmb.service
+%{systemdunitdir}/smb.service
+
 %files -n samba3-client
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/net
@@ -1545,7 +1561,6 @@ fi
 
 %files -n samba3-common
 %defattr(644,root,root,755)
-%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf.samba3
 %attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/pdbedit

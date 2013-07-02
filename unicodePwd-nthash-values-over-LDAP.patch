@@ -1,0 +1,47 @@
+
+Allow setting unicodePwd with NTHash vlue over LDAP
+
+--- samba-4.0.7/source4/libcli/ldap/ldap_controls.c~	2013-07-02 20:19:37.554868793 +0200
++++ samba-4.0.7/source4/libcli/ldap/ldap_controls.c	2013-07-02 21:00:47.595973713 +0200
+@@ -1293,7 +1293,7 @@
+ 	{ LDB_CONTROL_REVEAL_INTERNALS, NULL, NULL },
+ 	{ LDB_CONTROL_AS_SYSTEM_OID, NULL, NULL },
+ 	{ DSDB_CONTROL_PASSWORD_CHANGE_STATUS_OID, NULL, NULL },
+-	{ DSDB_CONTROL_PASSWORD_HASH_VALUES_OID, NULL, NULL },
++	{ DSDB_CONTROL_PASSWORD_HASH_VALUES_OID, decode_flag_request, encode_flag_request },
+ 	{ DSDB_CONTROL_PASSWORD_CHANGE_OID, NULL, NULL },
+ 	{ DSDB_CONTROL_APPLY_LINKS, NULL, NULL },
+ 	{ LDB_CONTROL_BYPASS_OPERATIONAL_OID, NULL, NULL },
+--- samba-4.0.7/source4/dsdb/samdb/ldb_modules/password_hash.c~	2013-07-02 20:01:42.731518064 +0200
++++ samba-4.0.7/source4/dsdb/samdb/ldb_modules/password_hash.c	2013-07-02 20:39:24.909757777 +0200
+@@ -3386,10 +3386,29 @@
+ 	return ldb_next_request(ac->module, mod_req);
+ }
+ 
++static int password_hash_init(struct ldb_module *module)
++{
++	struct ldb_context *ldb;
++	int ret;
++
++	ldb = ldb_module_get_ctx(module);
++
++	ret = ldb_mod_register_control(module, DSDB_CONTROL_PASSWORD_HASH_VALUES_OID);
++	if (ret != LDB_SUCCESS) {
++		ldb_debug(ldb, LDB_DEBUG_ERROR,
++				"password_hash: Unable to register control (%s) with rootdse!\n",
++				DSDB_CONTROL_PASSWORD_HASH_VALUES_OID);
++		return ldb_operr(ldb);
++	}
++
++	return ldb_next_init(module);
++}
++
+ static const struct ldb_module_ops ldb_password_hash_module_ops = {
+ 	.name          = "password_hash",
+ 	.add           = password_hash_add,
+-	.modify        = password_hash_modify
++	.modify        = password_hash_modify,
++	.init_context  = password_hash_init
+ };
+ 
+ int ldb_password_hash_module_init(const char *version)

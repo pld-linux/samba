@@ -14,8 +14,8 @@
 
 %if %{with system_libs}
 %define		talloc_ver	2.0.7
-%define		tdb_ver		2:1.2.10
-%define		ldb_ver		1.1.15
+%define		tdb_ver		2:1.2.11
+%define		ldb_ver		1.1.16
 %define		tevent_ver	0.9.18
 %endif
 
@@ -23,13 +23,13 @@
 Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
-Version:	4.0.5
-Release:	0.3
+Version:	4.0.7
+Release:	0.5
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	58ec2fec08872b72f8fd526f2da20a9e
+# Source0-md5:	d887c1383654fc60b7bb1b74d273a826
 Source1:	smb.init
 Source2:	samba.pamd
 Source3:	swat.inetd
@@ -38,14 +38,15 @@ Source5:	samba.logrotate
 Source6:	smb.conf
 Source7:	winbind.init
 Source8:	winbind.sysconfig
+Source9:	samba.init
 Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilter-%{virusfilter_version}.tar.bz2
 # Source10-md5:	a3a30d5fbf309d356e8c5833db680c17
 Patch0:		system-heimdal.patch
 Patch1:		samba-c++-nofail.patch
 Patch3:		samba-nscd.patch
 Patch4:		samba-lprng-no-dot-printers.patch
-Patch5:		samba-fam.patch
-Patch6:		systemd-pid-dir.patch
+Patch5:		systemd-pid-dir.patch
+Patch6:		unicodePwd-nthash-values-over-LDAP.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -98,6 +99,15 @@ BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
+#%if %{with system_libs}
+#Requires:	ldb >= %{ldb_ver}
+#Requires:	python-ldb >= %{ldb_ver}
+#Requires:	python-talloc >= %{talloc_ver}
+#Requires:	python-tevent >= %{tevent_ver}
+#Requires:	talloc >= %{talloc_ver}
+#Requires:	tdb >= %{tdb_ver}
+#Requires:	tevent >= %{tevent_ver}
+#%endif
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts >= 0.4.0.12
@@ -792,7 +802,7 @@ cd pidl
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd,ld.so.conf.d} \
+install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd,ld.so.conf.d,env.d} \
 	$RPM_BUILD_ROOT{/var/{log/archive,spool}/samba,/var/lib/samba/printing} \
 	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_libdir}/samba/vfs,%{_includedir},%{_sambahome},%{schemadir}} \
@@ -835,6 +845,9 @@ cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
+install -p %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/samba
+
+echo "LDB_MODULES_PATH=%{_libdir}/samba/ldb" > $RPM_BUILD_ROOT/etc/env.d/LDB_MODULES_PATH
 
 # move lib{smb,wb}client where they always were for compatibility
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so.* $RPM_BUILD_ROOT%{_libdir}
@@ -875,7 +888,6 @@ install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 
 # remove man pages for not installed commands
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/log2pcap.1*
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/smbtar.1*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_cacheprime.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_gpfs.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_prealloc.8*
@@ -889,15 +901,15 @@ install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 rm -rf $RPM_BUILD_ROOT
 
 %post
-#/sbin/chkconfig --add samba
-#%service samba restart "Samba AD daemon"
+/sbin/chkconfig --add samba
+%service samba restart "Samba AD daemon"
 %systemd_post samba.service
 
 %preun
-#if [ "$1" = "0" ]; then
-#	%service samba stop
-#	/sbin/chkconfig --del samba
-#fi
+if [ "$1" = "0" ]; then
+	%service samba stop
+	/sbin/chkconfig --del samba
+fi
 %systemd_preun samba.service
 
 %postun
@@ -957,6 +969,8 @@ fi
 
 %files
 %defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/env.d/LDB_MODULES_PATH
+%attr(754,root,root) /etc/rc.d/init.d/samba
 %{systemdunitdir}/samba.service
 %{systemdtmpfilesdir}/samba.conf
 %attr(755,root,root) %{_bindir}/oLschema2ldif
@@ -1550,12 +1564,14 @@ fi
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
+%attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/rpcclient.1*
 %{_mandir}/man1/sharesec.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
 

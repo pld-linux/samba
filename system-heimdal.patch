@@ -1,14 +1,5 @@
 --- samba-4.0.0/source4/heimdal_build/wscript_build~	2012-12-04 11:07:44.000000000 +0100
 +++ samba-4.0.0/source4/heimdal_build/wscript_build	2013-01-07 15:09:18.976932049 +0100
-@@ -947,7 +947,7 @@
- 
- HEIMDAL_BINARY('samba4kgetcred',
-     'kuser/kgetcred.c',
--    deps='krb5 heimntlm roken HEIMDAL_VERS hcrypto',
-+    deps='krb5 heimntlm roken HEIMDAL_VERS hcrypto asn1',
-     install=False
-     )
- 
 @@ -953,7 +953,7 @@
  
  HEIMDAL_BINARY('samba4kpasswd',

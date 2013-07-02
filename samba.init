@@ -1,0 +1,110 @@
+#!/bin/sh
+#
+# chkconfig:	345 91 35
+# description:	Starts and stops the Samba daemon \
+#		used to provide Active Directory services.
+#
+# config:	/etc/samba/smb.conf
+# processname:	samba
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Demon specified configuration.
+[ -f /etc/sysconfig/samba ] && . /etc/sysconfig/samba
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
+		msg_network_down "Samba AD Server"
+		exit 1
+	fi
+else
+	exit 0
+fi
+
+TMPDIR="/tmp"; export TMPDIR
+unset TMP || :
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/samba ]; then
+		msg_already_running "Samba AD Server"
+		return
+	fi
+
+	msg_starting "Samba AD Server"
+	daemon /usr/sbin/smbd $SAMBAOPTIONS
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ]; then
+		touch /var/lock/subsys/samba
+	fi
+}
+
+stop() {
+	# Stop daemons.
+	if [ ! -f /var/lock/subsys/samba ]; then
+		msg_not_running "Samba AD Server"
+		return
+	fi
+
+	msg_stopping "Samba SMB/CIFS Server"
+	killproc --pidfile /var/run/samba/samba.pid samba
+	rm -f /var/lock/subsys/samba >/dev/null 2>&1
+}
+
+reload() {
+	if [ ! -f /var/lock/subsys/samba ]; then
+		msg_not_running "Samba AD Server"
+		RETVAL=7
+		return
+	fi
+
+	msg_reloading "Samba AD Server"
+	killproc --pidfile /var/run/samba/samba.pid samba -HUP
+	RETVAL=$?
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/samba ]; then
+		msg_not_running "Samba AD Server"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  reload|force-reload)
+	reload
+	;;
+  status)
+	status samba
+	RETVAL=$?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|status}"
+	exit 3
+esac
+
+exit $RETVAL

@@ -24,7 +24,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.7
-Release:	0.5
+Release:	0.11
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -980,9 +980,7 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
 %attr(755,root,root) %{_libdir}/libdcerpc-server.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-server.so.0
-%attr(755,root,root) %{_libdir}/samba/libdb-glue.so
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
-%attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
 %attr(755,root,root) %{_libdir}/samba/libntvfs.so
 %attr(755,root,root) %{_libdir}/samba/libpac.so
 %attr(755,root,root) %{_libdir}/samba/libprocess_model.so
@@ -1102,8 +1100,6 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.0
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
-%attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
 %attr(755,root,root) %{_libdir}/libsamdb.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamdb.so.0
 %attr(755,root,root) %{_libdir}/libtevent-util.so.*.*.*
@@ -1112,7 +1108,6 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %dir %{_libdir}/samba
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
-%attr(755,root,root) %{_libdir}/samba/libasn1util.so
 %attr(755,root,root) %{_libdir}/samba/libauth4.so
 %attr(755,root,root) %{_libdir}/samba/libauthkrb5.so
 %attr(755,root,root) %{_libdir}/samba/libauth_sam_reply.so
@@ -1127,6 +1122,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libcmdline-credentials.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba.so
+%attr(755,root,root) %{_libdir}/samba/libdbwrap.so
 %attr(755,root,root) %{_libdir}/samba/libdfs_server_ad.so
 %attr(755,root,root) %{_libdir}/samba/liberrors.so
 %attr(755,root,root) %{_libdir}/samba/libevents.so
@@ -1218,16 +1214,19 @@ fi
 
 %files -n libsmbclient-raw
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsmbclient-raw.so.0
 %attr(755,root,root) %{_libdir}/libsmbconf.so.0
 %attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
+%attr(755,root,root) %{_libdir}/samba/libaddns.so
+%attr(755,root,root) %{_libdir}/samba/libasn1util.so
 %attr(755,root,root) %{_libdir}/samba/libgse.so
 %attr(755,root,root) %{_libdir}/samba/liblibsmb.so
 %attr(755,root,root) %{_libdir}/samba/libsecrets3.so
 %attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
 %attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
-%attr(755,root,root) %{_libdir}/samba/libaddns.so
 
 %files -n libsmbclient-raw-devel
 %defattr(644,root,root,755)
@@ -1391,10 +1390,11 @@ fi
 %attr(755,root,root) %{_libdir}/libnetapi.so.0
 %attr(755,root,root) %{_libdir}/libpdb.so.0
 %attr(755,root,root) %{_libdir}/libsmbldap.so.0
+%attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
 %attr(755,root,root) %{_libdir}/samba/libads.so
 %attr(755,root,root) %{_libdir}/samba/libauth.so
 %attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
-%attr(755,root,root) %{_libdir}/samba/libdbwrap.so
+%attr(755,root,root) %{_libdir}/samba/libdb-glue.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
 %attr(755,root,root) %{_libdir}/samba/libmsrpc3.so

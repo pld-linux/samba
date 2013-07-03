@@ -80,7 +80,7 @@ Source6:	smb.conf
 Source7:	winbind.init
 Source8:	winbind.sysconfig
 Source9:	%{name}-rfc3454.txt
-Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilter-%{virusfilter_version}.tar.bz2
+Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/%{name}-virusfilter-%{virusfilter_version}.tar.bz2
 # Source10-md5:	a3a30d5fbf309d356e8c5833db680c17
 Patch0:		%{name}-smbwrapper.patch
 Patch1:		%{name}-c++-nofail.patch
@@ -349,8 +349,8 @@ Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
-Obsoletes:	smbfs
 Suggests:	cifs-utils
+Obsoletes:	smbfs
 
 %description client
 Samba-client provides some SMB clients, which complement the build-in
@@ -809,6 +809,9 @@ Summary(pl.UTF-8):	Schemat LDAP dla samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description -n openldap-schema-samba
 This package contains samba.schema for openldap.
@@ -841,8 +844,8 @@ Documentacja samby w formacie PDF.
 %package -n python-samba
 Summary:	Samba Module for Python
 Group:		Development/Languages/Python
-%pyrequires_eq 	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	python
 
 %description -n python-samba
 Samba Module for Python.

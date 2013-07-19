@@ -319,6 +319,7 @@ Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
+Obsoletes:	samba < 1:4.0.0-1
 
 %description -n samba3
 Samba provides an SMB server which can be used to provide network
@@ -363,6 +364,7 @@ Requires:	samba3-common = %{epoch}:%{version}-%{release}
 %{?with_kerberos5:Requires:	heimdal-libs}
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
 Obsoletes:	smbfs
+Obsoletes:	samba-client < 1:4.0.0-1
 Suggests:	cifs-utils
 
 %description -n samba3-client
@@ -381,6 +383,7 @@ Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
 Group:		Networking/Daemons
 Requires:	talloc >= %{libtalloc_ver}
 Requires:	tdb >= %{libtdb_ver}
+Obsoletes:	samba-common < 1:4.0.0-1
 
 %description -n samba3-common
 Samba-common provides files necessary for both the server and client
@@ -394,6 +397,7 @@ klientów Samba.
 Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
+Obsoletes:	samba-devel < 1:4.0.0-1
 
 %description -n samba3-devel
 Header files for Samba.
@@ -406,6 +410,7 @@ Summary:	VFS module to audit file access
 Summary(pl.UTF-8):	Moduł VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-audit < 1:4.0.0-1
 
 %description -n samba3-vfs-audit
 A simple module to audit file access to the syslog facility. The
@@ -428,6 +433,7 @@ Summary:	VFS module for CAP and samba compatibility
 Summary(pl.UTF-8):	Moduł VFS zgodności z CAP (Columbia AppleTalk Program)
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-cap < 1:4.0.0-1
 
 %description -n samba3-vfs-cap
 Convert an incoming Shift-JIS character to the 3 byte hex
@@ -443,6 +449,7 @@ Summary:	VFS module to store default quotas in a specified quota record
 Summary(pl.UTF-8):	Moduł VFS do zapisywania domyślnych limitów w określonym rekordzie
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-default_quota < 1:4.0.0-1
 
 %description -n samba3-vfs-default_quota
 This VFS modules stores default quotas in a specified quota record.
@@ -456,6 +463,7 @@ Summary:	VFS module for hosting a Microsoft Distributed File System Tree
 Summary(pl.UTF-8):	Moduł VFS obsługi Microsoft Distributed File System
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-expand_msdfs < 1:4.0.0-1
 
 %description -n samba3-vfs-expand_msdfs
 A VFS module for hosting a Microsoft Distributed File System Tree.
@@ -480,6 +488,7 @@ Summary:	VFS module to report read-only fires as writable
 Summary(pl.UTF-8):	Moduł VFS udający, że pliki tylko do odczytu są zapisywalne
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-fake_perms < 1:4.0.0-1
 
 %description -n samba3-vfs-fake_perms
 This module allow Roaming Profile files and directories to be set (on
@@ -502,6 +511,7 @@ Summary:	VFS module to implement file change notifications
 Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-notify_fam < 1:4.0.0-1
 
 %description -n samba3-vfs-notify_fam
 The vfs_notify_fam module makes use of the system FAM (File Alteration
@@ -517,6 +527,7 @@ Summary:	VFS module for ease co-existence of samba and netatalk
 Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów samba i netatalk
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-netatalk < 1:4.0.0-1
 
 %description -n samba3-vfs-netatalk
 Package contains a netatalk VFS module for ease co-existence of Samba
@@ -531,6 +542,7 @@ Summary:	VFS module to add recycle bin facility to a samba share
 Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-recycle < 1:4.0.0-1
 
 %description -n samba3-vfs-recycle
 VFS module to add recycle bin facility to a samba share.
@@ -543,6 +555,7 @@ Summary:	VFS module for pre-loading the kernel buffer cache
 Summary(pl.UTF-8):	Moduł VFS do wczesnego odczytu danych do bufora cache jądra
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-readahead < 1:4.0.0-1
 
 %description -n samba3-vfs-readahead
 This VFS module detects read requests at multiples of a given offset
@@ -570,6 +583,7 @@ Summary:	VFS module for read-only limitation for specified share
 Summary(pl.UTF-8):	Moduł VFS do ograniczania określonego udziału tylko do odczytu
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-readonly < 1:4.0.0-1
 
 %description -n samba3-vfs-readonly
 This module performs a read-only limitation for specified share (or
@@ -586,6 +600,7 @@ Summary:	VFS module to make automatic copy of data in samba share
 Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-shadow_copy < 1:4.0.0-1
 
 %description -n samba3-vfs-shadow_copy
 VFS module to make automatic copy of data in samba share.
@@ -597,6 +612,7 @@ Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
 Summary:	VFS module to fix Catia CAD filenames
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-catia < 1:4.0.0-1
 
 %description -n samba3-vfs-catia
 The Catia CAD package commonly creates filenames that use characters
@@ -609,35 +625,36 @@ Summary:	Anti-virus solution as VFS module
 Summary(pl.UTF-8):	Rozwiązanie antywirusowe jako moduł VFS
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-scannedonly < 1:4.0.0-1
 
 %description -n samba3-vfs-scannedonly
 The vfs_scannedonly VFS module ensures that only files that have been
 scanned for viruses are visible and accessible to the end user. If
 non-scanned files are found an anti-virus scanning daemon is notified.
 
-%package -n samba3-smbget
+%package -n smbget
 Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
 Group:		Applications/Networking
 
-%description -n samba3-smbget
+%description -n smbget
 wget-like utility for download files over SMB.
 
-%description -n samba3-smbget -l pl.UTF-8
+%description -n smbget -l pl.UTF-8
 Narzędzie podobne do wgeta do pobierania plików protokołem SMB
 używanym w sieciach MS Windows.
 
-%package -n cups-backend-samba3-smb
+%package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
 Requires:	samba3-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
 
-%description -n cups-backend-samba3-smb
+%description -n cups-backend-smb
 CUPS backend for printing to SMB printers.
 
-%description -n cups-backend-samba3-smb -l pl.UTF-8
+%description -n cups-backend-smb -l pl.UTF-8
 Backend CUPS-a drukujący na drukarkach SMB.
 
 %package -n samba3-swat
@@ -648,6 +665,7 @@ Requires:	samba3 = %{epoch}:%{version}-%{release}
 Requires:	inetdaemon
 Requires:	rc-inetd >= 0.8.2
 Obsoletes:	swat
+Obsoletes:	samba-swat < 1:4.0.0-1
 
 %description -n samba3-swat
 swat allows a Samba administrator to configure the complex smb.conf
@@ -666,6 +684,7 @@ Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	systemd-units >= 38
+Obsoletes:	samba-winbind < 1:4.0.0-1
 
 %description -n samba3-winbind
 Provides the winbind daemon and testing tools to allow authentication
@@ -709,6 +728,7 @@ Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Development/Libraries
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
 Obsoletes:	libsmbclient-devel < 1:4.0.0-1
+Obsoletes:	libsmbclient-static < 1:4.0.0-1
 
 %description -n samba3-libsmbclient-devel
 Header files for libsmbclient.
@@ -716,12 +736,13 @@ Header files for libsmbclient.
 %description -n samba3-libsmbclient-devel -l pl.UTF-8
 Pliki nagłówkowe dla libsmbclient.
 
-%package -n openldap-schema-samba
+%package -n openldap-schema-samba3
 Summary:	Samba LDAP schema
 Summary(pl.UTF-8):	Schemat LDAP dla samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
+Obsoletes:	openldap-schema-samba < 1:4.0.0-1
 
 %description -n openldap-schema-samba
 This package contains samba.schema for openldap.
@@ -1677,14 +1698,14 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/scannedonly.so
 %{_mandir}/man8/vfs_scannedonly.8*
 
-%files -n samba3-smbget
+%files -n smbget
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbget
 %{_mandir}/man1/smbget.1*
 %{_mandir}/man5/smbgetrc.5*
 
 %if %{with cups}
-%files -n cups-backend-samba3-smb
+%files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{cups_serverbin}/backend/smb
 %attr(755,root,root) %{_bindir}/smbspool

@@ -977,12 +977,12 @@ if [ "$1" = 0 ]; then
 	%service -q rc-inetd reload
 fi
 
-%post -n openldap-schema-samba
+%post -n openldap-schema-samba3
 # dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
 %openldap_schema_register %{schemadir}/samba.schema -d cosine,inetorgperson,nis
 %service -q ldap restart
 
-%postun -n openldap-schema-samba
+%postun -n openldap-schema-samba3
 if [ "$1" = "0" ]; then
 	%openldap_schema_unregister %{schemadir}/samba.schema
 	%service -q ldap restart
@@ -1763,7 +1763,7 @@ fi
 %{_includedir}/wbclient.h
 
 %if %{with ldap}
-%files -n openldap-schema-samba
+%files -n openldap-schema-samba3
 %defattr(644,root,root,755)
 %{schemadir}/*.schema
 %endif

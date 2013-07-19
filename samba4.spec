@@ -319,7 +319,6 @@ Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
-Obsoletes:	samba < 1:4.0.0-1
 
 %description -n samba3
 Samba provides an SMB server which can be used to provide network
@@ -347,6 +346,7 @@ Requires:	samba3 = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
+Obsoletes:	samba < 1:4.0.0-1
 
 %description -n samba3-server
 This package contains startup scripts and services for old SMB server

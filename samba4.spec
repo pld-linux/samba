@@ -744,10 +744,10 @@ Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
 Obsoletes:	openldap-schema-samba < 1:4.0.0-1
 
-%description -n openldap-schema-samba
+%description -n openldap-schema-samba3
 This package contains samba.schema for openldap.
 
-%description -n openldap-schema-samba -l pl.UTF-8
+%description -n openldap-schema-samba3 -l pl.UTF-8
 Ten pakiet zawiera schemat samby dla openldap-a.
 
 %prep

@@ -2,15 +2,9 @@
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
 %bcond_without	cups		# without CUPS support
-%bcond_without	kerberos5	# without Kerberos V support
 %bcond_without	ldap		# without LDAP support
 %bcond_without	avahi
 %bcond_without	system_libs
-
-# ADS requires kerberos5 and LDAP
-%if %{without kerberos5} || %{without ldap}
-%undefine	with_ads
-%endif
 
 %if %{with system_libs}
 %define		talloc_ver	2.0.7
@@ -60,7 +54,7 @@ BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
 BuildRequires:	gnutls-devel
-%{?with_kerberos5:BuildRequires:	heimdal-devel >= 1.5.3-1}
+BuildRequires:	heimdal-devel >= 1.5.3-1
 BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libaio-devel
@@ -99,15 +93,6 @@ BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
-#%if %{with system_libs}
-#Requires:	ldb >= %{ldb_ver}
-#Requires:	python-ldb >= %{ldb_ver}
-#Requires:	python-talloc >= %{talloc_ver}
-#Requires:	python-tevent >= %{tevent_ver}
-#Requires:	talloc >= %{talloc_ver}
-#Requires:	tdb >= %{tdb_ver}
-#Requires:	tevent >= %{tevent_ver}
-#%endif
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts >= 0.4.0.12
@@ -156,7 +141,7 @@ Summary:	Samba AD client programs
 Summary(pl.UTF-8):	Klienci serwera Samba AD
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-%{?with_kerberos5:Requires:	heimdal-libs >= 1.5.3-1}
+Requires:	heimdal-libs >= 1.5.3-1
 Suggests:	cifs-utils
 Obsoletes:	smbfs
 
@@ -174,8 +159,12 @@ drukowanie w sieci SMB.
 Summary:	Files used by both Samba servers and clients
 Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
 Group:		Networking/Daemons
+%if %{with system_libs}
+Requires:	ldb >= %{ldb_ver}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
+Requires:	tevent >= %{tevent_ver}
+%endif
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -216,6 +205,7 @@ Windows lub Samba.
 Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description devel
 Header files for Samba.
@@ -254,6 +244,11 @@ Group:		Development/Languages/Python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	python-dns
 Requires:	python-modules
+%if %{with system_libs}
+Requires:	python-ldb >= %{ldb_ver}
+Requires:	python-talloc >= %{talloc_ver}
+Requires:	python-tevent >= %{tevent_ver}
+%endif
 Obsoletes:	python-samba
 
 %description -n python-samba4
@@ -330,9 +325,9 @@ Ten pakiet zawiera skrypty startowe dla starych usług serwera SMB
 Summary:	Samba client programs
 Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
+Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Requires:	samba3-common = %{epoch}:%{version}-%{release}
-%{?with_kerberos5:Requires:	heimdal-libs}
-Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
+Requires:	heimdal-libs
 Obsoletes:	smbfs
 Obsoletes:	samba-client < 1:4.0.0-1
 Suggests:	cifs-utils
@@ -368,6 +363,7 @@ Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
 Obsoletes:	samba-devel < 1:4.0.0-1
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
 
 %description -n samba3-devel
 Header files for Samba.
@@ -669,7 +665,7 @@ Windows lub Samba.
 Summary:	Name Service Switch service for WINS
 Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
-Requires:	samba3-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 
 %description -n nss_wins
 Provides the libnss_wins shared library which resolves NetBIOS names
@@ -679,31 +675,29 @@ to IP addresses.
 Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
 IP.
 
-%package -n samba3-libsmbclient
+%package -n libsmbclient
 Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Libraries
-Obsoletes:	libsmbclient < 1:4.0.0-1
 
-%description -n samba3-libsmbclient
+%description -n libsmbclient
 libsmbclient - library that allows to use samba clients functions.
 
-%description -n samba3-libsmbclient -l pl.UTF-8
+%description -n libsmbclient -l pl.UTF-8
 libsmbclient - biblioteka pozwalająca korzystać z funcji klienta
 samby.
 
-%package -n samba3-libsmbclient-devel
+%package -n libsmbclient-devel
 Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Development/Libraries
-Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
-Obsoletes:	libsmbclient-devel < 1:4.0.0-1
+Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Obsoletes:	libsmbclient-static < 1:4.0.0-1
 
-%description -n samba3-libsmbclient-devel
+%description -n libsmbclient-devel
 Header files for libsmbclient.
 
-%description -n samba3-libsmbclient-devel -l pl.UTF-8
+%description -n libsmbclient-devel -l pl.UTF-8
 Pliki nagłówkowe dla libsmbclient.
 
 %package -n openldap-schema-samba3
@@ -969,8 +963,6 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
-%attr(755,root,root) %{_libdir}/libdcerpc-server.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libdcerpc-server.so.0
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
 %attr(755,root,root) %{_libdir}/samba/libntvfs.so
 %attr(755,root,root) %{_libdir}/samba/libpac.so
@@ -1071,25 +1063,107 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc.so.0
 %attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-atsvc.so.0
+%attr(755,root,root) %{_libdir}/libdcerpc-binding.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdcerpc-binding.so.0
 %attr(755,root,root) %{_libdir}/libdcerpc-samr.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-samr.so.0
+%attr(755,root,root) %{_libdir}/libdcerpc-server.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdcerpc-server.so.0
+%attr(755,root,root) %{_libdir}/libgensec.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgensec.so.0
+%attr(755,root,root) %{_libdir}/libndr-nbt.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libndr-nbt.so.0
+%attr(755,root,root) %{_libdir}/libndr.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libndr.so.0
+%attr(755,root,root) %{_libdir}/libndr-krb5pac.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libndr-krb5pac.so.0
 %attr(755,root,root) %{_libdir}/libregistry.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libregistry.so.0
-%attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
-%attr(755,root,root) %{_libdir}/samba/libauth4.so
-%attr(755,root,root) %{_libdir}/samba/libauth_unix_token.so
-%attr(755,root,root) %{_libdir}/samba/libcli-ldap.so
-%attr(755,root,root) %{_libdir}/samba/libcluster.so
-%attr(755,root,root) %{_libdir}/samba/libcmdline-credentials.so
-%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libiniparser.so
-%attr(755,root,root) %{_libdir}/samba/libldb-cmdline.so
+%attr(755,root,root) %{_libdir}/libndr-standard.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libndr-standard.so.0
+%attr(755,root,root) %{_libdir}/libsamba-credentials.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.0
+%attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
+%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
+%attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
+%attr(755,root,root) %{_libdir}/libsamdb.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamdb.so.0
+%attr(755,root,root) %{_libdir}/libsmbclient-raw.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsmbclient-raw.so.0
+%attr(755,root,root) %{_libdir}/libtevent-util.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
+%attr(755,root,root) %{_libdir}/libnetapi.so.0
+%attr(755,root,root) %{_libdir}/libpdb.so.0
+%attr(755,root,root) %{_libdir}/libsmbconf.so.0
+%attr(755,root,root) %{_libdir}/libsmbldap.so.0
+%dir %{_libdir}/samba
+%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
 %attr(755,root,root) %{_libdir}/samba/libLIBWBCLIENT_OLD.so
 %attr(755,root,root) %{_libdir}/samba/libMESSAGING.so
+%attr(755,root,root) %{_libdir}/samba/libaddns.so
+%attr(755,root,root) %{_libdir}/samba/libads.so
+%attr(755,root,root) %{_libdir}/samba/libasn1util.so
+%attr(755,root,root) %{_libdir}/samba/libauth.so
+%attr(755,root,root) %{_libdir}/samba/libauth4.so
+%attr(755,root,root) %{_libdir}/samba/libauth_sam_reply.so
+%attr(755,root,root) %{_libdir}/samba/libauth_unix_token.so
+%attr(755,root,root) %{_libdir}/samba/libauthkrb5.so
+%attr(755,root,root) %{_libdir}/samba/libcli-ldap-common.so
+%attr(755,root,root) %{_libdir}/samba/libcli-ldap.so
+%attr(755,root,root) %{_libdir}/samba/libcli-nbt.so
+%attr(755,root,root) %{_libdir}/samba/libcli_cldap.so
+%attr(755,root,root) %{_libdir}/samba/libcli_smb_common.so
+%attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
+%attr(755,root,root) %{_libdir}/samba/libcliauth.so
+%attr(755,root,root) %{_libdir}/samba/libcluster.so
+%attr(755,root,root) %{_libdir}/samba/libcmdline-credentials.so
+%attr(755,root,root) %{_libdir}/samba/libdbwrap.so
+%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba.so
+%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdfs_server_ad.so
+%attr(755,root,root) %{_libdir}/samba/liberrors.so
+%attr(755,root,root) %{_libdir}/samba/libevents.so
+%attr(755,root,root) %{_libdir}/samba/libflag_mapping.so
+%attr(755,root,root) %{_libdir}/samba/libgse.so
+%attr(755,root,root) %{_libdir}/samba/libiniparser.so
+%attr(755,root,root) %{_libdir}/samba/libinterfaces.so
+%attr(755,root,root) %{_libdir}/samba/libkrb5samba.so
+%attr(755,root,root) %{_libdir}/samba/libldb-cmdline.so
+%attr(755,root,root) %{_libdir}/samba/libldbsamba.so
+%attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
+%attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
+%attr(755,root,root) %{_libdir}/samba/liblibsmb.so
+%attr(755,root,root) %{_libdir}/samba/libmsrpc3.so
+%attr(755,root,root) %{_libdir}/samba/libndr-samba.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnetif.so
+%attr(755,root,root) %{_libdir}/samba/libnpa_tstream.so
 %attr(755,root,root) %{_libdir}/samba/libposix_eadb.so
+%attr(755,root,root) %{_libdir}/samba/libprinting_migrate.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-modules.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-security.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-sockets.so
+%attr(755,root,root) %{_libdir}/samba/libsamba3-util.so
+%attr(755,root,root) %{_libdir}/samba/libsamdb-common.so
+%attr(755,root,root) %{_libdir}/samba/libsecrets3.so
+%attr(755,root,root) %{_libdir}/samba/libserver-role.so
+%attr(755,root,root) %{_libdir}/samba/libsmb_transport.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser.so
+%attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
+%attr(755,root,root) %{_libdir}/samba/libtdb-wrap.so
+%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
+%attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
+%attr(755,root,root) %{_libdir}/samba/libutil_reg.so
+%attr(755,root,root) %{_libdir}/samba/libutil_setid.so
+%attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
+%attr(755,root,root) %{_libdir}/samba/libwinbind-client.so
+%attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
 %dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
@@ -1104,95 +1178,6 @@ fi
 %{_mandir}/man5/smb.conf.5*
 %{_mandir}/man7/samba.7*
 %{_mandir}/man8/samba-tool.8*
-
-%attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
-%attr(755,root,root) %{_libdir}/libsmbclient-raw.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsmbclient-raw.so.0
-%attr(755,root,root) %{_libdir}/libsmbconf.so.0
-%dir %{_libdir}/samba
-%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
-%attr(755,root,root) %{_libdir}/samba/libaddns.so
-%attr(755,root,root) %{_libdir}/samba/libasn1util.so
-%attr(755,root,root) %{_libdir}/samba/libgse.so
-%attr(755,root,root) %{_libdir}/samba/liblibsmb.so
-%attr(755,root,root) %{_libdir}/samba/libsecrets3.so
-%attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
-%attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
-### common
-%attr(755,root,root) %{_libdir}/samba/libcli_smb_common.so
-%attr(755,root,root) %{_libdir}/samba/libauthkrb5.so
-%attr(755,root,root) %{_libdir}/samba/libauth_sam_reply.so
-%attr(755,root,root) %{_libdir}/samba/libcli-nbt.so
-%attr(755,root,root) %{_libdir}/samba/libcli_cldap.so
-%attr(755,root,root) %{_libdir}/samba/libcli-ldap-common.so
-%attr(755,root,root) %{_libdir}/samba/libcliauth.so
-%attr(755,root,root) %{_libdir}/samba/libdbwrap.so
-%attr(755,root,root) %{_libdir}/samba/liberrors.so
-%attr(755,root,root) %{_libdir}/libgensec.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libgensec.so.0
-%attr(755,root,root) %{_libdir}/samba/libinterfaces.so
-%attr(755,root,root) %{_libdir}/samba/libkrb5samba.so
-%attr(755,root,root) %{_libdir}/libndr-krb5pac.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr-krb5pac.so.0
-%attr(755,root,root) %{_libdir}/libndr-nbt.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr-nbt.so.0
-%attr(755,root,root) %{_libdir}/samba/libndr-samba.so
-%attr(755,root,root) %{_libdir}/libndr-standard.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr-standard.so.0
-%attr(755,root,root) %{_libdir}/libndr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr.so.0
-%attr(755,root,root) %{_libdir}/libsamba-credentials.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.0
-%attr(755,root,root) %{_libdir}/samba/libldbsamba.so
-%attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
-%attr(755,root,root) %{_libdir}/samba/libsamba-modules.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-security.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-sockets.so
-%attr(755,root,root) %{_libdir}/samba/libsamba3-util.so
-%attr(755,root,root) %{_libdir}/samba/libsamdb-common.so
-%attr(755,root,root) %{_libdir}/samba/libflag_mapping.so
-%attr(755,root,root) %{_libdir}/libsamdb.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamdb.so.0
-%attr(755,root,root) %{_libdir}/samba/libserver-role.so
-####
-%attr(755,root,root) %{_libdir}/samba/libsmb_transport.so
-#### python
-%attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
-%attr(755,root,root) %{_libdir}/samba/libads.so
-%attr(755,root,root) %{_libdir}/samba/libauth.so
-%attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
-#### common
-%attr(755,root,root) %{_libdir}/libdcerpc-binding.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libdcerpc-binding.so.0
-%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba.so
-%attr(755,root,root) %{_libdir}/samba/libdfs_server_ad.so
-%attr(755,root,root) %{_libdir}/samba/libevents.so
-#### python
-%attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
-%attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
-%attr(755,root,root) %{_libdir}/samba/libmsrpc3.so
-%attr(755,root,root) %{_libdir}/libnetapi.so.0
-#### common
-%attr(755,root,root) %{_libdir}/samba/libnpa_tstream.so
-#### python
-%attr(755,root,root) %{_libdir}/libpdb.so.0
-%attr(755,root,root) %{_libdir}/samba/libprinting_migrate.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
-%attr(755,root,root) %{_libdir}/libsmbldap.so.0
-#### common
-%attr(755,root,root) %{_libdir}/samba/libtdb-wrap.so
-#### python
-%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
-#### common
-%attr(755,root,root) %{_libdir}/libtevent-util.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
-%attr(755,root,root) %{_libdir}/samba/libutil_reg.so
-%attr(755,root,root) %{_libdir}/samba/libutil_setid.so
-%attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
-%attr(755,root,root) %{_libdir}/samba/libwinbind-client.so
 
 %if %{without system_libs}
 %attr(755,root,root) %{_bindir}/tdbbackup
@@ -1257,112 +1242,61 @@ fi
 %{_includedir}/samba-4.0/gen_ndr/atsvc.h
 %{_includedir}/samba-4.0/gen_ndr/auth.h
 %{_includedir}/samba-4.0/gen_ndr/dcerpc.h
+%{_includedir}/samba-4.0/gen_ndr/drsblobs.h
+%{_includedir}/samba-4.0/gen_ndr/drsuapi.h
 %{_includedir}/samba-4.0/gen_ndr/epmapper.h
 %{_includedir}/samba-4.0/gen_ndr/krb5pac.h
 %{_includedir}/samba-4.0/gen_ndr/lsa.h
 %{_includedir}/samba-4.0/gen_ndr/mgmt.h
 %{_includedir}/samba-4.0/gen_ndr/misc.h
 %{_includedir}/samba-4.0/gen_ndr/nbt.h
-%{_includedir}/samba-4.0/gen_ndr/ndr_atsvc_c.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_atsvc.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_atsvc_c.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_dcerpc.h
-%{_includedir}/samba-4.0/gen_ndr/ndr_epmapper_c.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_drsblobs.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_drsuapi.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_epmapper.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_epmapper_c.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_krb5pac.h
-%{_includedir}/samba-4.0/gen_ndr/ndr_mgmt_c.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_mgmt.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_mgmt_c.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_misc.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_nbt.h
-%{_includedir}/samba-4.0/gen_ndr/ndr_samr_c.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_samr.h
-%{_includedir}/samba-4.0/gen_ndr/ndr_svcctl_c.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_samr_c.h
 %{_includedir}/samba-4.0/gen_ndr/ndr_svcctl.h
+%{_includedir}/samba-4.0/gen_ndr/ndr_svcctl_c.h
 %{_includedir}/samba-4.0/gen_ndr/netlogon.h
 %{_includedir}/samba-4.0/gen_ndr/samr.h
 %{_includedir}/samba-4.0/gen_ndr/security.h
 %{_includedir}/samba-4.0/gen_ndr/server_id.h
 %{_includedir}/samba-4.0/gen_ndr/svcctl.h
 %{_includedir}/samba-4.0/gensec.h
+%{_includedir}/samba-4.0/ldap-util.h
 %{_includedir}/samba-4.0/ldap_errors.h
 %{_includedir}/samba-4.0/ldap_message.h
 %{_includedir}/samba-4.0/ldap_ndr.h
-%{_includedir}/samba-4.0/ldap-util.h
 %{_includedir}/samba-4.0/ldb_wrap.h
 %{_includedir}/samba-4.0/ndr.h
 %dir %{_includedir}/samba-4.0/ndr
+%{_includedir}/samba-4.0/ndr/ndr_drsblobs.h
+%{_includedir}/samba-4.0/ndr/ndr_drsuapi.h
 %{_includedir}/samba-4.0/ndr/ndr_nbt.h
 %{_includedir}/samba-4.0/ndr/ndr_svcctl.h
 %{_includedir}/samba-4.0/param.h
 %{_includedir}/samba-4.0/policy.h
+%{_includedir}/samba-4.0/read_smb.h
 %{_includedir}/samba-4.0/registry.h
 %{_includedir}/samba-4.0/roles.h
 %{_includedir}/samba-4.0/rpc_common.h
 %dir %{_includedir}/samba-4.0/samba
 %{_includedir}/samba-4.0/samba/session.h
-%{_includedir}/samba-4.0/samba_util.h
 %{_includedir}/samba-4.0/samba/version.h
+%{_includedir}/samba-4.0/samba_util.h
 %{_includedir}/samba-4.0/share.h
-%{_includedir}/samba-4.0/tdr.h
-%{_includedir}/samba-4.0/tsocket.h
-%{_includedir}/samba-4.0/tsocket_internal.h
-%dir %{_includedir}/samba-4.0/util
-%{_includedir}/samba-4.0/util/attr.h
-%{_includedir}/samba-4.0/util/byteorder.h
-%{_includedir}/samba-4.0/util/data_blob.h
-%{_includedir}/samba-4.0/util/debug.h
-%{_includedir}/samba-4.0/util_ldb.h
-%{_includedir}/samba-4.0/util/memory.h
-%{_includedir}/samba-4.0/util/safe_string.h
-%{_includedir}/samba-4.0/util/string_wrappers.h
-%{_includedir}/samba-4.0/util/talloc_stack.h
-%{_includedir}/samba-4.0/util/tevent_ntstatus.h
-%{_includedir}/samba-4.0/util/tevent_unix.h
-%{_includedir}/samba-4.0/util/tevent_werror.h
-%{_includedir}/samba-4.0/util/time.h
-%{_includedir}/samba-4.0/util/xfile.h
-%{_libdir}/libdcerpc-atsvc.so
-%{_libdir}/libdcerpc-binding.so
-%{_libdir}/libdcerpc-samr.so
-%{_libdir}/libdcerpc-server.so
-%{_libdir}/libdcerpc.so
-%{_libdir}/libgensec.so
-%{_libdir}/libndr-krb5pac.so
-%{_libdir}/libndr-nbt.so
-%{_libdir}/libndr.so
-%{_libdir}/libndr-standard.so
-%{_libdir}/libregistry.so
-%{_libdir}/libsamba-credentials.so
-%{_libdir}/libsamba-hostconfig.so
-%{_libdir}/libsamba-policy.so
-%{_libdir}/libsamba-util.so
-%{_libdir}/libsamdb.so
-%{_libdir}/libtevent-util.so
-%{_pkgconfigdir}/dcerpc_atsvc.pc
-%{_pkgconfigdir}/dcerpc.pc
-%{_pkgconfigdir}/dcerpc_samr.pc
-%{_pkgconfigdir}/dcerpc_server.pc
-%{_pkgconfigdir}/gensec.pc
-%{_pkgconfigdir}/ndr_krb5pac.pc
-%{_pkgconfigdir}/ndr_nbt.pc
-%{_pkgconfigdir}/ndr.pc
-%{_pkgconfigdir}/ndr_standard.pc
-%{_pkgconfigdir}/registry.pc
-%{_pkgconfigdir}/samba-credentials.pc
-%{_pkgconfigdir}/samba-hostconfig.pc
-%{_pkgconfigdir}/samba-policy.pc
-%{_pkgconfigdir}/samba-util.pc
-%{_pkgconfigdir}/samdb.pc
-
-%{_includedir}/samba-4.0/gen_ndr/drsblobs.h
-%{_includedir}/samba-4.0/gen_ndr/drsuapi.h
-%{_includedir}/samba-4.0/gen_ndr/ndr_drsblobs.h
-%{_includedir}/samba-4.0/gen_ndr/ndr_drsuapi.h
-%{_includedir}/samba-4.0/ndr/ndr_drsblobs.h
-%{_includedir}/samba-4.0/ndr/ndr_drsuapi.h
-%{_includedir}/samba-4.0/read_smb.h
+%{_includedir}/samba-4.0/smb2.h
 %{_includedir}/samba-4.0/smb2_constants.h
 %{_includedir}/samba-4.0/smb2_create_blob.h
-%{_includedir}/samba-4.0/smb2.h
 %{_includedir}/samba-4.0/smb2_signing.h
 %{_includedir}/samba-4.0/smb_cli.h
 %{_includedir}/samba-4.0/smb_cliraw.h
@@ -1378,8 +1312,58 @@ fi
 %{_includedir}/samba-4.0/smb_signing.h
 %{_includedir}/samba-4.0/smb_unix_ext.h
 %{_includedir}/samba-4.0/smb_util.h
+%{_includedir}/samba-4.0/tdr.h
+%{_includedir}/samba-4.0/tsocket.h
+%{_includedir}/samba-4.0/tsocket_internal.h
+%dir %{_includedir}/samba-4.0/util
+%{_includedir}/samba-4.0/util/attr.h
+%{_includedir}/samba-4.0/util/byteorder.h
+%{_includedir}/samba-4.0/util/data_blob.h
+%{_includedir}/samba-4.0/util/debug.h
+%{_includedir}/samba-4.0/util/memory.h
+%{_includedir}/samba-4.0/util/safe_string.h
+%{_includedir}/samba-4.0/util/string_wrappers.h
+%{_includedir}/samba-4.0/util/talloc_stack.h
+%{_includedir}/samba-4.0/util/tevent_ntstatus.h
+%{_includedir}/samba-4.0/util/tevent_unix.h
+%{_includedir}/samba-4.0/util/tevent_werror.h
+%{_includedir}/samba-4.0/util/time.h
+%{_includedir}/samba-4.0/util/xfile.h
+%{_includedir}/samba-4.0/util_ldb.h
+%attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so
+%attr(755,root,root) %{_libdir}/libdcerpc-binding.so
+%attr(755,root,root) %{_libdir}/libdcerpc-samr.so
+%attr(755,root,root) %{_libdir}/libdcerpc-server.so
+%attr(755,root,root) %{_libdir}/libdcerpc.so
+%attr(755,root,root) %{_libdir}/libgensec.so
+%attr(755,root,root) %{_libdir}/libndr-krb5pac.so
+%attr(755,root,root) %{_libdir}/libndr-nbt.so
+%attr(755,root,root) %{_libdir}/libndr-standard.so
+%attr(755,root,root) %{_libdir}/libndr.so
+%attr(755,root,root) %{_libdir}/libregistry.so
+%attr(755,root,root) %{_libdir}/libsamba-credentials.so
+%attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
+%attr(755,root,root) %{_libdir}/libsamba-policy.so
+%attr(755,root,root) %{_libdir}/libsamba-util.so
+%attr(755,root,root) %{_libdir}/libsamdb.so
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so
 %attr(755,root,root) %{_libdir}/libsmbconf.so
+%attr(755,root,root) %{_libdir}/libtevent-util.so
+%{_pkgconfigdir}/dcerpc.pc
+%{_pkgconfigdir}/dcerpc_atsvc.pc
+%{_pkgconfigdir}/dcerpc_samr.pc
+%{_pkgconfigdir}/dcerpc_server.pc
+%{_pkgconfigdir}/gensec.pc
+%{_pkgconfigdir}/ndr.pc
+%{_pkgconfigdir}/ndr_krb5pac.pc
+%{_pkgconfigdir}/ndr_nbt.pc
+%{_pkgconfigdir}/ndr_standard.pc
+%{_pkgconfigdir}/registry.pc
+%{_pkgconfigdir}/samba-credentials.pc
+%{_pkgconfigdir}/samba-hostconfig.pc
+%{_pkgconfigdir}/samba-policy.pc
+%{_pkgconfigdir}/samba-util.pc
+%{_pkgconfigdir}/samdb.pc
 %{_pkgconfigdir}/smbclient-raw.pc
 
 %files -n pam-pam_smbpass
@@ -1396,14 +1380,10 @@ fi
 
 %files -n python-samba4
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %attr(755,root,root) %{_libdir}/samba/libsamba-net.so
 %attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
 %attr(755,root,root) %{_libdir}/samba/libdb-glue.so
 %attr(755,root,root) %{_libdir}/samba/libsamba_python.so
-%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
-%attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
 %dir %{py_sitedir}/samba
 %attr(755,root,root) %{py_sitedir}/samba/*.so
 %{py_sitedir}/samba/*.py[co]
@@ -1474,11 +1454,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/auth/samba4.so
 %attr(755,root,root) %{_libdir}/samba/auth/unix.so
 %attr(755,root,root) %{_libdir}/samba/auth/wbc.so
-%attr(755,root,root) %{_libdir}/samba/libgpo.so
-%attr(755,root,root) %{_libdir}/samba/libidmap.so
-%attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
-%attr(755,root,root) %{_libdir}/samba/libnss_info.so
-%attr(755,root,root) %{_libdir}/samba/libpopt_samba3.so
 %attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
 %dir %{_libdir}/samba/idmap
 %attr(755,root,root) %{_libdir}/samba/idmap/ad.so
@@ -1564,6 +1539,8 @@ fi
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
+%attr(755,root,root) %{_libdir}/samba/libgpo.so
+%attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
 %{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/rpcclient.1*
 %{_mandir}/man1/sharesec.1*
@@ -1582,6 +1559,11 @@ fi
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
+%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
+%attr(755,root,root) %{_libdir}/samba/libnss_info.so
+%attr(755,root,root) %{_libdir}/samba/libidmap.so
+%attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
+%attr(755,root,root) %{_libdir}/samba/libpopt_samba3.so
 %dir %{_libdir}/samba/auth
 %attr(755,root,root) %{_libdir}/samba/auth/script.so
 %{_mandir}/man1/ntlm_auth.1*
@@ -1726,13 +1708,13 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/libnss_wins*
 
-%files -n samba3-libsmbclient
+%files -n libsmbclient
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
 %attr(755,root,root) %{_libdir}/libwbclient.so.*
 %{_mandir}/man7/libsmbclient.7*
 
-%files -n samba3-libsmbclient-devel
+%files -n libsmbclient-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so
 %attr(755,root,root) %{_libdir}/libwbclient.so

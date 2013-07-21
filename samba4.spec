@@ -18,7 +18,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.7
-Release:	0.11
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -93,6 +93,7 @@ BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
+Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	rc-scripts >= 0.4.0.12
@@ -141,6 +142,7 @@ Summary:	Samba AD client programs
 Summary(pl.UTF-8):	Klienci serwera Samba AD
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs >= 1.5.3-1
 Suggests:	cifs-utils
 Obsoletes:	smbfs
@@ -723,6 +725,9 @@ Ten pakiet zawiera schemat samby dla openldap-a.
 %patch5 -p1
 %patch6 -p1
 
+sed -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
+sed -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
+
 %build
 LDFLAGS="${LDFLAGS:-%rpmldflags}" \
 CFLAGS="${CFLAGS:-%rpmcflags}" \
@@ -961,14 +966,11 @@ fi
 %attr(755,root,root) %{_bindir}/oLschema2ldif
 %attr(755,root,root) %{_sbindir}/samba
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
+%attr(755,root,root) %{_sbindir}/samba_kcc
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
-%attr(755,root,root) %{_libdir}/samba/libntvfs.so
 %attr(755,root,root) %{_libdir}/samba/libpac.so
-%attr(755,root,root) %{_libdir}/samba/libprocess_model.so
-%attr(755,root,root) %{_libdir}/samba/libservice.so
-%attr(755,root,root) %{_libdir}/samba/libshares.so
 %dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
@@ -1056,7 +1058,6 @@ fi
 %doc README WHATSNEW.txt Roadmap
 /etc/ld.so.conf.d/samba.conf
 %attr(755,root,root) %{_bindir}/samba-tool
-%attr(755,root,root) %{_sbindir}/samba_kcc
 %dir %{_sysconfdir}/samba
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
 %attr(755,root,root) %{_libdir}/libdcerpc.so.*.*.*
@@ -1085,8 +1086,6 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.0
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
-%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
 %attr(755,root,root) %{_libdir}/libsamdb.so.*.*.*
@@ -1141,8 +1140,10 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnetif.so
 %attr(755,root,root) %{_libdir}/samba/libnpa_tstream.so
+%attr(755,root,root) %{_libdir}/samba/libntvfs.so
 %attr(755,root,root) %{_libdir}/samba/libposix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/libprinting_migrate.so
+%attr(755,root,root) %{_libdir}/samba/libprocess_model.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-security.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets.so
@@ -1150,6 +1151,8 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsamdb-common.so
 %attr(755,root,root) %{_libdir}/samba/libsecrets3.so
 %attr(755,root,root) %{_libdir}/samba/libserver-role.so
+%attr(755,root,root) %{_libdir}/samba/libservice.so
+%attr(755,root,root) %{_libdir}/samba/libshares.so
 %attr(755,root,root) %{_libdir}/samba/libsmb_transport.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
@@ -1380,9 +1383,11 @@ fi
 
 %files -n python-samba4
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/libsamba-net.so
+%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
 %attr(755,root,root) %{_libdir}/samba/libdb-glue.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-net.so
 %attr(755,root,root) %{_libdir}/samba/libsamba_python.so
 %dir %{py_sitedir}/samba
 %attr(755,root,root) %{py_sitedir}/samba/*.so

@@ -18,7 +18,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.7
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -923,6 +923,11 @@ fi
 %postun -n samba3-server
 %systemd_reload
 
+%triggerpostun -n samba3-server -- samba < 1:4.0.0-1
+/sbin/chkconfig --add smb
+%service smb restart "Samba3 daemons"
+%systemd_post smb.service nmb.service
+
 %post -n samba3-winbind
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
@@ -937,6 +942,11 @@ fi
 
 %postun -n samba3-winbind
 %systemd_reload
+
+%triggerpostun -n samba3-winbind -- samba-winbind < 1:4.0.0-1
+/sbin/chkconfig --add winbind
+%service winbind restart "Winbind daemon"
+%systemd_post winbind.service
 
 %post -n samba3-swat
 %service -q rc-inetd reload
@@ -956,6 +966,11 @@ if [ "$1" = "0" ]; then
 	%openldap_schema_unregister %{schemadir}/samba.schema
 	%service -q ldap restart
 fi
+
+%triggerpostun -n openldap-schema-samba3 -- openldap-schema-samba < 1:4.0.0-1
+# dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
+%openldap_schema_register %{schemadir}/samba.schema -d cosine,inetorgperson,nis
+%service -q ldap restart
 
 %files
 %defattr(644,root,root,755)

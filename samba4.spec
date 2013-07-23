@@ -18,7 +18,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.7
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -327,8 +327,8 @@ Ten pakiet zawiera skrypty startowe dla starych usług serwera SMB
 Summary:	Samba client programs
 Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
-Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Requires:	samba3-common = %{epoch}:%{version}-%{release}
+Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs
 Obsoletes:	smbfs
 Obsoletes:	samba-client < 1:4.0.0-1
@@ -677,29 +677,29 @@ to IP addresses.
 Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
 IP.
 
-%package -n libsmbclient
+%package -n samba3-libsmbclient
 Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Libraries
 
-%description -n libsmbclient
+%description -n samba3-libsmbclient
 libsmbclient - library that allows to use samba clients functions.
 
-%description -n libsmbclient -l pl.UTF-8
+%description -n samba3-libsmbclient -l pl.UTF-8
 libsmbclient - biblioteka pozwalająca korzystać z funcji klienta
 samby.
 
-%package -n libsmbclient-devel
+%package -n samba3-libsmbclient-devel
 Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Development/Libraries
-Requires:	libsmbclient = %{epoch}:%{version}-%{release}
+Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
 Obsoletes:	libsmbclient-static < 1:4.0.0-1
 
-%description -n libsmbclient-devel
+%description -n samba3-libsmbclient-devel
 Header files for libsmbclient.
 
-%description -n libsmbclient-devel -l pl.UTF-8
+%description -n samba3-libsmbclient-devel -l pl.UTF-8
 Pliki nagłówkowe dla libsmbclient.
 
 %package -n openldap-schema-samba3
@@ -1728,13 +1728,13 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/libnss_wins*
 
-%files -n libsmbclient
+%files -n samba3-libsmbclient
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
 %attr(755,root,root) %{_libdir}/libwbclient.so.*
 %{_mandir}/man7/libsmbclient.7*
 
-%files -n libsmbclient-devel
+%files -n samba3-libsmbclient-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so
 %attr(755,root,root) %{_libdir}/libwbclient.so

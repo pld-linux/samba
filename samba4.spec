@@ -18,7 +18,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.7
-Release:	3
+Release:	4
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -681,6 +681,7 @@ IP.
 Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Libraries
+Obsoletes:	libsmbclient
 
 %description -n samba3-libsmbclient
 libsmbclient - library that allows to use samba clients functions.
@@ -694,7 +695,8 @@ Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Development/Libraries
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
-Obsoletes:	libsmbclient-static < 1:4.0.0-1
+Obsoletes:	libsmbclient-devel
+Obsoletes:	libsmbclient-static
 
 %description -n samba3-libsmbclient-devel
 Header files for libsmbclient.

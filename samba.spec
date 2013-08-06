@@ -24,6 +24,7 @@
 %bcond_without	ldap		# without LDAP support
 %bcond_without	avahi
 %bcond_with	merged_build	# without samba3+samba4 merge
+%bcond_without	system_libtevent
 %bcond_without	system_libtalloc
 %bcond_without	system_libtdb
 								# http://wiki.samba.org/index.php/Franky
@@ -34,6 +35,12 @@
 %undefine	with_ads
 %endif
 
+%if %{with system_libtevent}
+%define		libtevent_ver	0.9.11
+%else
+%define		libtevent_ver	%{epoch}:%{version}-%{release}
+%endif
+
 %if %{with system_libtalloc}
 %define		libtalloc_ver	2.0.1
 %else
@@ -41,9 +48,9 @@
 %endif
 
 %if %{with system_libtdb}
-%define		libtdb_ver		2:1.2.9
+%define		libtdb_ver	2:1.2.9
 %else
-%define		libtdb_ver		%{epoch}:%{version}-%{release}
+%define		libtdb_ver	%{epoch}:%{version}-%{release}
 %endif
 
 %define		virusfilter_version 0.1.3
@@ -118,6 +125,7 @@ BuildRequires:	python-modules
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
 BuildRequires:	sed >= 4.0
+%{?with_system_libtevent:BuildRequires:	tevent-devel >= %{libtevent_ver}}
 %{?with_system_libtalloc:BuildRequires:	talloc-devel >= %{libtalloc_ver}}
 %{?with_system_libtdb:BuildRequires:	tdb-devel >= %{libtdb_ver}}
 BuildRequires:	xfsprogs-devel
@@ -393,6 +401,7 @@ Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
 Group:		Networking/Daemons
+Requires:	tevent >= %{libtevent_ver}
 Requires:	talloc >= %{libtalloc_ver}
 Requires:	tdb >= %{libtdb_ver}
 
@@ -902,6 +911,10 @@ cd source3
 	--with-syslog \
 	--with-utmp \
 	--with-fhs \
+%if %{with system_libtevent}
+	--with-libtevent=no \
+	--enable-external-libtevent=yes \
+%endif
 %if %{with system_libtalloc}
 	--with-libtalloc=no \
 	--enable-external-libtalloc=yes \

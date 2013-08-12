@@ -37,7 +37,7 @@ start() {
 	fi
 
 	msg_starting "Samba AD Server"
-	daemon /usr/sbin/smbd $SAMBAOPTIONS
+	daemon /usr/sbin/samba $SAMBAOPTIONS
 	RETVAL=$?
 	if [ $RETVAL -eq 0 ]; then
 		touch /var/lock/subsys/samba

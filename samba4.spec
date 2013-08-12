@@ -18,7 +18,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.8
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons

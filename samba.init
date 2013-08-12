@@ -51,7 +51,7 @@ stop() {
 		return
 	fi
 
-	msg_stopping "Samba SMB/CIFS Server"
+	msg_stopping "Samba AD Server"
 	killproc --pidfile /var/run/samba/samba.pid samba
 	rm -f /var/lock/subsys/samba >/dev/null 2>&1
 }

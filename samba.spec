@@ -6,9 +6,8 @@
 #  maybe we should build them?
 #  /usr/share/man/man8/vfs_cacheprime.8*
 #  /usr/share/man/man8/vfs_catia.8*
-#  /usr/share/man/man8/vfs_commit.8*
+#  /usr/share/man/man8/fs_commit.8*
 #  /usr/share/man/man8/vfs_gpfs.8*
-#  /usr/share/man/man8/vfs_notify_fam.8*
 #  /usr/share/man/man8/vfs_prealloc.8*
 # - package libs:
 #      libnetapi
@@ -71,13 +70,13 @@ Summary(tr.UTF-8):	SMB sunucusu
 Summary(uk.UTF-8):	SMB клієнт та сервер
 Summary(zh_CN.UTF-8):	Samba 客户端和服务器
 Name:		samba
-Version:	3.6.17
+Version:	3.6.18
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	c67c3330545c8f1f7ee26e017c28439b
+# Source0-md5:	c7eec3e83fe4c4750240a8a0a214bbd4
 Source1:	smb.init
 Source2:	%{name}.pamd
 Source3:	swat.inetd
@@ -923,6 +922,7 @@ cd source3
 	--with-libtdb=no \
 	--enable-external-libtdb=yes \
 %endif
+	--%{?with_merged_build:en}%{!?with_merged_build:dis}able-smbtorture4 \
 	--without-included-popt \
 	--enable-dso \
 	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \
@@ -1164,6 +1164,7 @@ EOF
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/smbta-util.8*
 
 %dir %{_sambahome}
 %dir /var/lib/samba

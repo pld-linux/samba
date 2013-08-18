@@ -18,7 +18,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.0.8
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -215,18 +215,19 @@ Header files for Samba.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe Samby.
 
-%package -n pam-pam_smbpass
+%package -n pam-pam_smbpass3
 Summary:	PAM Samba Password Module
 Summary(pl.UTF-8):	Moduł PAM smbpass
 Group:		Base
 Obsoletes:	pam_smbpass
+Obsoletes:	pam-pam_smbpass < 1:4.0.8-3
 
-%description -n pam-pam_smbpass
+%description -n pam-pam_smbpass3
 PAM module which can be used on conforming systems to keep the
 smbpasswd (Samba password) database in sync with the Unix password
 file.
 
-%description -n pam-pam_smbpass -l pl.UTF-8
+%description -n pam-pam_smbpass3 -l pl.UTF-8
 Moduł PAM, który może być używany do trzymania pliku smbpasswd (hasła
 Samby) zsynchronizowanego z hasłami uniksowymi.
 
@@ -600,29 +601,31 @@ The vfs_scannedonly VFS module ensures that only files that have been
 scanned for viruses are visible and accessible to the end user. If
 non-scanned files are found an anti-virus scanning daemon is notified.
 
-%package -n smbget
+%package -n smbget3
 Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
 Group:		Applications/Networking
+Obsoletes:	smbget < 1:4.0.8-3
 
-%description -n smbget
+%description -n smbget3
 wget-like utility for download files over SMB.
 
-%description -n smbget -l pl.UTF-8
+%description -n smbget3 -l pl.UTF-8
 Narzędzie podobne do wgeta do pobierania plików protokołem SMB
 używanym w sieciach MS Windows.
 
-%package -n cups-backend-smb
+%package -n cups-backend-smb3
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
 Requires:	samba3-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
+Obsoletes:	cups-backend-smb < 1:4.0.8-3
 
-%description -n cups-backend-smb
+%description -n cups-backend-smb3
 CUPS backend for printing to SMB printers.
 
-%description -n cups-backend-smb -l pl.UTF-8
+%description -n cups-backend-smb3 -l pl.UTF-8
 Backend CUPS-a drukujący na drukarkach SMB.
 
 %package -n samba3-swat
@@ -663,17 +666,18 @@ Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
 uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
 Windows lub Samba.
 
-%package -n nss_wins
+%package -n nss_wins3
 Summary:	Name Service Switch service for WINS
 Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Obsoletes:	nss_wins < 1:4.0.8-3
 
-%description -n nss_wins
+%description -n nss_wins3
 Provides the libnss_wins shared library which resolves NetBIOS names
 to IP addresses.
 
-%description -n nss_wins -l pl.UTF-8
+%description -n nss_wins3 -l pl.UTF-8
 Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
 IP.
 
@@ -1386,7 +1390,7 @@ fi
 %{_pkgconfigdir}/samdb.pc
 %{_pkgconfigdir}/smbclient-raw.pc
 
-%files -n pam-pam_smbpass
+%files -n pam-pam_smbpass3
 %defattr(644,root,root,755)
 %doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
 %attr(755,root,root) /%{_lib}/security/pam_smbpass.so
@@ -1679,14 +1683,14 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/scannedonly.so
 %{_mandir}/man8/vfs_scannedonly.8*
 
-%files -n smbget
+%files -n smbget3
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbget
 %{_mandir}/man1/smbget.1*
 %{_mandir}/man5/smbgetrc.5*
 
 %if %{with cups}
-%files -n cups-backend-smb
+%files -n cups-backend-smb3
 %defattr(644,root,root,755)
 %attr(755,root,root) %{cups_serverbin}/backend/smb
 %attr(755,root,root) %{_bindir}/smbspool
@@ -1726,7 +1730,7 @@ fi
 %{systemdunitdir}/winbind.service
 %{_mandir}/man8/winbindd*.8*
 
-%files -n nss_wins
+%files -n nss_wins3
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/libnss_wins*
 

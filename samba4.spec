@@ -49,6 +49,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_avahi:BuildRequires:	avahi-devel}
+#BuildRequires:	ceph-devel
 BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
@@ -56,6 +57,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
+BuildRequires:	glusterfs-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	heimdal-devel >= 1.5.3-1
 BuildRequires:	iconv
@@ -1164,8 +1166,9 @@ fi
 %dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
-%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
+#%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %dir %{_datadir}/samba

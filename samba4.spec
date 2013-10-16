@@ -1,6 +1,3 @@
-#%package -n samba3-swat
-#Obsoletes:	swat
-#Obsoletes:	samba-swat < 1:4.0.0-1
 # TODO:
 #	- unbundle ntdb (no external release as of 16.Oct.2013)
 #
@@ -863,13 +860,6 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %endif
 
-%if %{with system_libtdb}
-# remove manuals of tdb if system lib used
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbbackup.8*
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbdump.8*
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/tdbtool.8*
-%endif
-
 # remove man pages for not installed commands
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/log2pcap.1*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_cacheprime.8*
@@ -1058,6 +1048,7 @@ fi
 %defattr(644,root,root,755)
 %doc README WHATSNEW.txt Roadmap
 /etc/ld.so.conf.d/samba.conf
+%attr(755,root,root) %{_bindir}/samba-regedit
 %attr(755,root,root) %{_bindir}/samba-tool
 %dir %{_sysconfdir}/samba
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
@@ -1140,6 +1131,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libndr-samba.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnetif.so
+%attr(755,root,root) %{_libdir}/samba/libnon_posix_acls.so
 %attr(755,root,root) %{_libdir}/samba/libnpa_tstream.so
 %attr(755,root,root) %{_libdir}/samba/libntvfs.so
 %attr(755,root,root) %{_libdir}/samba/libposix_eadb.so
@@ -1163,6 +1155,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libtdb-wrap.so
 %attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
 %attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
+%attr(755,root,root) %{_libdir}/samba/libutil_ntdb.so
 %attr(755,root,root) %{_libdir}/samba/libutil_reg.so
 %attr(755,root,root) %{_libdir}/samba/libutil_setid.so
 %attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
@@ -1170,6 +1163,8 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
 %dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
+%attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
+%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
@@ -1181,8 +1176,23 @@ fi
 %{_mandir}/man5/lmhosts.5*
 %{_mandir}/man5/smb.conf.5*
 %{_mandir}/man7/samba.7*
+%{_mandir}/man8/samba-regedit.8*
 %{_mandir}/man8/samba-tool.8*
+%{_mandir}/man8/vfs_acl_xattr.8*
+%{_mandir}/man8/vfs_btrfs.8*
+%{_mandir}/man8/vfs_fileid.8*
+%{_mandir}/man8/vfs_xattr_tdb.8*
 
+# TODO
+%attr(755,root,root) %{_bindir}/ntdbbackup
+%attr(755,root,root) %{_bindir}/ntdbdump
+%attr(755,root,root) %{_bindir}/ntdbrestore
+%attr(755,root,root) %{_bindir}/ntdbtool
+%attr(755,root,root) %{_libdir}/samba/libntdb.so.*
+%{_mandir}/man8/ntdbbackup.8*
+%{_mandir}/man8/ntdbdump.8*
+%{_mandir}/man8/ntdbrestore.8*
+%{_mandir}/man8/ntdbtool.8*
 %if %{without system_libs}
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
@@ -1301,6 +1311,7 @@ fi
 %{_includedir}/samba-4.0/smb2.h
 %{_includedir}/samba-4.0/smb2_constants.h
 %{_includedir}/samba-4.0/smb2_create_blob.h
+%{_includedir}/samba-4.0/smb2_lease.h
 %{_includedir}/samba-4.0/smb2_signing.h
 %{_includedir}/samba-4.0/smb_cli.h
 %{_includedir}/samba-4.0/smb_cliraw.h
@@ -1369,6 +1380,10 @@ fi
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
 %{_pkgconfigdir}/smbclient-raw.pc
+# TODO
+#%if %{without system_libs}
+%{_mandir}/man3/ntdb.3*
+#%endif
 
 %files -n pam-pam_smbpass3
 %defattr(644,root,root,755)
@@ -1419,6 +1434,8 @@ fi
 %{py_sitedir}/samba/tests/dcerpc/*.py[co]
 %dir %{py_sitedir}/samba/web_server
 %{py_sitedir}/samba/web_server/*.py[co]
+# TODO
+%attr(755,root,root) %{py_sitedir}/ntdb.so
 %if %{without system_libs}
 %attr(755,root,root) %{py_sitedir}/*.so
 %{py_sitedir}/tevent.py[co]
@@ -1465,6 +1482,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/idmap/ad.so
 %attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
 %attr(755,root,root) %{_libdir}/samba/idmap/hash.so
+%attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
 %attr(755,root,root) %{_libdir}/samba/idmap/rid.so
 %attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
@@ -1503,6 +1521,7 @@ fi
 %{_mandir}/man8/idmap_hash.8*
 %{_mandir}/man8/idmap_ldap.8*
 %{_mandir}/man8/idmap_nss.8*
+%{_mandir}/man8/idmap_rfc2307.8*
 %{_mandir}/man8/idmap_rid.8*
 %{_mandir}/man8/idmap_tdb2.8*
 %{_mandir}/man8/idmap_tdb.8*
@@ -1511,22 +1530,21 @@ fi
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/smbta-util.8*
 %{_mandir}/man8/vfs_acl_tdb.8*
-%{_mandir}/man8/vfs_acl_xattr.8*
 %{_mandir}/man8/vfs_aio_fork.8*
 %{_mandir}/man8/vfs_aio_linux.8*
 %{_mandir}/man8/vfs_aio_pthread.8*
 %{_mandir}/man8/vfs_commit.8*
 %{_mandir}/man8/vfs_crossrename.8*
 %{_mandir}/man8/vfs_dirsort.8*
-%{_mandir}/man8/vfs_fileid.8*
+%{_mandir}/man8/vfs_linux_xfs_sgid.8*
 %{_mandir}/man8/vfs_media_harmony.8*
 %{_mandir}/man8/vfs_preopen.8*
 %{_mandir}/man8/vfs_shadow_copy2.8*
 %{_mandir}/man8/vfs_smb_traffic_analyzer.8*
 %{_mandir}/man8/vfs_streams_depot.8*
 %{_mandir}/man8/vfs_streams_xattr.8*
+%{_mandir}/man8/vfs_syncops.8*
 %{_mandir}/man8/vfs_time_audit.8*
-%{_mandir}/man8/vfs_xattr_tdb.8*
 
 %files -n samba3-server
 %defattr(644,root,root,755)

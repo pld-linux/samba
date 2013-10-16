@@ -1,3 +1,7 @@
+#%package -n samba3-swat
+#Obsoletes:	swat
+#Obsoletes:	samba-swat < 1:4.0.0-1
+
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -17,16 +21,15 @@
 Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
-Version:	4.0.9
-Release:	2
+Version:	4.1.0
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	f5f2ad0e2aabf024e2e3e2f297a0631a
+# Source0-md5:	f448d18ae678c72afb72e0510cd69710
 Source1:	smb.init
 Source2:	samba.pamd
-Source3:	swat.inetd
 Source4:	samba.sysconfig
 Source5:	samba.logrotate
 Source6:	smb.conf
@@ -629,26 +632,6 @@ CUPS backend for printing to SMB printers.
 %description -n cups-backend-smb3 -l pl.UTF-8
 Backend CUPS-a drukujący na drukarkach SMB.
 
-%package -n samba3-swat
-Summary:	Samba Web Administration Tool
-Summary(pl.UTF-8):	Narzędzie administracyjne serwisu Samba
-Group:		Networking/Admin
-Requires:	samba3 = %{epoch}:%{version}-%{release}
-Requires:	inetdaemon
-Requires:	rc-inetd >= 0.8.2
-Obsoletes:	swat
-Obsoletes:	samba-swat < 1:4.0.0-1
-
-%description -n samba3-swat
-swat allows a Samba administrator to configure the complex smb.conf
-file via a Web browser. In addition, a swat configuration page has
-help links to all the configurable options in the smb.conf file
-allowing an administrator to easily look up the effects of any change.
-
-%description -n samba3-swat -l pl.UTF-8
-swat pozwala na kompleksową konfigurację smb.conf przy pomocy
-przeglądarki WWW.
-
 %package -n samba3-winbind
 Summary:	Samba-winbind daemon, utilities and documentation
 Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
@@ -727,7 +710,7 @@ Ten pakiet zawiera schemat samby dla openldap-a.
 %setup -q -n samba-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch3 -p1
+#%patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
@@ -781,7 +764,6 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-pam_smbpass \
 	--with-quotas \
 	--with-sendfile-support \
-	--with-swat \
 	--with-syslog \
 	--with-utmp \
 	--with-winbind \
@@ -836,7 +818,6 @@ install packaging/systemd/winbind.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
-install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/rc-inetd/swat
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
 cp -p %{SOURCE11} $RPM_BUILD_ROOT/etc/logrotate.d/samba3
@@ -955,14 +936,6 @@ fi
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
-
-%post -n samba3-swat
-%service -q rc-inetd reload
-
-%postun -n samba3-swat
-if [ "$1" = 0 ]; then
-	%service -q rc-inetd reload
-fi
 
 %post -n openldap-schema-samba3
 # dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
@@ -1699,32 +1672,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbspool
 %{_mandir}/man8/smbspool.8*
 %endif
-
-%files -n samba3-swat
-%defattr(644,root,root,755)
-#%doc swat/README* swat/help/*
-%doc swat/help/*
-%attr(755,root,root) %{_sbindir}/swat
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/rc-inetd/swat
-%dir %{_datadir}/samba/swat
-%{_datadir}/samba/swat/help
-%{_datadir}/samba/swat/images
-%{_datadir}/samba/swat/include
-%dir %{_datadir}/samba/swat/lang
-%lang(ja) %{_datadir}/samba/swat/lang/ja
-%lang(ru) %{_datadir}/samba/swat/lang/ru
-%lang(tr) %{_datadir}/samba/swat/lang/tr
-%{_mandir}/man8/swat.8*
-%lang(de) %{_datadir}/samba/codepages/de.msg
-%{_datadir}/samba/codepages/en.msg
-%lang(fi) %{_datadir}/samba/codepages/fi.msg
-%lang(fr) %{_datadir}/samba/codepages/fr.msg
-%lang(it) %{_datadir}/samba/codepages/it.msg
-%lang(ja) %{_datadir}/samba/codepages/ja.msg
-%lang(nl) %{_datadir}/samba/codepages/nl.msg
-%lang(pl) %{_datadir}/samba/codepages/pl.msg
-%lang(ru) %{_datadir}/samba/codepages/ru*
-%lang(tr) %{_datadir}/samba/codepages/tr.msg
 
 %files -n samba3-winbind
 %attr(755,root,root) %{_sbindir}/winbindd

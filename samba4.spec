@@ -1,7 +1,8 @@
 #%package -n samba3-swat
 #Obsoletes:	swat
 #Obsoletes:	samba-swat < 1:4.0.0-1
-
+# TODO:
+#	- unbundle ntdb (no external release as of 16.Oct.2013)
 #
 # Conditional build:
 %bcond_without	ads		# without ActiveDirectory support
@@ -15,6 +16,7 @@
 %define		tdb_ver		2:1.2.11
 %define		ldb_ver		1.1.16
 %define		tevent_ver	0.9.18
+%define		ntdb_ver	0.9
 %endif
 
 %define		virusfilter_version 0.1.3
@@ -41,10 +43,10 @@ Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilt
 Source11:	samba3.logrotate
 Patch0:		system-heimdal.patch
 Patch1:		samba-c++-nofail.patch
-Patch3:		samba-nscd.patch
 Patch4:		samba-lprng-no-dot-printers.patch
 Patch5:		systemd-pid-dir.patch
 Patch6:		unicodePwd-nthash-values-over-LDAP.patch
+Patch7:		link.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -85,6 +87,7 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
+#BuildRequires:	ntdb-devel >= %{ntdb_ver}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
@@ -167,6 +170,7 @@ Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
 Group:		Networking/Daemons
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
+#Requires:	ntdb >= %{ntdb_ver}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
@@ -253,6 +257,7 @@ Requires:	python-dns
 Requires:	python-modules
 %if %{with system_libs}
 Requires:	python-ldb >= %{ldb_ver}
+#Requires:	python-ntdb >= %{ntdb_ver}
 Requires:	python-talloc >= %{talloc_ver}
 Requires:	python-tevent >= %{tevent_ver}
 %endif
@@ -710,10 +715,10 @@ Ten pakiet zawiera schemat samby dla openldap-a.
 %setup -q -n samba-%{version}
 %patch0 -p1
 %patch1 -p1
-#%patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 sed -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 sed -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
@@ -749,7 +754,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--disable-rpath-install \
 	--builtin-libraries=replace,ccan \
-	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
+	--bundled-libraries=NONE,subunit,iniparser,ntdb,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
 	--private-libraries=smbclient,smbsharemodes,wbclient \
 	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2,pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4,auth_unix,auth_wbc,auth_server,auth_netlogond,auth_script,auth_samba4 \
 	--with-acl-support \

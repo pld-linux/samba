@@ -167,6 +167,7 @@ drukowanie w sieci SMB.
 Summary:	Files used by both Samba servers and clients
 Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
 Group:		Networking/Daemons
+Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
 #Requires:	ntdb >= %{ntdb_ver}
@@ -893,6 +894,9 @@ fi
 
 %post common -p /sbin/ldconfig
 %postun common -p /sbin/ldconfig
+
+%post -n python-samba4 -p /sbin/ldconfig
+%postun -n python-samba4 -p /sbin/ldconfig
 
 %post -n samba3-server
 /sbin/chkconfig --add smb

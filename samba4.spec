@@ -20,13 +20,13 @@
 Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
-Version:	4.1.0
+Version:	4.1.1
 Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	f448d18ae678c72afb72e0510cd69710
+# Source0-md5:	f63feeae652afc3a0fefdd38176957fb
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig

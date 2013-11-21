@@ -21,7 +21,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.1.1
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -957,6 +957,7 @@ fi
 %files
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/env.d/LDB_MODULES_PATH
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
 %attr(754,root,root) /etc/rc.d/init.d/samba
 %{systemdunitdir}/samba.service
 %{systemdtmpfilesdir}/samba.conf
@@ -1215,7 +1216,6 @@ fi
 %defattr(644,root,root,755)
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
 

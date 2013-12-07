@@ -688,6 +688,7 @@ Summary:	libsmbclient - samba client library
 Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
 Group:		Development/Libraries
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
+Provides:	libsmbclient-devel
 Obsoletes:	libsmbclient-devel
 Obsoletes:	libsmbclient-static
 

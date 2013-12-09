@@ -20,13 +20,13 @@
 Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
-Version:	4.1.1
-Release:	2
+Version:	4.1.3
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	f63feeae652afc3a0fefdd38176957fb
+# Source0-md5:	a5dbfe87f4cb3d9d91e15e5df99a59a1
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -69,6 +69,7 @@ BuildRequires:	libnscd-devel
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
+BuildRequires:	ncurses-ext-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	perl(ExtUtils::MakeMaker)
@@ -769,6 +770,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-pam \
 	--with-pam_smbpass \
 	--with-quotas \
+	--with-regedit \
 	--with-sendfile-support \
 	--with-syslog \
 	--with-utmp \

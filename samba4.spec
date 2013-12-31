@@ -1205,14 +1205,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
 %attr(755,root,root) %{_libdir}/samba/libwinbind-client.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
-%dir %{_libdir}/samba/vfs
-%attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
-%attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
-#%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
-%attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
-%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
-%attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
-%attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %dir %{_datadir}/samba
 %dir %{_datadir}/samba/codepages
 %{_datadir}/samba/codepages/lowcase.dat
@@ -1223,10 +1215,6 @@ fi
 %{_mandir}/man7/samba.7*
 %{_mandir}/man8/samba-regedit.8*
 %{_mandir}/man8/samba-tool.8*
-%{_mandir}/man8/vfs_acl_xattr.8*
-%{_mandir}/man8/vfs_btrfs.8*
-%{_mandir}/man8/vfs_fileid.8*
-%{_mandir}/man8/vfs_xattr_tdb.8*
 
 # TODO
 %attr(755,root,root) %{_bindir}/ntdbbackup
@@ -1481,7 +1469,10 @@ fi
 # TODO
 %attr(755,root,root) %{py_sitedir}/ntdb.so
 %if %{without system_libs}
-%attr(755,root,root) %{py_sitedir}/*.so
+%attr(755,root,root) %{py_sitedir}/ldb.so
+%attr(755,root,root) %{py_sitedir}/talloc.so
+%attr(755,root,root) %{py_sitedir}/tdb.so
+%attr(755,root,root) %{py_sitedir}/_tevent.so
 %{py_sitedir}/tevent.py[co]
 %endif
 
@@ -1529,16 +1520,23 @@ fi
 %attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
 %attr(755,root,root) %{_libdir}/samba/idmap/rid.so
 %attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
+%dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
+%attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_posix.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_pthread.so
+%attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
+#%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 %attr(755,root,root) %{_libdir}/samba/vfs/commit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/crossrename.so
 %attr(755,root,root) %{_libdir}/samba/vfs/dirsort.so
+%attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
+%attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/preopen.so
 %attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy2.so
 %attr(755,root,root) %{_libdir}/samba/vfs/smb_traffic_analyzer.so
@@ -1546,6 +1544,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/streams_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
 %attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %dir %{_libdir}/samba/pdb
 %attr(755,root,root) %{_libdir}/samba/pdb/ldapsam.so
 %attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
@@ -1574,12 +1573,15 @@ fi
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/smbta-util.8*
 %{_mandir}/man8/vfs_acl_tdb.8*
+%{_mandir}/man8/vfs_acl_xattr.8*
 %{_mandir}/man8/vfs_aio_fork.8*
 %{_mandir}/man8/vfs_aio_linux.8*
 %{_mandir}/man8/vfs_aio_pthread.8*
+%{_mandir}/man8/vfs_btrfs.8*
 %{_mandir}/man8/vfs_commit.8*
 %{_mandir}/man8/vfs_crossrename.8*
 %{_mandir}/man8/vfs_dirsort.8*
+%{_mandir}/man8/vfs_fileid.8*
 %{_mandir}/man8/vfs_linux_xfs_sgid.8*
 %{_mandir}/man8/vfs_media_harmony.8*
 %{_mandir}/man8/vfs_preopen.8*
@@ -1589,6 +1591,7 @@ fi
 %{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/vfs_syncops.8*
 %{_mandir}/man8/vfs_time_audit.8*
+%{_mandir}/man8/vfs_xattr_tdb.8*
 
 %files -n samba3-server
 %defattr(644,root,root,755)

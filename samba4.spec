@@ -2,11 +2,11 @@
 #	- unbundle ntdb (no external release as of 16.Oct.2013)
 #
 # Conditional build:
-%bcond_without	ads		# without ActiveDirectory support
-%bcond_without	cups		# without CUPS support
-%bcond_without	ldap		# without LDAP support
-%bcond_without	avahi
-%bcond_without	system_libs
+%bcond_without	ads		# ActiveDirectory support
+%bcond_without	cups		# CUPS support
+%bcond_without	ldap		# LDAP support
+%bcond_without	avahi		# Avahi support
+%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb)
 
 %if %{with system_libs}
 %define		talloc_ver	2.0.7
@@ -15,6 +15,8 @@
 %define		tevent_ver	0.9.18
 %define		ntdb_ver	0.9
 %endif
+
+%include	/usr/lib/rpm/macros.perl
 
 %define		virusfilter_version 0.1.3
 Summary:	Active Directory server
@@ -72,8 +74,8 @@ BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	pam-devel >= 0.99.8.1
-BuildRequires:	perl(ExtUtils::MakeMaker)
-BuildRequires:	perl(Parse::Yapp)
+BuildRequires:	perl-ExtUtils-MakeMaker
+BuildRequires:	perl-Parse-Yapp
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
@@ -83,6 +85,7 @@ BuildRequires:	python-modules
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.647
+BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
@@ -142,7 +145,7 @@ NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
 pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
 
-Then pakiet dostarcza główny demon Active Directory.
+Ten pakiet dostarcza główny demon Active Directory.
 
 %package client
 Summary:	Samba AD client programs
@@ -166,7 +169,7 @@ drukowanie w sieci SMB.
 
 %package common
 Summary:	Files used by both Samba servers and clients
-Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
+Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Group:		Networking/Daemons
 Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 %if %{with system_libs}
@@ -242,15 +245,21 @@ Samby) zsynchronizowanego z hasłami uniksowymi.
 
 %package pidl
 Summary:	Perl IDL compiler
+Summary(pl.UTF-8):	Kompilator IDL w Perlu
 Group:		Development/Tools
-Requires:	perl(Parse::Yapp)
+#Requires:	perl-Parse-Yapp
 
 %description pidl
 The samba4-pidl package contains the Perl IDL compiler used by Samba
 and Wireshark to parse IDL and similar protocols.
 
+%description pidl -l pl.UTF-8
+Ten pakiet zawiera kompilator IDL napisany w Perlu, używany przez
+Sambę oraz Wiresharka to analizy IDL i podobnych protokołów.
+
 %package -n python-samba4
 Summary:	Samba Module for Python
+Summary(pl.UTF-8):	Moduł Samba dla Pythona
 Group:		Development/Languages/Python
 %pyrequires_eq	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -267,8 +276,12 @@ Obsoletes:	python-samba
 %description -n python-samba4
 Samba Module for Python.
 
+%description -n python-samba4 -l pl.UTF-8
+Moduł Samba dla Pythona.
+
 %package test
 Summary:	Testing tools for Samba servers and clients
+Summary(pl.UTF-8):	Narzędzia testowe dla serwerów i klientów Samby
 Group:		Applications/System
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -278,14 +291,22 @@ Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
 samba4-test provides testing tools for both the server and client
 packages of Samba.
 
+%description test -l pl.UTF-8
+Narzędzia testowe dla serwerów i klientów Samby.
+
 %package test-devel
-Summary:	Testing devel files for Samba servers and clients
+Summary:	Testing development files for Samba servers and clients
+Summary(pl.UTF-8):	Pliki programistyczne narzędzi testowych dla serwerów i klientów Samby
 Group:		Applications/System
 Requires:	%{name}-test = %{epoch}:%{version}-%{release}
 
 %description test-devel
-samba-test-devel provides testing devel files for both the server and
-client packages of Samba.
+samba-test-devel provides development files for the library used by
+testing tools for both the server and client packages of Samba.
+
+%description test-devel -l pl.UTF-8
+Ten pakiet zawiera pliki programistyczne biblioteki wykorzystywanej
+przez narzędzia testowe dla serwerów i klientów Samby.
 
 %package -n samba3
 Summary:	SMB server
@@ -375,8 +396,8 @@ klientów Samba.
 Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
-Obsoletes:	samba-devel < 1:4.0.0-1
 Requires:	samba3-common = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-devel < 1:4.0.0-1
 
 %description -n samba3-devel
 Header files for Samba.
@@ -392,20 +413,19 @@ Requires:	samba3 = %{epoch}:%{version}-%{release}
 Obsoletes:	samba-vfs-audit < 1:4.0.0-1
 
 %description -n samba3-vfs-audit
-A simple module to audit file access to the syslog facility. The
-following operations are logged:
+A simple modules (audit, extd_audit, full_audit) to audit file access
+to the syslog facility. The following operations are logged:
  - share connect/disconnect,
  - directory opens/create/remove,
  - file open/close/rename/unlink/chmod.
 
 %description -n samba3-vfs-audit -l pl.UTF-8
-Proste moduły do monitorowania dostępu do plików na serwerze samba do
-do sysloga. Monitorowane są następujące operacje:
+Proste moduły (audit, extd_audit, full_audit) do monitorowania dostępu
+do plików na serwerze Samba do do sysloga. Monitorowane są następujące
+operacje:
  - podłączenie do/odłączenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
  - otwarcie/zamknięcie/zmiana nazwy/skasowanie/zmiana praw plików.
-
-Zawiera moduły audit, extd_audit i full_audit.
 
 %package -n samba3-vfs-cap
 Summary:	VFS module for CAP and samba compatibility
@@ -422,6 +442,25 @@ This is used for compatibility between Samba and CAP.
 %description -n samba3-vfs-cap -l pl.UTF-8
 Zamienia znaki kodowane Shift-JIS do trzybajowej szestnastkowej
 reprezentacji używanej przez program Columbia AppleTalk Program (CAP).
+
+%package -n samba3-vfs-catia
+Summary:	VFS module to fix Catia CAD filenames
+Summary(pl.UTF-8):	Moduł VFS poprawiający nazwy plików z pakietu CAD Catia
+Group:		Networking/Daemons
+Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-catia < 1:4.0.0-1
+
+%description -n samba3-vfs-catia
+The Catia CAD package commonly creates filenames that use characters
+that are illegal in CIFS filenames. The vfs_catia VFS module
+implements a fixed character mapping so that these files can be shared
+with CIFS clients.
+
+%description -n samba3-vfs-catia -l pl.UTF-8
+Pakiet CAD Catia często tworzy nazwy plików, wykorzystujące znaki,
+które nie są dozwolone w nazwach plików CIFS. Moduł VFS vfs_catia
+implementuje stałe odwzorowanie znaków, pozwalające na współdzielenie
+plików z innymi klientami CIFS.
 
 %package -n samba3-vfs-default_quota
 Summary:	VFS module to store default quotas in a specified quota record
@@ -502,8 +541,8 @@ Ten moduł używa demona FAM (File Alteration Monitor) do implementacji
 informowania o zmianach w plikach dla klientów Windows.
 
 %package -n samba3-vfs-netatalk
-Summary:	VFS module for ease co-existence of samba and netatalk
-Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów samba i netatalk
+Summary:	VFS module for ease co-existence of Samba and netatalk
+Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów Samba i netatalk
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
 Obsoletes:	samba-vfs-netatalk < 1:4.0.0-1
@@ -513,21 +552,21 @@ Package contains a netatalk VFS module for ease co-existence of Samba
 and netatalk file sharing services.
 
 %description -n samba3-vfs-netatalk -l pl.UTF-8
-Pakiet zawiera moduł VFS netatalk umożliwiający współpracę usług samba
+Pakiet zawiera moduł VFS netatalk umożliwiający współpracę usług Samba
 i netatalk przy udostępnianiu zasobów.
 
 %package -n samba3-vfs-recycle
-Summary:	VFS module to add recycle bin facility to a samba share
-Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
+Summary:	VFS module to add recycle bin facility to a Samba share
+Summary(pl.UTF-8):	Moduł VFS dodający możliwość kosza do zasobu Samby
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
 Obsoletes:	samba-vfs-recycle < 1:4.0.0-1
 
 %description -n samba3-vfs-recycle
-VFS module to add recycle bin facility to a samba share.
+VFS module to add recycle bin facility to a Samba share.
 
 %description -n samba3-vfs-recycle -l pl.UTF-8
-Moduł VFS dodający możliwość kosza do zasobu samby.
+Moduł VFS dodający możliwość kosza do zasobu Samby.
 
 %package -n samba3-vfs-readahead
 Summary:	VFS module for pre-loading the kernel buffer cache
@@ -574,31 +613,6 @@ Ten moduł wprowadza ograniczenie tylko do odczytu dla określonego
 udziału (lub wszystkich, jeśli jest wczytywany w sekcji [global]) w
 oparciu o definicje okresów w smb.conf.
 
-%package -n samba3-vfs-shadow_copy
-Summary:	VFS module to make automatic copy of data in samba share
-Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
-Group:		Networking/Daemons
-Requires:	samba3 = %{epoch}:%{version}-%{release}
-Obsoletes:	samba-vfs-shadow_copy < 1:4.0.0-1
-
-%description -n samba3-vfs-shadow_copy
-VFS module to make automatic copy of data in samba share.
-
-%description -n samba3-vfs-shadow_copy -l pl.UTF-8
-Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
-
-%package -n samba3-vfs-catia
-Summary:	VFS module to fix Catia CAD filenames
-Group:		Networking/Daemons
-Requires:	samba3 = %{epoch}:%{version}-%{release}
-Obsoletes:	samba-vfs-catia < 1:4.0.0-1
-
-%description -n samba3-vfs-catia
-The Catia CAD package commonly creates filenames that use characters
-that are illegal in CIFS filenames. The vfs_catia VFS module
-implements a fixed character mapping so that these files can be shared
-with CIFS clients.
-
 %package -n samba3-vfs-scannedonly
 Summary:	Anti-virus solution as VFS module
 Summary(pl.UTF-8):	Rozwiązanie antywirusowe jako moduł VFS
@@ -611,6 +625,25 @@ The vfs_scannedonly VFS module ensures that only files that have been
 scanned for viruses are visible and accessible to the end user. If
 non-scanned files are found an anti-virus scanning daemon is notified.
 
+%description -n samba3-vfs-scannedonly -l pl.UTF-8
+Moduł VFS vfs_scannedonly zapewnia, że tylko pliki, które zostały
+wcześniej przeskanowane pod kątem wirusów, są widoczne i dostępne dla
+użytkownika końcowego. Jeśli zostaną znalezione pliki nie
+przeskanowane, powiadamiany jest antywirusowy demon skanujący.
+
+%package -n samba3-vfs-shadow_copy
+Summary:	VFS module to make automatic copy of data in Samba share
+Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach Samby
+Group:		Networking/Daemons
+Requires:	samba3 = %{epoch}:%{version}-%{release}
+Obsoletes:	samba-vfs-shadow_copy < 1:4.0.0-1
+
+%description -n samba3-vfs-shadow_copy
+VFS module to make automatic copy of data in Samba share.
+
+%description -n samba3-vfs-shadow_copy -l pl.UTF-8
+Moduł VFS do tworzenia automatycznych kopii danych w zasobach Samby.
+
 %package -n smbget3
 Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
@@ -618,7 +651,7 @@ Group:		Applications/Networking
 Obsoletes:	smbget < 1:4.0.8-3
 
 %description -n smbget3
-wget-like utility for download files over SMB.
+wget-like utility for downloading files over SMB.
 
 %description -n smbget3 -l pl.UTF-8
 Narzędzie podobne do wgeta do pobierania plików protokołem SMB
@@ -672,21 +705,22 @@ Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
 IP.
 
 %package -n samba3-libsmbclient
-Summary:	libsmbclient - samba client library
-Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
+Summary:	libsmbclient and libwbclient - Samba client libraries
+Summary(pl.UTF-8):	libsmbclient i libwbclient - biblioteki klienckie Samby
 Group:		Libraries
 Obsoletes:	libsmbclient
 
 %description -n samba3-libsmbclient
-libsmbclient - library that allows to use samba clients functions.
+libsmbclient and libwbclient - libraries that allow to use Samba
+client functions.
 
 %description -n samba3-libsmbclient -l pl.UTF-8
-libsmbclient - biblioteka pozwalająca korzystać z funcji klienta
-samby.
+libsmbclient i libwbclient - biblioteki pozwalające korzystać z funcji
+klienta Samby.
 
 %package -n samba3-libsmbclient-devel
-Summary:	libsmbclient - samba client library
-Summary(pl.UTF-8):	libsmbclient - biblioteka klienta samby
+Summary:	Development files for Samba client libraries
+Summary(pl.UTF-8):	Pliki programistyczne bibliotek klienta Samby
 Group:		Development/Libraries
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
 Provides:	libsmbclient-devel
@@ -694,24 +728,24 @@ Obsoletes:	libsmbclient-devel
 Obsoletes:	libsmbclient-static
 
 %description -n samba3-libsmbclient-devel
-Header files for libsmbclient.
+Header files for libsmbclient and libwbclient libraries.
 
 %description -n samba3-libsmbclient-devel -l pl.UTF-8
-Pliki nagłówkowe dla libsmbclient.
+Pliki nagłówkowe bibliotek libsmbclient i libwbclient.
 
 %package -n openldap-schema-samba3
 Summary:	Samba LDAP schema
-Summary(pl.UTF-8):	Schemat LDAP dla samby
+Summary(pl.UTF-8):	Schemat LDAP dla Samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
 Obsoletes:	openldap-schema-samba < 1:4.0.0-1
 
 %description -n openldap-schema-samba3
-This package contains samba.schema for openldap.
+This package contains samba.schema for OpenLDAP.
 
 %description -n openldap-schema-samba3 -l pl.UTF-8
-Ten pakiet zawiera schemat samby dla openldap-a.
+Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 
 %prep
 %setup -q -n samba-%{version}
@@ -1638,6 +1672,11 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/cap.so
 %{_mandir}/man8/vfs_cap.8*
 
+%files -n samba3-vfs-catia
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/catia.so
+%{_mandir}/man8/vfs_catia.8*
+
 %files -n samba3-vfs-default_quota
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/default_quota.so
@@ -1677,20 +1716,15 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/recycle.so
 %{_mandir}/man8/vfs_recycle.8*
 
-%files -n samba3-vfs-shadow_copy
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy.so
-%{_mandir}/man8/vfs_shadow_copy.8*
-
-%files -n samba3-vfs-catia
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/vfs/catia.so
-%{_mandir}/man8/vfs_catia.8*
-
 %files -n samba3-vfs-scannedonly
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/scannedonly.so
 %{_mandir}/man8/vfs_scannedonly.8*
+
+%files -n samba3-vfs-shadow_copy
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy.so
+%{_mandir}/man8/vfs_shadow_copy.8*
 
 %files -n smbget3
 %defattr(644,root,root,755)
@@ -1733,5 +1767,5 @@ fi
 %if %{with ldap}
 %files -n openldap-schema-samba3
 %defattr(644,root,root,755)
-%{schemadir}/*.schema
+%{schemadir}/samba.schema
 %endif

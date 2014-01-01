@@ -421,7 +421,7 @@ to the syslog facility. The following operations are logged:
 
 %description -n samba3-vfs-audit -l pl.UTF-8
 Proste moduły (audit, extd_audit, full_audit) do monitorowania dostępu
-do plików na serwerze Samba do do sysloga. Monitorowane są następujące
+do plików na serwerze Samba do sysloga. Monitorowane są następujące
 operacje:
  - podłączenie do/odłączenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
@@ -542,7 +542,7 @@ informowania o zmianach w plikach dla klientów Windows.
 
 %package -n samba3-vfs-netatalk
 Summary:	VFS module for ease co-existence of Samba and netatalk
-Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów Samba i netatalk
+Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę usług Samba i netatalk
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
 Obsoletes:	samba-vfs-netatalk < 1:4.0.0-1
@@ -557,7 +557,7 @@ i netatalk przy udostępnianiu zasobów.
 
 %package -n samba3-vfs-recycle
 Summary:	VFS module to add recycle bin facility to a Samba share
-Summary(pl.UTF-8):	Moduł VFS dodający możliwość kosza do zasobu Samby
+Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
 Group:		Networking/Daemons
 Requires:	samba3 = %{epoch}:%{version}-%{release}
 Obsoletes:	samba-vfs-recycle < 1:4.0.0-1
@@ -566,7 +566,7 @@ Obsoletes:	samba-vfs-recycle < 1:4.0.0-1
 VFS module to add recycle bin facility to a Samba share.
 
 %description -n samba3-vfs-recycle -l pl.UTF-8
-Moduł VFS dodający możliwość kosza do zasobu Samby.
+Moduł VFS dodający funkcję kosza do zasobu Samby.
 
 %package -n samba3-vfs-readahead
 Summary:	VFS module for pre-loading the kernel buffer cache

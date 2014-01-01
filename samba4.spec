@@ -23,7 +23,7 @@ Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
 Version:	4.1.3
-Release:	2
+Release:	2.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -322,7 +322,7 @@ Requires:	setup >= 2.4.6-7
 Obsoletes:	samba < 1:4.0.0-1
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
-Obsoletes:	samba3-server
+Obsoletes:	samba3-server < 1:4.1.3-2.1
 
 %description -n samba3
 Samba provides an SMB server which can be used to provide network

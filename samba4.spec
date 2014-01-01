@@ -316,8 +316,13 @@ Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
+Requires:	logrotate >= 3.7-4
+Requires:	rc-scripts >= 0.4.0.12
+Requires:	setup >= 2.4.6-7
+Obsoletes:	samba < 1:4.0.0-1
 Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
+Obsoletes:	samba3-server
 
 %description -n samba3
 Samba provides an SMB server which can be used to provide network
@@ -335,25 +340,6 @@ znajduje się również oprogramowanie klienckie. Samba używa protokołu
 NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
 pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
-
-%package -n samba3-server
-Summary:	SMB server initscripts
-Summary(pl.UTF-8):	Skrypty startowe serwera SMB
-Group:		Networking/Daemons
-Requires(post,preun):	/sbin/chkconfig
-Requires:	samba3 = %{epoch}:%{version}-%{release}
-Requires:	logrotate >= 3.7-4
-Requires:	rc-scripts >= 0.4.0.12
-Requires:	setup >= 2.4.6-7
-Obsoletes:	samba < 1:4.0.0-1
-
-%description -n samba3-server
-This package contains startup scripts and services for old SMB server
-daemons (smbd, nmbd).
-
-%description -n samba3-server -l pl.UTF-8
-Ten pakiet zawiera skrypty startowe dla starych usług serwera SMB
-(smbd, nmbd).
 
 %package -n samba3-client
 Summary:	Samba client programs
@@ -935,22 +921,22 @@ fi
 %post -n python-samba4 -p /sbin/ldconfig
 %postun -n python-samba4 -p /sbin/ldconfig
 
-%post -n samba3-server
+%post -n samba3
 /sbin/chkconfig --add smb
 %service smb restart "Samba3 daemons"
 %systemd_post smb.service nmb.service
 
-%preun -n samba3-server
+%preun -n samba3
 if [ "$1" = "0" ]; then
 	%service smb stop
 	/sbin/chkconfig --del smb
 fi
 %systemd_preun smb.service nmb.service
 
-%postun -n samba3-server
+%postun -n samba3
 %systemd_reload
 
-%triggerpostun -n samba3-server -- samba < 1:4.0.0-1
+%triggerpostun -n samba3 -- samba < 1:4.0.0-1
 /sbin/chkconfig --add smb
 %service smb restart "Samba3 daemons"
 %systemd_post smb.service nmb.service
@@ -1513,6 +1499,11 @@ fi
 
 %files -n samba3
 %defattr(644,root,root,755)
+#%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
+%attr(754,root,root) /etc/rc.d/init.d/smb
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba3
+%{systemdunitdir}/nmb.service
+%{systemdunitdir}/smb.service
 %attr(755,root,root) %{_bindir}/dbwrap_tool
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/smbpasswd
@@ -1592,14 +1583,6 @@ fi
 %{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/vfs_syncops.8*
 %{_mandir}/man8/vfs_time_audit.8*
-
-%files -n samba3-server
-%defattr(644,root,root,755)
-%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
-%attr(754,root,root) /etc/rc.d/init.d/smb
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba3
-%{systemdunitdir}/nmb.service
-%{systemdunitdir}/smb.service
 
 %files -n samba3-client
 %defattr(644,root,root,755)

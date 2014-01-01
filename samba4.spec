@@ -84,9 +84,9 @@ BuildRequires:	python-dns
 BuildRequires:	python-modules
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
+BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
@@ -103,9 +103,9 @@ BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
-Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
+Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
@@ -152,8 +152,8 @@ Summary:	Samba AD client programs
 Summary(pl.UTF-8):	Klienci serwera Samba AD
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs >= 1.5.3-1
+Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 Suggests:	cifs-utils
 Obsoletes:	smbfs
 
@@ -231,8 +231,8 @@ Pliki nagłówkowe Samby.
 Summary:	PAM Samba Password Module
 Summary(pl.UTF-8):	Moduł PAM smbpass
 Group:		Base
-Obsoletes:	pam_smbpass
 Obsoletes:	pam-pam_smbpass < 1:4.0.8-3
+Obsoletes:	pam_smbpass
 
 %description -n pam-pam_smbpass3
 PAM module which can be used on conforming systems to keep the
@@ -261,8 +261,8 @@ Sambę oraz Wiresharka to analizy IDL i podobnych protokołów.
 Summary:	Samba Module for Python
 Summary(pl.UTF-8):	Moduł Samba dla Pythona
 Group:		Development/Languages/Python
-%pyrequires_eq	python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	python
 Requires:	python-dns
 Requires:	python-modules
 %if %{with system_libs}
@@ -312,8 +312,8 @@ przez narzędzia testowe dla serwerów i klientów Samby.
 Summary:	SMB server
 Summary(pl.UTF-8):	Serwer SMB
 Group:		Networking/Daemons
-Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
+Requires:	samba3-common = %{epoch}:%{version}-%{release}
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
 Requires:	logrotate >= 3.7-4
@@ -341,16 +341,35 @@ NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
 pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
 
+%package -n samba3-server
+Summary:	SMB server initscripts
+Summary(pl.UTF-8):	Skrypty startowe serwera SMB
+Group:		Networking/Daemons
+Requires(post,preun):	/sbin/chkconfig
+Requires:	logrotate >= 3.7-4
+Requires:	rc-scripts >= 0.4.0.12
+Requires:	samba3 = %{epoch}:%{version}-%{release}
+Requires:	setup >= 2.4.6-7
+Obsoletes:	samba < 1:4.0.0-1
+
+%description -n samba3-server
+This package contains startup scripts and services for old SMB server
+daemons (smbd, nmbd).
+
+%description -n samba3-server -l pl.UTF-8
+Ten pakiet zawiera skrypty startowe dla starych usług serwera SMB
+(smbd, nmbd).
+
 %package -n samba3-client
 Summary:	Samba client programs
 Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
+Requires:	heimdal-libs
 Requires:	samba3-common = %{epoch}:%{version}-%{release}
 Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
-Requires:	heimdal-libs
-Obsoletes:	smbfs
-Obsoletes:	samba-client < 1:4.0.0-1
 Suggests:	cifs-utils
+Obsoletes:	samba-client < 1:4.0.0-1
+Obsoletes:	smbfs
 
 %description -n samba3-client
 Samba-client provides some SMB clients, which complement the build-in
@@ -647,8 +666,8 @@ używanym w sieciach MS Windows.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
-Requires:	samba3-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
+Requires:	samba3-client = %{epoch}:%{version}-%{release}
 Obsoletes:	cups-backend-smb < 1:4.0.8-3
 
 %description -n cups-backend-smb3
@@ -1727,6 +1746,7 @@ fi
 %endif
 
 %files -n samba3-winbind
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind

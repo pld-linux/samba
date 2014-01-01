@@ -1,0 +1,31 @@
+--- samba-4.1.3/packaging/systemd/smb.service.orig	2013-12-20 19:15:20.885742895 +0100
++++ samba-4.1.3/packaging/systemd/smb.service	2014-01-01 16:33:29.280076263 +0100
+@@ -7,6 +7,7 @@
+ PIDFile=/run/samba/smbd.pid
+ LimitNOFILE=16384
+ EnvironmentFile=-/etc/sysconfig/samba
++ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role"  2>/dev/null | tail -1`" != "active directory domain controller" ]'
+ ExecStart=/usr/sbin/smbd $SMBDOPTIONS
+ ExecReload=/usr/bin/kill -HUP $MAINPID
+ 
+--- samba-4.1.3/packaging/systemd/nmb.service.orig	2013-12-20 19:15:20.885742895 +0100
++++ samba-4.1.3/packaging/systemd/nmb.service	2014-01-01 16:38:17.089656135 +0100
+@@ -6,6 +6,8 @@
+ Type=forking
+ PIDFile=/run/samba/nmbd.pid
+ EnvironmentFile=-/etc/sysconfig/samba
++ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role"  2>/dev/null | tail -1`" != "active directory domain controller" ]'
++ExecStartPre=/bin/sh -c '[ "`testparm -s --parameter-name="disable netbios" 2>/dev/null`" != "Yes" ]'
+ ExecStart=/usr/sbin/nmbd $NMBDOPTIONS
+ ExecReload=/usr/bin/kill -HUP $MAINPID
+ 
+--- samba-4.1.3/packaging/systemd/samba.service.orig	2014-01-01 16:44:59.833724642 +0100
++++ samba-4.1.3/packaging/systemd/samba.service	2014-01-01 16:45:17.763905567 +0100
+@@ -7,6 +7,7 @@
+ PIDFile=/run/samba/samba.pid
+ LimitNOFILE=16384
+ EnvironmentFile=-/etc/sysconfig/samba
++ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role"  2>/dev/null | tail -1`" = "active directory domain controller" ]'
+ ExecStart=/usr/sbin/samba $SAMBAOPTIONS
+ ExecReload=/usr/bin/kill -HUP $MAINPID
+ 

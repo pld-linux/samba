@@ -1481,7 +1481,10 @@ fi
 # TODO
 %attr(755,root,root) %{py_sitedir}/ntdb.so
 %if %{without system_libs}
-%attr(755,root,root) %{py_sitedir}/*.so
+%attr(755,root,root) %{py_sitedir}/ldb.so
+%attr(755,root,root) %{py_sitedir}/talloc.so
+%attr(755,root,root) %{py_sitedir}/tdb.so
+%attr(755,root,root) %{py_sitedir}/_tevent.so
 %{py_sitedir}/tevent.py[co]
 %endif
 

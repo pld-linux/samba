@@ -5,43 +5,36 @@
 # - unpackaged man pages for modules that are not built by default,
 #  maybe we should build them?
 #  /usr/share/man/man8/vfs_cacheprime.8*
-#  /usr/share/man/man8/vfs_catia.8*
-#  /usr/share/man/man8/fs_commit.8*
+#  /usr/share/man/man8/vfs_commit.8*
 #  /usr/share/man/man8/vfs_gpfs.8*
 #  /usr/share/man/man8/vfs_prealloc.8*
 # - package libs:
 #      libnetapi
 #      libsmbsharemodes
-# - MERGE vfs modules into main package, what was the point of splitting these?
+# - MERGE vfs modules with no external dependencies into main package?
 #
 
 #
 # Conditional build:
-%bcond_without	ads		# without ActiveDirectory support
-%bcond_without	cups		# without CUPS support
-%bcond_without	kerberos5	# without Kerberos V support
-%bcond_without	ldap		# without LDAP support
-%bcond_without	avahi
-%bcond_with	merged_build	# without samba3+samba4 merge
-%bcond_without	system_libtevent
-%bcond_without	system_libtalloc
-%bcond_without	system_libtdb
-								# http://wiki.samba.org/index.php/Franky
-%bcond_with	mks		# with vfs-mks (mksd dependency not distributale)
+%bcond_without	ads			# ActiveDirectory support
+%bcond_without	cups			# CUPS support
+%bcond_without	kerberos5		# Kerberos V support
+%bcond_without	ldap			# LDAP support
+%bcond_without	avahi			# Avahi support
+%bcond_with	merged_build		# samba3+samba4 merge
+%bcond_without	system_libtalloc	# system talloc
+%bcond_without	system_libtdb		# system tdb
+%bcond_without	system_libtevent	# system tevent
+						# http://wiki.samba.org/index.php/Franky
+%bcond_with	mks			# with vfs-mks (mksd dependency not distributale)
 
 # ADS requires kerberos5 and LDAP
 %if %{without kerberos5} || %{without ldap}
 %undefine	with_ads
 %endif
 
-%if %{with system_libtevent}
-%define		libtevent_ver	0.9.11
-%else
-%define		libtevent_ver	%{epoch}:%{version}-%{release}
-%endif
-
 %if %{with system_libtalloc}
-%define		libtalloc_ver	2.0.1
+%define		libtalloc_ver	2.0.5
 %else
 %define		libtalloc_ver	%{epoch}:%{version}-%{release}
 %endif
@@ -50,6 +43,12 @@
 %define		libtdb_ver	2:1.2.9
 %else
 %define		libtdb_ver	%{epoch}:%{version}-%{release}
+%endif
+
+%if %{with system_libtevent}
+%define		libtevent_ver	0.9.11
+%else
+%define		libtevent_ver	%{epoch}:%{version}-%{release}
 %endif
 
 %define		virusfilter_version 0.1.3
@@ -119,7 +118,7 @@ BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
-BuildRequires:	python-devel
+BuildRequires:	python-devel >= 1:2.4.2
 BuildRequires:	python-modules
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.304
@@ -130,7 +129,7 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	xfsprogs-devel
 # python-talloc 2.0.7+ is API incompatible with samba3
 BuildConflicts:	python-talloc-devel
-# samen goes for python-ldb 1.1.14
+# same goes for python-ldb 1.1.14
 BuildConflicts:	python-ldb-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -395,7 +394,7 @@ e também, à impressoras SMB.
 %package common
 Summary:	Files used by both Samba servers and clients
 Summary(ja.UTF-8):	Samba サーバーとクライアントで使用されるプログラム
-Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samba
+Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Summary(pt_BR.UTF-8):	Arquivos em comum entre samba e samba-clients
 Summary(ru.UTF-8):	Файлы, используемые как сервером, так и клиентом Samba
 Summary(uk.UTF-8):	Файли, що використовуються як сервером, так і клієнтом Samba
@@ -414,7 +413,7 @@ Samba-common は Samba のサーバとクライアントの両方のパッケー
 
 %description common -l pl.UTF-8
 Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
-klientów Samba.
+klientów Samby.
 
 %description common -l pt_BR.UTF-8
 Arquivos em comum entre os pacotes samba e samba-clients.
@@ -599,26 +598,25 @@ CUPS backend for printing to SMB printers.
 Backend CUPS-a drukujący na drukarkach SMB.
 
 %package vfs-audit
-Summary:	VFS module to audit file access
-Summary(pl.UTF-8):	Moduł VFS do monitorowania operacji na plikach
+Summary:	VFS modules to audit file access
+Summary(pl.UTF-8):	Moduły VFS do monitorowania operacji na plikach
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description vfs-audit
-A simple module to audit file access to the syslog facility. The
-following operations are logged:
+A simple modules (audit, extd_audit, full_audit) to audit file access
+to the syslog facility. The following operations are logged:
  - share connect/disconnect,
  - directory opens/create/remove,
  - file open/close/rename/unlink/chmod.
 
 %description vfs-audit -l pl.UTF-8
-Proste moduły do monitorowania dostępu do plików na serwerze samba do
-do sysloga. Monitorowane są następujące operacje:
+Proste moduły (audit, extd_audit, full_audit) do monitorowania dostępu
+do plików na serwerze samba do sysloga. Monitorowane są następujące
+operacje:
  - podłączenie do/odłączenie od zasobu,
  - otwarcie/utworzenie/zmiana nazwy katalogu,
  - otwarcie/zamknięcie/zmiana nazwy/skasowanie/zmiana praw plików.
-
-Zawiera moduły audit, extd_audit i full_audit.
 
 %package vfs-cap
 Summary:	VFS module for CAP and samba compatibility
@@ -634,6 +632,24 @@ This is used for compatibility between Samba and CAP.
 %description vfs-cap -l pl.UTF-8
 Zamienia znaki kodowane Shift-JIS do trzybajowej szestnastkowej
 reprezentacji używanej przez program Columbia AppleTalk Program (CAP).
+
+%package vfs-catia
+Summary:	VFS module to fix Catia CAD filenames
+Summary(pl.UTF-8):	Moduł VFS poprawiający nazwy plików z pakietu CAD Catia
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-catia
+The Catia CAD package commonly creates filenames that use characters
+that are illegal in CIFS filenames. The vfs_catia VFS module
+implements a fixed character mapping so that these files can be shared
+with CIFS clients.
+
+%description vfs-catia -l pl.UTF-8
+Pakiet CAD Catia często tworzy nazwy plików, wykorzystujące znaki,
+które nie są dozwolone w nazwach plików CIFS. Moduł VFS vfs_catia
+implementuje stałe odwzorowanie znaków, pozwalające na współdzielenie
+plików z innymi klientami CIFS.
 
 %package vfs-default_quota
 Summary:	VFS module to store default quotas in a specified quota record
@@ -710,8 +726,8 @@ Ten moduł używa demona FAM (File Alteration Monitor) do implementacji
 informowania o zmianach w plikach dla klientów Windows.
 
 %package vfs-netatalk
-Summary:	VFS module for ease co-existence of samba and netatalk
-Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę serwisów samba i netatalk
+Summary:	VFS module for ease co-existence of Samba and netatalk
+Summary(pl.UTF-8):	Moduł VFS ułatwiający współpracę usług Samba i netatalk
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -720,12 +736,12 @@ Package contains a netatalk VFS module for ease co-existence of Samba
 and netatalk file sharing services.
 
 %description vfs-netatalk -l pl.UTF-8
-Pakiet zawiera moduł VFS netatalk umożliwiający współpracę usług samba
+Pakiet zawiera moduł VFS netatalk umożliwiający współpracę usług Samba
 i netatalk przy udostępnianiu zasobów.
 
 %package vfs-recycle
 Summary:	VFS module to add recycle bin facility to a samba share
-Summary(pl.UTF-8):	Moduł VFS dodający możliwość kosza do zasobu samby
+Summary(pl.UTF-8):	Moduł VFS dodający funkcję kosza do zasobu Samby
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -733,7 +749,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 VFS module to add recycle bin facility to a samba share.
 
 %description vfs-recycle -l pl.UTF-8
-Moduł VFS dodający możliwość kosza do zasobu samby.
+Moduł VFS dodający funkcję kosza do zasobu Samby.
 
 %package vfs-readahead
 Summary:	VFS module for pre-loading the kernel buffer cache
@@ -778,31 +794,9 @@ Ten moduł wprowadza ograniczenie tylko do odczytu dla określonego
 udziału (lub wszystkich, jeśli jest wczytywany w sekcji [global]) w
 oparciu o definicje okresów w smb.conf.
 
-%package vfs-shadow_copy
-Summary:	VFS module to make automatic copy of data in samba share
-Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description vfs-shadow_copy
-VFS module to make automatic copy of data in samba share.
-
-%description vfs-shadow_copy -l pl.UTF-8
-Moduł VFS do tworzenia automatycznych kopii danych w zasobach samby.
-
-%package vfs-catia
-Summary:	VFS module to fix Catia CAD filenames
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description vfs-catia
-The Catia CAD package commonly creates filenames that use characters
-that are illegal in CIFS filenames. The vfs_catia VFS module
-implements a fixed character mapping so that these files can be shared
-with CIFS clients.
-
 %package vfs-scannedonly
 Summary:	Anti-virus solution as VFS module
+Summary(pl.UTF-8):	Rozwiązanie antywirusowe jako moduł VFS
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
@@ -810,6 +804,24 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 The vfs_scannedonly VFS module ensures that only files that have been
 scanned for viruses are visible and accessible to the end user. If
 non-scanned files are found an anti-virus scanning daemon is notified.
+
+%description vfs-scannedonly -l pl.UTF-8
+Moduł VFS vfs_scannedonly zapewnia, że tylko pliki, które zostały
+wcześniej przeskanowane pod kątem wirusów, są widoczne i dostępne dla
+użytkownika końcowego. Jeśli zostaną znalezione pliki nie
+przeskanowane, powiadamiany jest antywirusowy demon skanujący.
+
+%package vfs-shadow_copy
+Summary:	VFS module to make automatic copy of data in Samba share
+Summary(pl.UTF-8):	Moduł VFS do tworzenia automatycznych kopii danych w zasobach Samby
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-shadow_copy
+VFS module to make automatic copy of data in Samba share.
+
+%description vfs-shadow_copy -l pl.UTF-8
+Moduł VFS do tworzenia automatycznych kopii danych w zasobach Samby.
 
 %package -n openldap-schema-samba
 Summary:	Samba LDAP schema
@@ -822,10 +834,10 @@ BuildArch:	noarch
 %endif
 
 %description -n openldap-schema-samba
-This package contains samba.schema for openldap.
+This package contains samba.schema for OpenLDAP.
 
 %description -n openldap-schema-samba -l pl.UTF-8
-Ten pakiet zawiera schemat samby dla openldap-a.
+Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 
 %package doc-html
 Summary:	Samba HTML documentation
@@ -850,13 +862,17 @@ Samba PDF documentation.
 Documentacja samby w formacie PDF.
 
 %package -n python-samba
-Summary:	Samba Module for Python
+Summary:	Samba modules for Python
+Summary(pl.UTF-8):	Moduły Samby dla Pythona
 Group:		Development/Languages/Python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	python
+Requires:	python-libs
 
 %description -n python-samba
-Samba Module for Python.
+Samba modules for Python.
+
+%description -n python-samba -l pl.UTF-8
+Moduły Samby dla Pythona.
 
 %prep
 %setup -q
@@ -1394,6 +1410,11 @@ EOF
 %attr(755,root,root) %{_vfsdir}/cap.so
 %{_mandir}/man8/vfs_cap.8*
 
+%files vfs-catia
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/catia.so
+%{_mandir}/man8/vfs_catia.8*
+
 %files vfs-default_quota
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/default_quota.so
@@ -1433,25 +1454,20 @@ EOF
 %attr(755,root,root) %{_vfsdir}/recycle.so
 %{_mandir}/man8/vfs_recycle.8*
 
-%files vfs-shadow_copy
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/shadow_copy.so
-%{_mandir}/man8/vfs_shadow_copy.8*
-
-%files vfs-catia
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_vfsdir}/catia.so
-%{_mandir}/man8/vfs_catia.8*
-
 %files vfs-scannedonly
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_vfsdir}/scannedonly.so
 %{_mandir}/man8/vfs_scannedonly.8*
 
+%files vfs-shadow_copy
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_vfsdir}/shadow_copy.so
+%{_mandir}/man8/vfs_shadow_copy.8*
+
 %if %{with ldap}
 %files -n openldap-schema-samba
 %defattr(644,root,root,755)
-%{schemadir}/*.schema
+%{schemadir}/samba.schema
 %endif
 
 %files doc-html

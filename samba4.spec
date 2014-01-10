@@ -17,8 +17,8 @@
 %include	/usr/lib/rpm/macros.perl
 
 %define		virusfilter_version 0.1.3
-Summary:	Active Directory server
-Summary(pl.UTF-8):	Serwer Active Directory
+Summary:	Samba Active Directory and SMB server
+Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba4
 Version:	4.1.4
 Release:	2
@@ -101,7 +101,6 @@ BuildRequires:	xfsprogs-devel
 BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
 Requires:	python-samba4 = %{epoch}:%{version}-%{release}
@@ -110,9 +109,38 @@ Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
+Obsoletes:	samba < 1:4.0.0-1
 Obsoletes:	samba-doc-html
 Obsoletes:	samba-doc-pdf
 Obsoletes:	samba-pdb-xml
+Obsoletes:	samba-pdb-xml
+Obsoletes:	samba-vfs-block
+Obsoletes:	samba-vfs-audit
+Obsoletes:	samba-vfs-cap
+Obsoletes:	samba-vfs-catia
+Obsoletes:	samba-vfs-default_quota
+Obsoletes:	samba-vfs-expand_msdfs
+Obsoletes:	samba-vfs-fake_perms
+Obsoletes:	samba-vfs-netatalk
+Obsoletes:	samba-vfs-recycle
+Obsoletes:	samba-vfs-readahead
+Obsoletes:	samba-vfs-readonly
+Obsoletes:	samba-vfs-scannedonly
+Obsoletes:	samba-vfs-shadow_copy
+Obsoletes:	samba3-server
+Obsoletes:	samba3-vfs-audit
+Obsoletes:	samba3-vfs-cap
+Obsoletes:	samba3-vfs-catia
+Obsoletes:	samba3-vfs-default_quota
+Obsoletes:	samba3-vfs-expand_msdfs
+Obsoletes:	samba3-vfs-fake_perms
+Obsoletes:	samba3-vfs-netatalk
+Obsoletes:	samba3-vfs-recycle
+Obsoletes:	samba3-vfs-readahead
+Obsoletes:	samba3-vfs-readonly
+Obsoletes:	samba3-vfs-scannedonly
+Obsoletes:	samba3-vfs-shadow_copy
+Obsoletes:	samba4-common-server
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sambahome	/home/services/samba
@@ -132,8 +160,6 @@ also provides some SMB clients, which complement the built-in SMB
 filesystem in Linux. Samba uses NetBIOS over TCP/IP (NetBT) protocols
 and does NOT need NetBEUI (Microsoft Raw NetBIOS frame) protocol.
 
-This package contains main Active Directory server daemon.
-
 %description -l pl.UTF-8
 Samba udostępnia serwer SMB, który może być użyty w celu dostarczenia
 usług sieciowych (potocznie zwanych "Lan Manager"), dla klientów
@@ -142,8 +168,6 @@ znajduje się również oprogramowanie klienckie. Samba używa protokołu
 NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
 pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
-
-Ten pakiet dostarcza główny demon Active Directory.
 
 %package client
 Summary:	Samba AD client programs
@@ -187,17 +211,6 @@ packages of Samba.
 %description common -l pl.UTF-8
 Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
 klientów Samby.
-
-%package common-server
-Summary:	Files used by both Samba3 PDC and Samba4 AD servers
-Summary(pl.UTF-8):	Pliki używane przez serwery Samba3 PDC i Samba4 AD
-Group:		Networking/Daemons
-
-%description common-server
-Files used by both Samba3 PDC and Samba4 AD servers.
-
-%description common-server -l pl.UTF-8
-Pliki używane przez serwery Samba3 PDC i Samba4 AD.
 
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
@@ -307,82 +320,6 @@ testing tools for both the server and client packages of Samba.
 %description test-devel -l pl.UTF-8
 Ten pakiet zawiera pliki programistyczne biblioteki wykorzystywanej
 przez narzędzia testowe dla serwerów i klientów Samby.
-
-%package -n samba3
-Summary:	SMB server
-Summary(pl.UTF-8):	Serwer SMB
-Group:		Networking/Daemons
-Requires:	%{name}-common-server = %{epoch}:%{version}-%{release}
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-# smbd links with libcups
-%{?with_cups:Requires:	cups-lib >= 1:1.2.0}
-Requires:	logrotate >= 3.7-4
-Requires:	rc-scripts >= 0.4.0.12
-Requires:	setup >= 2.4.6-7
-Obsoletes:	samba < 1:4.0.0-1
-Obsoletes:	samba-pdb-xml
-Obsoletes:	samba-vfs-block
-Obsoletes:	samba-vfs-audit
-Obsoletes:	samba-vfs-cap
-Obsoletes:	samba-vfs-catia
-Obsoletes:	samba-vfs-default_quota
-Obsoletes:	samba-vfs-expand_msdfs
-Obsoletes:	samba-vfs-fake_perms
-Obsoletes:	samba-vfs-netatalk
-Obsoletes:	samba-vfs-recycle
-Obsoletes:	samba-vfs-readahead
-Obsoletes:	samba-vfs-readonly
-Obsoletes:	samba-vfs-scannedonly
-Obsoletes:	samba-vfs-shadow_copy
-Obsoletes:	samba3-server < 1:4.1.3-2.1
-Obsoletes:	samba3-vfs-audit
-Obsoletes:	samba3-vfs-cap
-Obsoletes:	samba3-vfs-catia
-Obsoletes:	samba3-vfs-default_quota
-Obsoletes:	samba3-vfs-expand_msdfs
-Obsoletes:	samba3-vfs-fake_perms
-Obsoletes:	samba3-vfs-netatalk
-Obsoletes:	samba3-vfs-recycle
-Obsoletes:	samba3-vfs-readahead
-Obsoletes:	samba3-vfs-readonly
-Obsoletes:	samba3-vfs-scannedonly
-Obsoletes:	samba3-vfs-shadow_copy
-
-%description -n samba3
-Samba provides an SMB server which can be used to provide network
-services to SMB (sometimes called "Lan Manager") clients, including
-various versions of MS Windows, OS/2, and other Linux machines. Samba
-also provides some SMB clients, which complement the built-in SMB
-filesystem in Linux. Samba uses NetBIOS over TCP/IP (NetBT) protocols
-and does NOT need NetBEUI (Microsoft Raw NetBIOS frame) protocol.
-
-%description -n samba3 -l pl.UTF-8
-Samba udostępnia serwer SMB, który może być użyty w celu dostarczenia
-usług sieciowych (potocznie zwanych "Lan Manager"), dla klientów
-takich jak MS Windows, OS/2 a także maszyn linuksowych. W pakiecie
-znajduje się również oprogramowanie klienckie. Samba używa protokołu
-NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
-pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
-haseł w standardzie MS i zarządzania bazą WINS.
-
-%package -n samba3-server
-Summary:	SMB server initscripts
-Summary(pl.UTF-8):	Skrypty startowe serwera SMB
-Group:		Networking/Daemons
-Requires(post,preun):	/sbin/chkconfig
-Requires:	logrotate >= 3.7-4
-Requires:	rc-scripts >= 0.4.0.12
-Requires:	samba3 = %{epoch}:%{version}-%{release}
-Requires:	setup >= 2.4.6-7
-Obsoletes:	samba < 1:4.0.0-1
-
-%description -n samba3-server
-This package contains startup scripts and services for old SMB server
-daemons (smbd, nmbd).
-
-%description -n samba3-server -l pl.UTF-8
-Ten pakiet zawiera skrypty startowe dla starych usług serwera SMB
-(smbd, nmbd).
 
 %package -n samba3-client
 Summary:	Samba client programs
@@ -736,44 +673,35 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add samba
+/sbin/chkconfig --add smb
 %service samba restart "Samba AD daemon"
+%service smb restart "Samba3 daemons"
 %systemd_post samba.service
+%systemd_post smb.service nmb.service
 
 %preun
 if [ "$1" = "0" ]; then
 	%service samba stop
+	%service smb stop
 	/sbin/chkconfig --del samba
+	/sbin/chkconfig --del smb
 fi
 %systemd_preun samba.service
+%systemd_preun smb.service nmb.service
 
 %postun
 %systemd_reload
+
+%triggerpostun -- samba < 1:4.0.0-1
+/sbin/chkconfig --add smb
+%service smb restart "Samba3 daemons"
+%systemd_post smb.service nmb.service
 
 %post common -p /sbin/ldconfig
 %postun common -p /sbin/ldconfig
 
 %post -n python-samba4 -p /sbin/ldconfig
 %postun -n python-samba4 -p /sbin/ldconfig
-
-%post -n samba3
-/sbin/chkconfig --add smb
-%service smb restart "Samba3 daemons"
-%systemd_post smb.service nmb.service
-
-%preun -n samba3
-if [ "$1" = "0" ]; then
-	%service smb stop
-	/sbin/chkconfig --del smb
-fi
-%systemd_preun smb.service nmb.service
-
-%postun -n samba3
-%systemd_reload
-
-%triggerpostun -n samba3 -- samba < 1:4.0.0-1
-/sbin/chkconfig --add smb
-%service smb restart "Samba3 daemons"
-%systemd_post smb.service nmb.service
 
 %post -n samba3-winbind
 /sbin/chkconfig --add winbind
@@ -897,6 +825,138 @@ fi
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
 %{_mandir}/man8/samba.8*
+
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
+
+%dir %{_sambahome}
+%dir /var/lib/samba
+%ghost /var/lib/samba/*.dat
+%dir /var/lib/samba/printing
+
+%attr(750,root,root) %dir /var/log/samba
+%attr(750,root,root) %dir /var/log/samba/cores
+%attr(750,root,root) %dir /var/log/samba/cores/smbd
+%attr(750,root,root) %dir /var/log/samba/cores/nmbd
+%attr(750,root,root) %dir /var/log/archive/samba
+%attr(1777,root,root) %dir /var/spool/samba
+%if %{with ldap}
+%doc examples/LDAP
+%endif
+
+#%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
+%attr(754,root,root) /etc/rc.d/init.d/smb
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba3
+%{systemdunitdir}/nmb.service
+%{systemdunitdir}/smb.service
+%attr(755,root,root) %{_bindir}/dbwrap_tool
+%attr(755,root,root) %{_bindir}/smbcontrol
+%attr(755,root,root) %{_bindir}/smbpasswd
+%attr(755,root,root) %{_bindir}/smbstatus
+%attr(755,root,root) %{_bindir}/smbta-util
+%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
+%attr(755,root,root) %{_sbindir}/nmbd
+%attr(755,root,root) %{_sbindir}/smbd
+%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
+%attr(755,root,root) %{_libdir}/samba/auth/unix.so
+%attr(755,root,root) %{_libdir}/samba/auth/wbc.so
+%attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
+%dir %{_libdir}/samba/idmap
+%attr(755,root,root) %{_libdir}/samba/idmap/ad.so
+%attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
+%attr(755,root,root) %{_libdir}/samba/idmap/hash.so
+%attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/idmap/rid.so
+%attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
+%attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_posix.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_pthread.so
+%attr(755,root,root) %{_libdir}/samba/vfs/audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/cap.so
+%attr(755,root,root) %{_libdir}/samba/vfs/catia.so
+%attr(755,root,root) %{_libdir}/samba/vfs/commit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/crossrename.so
+%attr(755,root,root) %{_libdir}/samba/vfs/default_quota.so
+%attr(755,root,root) %{_libdir}/samba/vfs/dirsort.so
+%attr(755,root,root) %{_libdir}/samba/vfs/expand_msdfs.so
+%attr(755,root,root) %{_libdir}/samba/vfs/extd_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/fake_perms.so
+%attr(755,root,root) %{_libdir}/samba/vfs/full_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
+%attr(755,root,root) %{_libdir}/samba/vfs/netatalk.so
+%attr(755,root,root) %{_libdir}/samba/vfs/preopen.so
+%attr(755,root,root) %{_libdir}/samba/vfs/readahead.so
+%attr(755,root,root) %{_libdir}/samba/vfs/readonly.so
+%attr(755,root,root) %{_libdir}/samba/vfs/recycle.so
+%attr(755,root,root) %{_libdir}/samba/vfs/scannedonly.so
+%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy2.so
+%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy.so
+%attr(755,root,root) %{_libdir}/samba/vfs/smb_traffic_analyzer.so
+%attr(755,root,root) %{_libdir}/samba/vfs/streams_depot.so
+%attr(755,root,root) %{_libdir}/samba/vfs/streams_xattr.so
+%attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
+%attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
+%dir %{_libdir}/samba/pdb
+%attr(755,root,root) %{_libdir}/samba/pdb/ldapsam.so
+%attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
+%attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
+%attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
+%dir %{_libdir}/samba/nss_info
+%attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
+%{_mandir}/man1/dbwrap_tool.1*
+%{_mandir}/man1/smbcontrol.1*
+%{_mandir}/man1/smbstatus.1*
+%{_mandir}/man5/smbpasswd.5*
+%{_mandir}/man8/idmap_ad.8*
+%{_mandir}/man8/idmap_autorid.8*
+%{_mandir}/man8/idmap_hash.8*
+%{_mandir}/man8/idmap_ldap.8*
+%{_mandir}/man8/idmap_nss.8*
+%{_mandir}/man8/idmap_rfc2307.8*
+%{_mandir}/man8/idmap_rid.8*
+%{_mandir}/man8/idmap_tdb2.8*
+%{_mandir}/man8/idmap_tdb.8*
+%{_mandir}/man8/nmbd.8*
+%{_mandir}/man8/smbd.8*
+%{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/smbta-util.8*
+%{_mandir}/man8/vfs_acl_tdb.8*
+%{_mandir}/man8/vfs_aio_fork.8*
+%{_mandir}/man8/vfs_aio_linux.8*
+%{_mandir}/man8/vfs_aio_pthread.8*
+%{_mandir}/man8/vfs_audit.8*
+%{_mandir}/man8/vfs_cap.8*
+%{_mandir}/man8/vfs_catia.8*
+%{_mandir}/man8/vfs_commit.8*
+%{_mandir}/man8/vfs_crossrename.8*
+%{_mandir}/man8/vfs_default_quota.8*
+%{_mandir}/man8/vfs_dirsort.8*
+%{_mandir}/man8/vfs_extd_audit.8*
+%{_mandir}/man8/vfs_fake_perms.8*
+%{_mandir}/man8/vfs_full_audit.8*
+%{_mandir}/man8/vfs_linux_xfs_sgid.8*
+%{_mandir}/man8/vfs_media_harmony.8*
+%{_mandir}/man8/vfs_netatalk.8*
+%{_mandir}/man8/vfs_preopen.8*
+%{_mandir}/man8/vfs_readahead.8*
+%{_mandir}/man8/vfs_readonly.8*
+%{_mandir}/man8/vfs_recycle.8*
+%{_mandir}/man8/vfs_scannedonly.8*
+%{_mandir}/man8/vfs_shadow_copy2.8*
+%{_mandir}/man8/vfs_shadow_copy.8*
+%{_mandir}/man8/vfs_smb_traffic_analyzer.8*
+%{_mandir}/man8/vfs_streams_depot.8*
+%{_mandir}/man8/vfs_streams_xattr.8*
+%{_mandir}/man8/vfs_syncops.8*
+%{_mandir}/man8/vfs_time_audit.8*
 
 %files client
 %defattr(644,root,root,755)
@@ -1084,28 +1144,6 @@ fi
 %{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
-%endif
-
-%files common-server
-%defattr(644,root,root,755)
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
-
-%dir %{_sambahome}
-%dir /var/lib/samba
-%ghost /var/lib/samba/*.dat
-%dir /var/lib/samba/printing
-
-%attr(750,root,root) %dir /var/log/samba
-%attr(750,root,root) %dir /var/log/samba/cores
-%attr(750,root,root) %dir /var/log/samba/cores/smbd
-%attr(750,root,root) %dir /var/log/samba/cores/nmbd
-%attr(750,root,root) %dir /var/log/archive/samba
-%attr(1777,root,root) %dir /var/spool/samba
-%if %{with ldap}
-%doc examples/LDAP
 %endif
 
 %files winbind
@@ -1345,120 +1383,6 @@ fi
 %attr(755,root,root) %{_libdir}/libtorture.so
 %{_includedir}/samba-4.0/torture.h
 %{_pkgconfigdir}/torture.pc
-
-%files -n samba3
-%defattr(644,root,root,755)
-#%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
-%attr(754,root,root) /etc/rc.d/init.d/smb
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba3
-%{systemdunitdir}/nmb.service
-%{systemdunitdir}/smb.service
-%attr(755,root,root) %{_bindir}/dbwrap_tool
-%attr(755,root,root) %{_bindir}/smbcontrol
-%attr(755,root,root) %{_bindir}/smbpasswd
-%attr(755,root,root) %{_bindir}/smbstatus
-%attr(755,root,root) %{_bindir}/smbta-util
-%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
-%attr(755,root,root) %{_sbindir}/nmbd
-%attr(755,root,root) %{_sbindir}/smbd
-%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
-%attr(755,root,root) %{_libdir}/samba/auth/unix.so
-%attr(755,root,root) %{_libdir}/samba/auth/wbc.so
-%attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
-%dir %{_libdir}/samba/idmap
-%attr(755,root,root) %{_libdir}/samba/idmap/ad.so
-%attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
-%attr(755,root,root) %{_libdir}/samba/idmap/hash.so
-%attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/idmap/rid.so
-%attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
-%attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_posix.so
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_pthread.so
-%attr(755,root,root) %{_libdir}/samba/vfs/audit.so
-%attr(755,root,root) %{_libdir}/samba/vfs/cap.so
-%attr(755,root,root) %{_libdir}/samba/vfs/catia.so
-%attr(755,root,root) %{_libdir}/samba/vfs/commit.so
-%attr(755,root,root) %{_libdir}/samba/vfs/crossrename.so
-%attr(755,root,root) %{_libdir}/samba/vfs/default_quota.so
-%attr(755,root,root) %{_libdir}/samba/vfs/dirsort.so
-%attr(755,root,root) %{_libdir}/samba/vfs/expand_msdfs.so
-%attr(755,root,root) %{_libdir}/samba/vfs/extd_audit.so
-%attr(755,root,root) %{_libdir}/samba/vfs/fake_perms.so
-%attr(755,root,root) %{_libdir}/samba/vfs/full_audit.so
-%attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
-%attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
-%attr(755,root,root) %{_libdir}/samba/vfs/netatalk.so
-%attr(755,root,root) %{_libdir}/samba/vfs/preopen.so
-%attr(755,root,root) %{_libdir}/samba/vfs/readahead.so
-%attr(755,root,root) %{_libdir}/samba/vfs/readonly.so
-%attr(755,root,root) %{_libdir}/samba/vfs/recycle.so
-%attr(755,root,root) %{_libdir}/samba/vfs/scannedonly.so
-%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy2.so
-%attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy.so
-%attr(755,root,root) %{_libdir}/samba/vfs/smb_traffic_analyzer.so
-%attr(755,root,root) %{_libdir}/samba/vfs/streams_depot.so
-%attr(755,root,root) %{_libdir}/samba/vfs/streams_xattr.so
-%attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
-%attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
-%dir %{_libdir}/samba/pdb
-%attr(755,root,root) %{_libdir}/samba/pdb/ldapsam.so
-%attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
-%attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
-%attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
-%dir %{_libdir}/samba/nss_info
-%attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
-%{_mandir}/man1/dbwrap_tool.1*
-%{_mandir}/man1/smbcontrol.1*
-%{_mandir}/man1/smbstatus.1*
-%{_mandir}/man5/smbpasswd.5*
-%{_mandir}/man8/idmap_ad.8*
-%{_mandir}/man8/idmap_autorid.8*
-%{_mandir}/man8/idmap_hash.8*
-%{_mandir}/man8/idmap_ldap.8*
-%{_mandir}/man8/idmap_nss.8*
-%{_mandir}/man8/idmap_rfc2307.8*
-%{_mandir}/man8/idmap_rid.8*
-%{_mandir}/man8/idmap_tdb2.8*
-%{_mandir}/man8/idmap_tdb.8*
-%{_mandir}/man8/nmbd.8*
-%{_mandir}/man8/smbd.8*
-%{_mandir}/man8/smbpasswd.8*
-%{_mandir}/man8/smbta-util.8*
-%{_mandir}/man8/vfs_acl_tdb.8*
-%{_mandir}/man8/vfs_aio_fork.8*
-%{_mandir}/man8/vfs_aio_linux.8*
-%{_mandir}/man8/vfs_aio_pthread.8*
-%{_mandir}/man8/vfs_audit.8*
-%{_mandir}/man8/vfs_cap.8*
-%{_mandir}/man8/vfs_catia.8*
-%{_mandir}/man8/vfs_commit.8*
-%{_mandir}/man8/vfs_crossrename.8*
-%{_mandir}/man8/vfs_default_quota.8*
-%{_mandir}/man8/vfs_dirsort.8*
-%{_mandir}/man8/vfs_extd_audit.8*
-%{_mandir}/man8/vfs_fake_perms.8*
-%{_mandir}/man8/vfs_full_audit.8*
-%{_mandir}/man8/vfs_linux_xfs_sgid.8*
-%{_mandir}/man8/vfs_media_harmony.8*
-%{_mandir}/man8/vfs_netatalk.8*
-%{_mandir}/man8/vfs_preopen.8*
-%{_mandir}/man8/vfs_readahead.8*
-%{_mandir}/man8/vfs_readonly.8*
-%{_mandir}/man8/vfs_recycle.8*
-%{_mandir}/man8/vfs_scannedonly.8*
-%{_mandir}/man8/vfs_shadow_copy2.8*
-%{_mandir}/man8/vfs_shadow_copy.8*
-%{_mandir}/man8/vfs_smb_traffic_analyzer.8*
-%{_mandir}/man8/vfs_streams_depot.8*
-%{_mandir}/man8/vfs_streams_xattr.8*
-%{_mandir}/man8/vfs_syncops.8*
-%{_mandir}/man8/vfs_time_audit.8*
 
 %files -n samba3-client
 %defattr(644,root,root,755)

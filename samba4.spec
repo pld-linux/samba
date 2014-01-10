@@ -233,6 +233,8 @@ Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Obsoletes:	samba3-devel
+Obsoletes:	samba-devel < 1:4.0.0-1
 
 %description devel
 Header files for Samba.
@@ -341,19 +343,6 @@ printing to SMB printers.
 Samba-client dostarcza programy uzupełniające obsługę systemu plików
 SMB zawartą w jądrze. Pozwalają one na współdzielenie zasobów SMB i
 drukowanie w sieci SMB.
-
-%package -n samba3-devel
-Summary:	Header files for Samba
-Summary(pl.UTF-8):	Pliki nagłówkowe Samby
-Group:		Development/Libraries
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Obsoletes:	samba-devel < 1:4.0.0-1
-
-%description -n samba3-devel
-Header files for Samba.
-
-%description -n samba3-devel -l pl.UTF-8
-Pliki nagłówkowe Samby.
 
 %package -n samba3-vfs-ceph
 Summary:	VFS module host shares on Ceph file system
@@ -1264,6 +1253,14 @@ fi
 %{_includedir}/samba-4.0/util/time.h
 %{_includedir}/samba-4.0/util/xfile.h
 %{_includedir}/samba-4.0/util_ldb.h
+%{_includedir}/samba-4.0/lookup_sid.h
+%{_includedir}/samba-4.0/machine_sid.h
+%{_includedir}/samba-4.0/netapi.h
+%{_includedir}/samba-4.0/passdb.h
+%{_includedir}/samba-4.0/smbconf.h
+%{_includedir}/samba-4.0/smb_ldap.h
+%{_includedir}/samba-4.0/smbldap.h
+%{_includedir}/samba-4.0/smb_share_modes.h
 %attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so
 %attr(755,root,root) %{_libdir}/libdcerpc-binding.so
 %attr(755,root,root) %{_libdir}/libdcerpc-samr.so
@@ -1272,8 +1269,10 @@ fi
 %attr(755,root,root) %{_libdir}/libgensec.so
 %attr(755,root,root) %{_libdir}/libndr-krb5pac.so
 %attr(755,root,root) %{_libdir}/libndr-nbt.so
-%attr(755,root,root) %{_libdir}/libndr-standard.so
 %attr(755,root,root) %{_libdir}/libndr.so
+%attr(755,root,root) %{_libdir}/libndr-standard.so
+%attr(755,root,root) %{_libdir}/libnetapi.so
+%attr(755,root,root) %{_libdir}/libpdb.so
 %attr(755,root,root) %{_libdir}/libregistry.so
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
@@ -1282,6 +1281,7 @@ fi
 %attr(755,root,root) %{_libdir}/libsamdb.so
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so
 %attr(755,root,root) %{_libdir}/libsmbconf.so
+%attr(755,root,root) %{_libdir}/libsmbldap.so
 %attr(755,root,root) %{_libdir}/libtevent-util.so
 %{_pkgconfigdir}/dcerpc.pc
 %{_pkgconfigdir}/dcerpc_atsvc.pc
@@ -1292,6 +1292,7 @@ fi
 %{_pkgconfigdir}/ndr_krb5pac.pc
 %{_pkgconfigdir}/ndr_nbt.pc
 %{_pkgconfigdir}/ndr_standard.pc
+%{_pkgconfigdir}/netapi.pc
 %{_pkgconfigdir}/registry.pc
 %{_pkgconfigdir}/samba-credentials.pc
 %{_pkgconfigdir}/samba-hostconfig.pc
@@ -1404,21 +1405,6 @@ fi
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
-
-%files -n samba3-devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libnetapi.so
-%attr(755,root,root) %{_libdir}/libpdb.so
-%attr(755,root,root) %{_libdir}/libsmbldap.so
-%{_includedir}/samba-4.0/lookup_sid.h
-%{_includedir}/samba-4.0/machine_sid.h
-%{_includedir}/samba-4.0/netapi.h
-%{_includedir}/samba-4.0/passdb.h
-%{_includedir}/samba-4.0/smbconf.h
-%{_includedir}/samba-4.0/smb_ldap.h
-%{_includedir}/samba-4.0/smbldap.h
-%{_includedir}/samba-4.0/smb_share_modes.h
-%{_pkgconfigdir}/netapi.pc
 
 %files -n samba3-vfs-ceph
 %defattr(644,root,root,755)

@@ -89,6 +89,7 @@ BuildRequires:	sed >= 4.0
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
 BuildRequires:	ntdb-devel >= %{ntdb_ver}
+BuildRequires:	python-ntdb >= %{ntdb_ver}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}

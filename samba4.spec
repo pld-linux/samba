@@ -432,6 +432,36 @@ Header files for Samba.
 %description -n samba3-devel -l pl.UTF-8
 Pliki nagłówkowe Samby.
 
+%package -n samba3-vfs-ceph
+Summary:	VFS module host shares on Ceph file system
+Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików Ceph
+Group:		Networking/Daemons
+Requires:	samba3 = %{epoch}:%{version}-%{release}
+
+%description -n samba3-vfs-ceph
+VFS module host shares on Ceph file system.
+
+This module only works with the libceph.so user-space client.  It is
+not needed if you are using the kernel client or the FUSE client.
+
+%description -n samba3-vfs-ceph -l pl.UTF-8
+Moduł VFS do serwowania zasobów z systemu plików Ceph
+
+Ten moduł działa jednynie z klientem libceph.so. Jest zbędny w
+przypadku używania klienta dostarczanego przez jądro lub FUSE.
+
+%package -n samba3-vfs-glusterfs
+Summary:	VFS module to host shares on GlusterFS file system
+Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików GlusterFS
+Group:		Networking/Daemons
+Requires:	samba3 = %{epoch}:%{version}-%{release}
+
+%description -n samba3-vfs-glusterfs
+VFS module to host shares on GlusterFS file system.
+
+%description -n samba3-vfs-glusterfs -l pl.UTF-8
+Moduł VFS do serwowania zasobów z systemu plików GlusterFS.
+
 %package -n samba3-vfs-notify_fam
 Summary:	VFS module to implement file change notifications
 Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
@@ -1012,9 +1042,7 @@ fi
 %dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
-%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
-%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %dir %{_datadir}/samba
@@ -1485,6 +1513,14 @@ fi
 %{_includedir}/samba-4.0/smbldap.h
 %{_includedir}/samba-4.0/smb_share_modes.h
 %{_pkgconfigdir}/netapi.pc
+
+%files -n samba3-vfs-ceph
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
+
+%files -n samba3-vfs-glusterfs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
 
 %files -n samba3-vfs-notify_fam
 %defattr(644,root,root,755)

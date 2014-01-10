@@ -1,12 +1,10 @@
-# TODO:
-#	- unbundle ntdb (no external release as of 16.Oct.2013)
 #
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
 %bcond_without	cups		# CUPS support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
-%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb)
+%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
 %define		talloc_ver	2.0.7
@@ -22,13 +20,13 @@
 Summary:	Active Directory server
 Summary(pl.UTF-8):	Serwer Active Directory
 Name:		samba4
-Version:	4.1.3
-Release:	2.1
+Version:	4.1.4
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	a5dbfe87f4cb3d9d91e15e5df99a59a1
+# Source0-md5:	c7871012ac40b8c74afff42bbd873bd7
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -90,7 +88,7 @@ BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-#BuildRequires:	ntdb-devel >= %{ntdb_ver}
+BuildRequires:	ntdb-devel >= %{ntdb_ver}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
@@ -174,7 +172,7 @@ Group:		Networking/Daemons
 Requires:	python-samba4 = %{epoch}:%{version}-%{release}
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
-#Requires:	ntdb >= %{ntdb_ver}
+Requires:	ntdb >= %{ntdb_ver}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
@@ -267,7 +265,7 @@ Requires:	python-dns
 Requires:	python-modules
 %if %{with system_libs}
 Requires:	python-ldb >= %{ldb_ver}
-#Requires:	python-ntdb >= %{ntdb_ver}
+Requires:	python-ntdb >= %{ntdb_ver}
 Requires:	python-talloc >= %{talloc_ver}
 Requires:	python-tevent >= %{tevent_ver}
 %endif
@@ -795,7 +793,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--disable-rpath-install \
 	--builtin-libraries=replace,ccan \
-	--bundled-libraries=NONE,subunit,iniparser,ntdb,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
+	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
 	--private-libraries=smbclient,smbsharemodes,wbclient \
 	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2,pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4,auth_unix,auth_wbc,auth_server,auth_netlogond,auth_script,auth_samba4 \
 	--with-acl-support \
@@ -1233,22 +1231,21 @@ fi
 %{_mandir}/man8/vfs_fileid.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
-# TODO
+%if %{without system_libs}
 %attr(755,root,root) %{_bindir}/ntdbbackup
 %attr(755,root,root) %{_bindir}/ntdbdump
 %attr(755,root,root) %{_bindir}/ntdbrestore
 %attr(755,root,root) %{_bindir}/ntdbtool
+%attr(755,root,root) %{_bindir}/tdbbackup
+%attr(755,root,root) %{_bindir}/tdbdump
+%attr(755,root,root) %{_bindir}/tdbtool
 %attr(755,root,root) %{_libdir}/samba/libntdb.so.*
+%attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
+%attr(755,root,root) %{_libdir}/samba/libtdb.so.*
 %{_mandir}/man8/ntdbbackup.8*
 %{_mandir}/man8/ntdbdump.8*
 %{_mandir}/man8/ntdbrestore.8*
 %{_mandir}/man8/ntdbtool.8*
-%if %{without system_libs}
-%attr(755,root,root) %{_bindir}/tdbbackup
-%attr(755,root,root) %{_bindir}/tdbdump
-%attr(755,root,root) %{_bindir}/tdbtool
-%attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
-%attr(755,root,root) %{_libdir}/samba/libtdb.so.*
 %{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
@@ -1429,10 +1426,9 @@ fi
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
 %{_pkgconfigdir}/smbclient-raw.pc
-# TODO
-#%if %{without system_libs}
+%if %{without system_libs}
 %{_mandir}/man3/ntdb.3*
-#%endif
+%endif
 
 %files -n pam-pam_smbpass3
 %defattr(644,root,root,755)
@@ -1483,10 +1479,9 @@ fi
 %{py_sitedir}/samba/tests/dcerpc/*.py[co]
 %dir %{py_sitedir}/samba/web_server
 %{py_sitedir}/samba/web_server/*.py[co]
-# TODO
-%attr(755,root,root) %{py_sitedir}/ntdb.so
 %if %{without system_libs}
 %attr(755,root,root) %{py_sitedir}/ldb.so
+%attr(755,root,root) %{py_sitedir}/ntdb.so
 %attr(755,root,root) %{py_sitedir}/talloc.so
 %attr(755,root,root) %{py_sitedir}/tdb.so
 %attr(755,root,root) %{py_sitedir}/_tevent.so

@@ -49,7 +49,7 @@ BuildRequires:	acl-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_avahi:BuildRequires:	avahi-devel}
-#BuildRequires:	ceph-devel
+BuildRequires:	ceph-devel >= 0.73
 BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	dmapi-devel
@@ -1212,7 +1212,7 @@ fi
 %dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
-#%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
+%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/posix_eadb.so

@@ -170,13 +170,16 @@ pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
 
 %package client
-Summary:	Samba AD client programs
-Summary(pl.UTF-8):	Klienci serwera Samba AD
+Summary:	Samba client programs
+Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs >= 1.5.3-1
 Requires:	python-samba = %{epoch}:%{version}-%{release}
+Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
 Suggests:	cifs-utils
+Obsoletes:	samba-client < 1:4.0.0-1
+Obsoletes:	samba3-client
 Obsoletes:	smbfs
 
 %description client
@@ -326,27 +329,6 @@ testing tools for both the server and client packages of Samba.
 Ten pakiet zawiera pliki programistyczne biblioteki wykorzystywanej
 przez narzędzia testowe dla serwerów i klientów Samby.
 
-%package -n samba3-client
-Summary:	Samba client programs
-Summary(pl.UTF-8):	Klienci serwera Samba
-Group:		Applications/Networking
-Requires:	heimdal-libs
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	samba3-libsmbclient = %{epoch}:%{version}-%{release}
-Suggests:	cifs-utils
-Obsoletes:	samba-client < 1:4.0.0-1
-Obsoletes:	smbfs
-
-%description -n samba3-client
-Samba-client provides some SMB clients, which complement the build-in
-SMB filesystem in Linux. These allow accessing of SMB shares and
-printing to SMB printers.
-
-%description -n samba3-client -l pl.UTF-8
-Samba-client dostarcza programy uzupełniające obsługę systemu plików
-SMB zawartą w jądrze. Pozwalają one na współdzielenie zasobów SMB i
-drukowanie w sieci SMB.
-
 %package -n samba-vfs-ceph
 Summary:	VFS module host shares on Ceph file system
 Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików Ceph
@@ -411,7 +393,7 @@ Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
 Requires:	cups >= 1:1.2.0
-Requires:	samba3-client = %{epoch}:%{version}-%{release}
+Requires:	%{name}-client = %{epoch}:%{version}-%{release}
 Obsoletes:	cups-backend-smb3
 
 %description -n cups-backend-smb
@@ -935,12 +917,30 @@ fi
 %files client
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cifsdd
+%attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/nmblookup
 %attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/reg*
+%attr(755,root,root) %{_bindir}/rpcclient
+%attr(755,root,root) %{_bindir}/sharesec
+%attr(755,root,root) %{_bindir}/smbcacls
+%attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbclient4
+%attr(755,root,root) %{_bindir}/smbtar
+%attr(755,root,root) %{_bindir}/smbtree
+%attr(755,root,root) %{_libdir}/samba/libgpo.so
+%attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
 %{_mandir}/man1/findsmb.1*
+%{_mandir}/man1/nmblookup.1*
 %{_mandir}/man1/nmblookup4.1*
 %{_mandir}/man1/reg*.1*
+%{_mandir}/man1/rpcclient.1*
+%{_mandir}/man1/sharesec.1*
+%{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbtar.1*
+%{_mandir}/man1/smbtree.1*
+%{_mandir}/man8/net.8*
 
 %files common
 %defattr(644,root,root,755)
@@ -1374,27 +1374,6 @@ fi
 %attr(755,root,root) %{_libdir}/libtorture.so
 %{_includedir}/samba-4.0/torture.h
 %{_pkgconfigdir}/torture.pc
-
-%files -n samba3-client
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/net
-%attr(755,root,root) %{_bindir}/nmblookup
-%attr(755,root,root) %{_bindir}/rpcclient
-%attr(755,root,root) %{_bindir}/sharesec
-%attr(755,root,root) %{_bindir}/smbcacls
-%attr(755,root,root) %{_bindir}/smbclient
-%attr(755,root,root) %{_bindir}/smbtar
-%attr(755,root,root) %{_bindir}/smbtree
-%attr(755,root,root) %{_libdir}/samba/libgpo.so
-%attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
-%{_mandir}/man1/nmblookup.1*
-%{_mandir}/man1/rpcclient.1*
-%{_mandir}/man1/sharesec.1*
-%{_mandir}/man1/smbcacls.1*
-%{_mandir}/man1/smbclient.1*
-%{_mandir}/man1/smbtar.1*
-%{_mandir}/man1/smbtree.1*
-%{_mandir}/man8/net.8*
 
 %files -n samba-vfs-ceph
 %defattr(644,root,root,755)

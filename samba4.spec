@@ -103,7 +103,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
-Requires:	python-samba4 = %{epoch}:%{version}-%{release}
+Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
@@ -175,7 +175,7 @@ Summary(pl.UTF-8):	Klienci serwera Samba AD
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs >= 1.5.3-1
-Requires:	python-samba4 = %{epoch}:%{version}-%{release}
+Requires:	python-samba = %{epoch}:%{version}-%{release}
 Suggests:	cifs-utils
 Obsoletes:	smbfs
 
@@ -193,7 +193,7 @@ drukowanie w sieci SMB.
 Summary:	Files used by both Samba servers and clients
 Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Group:		Networking/Daemons
-Requires:	python-samba4 = %{epoch}:%{version}-%{release}
+Requires:	python-samba = %{epoch}:%{version}-%{release}
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
 Requires:	ntdb >= %{ntdb_ver}
@@ -275,7 +275,7 @@ and Wireshark to parse IDL and similar protocols.
 Ten pakiet zawiera kompilator IDL napisany w Perlu, używany przez
 Sambę oraz Wiresharka to analizy IDL i podobnych protokołów.
 
-%package -n python-samba4
+%package -n python-samba
 Summary:	Samba Module for Python
 Summary(pl.UTF-8):	Moduł Samba dla Pythona
 Group:		Development/Languages/Python
@@ -289,12 +289,12 @@ Requires:	python-ntdb >= %{ntdb_ver}
 Requires:	python-talloc >= %{talloc_ver}
 Requires:	python-tevent >= %{tevent_ver}
 %endif
-Obsoletes:	python-samba
+Obsoletes:	python-samba4
 
-%description -n python-samba4
+%description -n python-samba
 Samba Module for Python.
 
-%description -n python-samba4 -l pl.UTF-8
+%description -n python-samba -l pl.UTF-8
 Moduł Samba dla Pythona.
 
 %package test
@@ -347,91 +347,91 @@ Samba-client dostarcza programy uzupełniające obsługę systemu plików
 SMB zawartą w jądrze. Pozwalają one na współdzielenie zasobów SMB i
 drukowanie w sieci SMB.
 
-%package -n samba3-vfs-ceph
+%package -n samba-vfs-ceph
 Summary:	VFS module host shares on Ceph file system
 Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików Ceph
 Group:		Networking/Daemons
-Requires:	samba3 = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
-%description -n samba3-vfs-ceph
+%description -n samba-vfs-ceph
 VFS module host shares on Ceph file system.
 
 This module only works with the libceph.so user-space client.  It is
 not needed if you are using the kernel client or the FUSE client.
 
-%description -n samba3-vfs-ceph -l pl.UTF-8
+%description -n samba-vfs-ceph -l pl.UTF-8
 Moduł VFS do serwowania zasobów z systemu plików Ceph
 
 Ten moduł działa jednynie z klientem libceph.so. Jest zbędny w
 przypadku używania klienta dostarczanego przez jądro lub FUSE.
 
-%package -n samba3-vfs-glusterfs
+%package -n samba-vfs-glusterfs
 Summary:	VFS module to host shares on GlusterFS file system
 Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików GlusterFS
 Group:		Networking/Daemons
-Requires:	samba3 = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 
-%description -n samba3-vfs-glusterfs
+%description -n samba-vfs-glusterfs
 VFS module to host shares on GlusterFS file system.
 
-%description -n samba3-vfs-glusterfs -l pl.UTF-8
+%description -n samba-vfs-glusterfs -l pl.UTF-8
 Moduł VFS do serwowania zasobów z systemu plików GlusterFS.
 
-%package -n samba3-vfs-notify_fam
+%package -n samba-vfs-notify_fam
 Summary:	VFS module to implement file change notifications
 Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
 Group:		Networking/Daemons
-Requires:	samba3 = %{epoch}:%{version}-%{release}
-Obsoletes:	samba-vfs-notify_fam < 1:4.0.0-1
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Obsoletes:	samba3-vfs-notify_fam
 
-%description -n samba3-vfs-notify_fam
+%description -n samba-vfs-notify_fam
 The vfs_notify_fam module makes use of the system FAM (File Alteration
 Monitor) daemon to implement file change notifications for Windows
 clients.
 
-%description -n samba3-vfs-notify_fam -l pl.UTF-8
+%description -n samba-vfs-notify_fam -l pl.UTF-8
 Ten moduł używa demona FAM (File Alteration Monitor) do implementacji
 informowania o zmianach w plikach dla klientów Windows.
 
-%package -n smbget3
+%package -n smbget
 Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
 Group:		Applications/Networking
-Obsoletes:	smbget < 1:4.0.8-3
+Obsoletes:	smbget3
 
-%description -n smbget3
+%description -n smbget
 wget-like utility for downloading files over SMB.
 
-%description -n smbget3 -l pl.UTF-8
+%description -n smbget -l pl.UTF-8
 Narzędzie podobne do wgeta do pobierania plików protokołem SMB
 używanym w sieciach MS Windows.
 
-%package -n cups-backend-smb3
+%package -n cups-backend-smb
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
 Requires:	cups >= 1:1.2.0
 Requires:	samba3-client = %{epoch}:%{version}-%{release}
-Obsoletes:	cups-backend-smb < 1:4.0.8-3
+Obsoletes:	cups-backend-smb3
 
-%description -n cups-backend-smb3
+%description -n cups-backend-smb
 CUPS backend for printing to SMB printers.
 
-%description -n cups-backend-smb3 -l pl.UTF-8
+%description -n cups-backend-smb -l pl.UTF-8
 Backend CUPS-a drukujący na drukarkach SMB.
 
-%package -n nss_wins3
+%package -n nss_wins
 Summary:	Name Service Switch service for WINS
 Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Obsoletes:	nss_wins < 1:4.0.8-3
+Obsoletes:	nss_wins3
 
-%description -n nss_wins3
+%description -n nss_wins
 Provides the libnss_wins shared library which resolves NetBIOS names
 to IP addresses.
 
-%description -n nss_wins3 -l pl.UTF-8
+%description -n nss_wins -l pl.UTF-8
 Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
 IP.
 
@@ -464,18 +464,18 @@ Header files for libsmbclient and libwbclient libraries.
 %description -n samba3-libsmbclient-devel -l pl.UTF-8
 Pliki nagłówkowe bibliotek libsmbclient i libwbclient.
 
-%package -n openldap-schema-samba3
+%package -n openldap-schema-samba
 Summary:	Samba LDAP schema
 Summary(pl.UTF-8):	Schemat LDAP dla Samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
-Obsoletes:	openldap-schema-samba < 1:4.0.0-1
+Obsoletes:	openldap-schema-samba3
 
-%description -n openldap-schema-samba3
+%description -n openldap-schema-samba
 This package contains samba.schema for OpenLDAP.
 
-%description -n openldap-schema-samba3 -l pl.UTF-8
+%description -n openldap-schema-samba -l pl.UTF-8
 Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 
 %prep
@@ -674,8 +674,8 @@ fi
 %post common -p /sbin/ldconfig
 %postun common -p /sbin/ldconfig
 
-%post -n python-samba4 -p /sbin/ldconfig
-%postun -n python-samba4 -p /sbin/ldconfig
+%post -n python-samba -p /sbin/ldconfig
+%postun -n python-samba -p /sbin/ldconfig
 
 %post winbind
 /sbin/chkconfig --add winbind
@@ -697,18 +697,18 @@ fi
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
 
-%post -n openldap-schema-samba3
+%post -n openldap-schema-samba
 # dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
 %openldap_schema_register %{schemadir}/samba.schema -d cosine,inetorgperson,nis
 %service -q ldap restart
 
-%postun -n openldap-schema-samba3
+%postun -n openldap-schema-samba
 if [ "$1" = "0" ]; then
 	%openldap_schema_unregister %{schemadir}/samba.schema
 	%service -q ldap restart
 fi
 
-%triggerpostun -n openldap-schema-samba3 -- openldap-schema-samba < 1:4.0.0-1
+%triggerpostun -n openldap-schema-samba -- openldap-schema-samba3 < 1:4.1.4-3
 # dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
 %openldap_schema_register %{schemadir}/samba.schema -d cosine,inetorgperson,nis
 %service -q ldap restart
@@ -1306,7 +1306,7 @@ fi
 %{_mandir}/man3/Parse::Pidl*.3*
 %{perl_vendorlib}/Parse/Pidl*
 
-%files -n python-samba4
+%files -n python-samba
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
@@ -1396,34 +1396,34 @@ fi
 %{_mandir}/man1/smbtree.1*
 %{_mandir}/man8/net.8*
 
-%files -n samba3-vfs-ceph
+%files -n samba-vfs-ceph
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 
-%files -n samba3-vfs-glusterfs
+%files -n samba-vfs-glusterfs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
 
-%files -n samba3-vfs-notify_fam
+%files -n samba-vfs-notify_fam
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
 %{_mandir}/man8/vfs_notify_fam.8*
 
-%files -n smbget3
+%files -n smbget
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbget
 %{_mandir}/man1/smbget.1*
 %{_mandir}/man5/smbgetrc.5*
 
 %if %{with cups}
-%files -n cups-backend-smb3
+%files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{cups_serverbin}/backend/smb
 %attr(755,root,root) %{_bindir}/smbspool
 %{_mandir}/man8/smbspool.8*
 %endif
 
-%files -n nss_wins3
+%files -n nss_wins
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/libnss_wins*
 
@@ -1441,7 +1441,7 @@ fi
 %{_includedir}/wbclient.h
 
 %if %{with ldap}
-%files -n openldap-schema-samba3
+%files -n openldap-schema-samba
 %defattr(644,root,root,755)
 %{schemadir}/samba.schema
 %endif

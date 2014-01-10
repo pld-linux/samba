@@ -217,7 +217,10 @@ Summary:	Samba-winbind daemon, utilities and documentation
 Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
 Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
+Requires(post,preun,postun):	systemd-units >= 38
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	systemd-units >= 38
+Obsoletes:	samba3-winbind
 
 %description winbind
 Provides the winbind daemon and testing tools to allow authentication
@@ -416,24 +419,6 @@ CUPS backend for printing to SMB printers.
 
 %description -n cups-backend-smb3 -l pl.UTF-8
 Backend CUPS-a drukujący na drukarkach SMB.
-
-%package -n samba3-winbind
-Summary:	Samba-winbind daemon, utilities and documentation
-Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
-Group:		Networking/Daemons
-Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	systemd-units >= 38
-Obsoletes:	samba-winbind < 1:4.0.0-1
-
-%description -n samba3-winbind
-Provides the winbind daemon and testing tools to allow authentication
-and group/user enumeration from a Windows or Samba domain controller.
-
-%description -n samba3-winbind -l pl.UTF-8
-Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
-uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
-Windows lub Samba.
 
 %package -n nss_wins3
 Summary:	Name Service Switch service for WINS
@@ -692,22 +677,22 @@ fi
 %post -n python-samba4 -p /sbin/ldconfig
 %postun -n python-samba4 -p /sbin/ldconfig
 
-%post -n samba3-winbind
+%post winbind
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
 
-%preun -n samba3-winbind
+%preun winbind
 if [ "$1" = "0" ]; then
 	%service winbind stop
 	/sbin/chkconfig --del winbind
 fi
 %systemd_preun winbind.service
 
-%postun -n samba3-winbind
+%postun winbind
 %systemd_reload
 
-%triggerpostun -n samba3-winbind -- samba-winbind < 1:4.0.0-1
+%triggerpostun winbind -- samba-winbind < 1:4.0.0-1
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
@@ -1137,7 +1122,11 @@ fi
 
 %files winbind
 %defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/winbind
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
+%{systemdunitdir}/winbind.service
 %attr(755,root,root) %{_bindir}/wbinfo
+%attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
@@ -1145,6 +1134,7 @@ fi
 %{_mandir}/man5/pam_winbind.conf.5*
 %{_mandir}/man7/winbind_krb5_locator.7*
 %{_mandir}/man8/pam_winbind.8*
+%{_mandir}/man8/winbindd*.8*
 
 %files devel
 %defattr(644,root,root,755)
@@ -1432,14 +1422,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbspool
 %{_mandir}/man8/smbspool.8*
 %endif
-
-%files -n samba3-winbind
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_sbindir}/winbindd
-%attr(754,root,root) /etc/rc.d/init.d/winbind
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
-%{systemdunitdir}/winbind.service
-%{_mandir}/man8/winbindd*.8*
 
 %files -n nss_wins3
 %defattr(644,root,root,755)

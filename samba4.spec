@@ -19,7 +19,7 @@
 %define		virusfilter_version 0.1.3
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
-Name:		samba4
+Name:		samba
 Version:	4.1.4
 Release:	2
 Epoch:		1
@@ -109,7 +109,6 @@ Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
-Obsoletes:	samba < 1:4.0.0-1
 Obsoletes:	samba-doc-html
 Obsoletes:	samba-doc-pdf
 Obsoletes:	samba-pdb-xml
@@ -178,7 +177,6 @@ Requires:	heimdal-libs >= 1.5.3-1
 Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Suggests:	cifs-utils
-Obsoletes:	samba-client < 1:4.0.0-1
 Obsoletes:	samba3-client
 Obsoletes:	smbfs
 
@@ -204,7 +202,6 @@ Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
 %endif
-Obsoletes:	samba-common
 Obsoletes:	samba3-common
 
 %description common
@@ -240,7 +237,6 @@ Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-devel
-Obsoletes:	samba-devel < 1:4.0.0-1
 
 %description devel
 Header files for Samba.
@@ -248,19 +244,18 @@ Header files for Samba.
 %description devel -l pl.UTF-8
 Pliki nagłówkowe Samby.
 
-%package -n pam-pam_smbpass3
+%package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
 Summary(pl.UTF-8):	Moduł PAM smbpass
 Group:		Base
-Obsoletes:	pam-pam_smbpass < 1:4.0.8-3
-Obsoletes:	pam_smbpass
+Obsoletes:	pam_smbpass3
 
-%description -n pam-pam_smbpass3
+%description -n pam-pam_smbpass
 PAM module which can be used on conforming systems to keep the
 smbpasswd (Samba password) database in sync with the Unix password
 file.
 
-%description -n pam-pam_smbpass3 -l pl.UTF-8
+%description -n pam-pam_smbpass -l pl.UTF-8
 Moduł PAM, który może być używany do trzymania pliku smbpasswd (hasła
 Samby) zsynchronizowanego z hasłami uniksowymi.
 
@@ -271,7 +266,7 @@ Group:		Development/Tools
 #Requires:	perl-Parse-Yapp
 
 %description pidl
-The samba4-pidl package contains the Perl IDL compiler used by Samba
+The samba-pidl package contains the Perl IDL compiler used by Samba
 and Wireshark to parse IDL and similar protocols.
 
 %description pidl -l pl.UTF-8
@@ -309,7 +304,7 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
 
 %description test
-samba4-test provides testing tools for both the server and client
+samba-test provides testing tools for both the server and client
 packages of Samba.
 
 %description test -l pl.UTF-8
@@ -630,7 +625,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --add samba
 /sbin/chkconfig --add smb
 %service samba restart "Samba AD daemon"
-%service smb restart "Samba3 daemons"
+%service smb restart "Samba SMB daemons"
 %systemd_post samba.service
 %systemd_post smb.service nmb.service
 
@@ -647,10 +642,15 @@ fi
 %postun
 %systemd_reload
 
-%triggerpostun -- samba < 1:4.0.0-1
+%triggerpostun -- samba3
 /sbin/chkconfig --add smb
-%service smb restart "Samba3 daemons"
+%service smb restart "Samba SMB daemons"
 %systemd_post smb.service nmb.service
+
+%triggerpostun -- samba4
+/sbin/chkconfig --add samba
+%service samba restart "Samba AD daemons"
+%systemd_post samba.service
 
 %post common -p /sbin/ldconfig
 %postun common -p /sbin/ldconfig
@@ -673,7 +673,7 @@ fi
 %postun winbind
 %systemd_reload
 
-%triggerpostun winbind -- samba-winbind < 1:4.0.0-1
+%triggerpostun winbind -- samba3-winbind
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
@@ -1293,7 +1293,7 @@ fi
 %{_mandir}/man3/ntdb.3*
 %endif
 
-%files -n pam-pam_smbpass3
+%files -n pam-pam_smbpass
 %defattr(644,root,root,755)
 %doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
 %attr(755,root,root) /%{_lib}/security/pam_smbpass.so

@@ -1065,7 +1065,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libutil_reg.so
 %attr(755,root,root) %{_libdir}/samba/libutil_setid.so
 %attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
-%attr(755,root,root) %{_libdir}/samba/libwinbind-client.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
 %dir %{_libdir}/samba/auth
 %attr(755,root,root) %{_libdir}/samba/auth/script.so
@@ -1406,6 +1405,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
 %attr(755,root,root) %{_libdir}/libwbclient.so.*
+%attr(755,root,root) %{_libdir}/samba/libwinbind-client.so
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel

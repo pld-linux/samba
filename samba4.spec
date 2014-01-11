@@ -685,22 +685,42 @@ fi
 
 %files
 %defattr(644,root,root,755)
+%{?with_ldap:%doc examples/LDAP}
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
 %config(noreplace) %verify(not md5 mtime size) /etc/env.d/LDB_MODULES_PATH
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
+#%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %attr(754,root,root) /etc/rc.d/init.d/samba
+%attr(754,root,root) /etc/rc.d/init.d/smb
+%{systemdunitdir}/nmb.service
+%{systemdunitdir}/smb.service
 %{systemdunitdir}/samba.service
 %{systemdtmpfilesdir}/samba.conf
 %attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/oLschema2ldif
 %attr(755,root,root) %{_bindir}/pdbedit
 %attr(755,root,root) %{_bindir}/profiles
+%attr(755,root,root) %{_bindir}/sharesec
+%attr(755,root,root) %{_bindir}/smbcontrol
+%attr(755,root,root) %{_bindir}/smbstatus
+%attr(755,root,root) %{_bindir}/smbta-util
+%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
+%attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/samba
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
 %attr(755,root,root) %{_sbindir}/samba_kcc
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
+%attr(755,root,root) %{_sbindir}/smbd
+%attr(755,root,root) %{_libdir}/libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
 %attr(755,root,root) %{_libdir}/samba/libpac.so
+%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
+%attr(755,root,root) %{_libdir}/samba/auth/unix.so
+%attr(755,root,root) %{_libdir}/samba/auth/wbc.so
 %dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
@@ -769,48 +789,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/service/web.so
 %attr(755,root,root) %{_libdir}/samba/service/winbind.so
 %attr(755,root,root) %{_libdir}/samba/service/wrepl.so
-%{_datadir}/samba/setup
-%{_mandir}/man1/oLschema2ldif.1*
-%{_mandir}/man1/profiles.1*
-%{_mandir}/man8/eventlogadm.8*
-%{_mandir}/man8/pdbedit.8*
-%{_mandir}/man8/samba.8*
-
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
-
-%dir %{_sambahome}
-%dir /var/lib/samba
-%ghost /var/lib/samba/*.dat
-%dir /var/lib/samba/printing
-
-%attr(750,root,root) %dir /var/log/samba
-%attr(750,root,root) %dir /var/log/samba/cores
-%attr(750,root,root) %dir /var/log/samba/cores/smbd
-%attr(750,root,root) %dir /var/log/samba/cores/nmbd
-%attr(750,root,root) %dir /var/log/archive/samba
-%attr(1777,root,root) %dir /var/spool/samba
-%if %{with ldap}
-%doc examples/LDAP
-%endif
-
-#%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
-%attr(754,root,root) /etc/rc.d/init.d/smb
-%{systemdunitdir}/nmb.service
-%{systemdunitdir}/smb.service
-%attr(755,root,root) %{_bindir}/sharesec
-%attr(755,root,root) %{_bindir}/smbcontrol
-%attr(755,root,root) %{_bindir}/smbstatus
-%attr(755,root,root) %{_bindir}/smbta-util
-%attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
-%attr(755,root,root) %{_sbindir}/nmbd
-%attr(755,root,root) %{_sbindir}/smbd
-%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
-%attr(755,root,root) %{_libdir}/samba/auth/unix.so
-%attr(755,root,root) %{_libdir}/samba/auth/wbc.so
-%attr(755,root,root) %{_libdir}/libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
@@ -847,10 +825,16 @@ fi
 %attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
 %attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
 %attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
+%{_datadir}/samba/setup
+%{_mandir}/man1/oLschema2ldif.1*
+%{_mandir}/man1/profiles.1*
 %{_mandir}/man1/sharesec.1*
 %{_mandir}/man1/smbcontrol.1*
 %{_mandir}/man1/smbstatus.1*
+%{_mandir}/man8/eventlogadm.8*
 %{_mandir}/man8/nmbd.8*
+%{_mandir}/man8/pdbedit.8*
+%{_mandir}/man8/samba.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/smbta-util.8*
@@ -883,6 +867,18 @@ fi
 %{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/vfs_syncops.8*
 %{_mandir}/man8/vfs_time_audit.8*
+
+%dir %{_sambahome}
+%dir /var/lib/samba
+%ghost /var/lib/samba/*.dat
+%dir /var/lib/samba/printing
+
+%attr(750,root,root) %dir /var/log/samba
+%attr(750,root,root) %dir /var/log/samba/cores
+%attr(750,root,root) %dir /var/log/samba/cores/smbd
+%attr(750,root,root) %dir /var/log/samba/cores/nmbd
+%attr(750,root,root) %dir /var/log/archive/samba
+%attr(1777,root,root) %dir /var/spool/samba
 
 %files client
 %defattr(644,root,root,755)

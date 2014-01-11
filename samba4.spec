@@ -699,7 +699,10 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/samba
 %{systemdunitdir}/samba.service
 %{systemdtmpfilesdir}/samba.conf
+%attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/oLschema2ldif
+%attr(755,root,root) %{_bindir}/pdbedit
+%attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_sbindir}/samba
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
 %attr(755,root,root) %{_sbindir}/samba_kcc
@@ -777,6 +780,9 @@ fi
 %attr(755,root,root) %{_libdir}/samba/service/wrepl.so
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
+%{_mandir}/man1/profiles.1*
+%{_mandir}/man8/eventlogadm.8*
+%{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/samba.8*
 
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
@@ -803,9 +809,8 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %{systemdunitdir}/nmb.service
 %{systemdunitdir}/smb.service
-%attr(755,root,root) %{_bindir}/dbwrap_tool
+%attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcontrol
-%attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/smbstatus
 %attr(755,root,root) %{_bindir}/smbta-util
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
@@ -815,13 +820,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/auth/unix.so
 %attr(755,root,root) %{_libdir}/samba/auth/wbc.so
 %attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
-%dir %{_libdir}/samba/idmap
-%attr(755,root,root) %{_libdir}/samba/idmap/ad.so
-%attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
-%attr(755,root,root) %{_libdir}/samba/idmap/hash.so
-%attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/idmap/rid.so
-%attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
@@ -858,24 +856,9 @@ fi
 %attr(755,root,root) %{_libdir}/samba/pdb/smbpasswd.so
 %attr(755,root,root) %{_libdir}/samba/pdb/tdbsam.so
 %attr(755,root,root) %{_libdir}/samba/pdb/wbc_sam.so
-%dir %{_libdir}/samba/nss_info
-%attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
-%{_mandir}/man1/dbwrap_tool.1*
+%{_mandir}/man1/sharesec.1*
 %{_mandir}/man1/smbcontrol.1*
 %{_mandir}/man1/smbstatus.1*
-%{_mandir}/man5/smbpasswd.5*
-%{_mandir}/man8/idmap_ad.8*
-%{_mandir}/man8/idmap_autorid.8*
-%{_mandir}/man8/idmap_hash.8*
-%{_mandir}/man8/idmap_ldap.8*
-%{_mandir}/man8/idmap_nss.8*
-%{_mandir}/man8/idmap_rfc2307.8*
-%{_mandir}/man8/idmap_rid.8*
-%{_mandir}/man8/idmap_tdb2.8*
-%{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
@@ -913,42 +896,35 @@ fi
 %files client
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cifsdd
-%attr(755,root,root) %{_bindir}/net
-%attr(755,root,root) %{_bindir}/nmblookup
-%attr(755,root,root) %{_bindir}/nmblookup4
-%attr(755,root,root) %{_bindir}/reg*
 %attr(755,root,root) %{_bindir}/rpcclient
-%attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
 %attr(755,root,root) %{_bindir}/smbclient4
+%attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
 %attr(755,root,root) %{_libdir}/samba/libgpo.so
 %attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
 %{_mandir}/man1/findsmb.1*
-%{_mandir}/man1/nmblookup.1*
-%{_mandir}/man1/nmblookup4.1*
-%{_mandir}/man1/reg*.1*
 %{_mandir}/man1/rpcclient.1*
-%{_mandir}/man1/sharesec.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbcquotas.1*
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
-%{_mandir}/man8/net.8*
 
 %files common
 %defattr(644,root,root,755)
 %doc README WHATSNEW.txt Roadmap
 /etc/ld.so.conf.d/samba.conf
+%attr(755,root,root) %{_bindir}/dbwrap_tool
+%attr(755,root,root) %{_bindir}/net
+%attr(755,root,root) %{_bindir}/nmblookup
+%attr(755,root,root) %{_bindir}/nmblookup4
+%attr(755,root,root) %{_bindir}/reg*
 %attr(755,root,root) %{_bindir}/samba-regedit
 %attr(755,root,root) %{_bindir}/samba-tool
-%attr(755,root,root) %{_bindir}/eventlogadm
-%attr(755,root,root) %{_bindir}/ntlm_auth
-%attr(755,root,root) %{_bindir}/pdbedit
-%attr(755,root,root) %{_bindir}/profiles
-%attr(755,root,root) %{_bindir}/smbcquotas
+%attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
 %dir %{_sysconfdir}/samba
@@ -1018,7 +994,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libevents.so
 %attr(755,root,root) %{_libdir}/samba/libflag_mapping.so
 %attr(755,root,root) %{_libdir}/samba/libgse.so
-%attr(755,root,root) %{_libdir}/samba/libidmap.so
 %attr(755,root,root) %{_libdir}/samba/libiniparser.so
 %attr(755,root,root) %{_libdir}/samba/libinterfaces.so
 %attr(755,root,root) %{_libdir}/samba/libkrb5samba.so
@@ -1035,7 +1010,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libnetif.so
 %attr(755,root,root) %{_libdir}/samba/libnon_posix_acls.so
 %attr(755,root,root) %{_libdir}/samba/libnpa_tstream.so
-%attr(755,root,root) %{_libdir}/samba/libnss_info.so
 %attr(755,root,root) %{_libdir}/samba/libntvfs.so
 %attr(755,root,root) %{_libdir}/samba/libpopt_samba3.so
 %attr(755,root,root) %{_libdir}/samba/libposix_eadb.so
@@ -1079,16 +1053,17 @@ fi
 %{_datadir}/samba/codepages/lowcase.dat
 %{_datadir}/samba/codepages/upcase.dat
 %{_datadir}/samba/codepages/valid.dat
-%{_mandir}/man1/ntlm_auth.1*
-%{_mandir}/man1/profiles.1*
-%{_mandir}/man1/smbcquotas.1*
+%{_mandir}/man1/dbwrap_tool.1*
+%{_mandir}/man1/nmblookup.1*
+%{_mandir}/man1/nmblookup4.1*
+%{_mandir}/man1/reg*.1*
 %{_mandir}/man1/testparm.1*
 %{_mandir}/man1/vfstest.1*
 %{_mandir}/man5/lmhosts.5*
 %{_mandir}/man5/smb.conf.5*
+%{_mandir}/man5/smbpasswd.5*
 %{_mandir}/man7/samba.7*
-%{_mandir}/man8/eventlogadm.8*
-%{_mandir}/man8/pdbedit.8*
+%{_mandir}/man8/net.8*
 %{_mandir}/man8/samba-regedit.8*
 %{_mandir}/man8/samba-tool.8*
 %{_mandir}/man8/vfs_acl_xattr.8*
@@ -1120,14 +1095,39 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
 %{systemdunitdir}/winbind.service
+%attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/wbinfo
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) /%{_lib}/security/pam_winbind*
 %attr(755,root,root) /%{_lib}/libnss_winbind*
 %attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
+%attr(755,root,root) %{_libdir}/samba/libidmap.so
+%attr(755,root,root) %{_libdir}/samba/libnss_info.so
+%dir %{_libdir}/samba/idmap
+%attr(755,root,root) %{_libdir}/samba/idmap/ad.so
+%attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
+%attr(755,root,root) %{_libdir}/samba/idmap/hash.so
+%attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/idmap/rid.so
+%attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
+%dir %{_libdir}/samba/nss_info
+%attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
+%{_mandir}/man1/ntlm_auth.1*
 %{_mandir}/man1/wbinfo*.1*
 %{_mandir}/man5/pam_winbind.conf.5*
 %{_mandir}/man7/winbind_krb5_locator.7*
+%{_mandir}/man8/idmap_ad.8*
+%{_mandir}/man8/idmap_autorid.8*
+%{_mandir}/man8/idmap_hash.8*
+%{_mandir}/man8/idmap_ldap.8*
+%{_mandir}/man8/idmap_nss.8*
+%{_mandir}/man8/idmap_rfc2307.8*
+%{_mandir}/man8/idmap_rid.8*
+%{_mandir}/man8/idmap_tdb2.8*
+%{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/pam_winbind.8*
 %{_mandir}/man8/winbindd*.8*
 

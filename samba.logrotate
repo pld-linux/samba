@@ -4,6 +4,7 @@
 	missingok
 	olddir /var/log/archive/samba
 	postrotate
-		/bin/killall -HUP samba
+		/sbin/service smb reload >/dev/null || :
+		/sbin/service samba reload >/dev/null || :
 	endscript
 }

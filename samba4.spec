@@ -37,7 +37,6 @@ Source8:	winbind.sysconfig
 Source9:	samba.init
 Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilter-%{virusfilter_version}.tar.bz2
 # Source10-md5:	a3a30d5fbf309d356e8c5833db680c17
-Source11:	samba3.logrotate
 Patch0:		system-heimdal.patch
 Patch1:		samba-c++-nofail.patch
 Patch4:		samba-lprng-no-dot-printers.patch
@@ -569,7 +568,6 @@ install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/samba
 cp -p %{SOURCE5} $RPM_BUILD_ROOT/etc/logrotate.d/samba
-cp -p %{SOURCE11} $RPM_BUILD_ROOT/etc/logrotate.d/samba3
 cp -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/winbind
 cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
@@ -803,7 +801,6 @@ fi
 
 #%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %attr(754,root,root) /etc/rc.d/init.d/smb
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba3
 %{systemdunitdir}/nmb.service
 %{systemdunitdir}/smb.service
 %attr(755,root,root) %{_bindir}/dbwrap_tool

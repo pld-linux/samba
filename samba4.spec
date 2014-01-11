@@ -497,7 +497,6 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--disable-rpath-install \
 	--builtin-libraries=replace,ccan \
 	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
-	--private-libraries=smbclient,smbsharemodes,wbclient \
 	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2,pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4,auth_unix,auth_wbc,auth_server,auth_netlogond,auth_script,auth_samba4 \
 	--with-acl-support \
 	--with%{!?with_ads:out}-ads \
@@ -574,14 +573,6 @@ cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/sysconfig/winbind
 install -p %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/samba
 
 echo "LDB_MODULES_PATH=%{_libdir}/samba/ldb" > $RPM_BUILD_ROOT/etc/env.d/LDB_MODULES_PATH
-
-# move lib{smb,wb}client where they always were for compatibility
-%{__mv} $RPM_BUILD_ROOT%{_libdir}/samba/libsmbclient.so.* $RPM_BUILD_ROOT%{_libdir}
-ln -s libsmbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so
-ln -s libwbclient.so.0 $RPM_BUILD_ROOT%{_libdir}/libwbclient.so
-%{__mv} $RPM_BUILD_ROOT%{_libdir}/samba/libwbclient.so.* $RPM_BUILD_ROOT%{_libdir}
-%{__mv} $RPM_BUILD_ROOT%{_includedir}/samba-4.0/libsmbclient.h $RPM_BUILD_ROOT%{_includedir}
-%{__mv} $RPM_BUILD_ROOT%{_includedir}/samba-4.0/wbclient.h $RPM_BUILD_ROOT%{_includedir}
 
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/libnss_winbind.so* $RPM_BUILD_ROOT/%{_lib}
 %{__mv} $RPM_BUILD_ROOT%{_libdir}/libnss_wins.so* $RPM_BUILD_ROOT/%{_lib}
@@ -819,7 +810,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/auth/samba4.so
 %attr(755,root,root) %{_libdir}/samba/auth/unix.so
 %attr(755,root,root) %{_libdir}/samba/auth/wbc.so
-%attr(755,root,root) %{_libdir}/samba/libsmbsharemodes.so.0
+%attr(755,root,root) %{_libdir}/libsmbsharemodes.so.0
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
@@ -1264,6 +1255,7 @@ fi
 %attr(755,root,root) %{_libdir}/libsamba-policy.so
 %attr(755,root,root) %{_libdir}/libsamba-util.so
 %attr(755,root,root) %{_libdir}/libsamdb.so
+%attr(755,root,root) %{_libdir}/libsmbsharemodes.so
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so
 %attr(755,root,root) %{_libdir}/libsmbconf.so
 %attr(755,root,root) %{_libdir}/libsmbldap.so
@@ -1284,6 +1276,7 @@ fi
 %{_pkgconfigdir}/samba-policy.pc
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
+%{_pkgconfigdir}/smbsharemodes.pc
 %{_pkgconfigdir}/smbclient-raw.pc
 %if %{without system_libs}
 %{_mandir}/man3/ntdb.3*
@@ -1412,8 +1405,10 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so
 %attr(755,root,root) %{_libdir}/libwbclient.so
-%{_includedir}/libsmbclient.h
-%{_includedir}/wbclient.h
+%{_includedir}/samba-4.0/libsmbclient.h
+%{_includedir}/samba-4.0/wbclient.h
+%{_pkgconfigdir}/smbclient.pc
+%{_pkgconfigdir}/wbclient.pc
 
 %if %{with ldap}
 %files -n openldap-schema-samba

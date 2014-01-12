@@ -716,13 +716,13 @@ fi
 %files
 %defattr(644,root,root,755)
 %{?with_ldap:%doc examples/LDAP}
+%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.samba
-%config(noreplace) %verify(not md5 mtime size) /etc/env.d/LDB_MODULES_PATH
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/samba
-#%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
+%config(noreplace) %verify(not md5 mtime size) /etc/env.d/LDB_MODULES_PATH
 %attr(754,root,root) /etc/rc.d/init.d/samba
 %attr(754,root,root) /etc/rc.d/init.d/smb
 %{systemdunitdir}/nmb.service

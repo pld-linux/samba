@@ -694,8 +694,8 @@ fi
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
 
-%post libsmbclient -p /sbin/ldconfig
-%postun libsmbclient -p /sbin/ldconfig
+%post -n libsmbclient -p /sbin/ldconfig
+%postun -n libsmbclient -p /sbin/ldconfig
 
 %post -n openldap-schema-samba
 # dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)

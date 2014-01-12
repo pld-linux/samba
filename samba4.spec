@@ -112,7 +112,6 @@ Requires:	systemd-units >= 38
 Obsoletes:	samba-doc-html
 Obsoletes:	samba-doc-pdf
 Obsoletes:	samba-pdb-xml
-Obsoletes:	samba-pdb-xml
 Obsoletes:	samba-vfs-block
 Obsoletes:	samba-vfs-audit
 Obsoletes:	samba-vfs-cap
@@ -195,8 +194,8 @@ drukowanie w sieci SMB.
 Summary:	Files used by both Samba servers and clients
 Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Group:		Networking/Daemons
-Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+Requires:	python-samba = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-common
 
 %description common
@@ -263,7 +262,8 @@ Summary:	PAM Samba Password Module
 Summary(pl.UTF-8):	Moduł PAM smbpass
 Group:		Base
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	pam_smbpass3
+Obsoletes:	pam_smbpass
+Obsoletes:	pam-pam_smbpass3
 
 %description -n pam-pam_smbpass
 PAM module which can be used on conforming systems to keep the
@@ -405,8 +405,8 @@ używanym w sieciach MS Windows.
 Summary:	CUPS backend for printing to SMB printers
 Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
-Requires:	cups >= 1:1.2.0
 Requires:	%{name}-client = %{epoch}:%{version}-%{release}
+Requires:	cups >= 1:1.2.0
 Obsoletes:	cups-backend-smb3
 
 %description -n cups-backend-smb
@@ -716,7 +716,6 @@ fi
 %files
 %defattr(644,root,root,755)
 %{?with_ldap:%doc examples/LDAP}
-%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smbusers
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/samba
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/samba
@@ -745,9 +744,6 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
 %attr(755,root,root) %{_sbindir}/smbd
-%dir %{_libdir}/samba/auth
-%attr(755,root,root) %{_libdir}/samba/auth/script.so
-%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
 %dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
@@ -934,6 +930,9 @@ fi
 %files common
 %defattr(644,root,root,755)
 %doc README WHATSNEW.txt Roadmap
+%dir %{_sysconfdir}/samba
+%attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
 %attr(755,root,root) %{_bindir}/dbwrap_tool
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/nmblookup
@@ -944,8 +943,9 @@ fi
 %attr(755,root,root) %{_bindir}/smbpasswd
 %attr(755,root,root) %{_bindir}/testparm
 %attr(755,root,root) %{_bindir}/vfstest
-%dir %{_sysconfdir}/samba
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
+%dir %{_libdir}/samba/auth
+%attr(755,root,root) %{_libdir}/samba/auth/script.so
+%attr(755,root,root) %{_libdir}/samba/auth/samba4.so
 %dir %{_datadir}/samba
 %dir %{_datadir}/samba/codepages
 %{_datadir}/samba/codepages/lowcase.dat
@@ -1100,6 +1100,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
+%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser.so
 %attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
 %attr(755,root,root) %{_libdir}/samba/libsmb_transport.so
@@ -1127,7 +1128,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libidmap.so
 %attr(755,root,root) %{_libdir}/samba/libnss_info.so
 %attr(755,root,root) %{_libdir}/samba/libiniparser.so
-%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
 %dir %{_libdir}/samba/idmap
 %attr(755,root,root) %{_libdir}/samba/idmap/ad.so
 %attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
@@ -1159,7 +1159,6 @@ fi
 
 %files devel
 %defattr(644,root,root,755)
-%dir %{_includedir}/samba-4.0
 %{_includedir}/samba-4.0/charset.h
 %dir %{_includedir}/samba-4.0/core
 %{_includedir}/samba-4.0/core/doserr.h
@@ -1434,6 +1433,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so
 %attr(755,root,root) %{_libdir}/libwbclient.so
+%dir %{_includedir}/samba-4.0
 %{_includedir}/samba-4.0/libsmbclient.h
 %{_includedir}/samba-4.0/wbclient.h
 %{_pkgconfigdir}/smbclient.pc

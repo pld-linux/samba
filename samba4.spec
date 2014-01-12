@@ -100,9 +100,10 @@ BuildRequires:	xfsprogs-devel
 BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
-Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
@@ -172,9 +173,10 @@ Summary:	Samba client programs
 Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	heimdal-libs >= 1.5.3-1
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
+Requires:	heimdal-libs >= 1.5.3-1
 Suggests:	cifs-utils
 Obsoletes:	samba3-client
 Obsoletes:	smbfs
@@ -194,13 +196,7 @@ Summary:	Files used by both Samba servers and clients
 Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Group:		Networking/Daemons
 Requires:	python-samba = %{epoch}:%{version}-%{release}
-%if %{with system_libs}
-Requires:	ldb >= %{ldb_ver}
-Requires:	ntdb >= %{ntdb_ver}
-Requires:	talloc >= %{talloc_ver}
-Requires:	tdb >= %{tdb_ver}
-Requires:	tevent >= %{tevent_ver}
-%endif
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-common
 
 %description common
@@ -212,9 +208,9 @@ Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
 klientów Samby.
 
 %package libs
-Summary:	Files used by both Samba servers and clients
-Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
-Group:		Networking/Daemons
+Summary:	Samba shared libraries
+Summary(pl.UTF-8):	Biblioteki dzieloe Samby
+Group:		Libraries
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
 Requires:	ntdb >= %{ntdb_ver}
@@ -224,12 +220,10 @@ Requires:	tevent >= %{tevent_ver}
 %endif
 
 %description libs
-Samba-common provides files necessary for both the server and client
-packages of Samba.
+Samba shared libraries.
 
 %description libs -l pl.UTF-8
-Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
-klientów Samby.
+Biblioteki dzieloe Samby.
 
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
@@ -238,6 +232,7 @@ Group:		Networking/Daemons
 Requires(post,preun):	/sbin/chkconfig
 Requires(post,preun,postun):	systemd-units >= 38
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	systemd-units >= 38
 Obsoletes:	samba3-winbind
 
@@ -254,7 +249,7 @@ Windows lub Samba.
 Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-devel
 
 %description devel
@@ -267,6 +262,7 @@ Pliki nagłówkowe Samby.
 Summary:	PAM Samba Password Module
 Summary(pl.UTF-8):	Moduł PAM smbpass
 Group:		Base
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Obsoletes:	pam_smbpass3
 
 %description -n pam-pam_smbpass
@@ -297,6 +293,7 @@ Summary:	Samba Module for Python
 Summary(pl.UTF-8):	Moduł Samba dla Pythona
 Group:		Development/Languages/Python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	python
 Requires:	python-dns
 Requires:	python-modules
@@ -320,6 +317,7 @@ Summary(pl.UTF-8):	Narzędzia testowe dla serwerów i klientów Samby
 Group:		Applications/System
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
 
 %description test
@@ -393,6 +391,7 @@ informowania o zmianach w plikach dla klientów Windows.
 Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
 Group:		Applications/Networking
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Obsoletes:	smbget3
 
 %description -n smbget
@@ -421,6 +420,7 @@ Summary:	Name Service Switch service for WINS
 Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Obsoletes:	nss_wins3
 
 %description -n nss_wins
@@ -435,6 +435,7 @@ IP.
 Summary:	libsmbclient and libwbclient - Samba client libraries
 Summary(pl.UTF-8):	libsmbclient i libwbclient - biblioteki klienckie Samby
 Group:		Libraries
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-libsmbclient
 
 %description -n libsmbclient
@@ -602,7 +603,11 @@ touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
 echo '127.0.0.1 localhost' > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
 
+%if "%{_lib"}" == "lib64"
+echo "%{_libdir}/samba" >$RPM_BUILD_ROOT/etc/ld.so.conf.d/samba64.conf
+%else
 echo "%{_libdir}/samba" >$RPM_BUILD_ROOT/etc/ld.so.conf.d/samba.conf
+%endif
 
 %if %{with cups}
 install -d $RPM_BUILD_ROOT%{cups_serverbin}/backend
@@ -982,7 +987,11 @@ fi
 
 %files libs
 %defattr(644,root,root,755)
+%if "%{_lib}" == "lib64"
+/etc/ld.so.conf.d/samba64.conf
+%else
 /etc/ld.so.conf.d/samba.conf
+%endif
 %attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libdcerpc-atsvc.so.0
 %attr(755,root,root) %{_libdir}/libdcerpc-binding.so.*.*.*

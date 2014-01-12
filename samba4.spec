@@ -603,7 +603,7 @@ touch $RPM_BUILD_ROOT/var/lib/samba/{wins.dat,browse.dat}
 
 echo '127.0.0.1 localhost' > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
 
-%if "%{_lib"}" == "lib64"
+%if "%{_lib}" == "lib64"
 echo "%{_libdir}/samba" >$RPM_BUILD_ROOT/etc/ld.so.conf.d/samba64.conf
 %else
 echo "%{_libdir}/samba" >$RPM_BUILD_ROOT/etc/ld.so.conf.d/samba.conf

@@ -661,13 +661,14 @@ fi
 %service samba restart "Samba AD daemons"
 %systemd_post samba.service
 
-%post common -p /sbin/ldconfig
-%postun common -p /sbin/ldconfig
+%post libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
 %post -n python-samba -p /sbin/ldconfig
 %postun -n python-samba -p /sbin/ldconfig
 
 %post winbind
+/sbin/ldconfig
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
@@ -680,12 +681,16 @@ fi
 %systemd_preun winbind.service
 
 %postun winbind
+/sbin/ldconfig
 %systemd_reload
 
 %triggerpostun winbind -- samba3-winbind
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
+
+%post libsmbclient -p /sbin/ldconfig
+%postun libsmbclient -p /sbin/ldconfig
 
 %post -n openldap-schema-samba
 # dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)

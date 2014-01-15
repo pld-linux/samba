@@ -1,4 +1,8 @@
 #
+# TODO:
+#	- safeguard smb.conf on upgrade from samba4
+#	- verify upgrades from samba 3.x and samba4
+#
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
 %bcond_without	cups		# CUPS support

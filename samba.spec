@@ -1,8 +1,4 @@
 #
-# TODO:
-#	- safeguard smb.conf on upgrade from samba4
-#	- verify upgrades from samba 3.x and samba4
-#
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
 %bcond_without	cups		# CUPS support
@@ -129,6 +125,7 @@ Obsoletes:	samba-vfs-readahead
 Obsoletes:	samba-vfs-readonly
 Obsoletes:	samba-vfs-scannedonly
 Obsoletes:	samba-vfs-shadow_copy
+Obsoletes:	samba3
 Obsoletes:	samba3-server
 Obsoletes:	samba3-vfs-audit
 Obsoletes:	samba3-vfs-cap
@@ -142,6 +139,7 @@ Obsoletes:	samba3-vfs-readahead
 Obsoletes:	samba3-vfs-readonly
 Obsoletes:	samba3-vfs-scannedonly
 Obsoletes:	samba3-vfs-shadow_copy
+Obsoletes:	samba4
 Obsoletes:	samba4-common-server
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -182,6 +180,7 @@ Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs >= 1.5.3-1
 Suggests:	cifs-utils
 Obsoletes:	samba3-client
+Obsoletes:	samba4-client
 Obsoletes:	smbfs
 
 %description client
@@ -201,6 +200,7 @@ Group:		Networking/Daemons
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	python-samba = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-common
+Obsoletes:	samba4-common
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -238,6 +238,7 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	systemd-units >= 38
 Obsoletes:	samba3-winbind
+Obsoletes:	samba4-winbind
 
 %description winbind
 Provides the winbind daemon and testing tools to allow authentication
@@ -254,6 +255,7 @@ Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-devel
+Obsoletes:	samba4-devel
 
 %description devel
 Header files for Samba.
@@ -283,6 +285,7 @@ Summary:	Perl IDL compiler
 Summary(pl.UTF-8):	Kompilator IDL w Perlu
 Group:		Development/Tools
 #Requires:	perl-Parse-Yapp
+Obsoletes:	samba4-pidl
 
 %description pidl
 The samba-pidl package contains the Perl IDL compiler used by Samba
@@ -323,6 +326,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
+Obsoletes:	samba4-test
 
 %description test
 samba-test provides testing tools for both the server and client
@@ -336,6 +340,7 @@ Summary:	Testing development files for Samba servers and clients
 Summary(pl.UTF-8):	Pliki programistyczne narzędzi testowych dla serwerów i klientów Samby
 Group:		Applications/System
 Requires:	%{name}-test = %{epoch}:%{version}-%{release}
+Obsoletes:	samba4-test-devel
 
 %description test-devel
 samba-test-devel provides development files for the library used by
@@ -669,6 +674,20 @@ fi
 /sbin/chkconfig --add samba
 %service samba restart "Samba AD daemons"
 %systemd_post samba.service
+
+%triggerprein common -- samba4
+cp -a %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.samba4
+
+%triggerpostun common -- samba4
+%{__mv} -f %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.rpmnew
+%{__mv} %{_sysconfdir}/samba/smb.conf.samba4 %{_sysconfdir}/samba/smb.conf
+
+%triggerprein common -- samba3-server
+cp -a %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.samba4
+
+%triggerpostun common -- samba3-server
+%{__mv} -f %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.rpmnew
+%{__mv} %{_sysconfdir}/samba/smb.conf.samba4 %{_sysconfdir}/samba/smb.conf
 
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig

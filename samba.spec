@@ -43,6 +43,7 @@ Patch4:		samba-lprng-no-dot-printers.patch
 Patch5:		systemd-pid-dir.patch
 Patch6:		unicodePwd-nthash-values-over-LDAP.patch
 Patch7:		link.patch
+Patch8:		server-role.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -491,6 +492,7 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 sed -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 sed -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

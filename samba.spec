@@ -39,11 +39,11 @@ Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilt
 # Source10-md5:	a3a30d5fbf309d356e8c5833db680c17
 Patch0:		system-heimdal.patch
 Patch1:		samba-c++-nofail.patch
-Patch4:		samba-lprng-no-dot-printers.patch
-Patch5:		systemd-pid-dir.patch
-Patch6:		unicodePwd-nthash-values-over-LDAP.patch
-Patch7:		link.patch
-Patch8:		server-role.patch
+Patch2:		samba-lprng-no-dot-printers.patch
+Patch3:		systemd-pid-dir.patch
+Patch4:		unicodePwd-nthash-values-over-LDAP.patch
+Patch5:		link.patch
+Patch6:		server-role.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 BuildRequires:	autoconf
@@ -488,11 +488,11 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %setup -q -n samba-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
 
 sed -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 sed -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

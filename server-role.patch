@@ -4,7 +4,7 @@
  PIDFile=/run/samba/smbd.pid
  LimitNOFILE=16384
  EnvironmentFile=-/etc/sysconfig/samba
-+ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role"  2>/dev/null | tail -1`" != "active directory domain controller" ]'
++ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -1`" != "active directory domain controller" ]'
  ExecStart=/usr/sbin/smbd $SMBDOPTIONS
  ExecReload=/usr/bin/kill -HUP $MAINPID
  
@@ -14,7 +14,7 @@
  Type=forking
  PIDFile=/run/samba/nmbd.pid
  EnvironmentFile=-/etc/sysconfig/samba
-+ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role"  2>/dev/null | tail -1`" != "active directory domain controller" ]'
++ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -1`" != "active directory domain controller" ]'
 +ExecStartPre=/bin/sh -c '[ "`testparm -s --parameter-name="disable netbios" 2>/dev/null`" != "Yes" ]'
  ExecStart=/usr/sbin/nmbd $NMBDOPTIONS
  ExecReload=/usr/bin/kill -HUP $MAINPID
@@ -25,7 +25,7 @@
  PIDFile=/run/samba/samba.pid
  LimitNOFILE=16384
  EnvironmentFile=-/etc/sysconfig/samba
-+ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role"  2>/dev/null | tail -1`" = "active directory domain controller" ]'
++ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -1`" = "active directory domain controller" ]'
  ExecStart=/usr/sbin/samba $SAMBAOPTIONS
  ExecReload=/usr/bin/kill -HUP $MAINPID
  

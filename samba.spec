@@ -213,7 +213,7 @@ klientów Samby.
 
 %package libs
 Summary:	Samba shared libraries
-Summary(pl.UTF-8):	Biblioteki dzieloe Samby
+Summary(pl.UTF-8):	Biblioteki współdzielone Samby
 Group:		Libraries
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
@@ -227,7 +227,7 @@ Requires:	tevent >= %{tevent_ver}
 Samba shared libraries.
 
 %description libs -l pl.UTF-8
-Biblioteki dzieloe Samby.
+Biblioteki współdzielone Samby.
 
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
@@ -285,7 +285,6 @@ Samby) zsynchronizowanego z hasłami uniksowymi.
 Summary:	Perl IDL compiler
 Summary(pl.UTF-8):	Kompilator IDL w Perlu
 Group:		Development/Tools
-#Requires:	perl-Parse-Yapp
 Obsoletes:	samba4-pidl
 
 %description pidl
@@ -352,13 +351,13 @@ Ten pakiet zawiera pliki programistyczne biblioteki wykorzystywanej
 przez narzędzia testowe dla serwerów i klientów Samby.
 
 %package -n samba-vfs-ceph
-Summary:	VFS module host shares on Ceph file system
+Summary:	VFS module to host shares on Ceph file system
 Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików Ceph
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 
 %description -n samba-vfs-ceph
-VFS module host shares on Ceph file system.
+VFS module to host shares on Ceph file system.
 
 This module only works with the libceph.so user-space client.  It is
 not needed if you are using the kernel client or the FUSE client.
@@ -366,8 +365,9 @@ not needed if you are using the kernel client or the FUSE client.
 %description -n samba-vfs-ceph -l pl.UTF-8
 Moduł VFS do serwowania zasobów z systemu plików Ceph
 
-Ten moduł działa jednynie z klientem libceph.so. Jest zbędny w
-przypadku używania klienta dostarczanego przez jądro lub FUSE.
+Ten moduł działa jedynie z klientem przestrzeni użytkownika
+libceph.so. Jest zbędny w przypadku używania klienta dostarczanego
+przez jądro lub FUSE.
 
 %package -n samba-vfs-glusterfs
 Summary:	VFS module to host shares on GlusterFS file system
@@ -571,13 +571,11 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
 # Undo the PIDL install, we want to try again with the right options.
-%{__rm} -r $RPM_BUILD_ROOT/%{_datadir}/perl5
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/perl5
 
 # Install PIDL
-cd pidl
-%{__make} install \
+%{__make} -C pidl install \
 	PERL_INSTALL_ROOT=$RPM_BUILD_ROOT
-cd ..
 
 # Clean out crap left behind by the PIDL install
 %{__rm} $RPM_BUILD_ROOT%{perl_vendorlib}/wscript_build

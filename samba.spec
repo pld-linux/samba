@@ -16,6 +16,7 @@
 
 %include	/usr/lib/rpm/macros.perl
 
+# NOTE: packages order is: server + additions, common, clients, libs+devel, ldap
 %define		virusfilter_version 0.1.3
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
@@ -46,8 +47,6 @@ Patch5:		link.patch
 Patch6:		server-role.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
-BuildRequires:	autoconf
-BuildRequires:	automake
 %{?with_avahi:BuildRequires:	avahi-devel}
 BuildRequires:	ceph-devel >= 0.73
 BuildRequires:	ctdb-devel
@@ -66,7 +65,6 @@ BuildRequires:	libaio-devel
 BuildRequires:	libcom_err-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
-BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
@@ -170,6 +168,70 @@ NetBIOS po TCP/IP (NetBT) i nie wymaga protokołu NetBEUI. Ta wersja ma
 pełne wsparcie dla blokowania plików, a także wsparcie dla kodowania
 haseł w standardzie MS i zarządzania bazą WINS.
 
+%package vfs-ceph
+Summary:	VFS module to host shares on Ceph file system
+Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików Ceph
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-ceph
+VFS module to host shares on Ceph file system.
+
+This module only works with the libceph.so user-space client.  It is
+not needed if you are using the kernel client or the FUSE client.
+
+%description vfs-ceph -l pl.UTF-8
+Moduł VFS do serwowania zasobów z systemu plików Ceph.
+
+Ten moduł działa jedynie z klientem przestrzeni użytkownika
+libceph.so. Jest zbędny w przypadku używania klienta dostarczanego
+przez jądro lub FUSE.
+
+%package vfs-glusterfs
+Summary:	VFS module to host shares on GlusterFS file system
+Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików GlusterFS
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description vfs-glusterfs
+VFS module to host shares on GlusterFS file system.
+
+%description vfs-glusterfs -l pl.UTF-8
+Moduł VFS do serwowania zasobów z systemu plików GlusterFS.
+
+%package vfs-notify_fam
+Summary:	VFS module to implement file change notifications
+Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
+Group:		Networking/Daemons
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Obsoletes:	samba3-vfs-notify_fam
+
+%description vfs-notify_fam
+The vfs_notify_fam module makes use of the system FAM (File Alteration
+Monitor) daemon to implement file change notifications for Windows
+clients.
+
+%description vfs-notify_fam -l pl.UTF-8
+Ten moduł używa demona FAM (File Alteration Monitor) do implementacji
+informowania o zmianach w plikach dla klientów Windows.
+
+%package common
+Summary:	Files used by both Samba servers and clients
+Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
+Group:		Networking/Daemons
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+Requires:	python-samba = %{epoch}:%{version}-%{release}
+Obsoletes:	samba3-common
+Obsoletes:	samba4-common
+
+%description common
+Samba-common provides files necessary for both the server and client
+packages of Samba.
+
+%description common -l pl.UTF-8
+Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
+klientów Samby.
+
 %package client
 Summary:	Samba client programs
 Summary(pl.UTF-8):	Klienci serwera Samba
@@ -193,41 +255,6 @@ Samba-client dostarcza programy uzupełniające obsługę systemu plików
 SMB zawartą w jądrze. Pozwalają one na współdzielenie zasobów SMB i
 drukowanie w sieci SMB.
 
-%package common
-Summary:	Files used by both Samba servers and clients
-Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
-Group:		Networking/Daemons
-Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Requires:	python-samba = %{epoch}:%{version}-%{release}
-Obsoletes:	samba3-common
-Obsoletes:	samba4-common
-
-%description common
-Samba-common provides files necessary for both the server and client
-packages of Samba.
-
-%description common -l pl.UTF-8
-Samba-common dostarcza pliki niezbędne zarówno dla serwera jak i
-klientów Samby.
-
-%package libs
-Summary:	Samba shared libraries
-Summary(pl.UTF-8):	Biblioteki współdzielone Samby
-Group:		Libraries
-%if %{with system_libs}
-Requires:	ldb >= %{ldb_ver}
-Requires:	ntdb >= %{ntdb_ver}
-Requires:	talloc >= %{talloc_ver}
-Requires:	tdb >= %{tdb_ver}
-Requires:	tevent >= %{tevent_ver}
-%endif
-
-%description libs
-Samba shared libraries.
-
-%description libs -l pl.UTF-8
-Biblioteki współdzielone Samby.
-
 %package winbind
 Summary:	Samba-winbind daemon, utilities and documentation
 Summary(pl.UTF-8):	Demon samba-winbind, narzędzia i dokumentacja
@@ -249,19 +276,35 @@ Pakiet zawiera demona winbind oraz narzędzia testowe. Umożliwia
 uwierzytelnianie i wyliczanie grup/użytkowników z kontrolera domeny
 Windows lub Samba.
 
-%package devel
-Summary:	Header files for Samba
-Summary(pl.UTF-8):	Pliki nagłówkowe Samby
-Group:		Development/Libraries
+%package -n cups-backend-smb
+Summary:	CUPS backend for printing to SMB printers
+Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
+Group:		Applications/Printing
+Requires:	%{name}-client = %{epoch}:%{version}-%{release}
+Requires:	cups >= 1:1.2.0
+Obsoletes:	cups-backend-smb3
+
+%description -n cups-backend-smb
+CUPS backend for printing to SMB printers.
+
+%description -n cups-backend-smb -l pl.UTF-8
+Backend CUPS-a drukujący na drukarkach SMB.
+
+%package -n nss_wins
+Summary:	Name Service Switch service for WINS
+Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
+Group:		Base
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	samba3-devel
-Obsoletes:	samba4-devel
+Obsoletes:	nss_wins3
 
-%description devel
-Header files for Samba.
+%description -n nss_wins
+Provides the libnss_wins shared library which resolves NetBIOS names
+to IP addresses.
 
-%description devel -l pl.UTF-8
-Pliki nagłówkowe Samby.
+%description -n nss_wins -l pl.UTF-8
+Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
+IP.
 
 %package -n pam-pam_smbpass
 Summary:	PAM Samba Password Module
@@ -279,6 +322,52 @@ file.
 %description -n pam-pam_smbpass -l pl.UTF-8
 Moduł PAM, który może być używany do trzymania pliku smbpasswd (hasła
 Samby) zsynchronizowanego z hasłami uniksowymi.
+
+%package -n smbget
+Summary:	A utility for retrieving files using the SMB protocol
+Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
+Group:		Applications/Networking
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+Obsoletes:	smbget3
+
+%description -n smbget
+wget-like utility for downloading files over SMB.
+
+%description -n smbget -l pl.UTF-8
+Narzędzie podobne do wgeta do pobierania plików protokołem SMB
+używanym w sieciach MS Windows.
+
+%package libs
+Summary:	Samba shared libraries
+Summary(pl.UTF-8):	Biblioteki współdzielone Samby
+Group:		Libraries
+%if %{with system_libs}
+Requires:	ldb >= %{ldb_ver}
+Requires:	ntdb >= %{ntdb_ver}
+Requires:	talloc >= %{talloc_ver}
+Requires:	tdb >= %{tdb_ver}
+Requires:	tevent >= %{tevent_ver}
+%endif
+
+%description libs
+Samba shared libraries.
+
+%description libs -l pl.UTF-8
+Biblioteki współdzielone Samby.
+
+%package devel
+Summary:	Header files for Samba
+Summary(pl.UTF-8):	Pliki nagłówkowe Samby
+Group:		Development/Libraries
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+Obsoletes:	samba3-devel
+Obsoletes:	samba4-devel
+
+%description devel
+Header files for Samba.
+
+%description devel -l pl.UTF-8
+Pliki nagłówkowe Samby.
 
 %package pidl
 Summary:	Perl IDL compiler
@@ -348,97 +437,6 @@ testing tools for both the server and client packages of Samba.
 %description test-devel -l pl.UTF-8
 Ten pakiet zawiera pliki programistyczne biblioteki wykorzystywanej
 przez narzędzia testowe dla serwerów i klientów Samby.
-
-%package -n samba-vfs-ceph
-Summary:	VFS module to host shares on Ceph file system
-Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików Ceph
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description -n samba-vfs-ceph
-VFS module to host shares on Ceph file system.
-
-This module only works with the libceph.so user-space client.  It is
-not needed if you are using the kernel client or the FUSE client.
-
-%description -n samba-vfs-ceph -l pl.UTF-8
-Moduł VFS do serwowania zasobów z systemu plików Ceph
-
-Ten moduł działa jedynie z klientem przestrzeni użytkownika
-libceph.so. Jest zbędny w przypadku używania klienta dostarczanego
-przez jądro lub FUSE.
-
-%package -n samba-vfs-glusterfs
-Summary:	VFS module to host shares on GlusterFS file system
-Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików GlusterFS
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-
-%description -n samba-vfs-glusterfs
-VFS module to host shares on GlusterFS file system.
-
-%description -n samba-vfs-glusterfs -l pl.UTF-8
-Moduł VFS do serwowania zasobów z systemu plików GlusterFS.
-
-%package -n samba-vfs-notify_fam
-Summary:	VFS module to implement file change notifications
-Summary(pl.UTF-8):	Moduł VFS implementujący informowanie o zmianach w plikach
-Group:		Networking/Daemons
-Requires:	%{name} = %{epoch}:%{version}-%{release}
-Obsoletes:	samba3-vfs-notify_fam
-
-%description -n samba-vfs-notify_fam
-The vfs_notify_fam module makes use of the system FAM (File Alteration
-Monitor) daemon to implement file change notifications for Windows
-clients.
-
-%description -n samba-vfs-notify_fam -l pl.UTF-8
-Ten moduł używa demona FAM (File Alteration Monitor) do implementacji
-informowania o zmianach w plikach dla klientów Windows.
-
-%package -n smbget
-Summary:	A utility for retrieving files using the SMB protocol
-Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
-Group:		Applications/Networking
-Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	smbget3
-
-%description -n smbget
-wget-like utility for downloading files over SMB.
-
-%description -n smbget -l pl.UTF-8
-Narzędzie podobne do wgeta do pobierania plików protokołem SMB
-używanym w sieciach MS Windows.
-
-%package -n cups-backend-smb
-Summary:	CUPS backend for printing to SMB printers
-Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
-Group:		Applications/Printing
-Requires:	%{name}-client = %{epoch}:%{version}-%{release}
-Requires:	cups >= 1:1.2.0
-Obsoletes:	cups-backend-smb3
-
-%description -n cups-backend-smb
-CUPS backend for printing to SMB printers.
-
-%description -n cups-backend-smb -l pl.UTF-8
-Backend CUPS-a drukujący na drukarkach SMB.
-
-%package -n nss_wins
-Summary:	Name Service Switch service for WINS
-Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
-Group:		Base
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	nss_wins3
-
-%description -n nss_wins
-Provides the libnss_wins shared library which resolves NetBIOS names
-to IP addresses.
-
-%description -n nss_wins -l pl.UTF-8
-Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
-IP.
 
 %package -n libsmbclient
 Summary:	libsmbclient and libwbclient - Samba client libraries
@@ -699,12 +697,6 @@ cp -a %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.samba4
 %{__mv} -f %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.rpmnew
 %{__mv} %{_sysconfdir}/samba/smb.conf.samba4 %{_sysconfdir}/samba/smb.conf
 
-%post	libs -p /sbin/ldconfig
-%postun	libs -p /sbin/ldconfig
-
-%post	-n python-samba -p /sbin/ldconfig
-%postun	-n python-samba -p /sbin/ldconfig
-
 %post winbind
 /sbin/ldconfig
 /sbin/chkconfig --add winbind
@@ -726,6 +718,12 @@ fi
 /sbin/chkconfig --add winbind
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
+
+%post	libs -p /sbin/ldconfig
+%postun	libs -p /sbin/ldconfig
+
+%post	-n python-samba -p /sbin/ldconfig
+%postun	-n python-samba -p /sbin/ldconfig
 
 %post	-n libsmbclient -p /sbin/ldconfig
 %postun	-n libsmbclient -p /sbin/ldconfig
@@ -942,23 +940,18 @@ fi
 %attr(750,root,root) %dir /var/log/archive/samba
 %attr(1777,root,root) %dir /var/spool/samba
 
-%files client
+%files vfs-ceph
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/cifsdd
-%attr(755,root,root) %{_bindir}/rpcclient
-%attr(755,root,root) %{_bindir}/smbcacls
-%attr(755,root,root) %{_bindir}/smbclient
-%attr(755,root,root) %{_bindir}/smbclient4
-%attr(755,root,root) %{_bindir}/smbcquotas
-%attr(755,root,root) %{_bindir}/smbtar
-%attr(755,root,root) %{_bindir}/smbtree
-%{_mandir}/man1/findsmb.1*
-%{_mandir}/man1/rpcclient.1*
-%{_mandir}/man1/smbcacls.1*
-%{_mandir}/man1/smbclient.1*
-%{_mandir}/man1/smbcquotas.1*
-%{_mandir}/man1/smbtar.1*
-%{_mandir}/man1/smbtree.1*
+%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
+
+%files vfs-glusterfs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
+
+%files vfs-notify_fam
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
+%{_mandir}/man8/vfs_notify_fam.8*
 
 %files common
 %defattr(644,root,root,755)
@@ -1017,6 +1010,90 @@ fi
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
 %endif
+
+%files client
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/cifsdd
+%attr(755,root,root) %{_bindir}/rpcclient
+%attr(755,root,root) %{_bindir}/smbcacls
+%attr(755,root,root) %{_bindir}/smbclient
+%attr(755,root,root) %{_bindir}/smbclient4
+%attr(755,root,root) %{_bindir}/smbcquotas
+%attr(755,root,root) %{_bindir}/smbtar
+%attr(755,root,root) %{_bindir}/smbtree
+%{_mandir}/man1/findsmb.1*
+%{_mandir}/man1/rpcclient.1*
+%{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbcquotas.1*
+%{_mandir}/man1/smbtar.1*
+%{_mandir}/man1/smbtree.1*
+
+%files winbind
+%defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/winbind
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
+%{systemdunitdir}/winbind.service
+%attr(755,root,root) %{_bindir}/ntlm_auth
+%attr(755,root,root) %{_bindir}/wbinfo
+%attr(755,root,root) %{_sbindir}/winbindd
+%attr(755,root,root) /%{_lib}/security/pam_winbind.so
+%attr(755,root,root) /%{_lib}/libnss_winbind.so*
+%attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
+%attr(755,root,root) %{_libdir}/samba/libidmap.so
+%attr(755,root,root) %{_libdir}/samba/libnss_info.so
+%attr(755,root,root) %{_libdir}/samba/libiniparser.so
+%dir %{_libdir}/samba/idmap
+%attr(755,root,root) %{_libdir}/samba/idmap/ad.so
+%attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
+%attr(755,root,root) %{_libdir}/samba/idmap/hash.so
+%attr(755,root,root) %{_libdir}/samba/idmap/ldap.so
+%attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/idmap/rid.so
+%attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
+%dir %{_libdir}/samba/nss_info
+%attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
+%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
+%{_mandir}/man1/ntlm_auth.1*
+%{_mandir}/man1/wbinfo*.1*
+%{_mandir}/man5/pam_winbind.conf.5*
+%{_mandir}/man7/winbind_krb5_locator.7*
+%{_mandir}/man8/idmap_ad.8*
+%{_mandir}/man8/idmap_autorid.8*
+%{_mandir}/man8/idmap_hash.8*
+%{_mandir}/man8/idmap_ldap.8*
+%{_mandir}/man8/idmap_nss.8*
+%{_mandir}/man8/idmap_rfc2307.8*
+%{_mandir}/man8/idmap_rid.8*
+%{_mandir}/man8/idmap_tdb2.8*
+%{_mandir}/man8/idmap_tdb.8*
+%{_mandir}/man8/pam_winbind.8*
+%{_mandir}/man8/winbindd*.8*
+
+%if %{with cups}
+%files -n cups-backend-smb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{cups_serverbin}/backend/smb
+%attr(755,root,root) %{_bindir}/smbspool
+%{_mandir}/man8/smbspool.8*
+%endif
+
+%files -n nss_wins
+%defattr(644,root,root,755)
+%attr(755,root,root) /%{_lib}/libnss_wins.so*
+
+%files -n pam-pam_smbpass
+%defattr(644,root,root,755)
+%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
+%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
+
+%files -n smbget
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/smbget
+%{_mandir}/man1/smbget.1*
+%{_mandir}/man5/smbgetrc.5*
 
 %files libs
 %defattr(644,root,root,755)
@@ -1146,49 +1223,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libutil_setid.so
 %attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
 %attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
-
-%files winbind
-%defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/winbind
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
-%{systemdunitdir}/winbind.service
-%attr(755,root,root) %{_bindir}/ntlm_auth
-%attr(755,root,root) %{_bindir}/wbinfo
-%attr(755,root,root) %{_sbindir}/winbindd
-%attr(755,root,root) /%{_lib}/security/pam_winbind.so
-%attr(755,root,root) /%{_lib}/libnss_winbind.so*
-%attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
-%attr(755,root,root) %{_libdir}/samba/libidmap.so
-%attr(755,root,root) %{_libdir}/samba/libnss_info.so
-%attr(755,root,root) %{_libdir}/samba/libiniparser.so
-%dir %{_libdir}/samba/idmap
-%attr(755,root,root) %{_libdir}/samba/idmap/ad.so
-%attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
-%attr(755,root,root) %{_libdir}/samba/idmap/hash.so
-%attr(755,root,root) %{_libdir}/samba/idmap/ldap.so
-%attr(755,root,root) %{_libdir}/samba/idmap/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/idmap/rid.so
-%attr(755,root,root) %{_libdir}/samba/idmap/tdb2.so
-%dir %{_libdir}/samba/nss_info
-%attr(755,root,root) %{_libdir}/samba/nss_info/hash.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/rfc2307.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
-%attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
-%{_mandir}/man1/ntlm_auth.1*
-%{_mandir}/man1/wbinfo*.1*
-%{_mandir}/man5/pam_winbind.conf.5*
-%{_mandir}/man7/winbind_krb5_locator.7*
-%{_mandir}/man8/idmap_ad.8*
-%{_mandir}/man8/idmap_autorid.8*
-%{_mandir}/man8/idmap_hash.8*
-%{_mandir}/man8/idmap_ldap.8*
-%{_mandir}/man8/idmap_nss.8*
-%{_mandir}/man8/idmap_rfc2307.8*
-%{_mandir}/man8/idmap_rid.8*
-%{_mandir}/man8/idmap_tdb2.8*
-%{_mandir}/man8/idmap_tdb.8*
-%{_mandir}/man8/pam_winbind.8*
-%{_mandir}/man8/winbindd*.8*
 
 %files devel
 %defattr(644,root,root,755)
@@ -1349,11 +1383,6 @@ fi
 %{_mandir}/man3/ntdb.3*
 %endif
 
-%files -n pam-pam_smbpass
-%defattr(644,root,root,755)
-%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
-%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
-
 %files pidl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pidl
@@ -1423,37 +1452,6 @@ fi
 %attr(755,root,root) %{_libdir}/libtorture.so
 %{_includedir}/samba-4.0/torture.h
 %{_pkgconfigdir}/torture.pc
-
-%files -n samba-vfs-ceph
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
-
-%files -n samba-vfs-glusterfs
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
-
-%files -n samba-vfs-notify_fam
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/samba/vfs/notify_fam.so
-%{_mandir}/man8/vfs_notify_fam.8*
-
-%files -n smbget
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/smbget
-%{_mandir}/man1/smbget.1*
-%{_mandir}/man5/smbgetrc.5*
-
-%if %{with cups}
-%files -n cups-backend-smb
-%defattr(644,root,root,755)
-%attr(755,root,root) %{cups_serverbin}/backend/smb
-%attr(755,root,root) %{_bindir}/smbspool
-%{_mandir}/man8/smbspool.8*
-%endif
-
-%files -n nss_wins
-%defattr(644,root,root,755)
-%attr(755,root,root) /%{_lib}/libnss_wins.so*
 
 %files -n libsmbclient
 %defattr(644,root,root,755)

@@ -176,7 +176,6 @@ Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Requires:	heimdal-libs >= 1.5.3-1
 Suggests:	cifs-utils
@@ -700,11 +699,11 @@ cp -a %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.samba4
 %{__mv} -f %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.rpmnew
 %{__mv} %{_sysconfdir}/samba/smb.conf.samba4 %{_sysconfdir}/samba/smb.conf
 
-%post libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
+%post	libs -p /sbin/ldconfig
+%postun	libs -p /sbin/ldconfig
 
-%post -n python-samba -p /sbin/ldconfig
-%postun -n python-samba -p /sbin/ldconfig
+%post	-n python-samba -p /sbin/ldconfig
+%postun	-n python-samba -p /sbin/ldconfig
 
 %post winbind
 /sbin/ldconfig
@@ -728,8 +727,8 @@ fi
 %service winbind restart "Winbind daemon"
 %systemd_post winbind.service
 
-%post -n libsmbclient -p /sbin/ldconfig
-%postun -n libsmbclient -p /sbin/ldconfig
+%post	-n libsmbclient -p /sbin/ldconfig
+%postun	-n libsmbclient -p /sbin/ldconfig
 
 %post -n openldap-schema-samba
 # dependant schemas: cosine(uid) inetorgperson(displayName) nis(gidNumber)
@@ -1156,8 +1155,8 @@ fi
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/wbinfo
 %attr(755,root,root) %{_sbindir}/winbindd
-%attr(755,root,root) /%{_lib}/security/pam_winbind*
-%attr(755,root,root) /%{_lib}/libnss_winbind*
+%attr(755,root,root) /%{_lib}/security/pam_winbind.so
+%attr(755,root,root) /%{_lib}/libnss_winbind.so*
 %attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
 %attr(755,root,root) %{_libdir}/samba/libidmap.so
 %attr(755,root,root) %{_libdir}/samba/libnss_info.so
@@ -1454,7 +1453,7 @@ fi
 
 %files -n nss_wins
 %defattr(644,root,root,755)
-%attr(755,root,root) /%{_lib}/libnss_wins*
+%attr(755,root,root) /%{_lib}/libnss_wins.so*
 
 %files -n libsmbclient
 %defattr(644,root,root,755)

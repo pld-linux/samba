@@ -100,6 +100,7 @@ BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+# for samba_{dnsupdate,kcc,spnupdate,upgradedns} scripts
 Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
@@ -220,6 +221,7 @@ Summary:	Files used by both Samba servers and clients
 Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Group:		Networking/Daemons
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+# for samba-tool script
 Requires:	python-samba = %{epoch}:%{version}-%{release}
 Obsoletes:	samba3-common
 Obsoletes:	samba4-common
@@ -384,8 +386,8 @@ Ten pakiet zawiera kompilator IDL napisany w Perlu, używany przez
 Sambę oraz Wiresharka to analizy IDL i podobnych protokołów.
 
 %package -n python-samba
-Summary:	Samba Module for Python
-Summary(pl.UTF-8):	Moduł Samba dla Pythona
+Summary:	Samba modules for Python
+Summary(pl.UTF-8):	Moduły Samby dla Pythona
 Group:		Development/Languages/Python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
@@ -401,10 +403,10 @@ Requires:	python-tevent >= %{tevent_ver}
 Obsoletes:	python-samba4
 
 %description -n python-samba
-Samba Module for Python.
+Samba modules for Python.
 
 %description -n python-samba -l pl.UTF-8
-Moduł Samba dla Pythona.
+Moduły Samby dla Pythona.
 
 %package test
 Summary:	Testing tools for Samba servers and clients

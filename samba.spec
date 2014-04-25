@@ -21,13 +21,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.1.6
+Version:	4.1.7
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	9dc64658c0cc81e7637f9b975c19638c
+# Source0-md5:	bc44b0a245468c3574ef07644206ede3
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -45,7 +45,6 @@ Patch3:		systemd-pid-dir.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		link.patch
 Patch6:		server-role.patch
-Patch7:		%{name}-readline.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -496,7 +495,6 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

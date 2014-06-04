@@ -4,6 +4,7 @@
 %bcond_without	cups		# CUPS support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
+%bcond_without	systemd		# systemd integration
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
@@ -21,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.1.7
+Version:	4.1.8
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	bc44b0a245468c3574ef07644206ede3
+# Source0-md5:	212b7568d44e7668a7dc8a45c5558764
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -84,6 +85,8 @@ BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
+%{?with_systemd:BuildRequires:	systemd-devel}
+BuildRequires:	xfsprogs-devel
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
 BuildRequires:	ntdb-devel >= %{ntdb_ver}
@@ -95,7 +98,6 @@ BuildRequires:	talloc-devel >= %{talloc_ver}
 BuildRequires:	tdb-devel >= %{tdb_ver}
 BuildRequires:	tevent-devel >= %{tevent_ver}
 %endif
-BuildRequires:	xfsprogs-devel
 BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -546,6 +548,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-regedit \
 	--with-sendfile-support \
 	--with-syslog \
+	%{!?with_systemd:--without-systemd} \
 	--with-utmp \
 	--with-winbind \
 	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \

@@ -10,7 +10,7 @@
 %if %{with system_libs}
 %define		talloc_ver	2.0.7
 %define		tdb_ver		2:1.2.11
-%define		ldb_ver		1.1.16
+%define		ldb_ver		1.1.17
 %define		tevent_ver	0.9.18
 %define		ntdb_ver	0.9
 %endif
@@ -18,17 +18,17 @@
 %include	/usr/lib/rpm/macros.perl
 
 # NOTE: packages order is: server + additions, common, clients, libs+devel, ldap
-%define		virusfilter_version 0.1.3
+%define		virusfilter_version 0.1.4
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.1.8
+Version:	4.1.11
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/samba/ftp/stable/samba-%{version}.tar.gz
-# Source0-md5:	212b7568d44e7668a7dc8a45c5558764
+Source0:	http://www.samba.org/ftp/samba/samba-%{version}.tar.gz
+# Source0-md5:	d7377e7247ad16f6b15363727b91b761
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -37,8 +37,8 @@ Source6:	smb.conf
 Source7:	winbind.init
 Source8:	winbind.sysconfig
 Source9:	samba.init
-Source10:	https://github.com/downloads/fumiyas/samba-virusfilter/samba-virusfilter-%{virusfilter_version}.tar.bz2
-# Source10-md5:	a3a30d5fbf309d356e8c5833db680c17
+Source10:	https://bitbucket.org/fumiyas/samba-virusfilter/downloads/samba-virusfilter-%{virusfilter_version}.tar.bz2
+# Source10-md5:	4bef017601d87f52f8c82819a3ff56ee
 Patch0:		system-heimdal.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
@@ -1184,7 +1184,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
 %attr(755,root,root) %{_libdir}/samba/libinterfaces.so
 %attr(755,root,root) %{_libdir}/samba/libkrb5samba.so
-%attr(755,root,root) %{_libdir}/samba/libldb-cmdline.so
 %attr(755,root,root) %{_libdir}/samba/libldbsamba.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so

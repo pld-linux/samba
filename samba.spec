@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.1.11
+Version:	4.1.13
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	d7377e7247ad16f6b15363727b91b761
+# Source0-md5:	7ed2d4a181e55baa995eb8b58a9ad293
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -46,6 +46,7 @@ Patch3:		systemd-pid-dir.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		link.patch
 Patch6:		server-role.patch
+Patch7:		%{name}-bug-9816.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -497,6 +498,7 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
@@ -783,6 +785,7 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
 %attr(755,root,root) %{_sbindir}/smbd
+%attr(755,root,root) %{_libdir}/samba/libdnsserver_common.so
 %dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so

@@ -1,11 +1,12 @@
 --- samba-4.1.8/lib/util/wscript_build.orig	2014-06-04 19:40:22.052755047 +0200
 +++ samba-4.1.8/lib/util/wscript_build	2014-06-04 19:41:57.692753054 +0200
-@@ -9,7 +9,7 @@
+@@ -9,7 +9,7 @@ bld.SAMBA_LIBRARY('samba-util',
                      util_str.c util_str_common.c substitute.c ms_fnmatch.c
                      server_id.c dprintf.c parmlist.c bitmap.c pidfile.c
-                     tevent_debug.c util_process.c''',
+                     tevent_debug.c util_process.c memcache.c''',
 -                  deps='DYNCONFIG',
 +                  deps='DYNCONFIG ccan-hash',
                    public_deps='talloc tevent execinfo uid_wrapper pthread LIBCRYPTO charset util_setid systemd-daemon',
                    public_headers='debug.h attr.h byteorder.h data_blob.h memory.h safe_string.h time.h talloc_stack.h xfile.h dlinklist.h samba_util.h string_wrappers.h',
                    header_path= [ ('dlinklist.h samba_util.h', '.'), ('*', 'util') ],
+

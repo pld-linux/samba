@@ -8,8 +8,8 @@
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
-%define		talloc_ver	2.0.7
-%define		tdb_ver		2:1.2.11
+%define		talloc_ver	2.0.8
+%define		tdb_ver		2:1.2.12
 %define		ldb_ver		1.1.17
 %define		tevent_ver	0.9.18
 %define		ntdb_ver	0.9
@@ -53,17 +53,20 @@ BuildRequires:	acl-devel
 BuildRequires:	ceph-devel >= 0.73
 BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
+BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dmapi-devel
 BuildRequires:	docbook-style-xsl
+# just FAM API
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
 BuildRequires:	glusterfs-devel
-BuildRequires:	gnutls-devel
+BuildRequires:	gnutls-devel >= 1.4.0
 BuildRequires:	heimdal-devel >= 1.5.3-1
 BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libaio-devel
+BuildRequires:	libcap-devel
 BuildRequires:	libcom_err-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
@@ -73,13 +76,13 @@ BuildRequires:	ncurses-ext-devel >= 5.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	perl-ExtUtils-MakeMaker
-BuildRequires:	perl-Parse-Yapp
+BuildRequires:	perl-Parse-Yapp >= 1.05
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
-BuildRequires:	python-devel
+BuildRequires:	python-devel >= 1:2.5.0
 BuildRequires:	python-dns
-BuildRequires:	python-modules
+BuildRequires:	python-modules >= 1:2.5.0
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-perlprov
@@ -88,6 +91,7 @@ BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
 %{?with_systemd:BuildRequires:	systemd-devel}
 BuildRequires:	xfsprogs-devel
+BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
 BuildRequires:	ntdb-devel >= %{ntdb_ver}
@@ -346,6 +350,7 @@ używanym w sieciach MS Windows.
 Summary:	Samba shared libraries
 Summary(pl.UTF-8):	Biblioteki współdzielone Samby
 Group:		Libraries
+Requires:	gnutls >= 1.4.0
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
 Requires:	ntdb >= %{ntdb_ver}

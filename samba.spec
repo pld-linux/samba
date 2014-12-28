@@ -59,7 +59,7 @@ BuildRequires:	docbook-style-xsl
 # just FAM API
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	glusterfs-devel
 BuildRequires:	gnutls-devel >= 1.4.0
 BuildRequires:	heimdal-devel >= 1.5.3-1

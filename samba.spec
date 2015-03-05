@@ -10,8 +10,8 @@
 %if %{with system_libs}
 %define		talloc_ver	2.0.8
 %define		tdb_ver		2:1.2.12
-%define		ldb_ver		1.1.17
-%define		tevent_ver	0.9.18
+%define		ldb_ver		1.1.20
+%define		tevent_ver	0.9.24
 %define		ntdb_ver	0.9
 %endif
 
@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.1.17
-Release:	2
+Version:	4.2.0
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	http://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	8fed0f23a672e6a8d0716d96aca88671
+# Source0-md5:	5ef28ee4cda243d07a0066f038b7d6e0
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -44,7 +44,7 @@ Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
 Patch3:		systemd-pid-dir.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
-Patch5:		link.patch
+
 Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
 URL:		http://www.samba.org/
@@ -73,6 +73,7 @@ BuildRequires:	libnscd-devel
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
+BuildRequires:	nss_wrapper
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	perl-ExtUtils-MakeMaker
@@ -89,6 +90,7 @@ BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
+BuildRequires:	socket_wrapper >= 1.1.2
 %{?with_systemd:BuildRequires:	systemd-devel}
 BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
@@ -103,6 +105,7 @@ BuildRequires:	talloc-devel >= %{talloc_ver}
 BuildRequires:	tdb-devel >= %{tdb_ver}
 BuildRequires:	tevent-devel >= %{tevent_ver}
 %endif
+BuildRequires:	uid_wrapper >= 1.1.0
 BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
@@ -501,7 +504,7 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
+
 %patch6 -p1
 %patch7 -p1
 

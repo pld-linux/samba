@@ -44,7 +44,7 @@ Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
 Patch3:		systemd-pid-dir.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
-
+Patch5:		samba-heimdal.patch
 Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
 URL:		http://www.samba.org/
@@ -54,6 +54,7 @@ BuildRequires:	ceph-devel >= 0.73
 BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	cyrus-sasl-devel >= 2
+BuildRequires:	dbus-devel
 BuildRequires:	dmapi-devel
 BuildRequires:	docbook-style-xsl
 # just FAM API
@@ -504,7 +505,7 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-
+%patch5 -p1
 %patch6 -p1
 %patch7 -p1
 
@@ -793,7 +794,7 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
 %attr(755,root,root) %{_sbindir}/smbd
-%attr(755,root,root) %{_libdir}/samba/libdnsserver_common.so
+%attr(755,root,root) %{_libdir}/samba/libdnsserver-common-samba4.so
 %dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
@@ -862,6 +863,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/service/smb.so
 %attr(755,root,root) %{_libdir}/samba/service/web.so
 %attr(755,root,root) %{_libdir}/samba/service/winbind.so
+%attr(755,root,root) %{_libdir}/samba/service/winbindd.so
 %attr(755,root,root) %{_libdir}/samba/service/wrepl.so
 %dir %{_libdir}/samba/vfs
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
@@ -883,6 +885,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/extd_audit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fake_perms.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
+%attr(755,root,root) %{_libdir}/samba/vfs/fruit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/full_audit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
@@ -893,6 +896,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/readonly.so
 %attr(755,root,root) %{_libdir}/samba/vfs/recycle.so
 %attr(755,root,root) %{_libdir}/samba/vfs/scannedonly.so
+%attr(755,root,root) %{_libdir}/samba/vfs/snapper.so
 %attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy2.so
 %attr(755,root,root) %{_libdir}/samba/vfs/shadow_copy.so
 %attr(755,root,root) %{_libdir}/samba/vfs/smb_traffic_analyzer.so
@@ -900,6 +904,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/streams_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
 %attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/worm.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
@@ -930,6 +935,7 @@ fi
 %{_mandir}/man8/vfs_extd_audit.8*
 %{_mandir}/man8/vfs_fake_perms.8*
 %{_mandir}/man8/vfs_fileid.8*
+%{_mandir}/man8/vfs_fruit.8*
 %{_mandir}/man8/vfs_full_audit.8*
 %{_mandir}/man8/vfs_linux_xfs_sgid.8*
 %{_mandir}/man8/vfs_media_harmony.8*
@@ -942,10 +948,12 @@ fi
 %{_mandir}/man8/vfs_shadow_copy2.8*
 %{_mandir}/man8/vfs_shadow_copy.8*
 %{_mandir}/man8/vfs_smb_traffic_analyzer.8*
+%{_mandir}/man8/vfs_snapper.8*
 %{_mandir}/man8/vfs_streams_depot.8*
 %{_mandir}/man8/vfs_streams_xattr.8*
 %{_mandir}/man8/vfs_syncops.8*
 %{_mandir}/man8/vfs_time_audit.8*
+%{_mandir}/man8/vfs_worm.8*
 %{_mandir}/man8/vfs_xattr_tdb.8*
 
 %dir %{_sambahome}
@@ -963,10 +971,12 @@ fi
 %files vfs-ceph
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
+%{_mandir}/man8/vfs_ceph.8*
 
 %files vfs-glusterfs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
+%{_mandir}/man8/vfs_glusterfs.8*
 
 %files vfs-notify_fam
 %defattr(644,root,root,755)
@@ -982,7 +992,6 @@ fi
 %attr(755,root,root) %{_bindir}/dbwrap_tool
 %attr(755,root,root) %{_bindir}/net
 %attr(755,root,root) %{_bindir}/nmblookup
-%attr(755,root,root) %{_bindir}/nmblookup4
 %attr(755,root,root) %{_bindir}/reg*
 %attr(755,root,root) %{_bindir}/samba-regedit
 %attr(755,root,root) %{_bindir}/samba-tool
@@ -999,7 +1008,6 @@ fi
 %{_datadir}/samba/codepages/valid.dat
 %{_mandir}/man1/dbwrap_tool.1*
 %{_mandir}/man1/nmblookup.1*
-%{_mandir}/man1/nmblookup4.1*
 %{_mandir}/man1/reg*.1*
 %{_mandir}/man1/testparm.1*
 %{_mandir}/man1/vfstest.1*
@@ -1037,7 +1045,6 @@ fi
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
-%attr(755,root,root) %{_bindir}/smbclient4
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
@@ -1060,9 +1067,8 @@ fi
 %attr(755,root,root) /%{_lib}/security/pam_winbind.so
 %attr(755,root,root) /%{_lib}/libnss_winbind.so*
 %attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
-%attr(755,root,root) %{_libdir}/samba/libidmap.so
-%attr(755,root,root) %{_libdir}/samba/libnss_info.so
-%attr(755,root,root) %{_libdir}/samba/libiniparser.so
+%attr(755,root,root) %{_libdir}/samba/libidmap-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libnss-info-samba4.so
 %dir %{_libdir}/samba/idmap
 %attr(755,root,root) %{_libdir}/samba/idmap/ad.so
 %attr(755,root,root) %{_libdir}/samba/idmap/autorid.so
@@ -1148,6 +1154,8 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.0
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
+%attr(755,root,root) %{_libdir}/libsamba-passdb.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-passdb.so.0
 %attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
@@ -1159,89 +1167,91 @@ fi
 %attr(755,root,root) %{_libdir}/libtevent-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
 %attr(755,root,root) %{_libdir}/libnetapi.so.0
-%attr(755,root,root) %{_libdir}/libpdb.so.0
 %attr(755,root,root) %{_libdir}/libsmbconf.so.0
 %attr(755,root,root) %{_libdir}/libsmbldap.so.0
-%attr(755,root,root) %{_libdir}/libsmbsharemodes.so.0
 %dir %{_libdir}/samba
-%attr(755,root,root) %{_libdir}/samba/libaddns.so
-%attr(755,root,root) %{_libdir}/samba/libads.so
-%attr(755,root,root) %{_libdir}/samba/libasn1util.so
-%attr(755,root,root) %{_libdir}/samba/libauth4.so
-%attr(755,root,root) %{_libdir}/samba/libauthkrb5.so
-%attr(755,root,root) %{_libdir}/samba/libauth_sam_reply.so
-%attr(755,root,root) %{_libdir}/samba/libauth.so
-%attr(755,root,root) %{_libdir}/samba/libauth_unix_token.so
-%attr(755,root,root) %{_libdir}/samba/libCHARSET3.so
-%attr(755,root,root) %{_libdir}/samba/libcliauth.so
-%attr(755,root,root) %{_libdir}/samba/libcli_cldap.so
-%attr(755,root,root) %{_libdir}/samba/libcli-ldap-common.so
-%attr(755,root,root) %{_libdir}/samba/libcli-ldap.so
-%attr(755,root,root) %{_libdir}/samba/libcli-nbt.so
-%attr(755,root,root) %{_libdir}/samba/libcli_smb_common.so
-%attr(755,root,root) %{_libdir}/samba/libcli_spoolss.so
-%attr(755,root,root) %{_libdir}/samba/libcluster.so
-%attr(755,root,root) %{_libdir}/samba/libcmdline-credentials.so
-%attr(755,root,root) %{_libdir}/samba/libdb-glue.so
-%attr(755,root,root) %{_libdir}/samba/libdbwrap.so
+%attr(755,root,root) %{_libdir}/samba/libaddns-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libads-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libasn1util-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libauth4-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libauthkrb5-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libauth-sam-reply-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libauth-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libauth-unix-token-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libCHARSET3-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcliauth-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcli-cldap-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcli-ldap-common-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcli-ldap-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcli-nbt-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcli-smb-common-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcli-spoolss-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcluster-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcmdline-credentials-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdb-glue-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdbwrap-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba.so
-%attr(755,root,root) %{_libdir}/samba/libdfs_server_ad.so
-%attr(755,root,root) %{_libdir}/samba/libdsdb-module.so
-%attr(755,root,root) %{_libdir}/samba/liberrors.so
-%attr(755,root,root) %{_libdir}/samba/libevents.so
-%attr(755,root,root) %{_libdir}/samba/libflag_mapping.so
-%attr(755,root,root) %{_libdir}/samba/libgpo.so
-%attr(755,root,root) %{_libdir}/samba/libgse.so
-%attr(755,root,root) %{_libdir}/samba/libHDB_SAMBA4.so
-%attr(755,root,root) %{_libdir}/samba/libinterfaces.so
-%attr(755,root,root) %{_libdir}/samba/libkrb5samba.so
-%attr(755,root,root) %{_libdir}/samba/libldbsamba.so
-%attr(755,root,root) %{_libdir}/samba/liblibcli_lsa3.so
-%attr(755,root,root) %{_libdir}/samba/liblibcli_netlogon3.so
-%attr(755,root,root) %{_libdir}/samba/liblibsmb.so
-%attr(755,root,root) %{_libdir}/samba/libLIBWBCLIENT_OLD.so
-%attr(755,root,root) %{_libdir}/samba/libMESSAGING.so
-%attr(755,root,root) %{_libdir}/samba/libmsrpc3.so
+%attr(755,root,root) %{_libdir}/samba/libdcerpc-samba-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdfs-server-ad-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdsdb-module-samba4.so
+%attr(755,root,root) %{_libdir}/samba/liberrors-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libevents-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libflag-mapping-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgpo-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgse-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libHDB-SAMBA4-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libhttp-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libinterfaces-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libkrb5samba-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libldbsamba-samba4.so
+%attr(755,root,root) %{_libdir}/samba/liblibcli-lsa3-samba4.so
+%attr(755,root,root) %{_libdir}/samba/liblibcli-netlogon3-samba4.so
+%attr(755,root,root) %{_libdir}/samba/liblibsmb-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libLIBWBCLIENT-OLD-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libMESSAGING-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libmsrpc3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libndr-samba.so
-%attr(755,root,root) %{_libdir}/samba/libnetif.so
-%attr(755,root,root) %{_libdir}/samba/libnet_keytab.so
-%attr(755,root,root) %{_libdir}/samba/libnon_posix_acls.so
-%attr(755,root,root) %{_libdir}/samba/libnpa_tstream.so
-%attr(755,root,root) %{_libdir}/samba/libntvfs.so
-%attr(755,root,root) %{_libdir}/samba/libpac.so
-%attr(755,root,root) %{_libdir}/samba/libpopt_samba3.so
-%attr(755,root,root) %{_libdir}/samba/libposix_eadb.so
-%attr(755,root,root) %{_libdir}/samba/libprinting_migrate.so
-%attr(755,root,root) %{_libdir}/samba/libprocess_model.so
-%attr(755,root,root) %{_libdir}/samba/libsamba3-util.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-modules.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-net.so
-%attr(755,root,root) %{_libdir}/samba/libsamba_python.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-security.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-sockets.so
-%attr(755,root,root) %{_libdir}/samba/libsamdb-common.so
-%attr(755,root,root) %{_libdir}/samba/libsecrets3.so
-%attr(755,root,root) %{_libdir}/samba/libserver-role.so
-%attr(755,root,root) %{_libdir}/samba/libservice.so
-%attr(755,root,root) %{_libdir}/samba/libshares.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_base.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_conn.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd_shim.so
-%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper.so
-%attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser.so
-%attr(755,root,root) %{_libdir}/samba/libsmbregistry.so
-%attr(755,root,root) %{_libdir}/samba/libsmb_transport.so
-%attr(755,root,root) %{_libdir}/samba/libtdb_compat.so
-%attr(755,root,root) %{_libdir}/samba/libtdb-wrap.so
-%attr(755,root,root) %{_libdir}/samba/libtrusts_util.so
-%attr(755,root,root) %{_libdir}/samba/libutil_cmdline.so
-%attr(755,root,root) %{_libdir}/samba/libutil_ntdb.so
-%attr(755,root,root) %{_libdir}/samba/libutil_reg.so
-%attr(755,root,root) %{_libdir}/samba/libutil_setid.so
-%attr(755,root,root) %{_libdir}/samba/libutil_tdb.so
-%attr(755,root,root) %{_libdir}/samba/libxattr_tdb.so
+%attr(755,root,root) %{_libdir}/samba/libndr-samba-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libnetif-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libnet-keytab-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libnon-posix-acls-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libnpa-tstream-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libntvfs-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libpac-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libpopt-samba3-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libposix-eadb-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libprinting-migrate-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libprocess-model-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba3-util-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-cluster-support-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-debug-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-modules-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-net-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-python-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-security-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsocket-blocking-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-sockets-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamdb-common-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsecrets3-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libserver-role-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libservice-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libshares-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd-base-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd-conn-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbd-shim-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbldaphelper-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbregistry-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmb-transport-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtdb-compat-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtdb-wrap-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtrusts-util-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libutil-cmdline-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libutil-ntdb-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libutil-reg-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libutil-setid-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libutil-tdb-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libxattr-tdb-samba4.so
 
 %files devel
 %defattr(644,root,root,755)
@@ -1249,6 +1259,7 @@ fi
 %dir %{_includedir}/samba-4.0/core
 %{_includedir}/samba-4.0/core/doserr.h
 %{_includedir}/samba-4.0/core/error.h
+%{_includedir}/samba-4.0/core/hresult.h
 %{_includedir}/samba-4.0/core/ntstatus.h
 %{_includedir}/samba-4.0/core/werror.h
 %{_includedir}/samba-4.0/credentials.h
@@ -1297,6 +1308,7 @@ fi
 %{_includedir}/samba-4.0/ldb_wrap.h
 %{_includedir}/samba-4.0/ndr.h
 %dir %{_includedir}/samba-4.0/ndr
+%{_includedir}/samba-4.0/ndr/ndr_dcerpc.h
 %{_includedir}/samba-4.0/ndr/ndr_drsblobs.h
 %{_includedir}/samba-4.0/ndr/ndr_drsuapi.h
 %{_includedir}/samba-4.0/ndr/ndr_nbt.h
@@ -1316,6 +1328,7 @@ fi
 %{_includedir}/samba-4.0/smb2_constants.h
 %{_includedir}/samba-4.0/smb2_create_blob.h
 %{_includedir}/samba-4.0/smb2_lease.h
+%{_includedir}/samba-4.0/smb2_lease_struct.h
 %{_includedir}/samba-4.0/smb2_signing.h
 %{_includedir}/samba-4.0/smb_cli.h
 %{_includedir}/samba-4.0/smb_cliraw.h
@@ -1334,14 +1347,21 @@ fi
 %{_includedir}/samba-4.0/tdr.h
 %{_includedir}/samba-4.0/tsocket.h
 %{_includedir}/samba-4.0/tsocket_internal.h
+%{_includedir}/samba-4.0/tstream_smbXcli_np.h
 %dir %{_includedir}/samba-4.0/util
 %{_includedir}/samba-4.0/util/attr.h
+%{_includedir}/samba-4.0/util/blocking.h
 %{_includedir}/samba-4.0/util/byteorder.h
 %{_includedir}/samba-4.0/util/data_blob.h
 %{_includedir}/samba-4.0/util/debug.h
+%{_includedir}/samba-4.0/util/fault.h
+%{_includedir}/samba-4.0/util/idtree.h
+%{_includedir}/samba-4.0/util/idtree_random.h
 %{_includedir}/samba-4.0/util/memory.h
 %{_includedir}/samba-4.0/util/safe_string.h
+%{_includedir}/samba-4.0/util/signal.h
 %{_includedir}/samba-4.0/util/string_wrappers.h
+%{_includedir}/samba-4.0/util/substitute.h
 %{_includedir}/samba-4.0/util/talloc_stack.h
 %{_includedir}/samba-4.0/util/tevent_ntstatus.h
 %{_includedir}/samba-4.0/util/tevent_unix.h
@@ -1356,7 +1376,6 @@ fi
 %{_includedir}/samba-4.0/smbconf.h
 %{_includedir}/samba-4.0/smb_ldap.h
 %{_includedir}/samba-4.0/smbldap.h
-%{_includedir}/samba-4.0/smb_share_modes.h
 %attr(755,root,root) %{_libdir}/libdcerpc-atsvc.so
 %attr(755,root,root) %{_libdir}/libdcerpc-binding.so
 %attr(755,root,root) %{_libdir}/libdcerpc-samr.so
@@ -1368,14 +1387,13 @@ fi
 %attr(755,root,root) %{_libdir}/libndr.so
 %attr(755,root,root) %{_libdir}/libndr-standard.so
 %attr(755,root,root) %{_libdir}/libnetapi.so
-%attr(755,root,root) %{_libdir}/libpdb.so
 %attr(755,root,root) %{_libdir}/libregistry.so
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
+%attr(755,root,root) %{_libdir}/libsamba-passdb.so
 %attr(755,root,root) %{_libdir}/libsamba-policy.so
 %attr(755,root,root) %{_libdir}/libsamba-util.so
 %attr(755,root,root) %{_libdir}/libsamdb.so
-%attr(755,root,root) %{_libdir}/libsmbsharemodes.so
 %attr(755,root,root) %{_libdir}/libsmbclient-raw.so
 %attr(755,root,root) %{_libdir}/libsmbconf.so
 %attr(755,root,root) %{_libdir}/libsmbldap.so
@@ -1396,7 +1414,6 @@ fi
 %{_pkgconfigdir}/samba-policy.pc
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
-%{_pkgconfigdir}/smbsharemodes.pc
 %{_pkgconfigdir}/smbclient-raw.pc
 %if %{without system_libs}
 %{_mandir}/man3/ntdb.3*
@@ -1458,8 +1475,8 @@ fi
 %attr(755,root,root) %{_bindir}/smbtorture
 %attr(755,root,root) %{_libdir}/libtorture.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libtorture.so.0
-%attr(755,root,root) %{_libdir}/samba/libsubunit.so
-%attr(755,root,root) %{_libdir}/samba/libdlz_bind9_for_torture.so
+%attr(755,root,root) %{_libdir}/samba/libsubunit-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdlz-bind9-for-torture-samba4.so
 %{_mandir}/man1/gentest.1*
 %{_mandir}/man1/locktest.1*
 %{_mandir}/man1/masktest.1*
@@ -1476,7 +1493,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
 %attr(755,root,root) %{_libdir}/libwbclient.so.*
-%attr(755,root,root) %{_libdir}/samba/libwinbind-client.so
+%attr(755,root,root) %{_libdir}/samba/libwinbind-client-samba4.so
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel

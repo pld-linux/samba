@@ -1,0 +1,14 @@
+--- samba-4.2.0/source4/kdc/kdc.c.org	2015-03-25 20:54:14.299705890 +0100
++++ samba-4.2.0/source4/kdc/kdc.c	2015-03-25 20:54:34.780191919 +0100
+@@ -967,9 +967,9 @@
+ 	 * The old behavior in the _kdc_get_preferred_key()
+ 	 * function is use_strongest_server_key=TRUE.
+ 	 */
+-	kdc->config->as_use_strongest_session_key = false;
++	kdc->config->tgt_use_strongest_session_key = false;
+ 	kdc->config->preauth_use_strongest_session_key = false;
+-	kdc->config->tgs_use_strongest_session_key = false;
++	kdc->config->svc_use_strongest_session_key = false;
+ 	kdc->config->use_strongest_server_key = true;
+ 
+ 	/* Register hdb-samba4 hooks for use as a keytab */

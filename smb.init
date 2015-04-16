@@ -37,12 +37,12 @@ fi
 export TMPDIR=/tmp
 unset TMP || :
 
-SERVER_ROLE=$(samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -n1)
-if [ "$SERVER_ROLE" = "active directory domain controller" ]; then
-	exit 0
-fi
-
 start() {
+	SERVER_ROLE=$(samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -n1)
+	if [ "$SERVER_ROLE" = "active directory domain controller" ]; then
+		exit 0
+	fi
+
 	# Check if the service is already running?
 	if [ -f /var/lock/subsys/$lockname ]; then
 		msg_already_running "Samba SMB/CIFS Server"

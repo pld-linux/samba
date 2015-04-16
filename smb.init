@@ -17,8 +17,8 @@
 
 # Set default config
 CFGFILE="/etc/samba/smb.conf"
-smbd_pidfile="/var/run/smbd.pid"
-nmbd_pidfile="/var/run/nmbd.pid"
+smbd_pidfile="/var/run/samba/smbd.pid"
+nmbd_pidfile="/var/run/samba/nmbd.pid"
 lockname=smb
 
 # Demon specified configuration.
@@ -34,10 +34,10 @@ else
 	exit 0
 fi
 
-TMPDIR="/tmp"; export TMPDIR
+export TMPDIR=/tmp
 unset TMP || :
 
-SERVER_ROLE=`samba-tool testparm --parameter-name="server role"  2>/dev/null | tail -1`
+SERVER_ROLE=$(samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -n1)
 if [ "$SERVER_ROLE" = "active directory domain controller" ]; then
 	exit 0
 fi

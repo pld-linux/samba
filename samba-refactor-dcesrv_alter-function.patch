@@ -25,7 +25,7 @@ diff --git a/source4/rpc_server/dcerpc_server.c b/source4/rpc_server/dcerpc_serv
 index f25aa68..b1c763b 100644
 --- a/source4/rpc_server/dcerpc_server.c
 +++ b/source4/rpc_server/dcerpc_server.c
-@@ -793,62 +793,27 @@ static NTSTATUS dcesrv_alter_new_context(struct dcesrv_call_state *call, uint32_
+@@ -793,66 +793,31 @@ static NTSTATUS dcesrv_alter_new_context(struct dcesrv_call_state *call, uint32_
  	return NT_STATUS_OK;
  }
  
@@ -86,6 +86,10 @@ index f25aa68..b1c763b 100644
 -		}
 -	}
 -
+-	if (call->state_flags & DCESRV_CALL_STATE_FLAG_PROCESS_PENDING_CALL) {
+-		call->context->conn->state_flags |= DCESRV_CALL_STATE_FLAG_PROCESS_PENDING_CALL;
+-	}
+-
 -	/* setup a alter_resp */
  	dcesrv_init_hdr(&pkt, lpcfg_rpc_big_endian(call->conn->dce_ctx->lp_ctx));
  	pkt.auth_length = 0;
@@ -96,6 +100,10 @@ index f25aa68..b1c763b 100644
 +				call->context->conn->state_flags &
 +					DCESRV_CALL_STATE_FLAG_MULTIPLEXED) {
 +			extra_flags |= DCERPC_PFC_FLAG_CONC_MPX;
++		}
++		if (call->state_flags & DCESRV_CALL_STATE_FLAG_PROCESS_PENDING_CALL) {
++			call->context->conn->state_flags |=
++				DCESRV_CALL_STATE_FLAG_PROCESS_PENDING_CALL;
 +		}
 +	}
  	pkt.pfc_flags = DCERPC_PFC_FLAG_FIRST | DCERPC_PFC_FLAG_LAST | extra_flags;

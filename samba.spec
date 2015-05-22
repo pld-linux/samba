@@ -23,7 +23,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.2.1
-Release:	0.1
+Release:	0.2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -49,7 +49,8 @@ Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
 Patch8:		%{name}-lib-tls-fix-build-with-gnutls-3.4.patch
 Patch9:		%{name}-dcerpc-multiplexed.patch
-Patch10:	%{name}-refactor-dcesrv_alter-function.patch
+Patch10:	%{name}-dcerpc-pending-call.patch
+Patch11:	%{name}-refactor-dcesrv_alter-function.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -514,6 +515,7 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

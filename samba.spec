@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.2.0
-Release:	2
+Version:	4.2.1
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
-Source0:	http://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	5ef28ee4cda243d07a0066f038b7d6e0
+Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
+# Source0-md5:	614b4c7b9bbc70cff4cb56956f565741
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -44,9 +44,12 @@ Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
 Patch3:		systemd-pid-dir.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
-Patch5:		samba-heimdal.patch
+Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
+Patch8:		%{name}-lib-tls-fix-build-with-gnutls-3.4.patch
+Patch9:		%{name}-dcerpc-multiplexed.patch
+Patch10:	%{name}-refactor-dcesrv_alter-function.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -508,6 +511,9 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

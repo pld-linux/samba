@@ -8,7 +8,7 @@
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
-%define		talloc_ver	2.0.8
+%define		talloc_ver	2:2.1.2
 %define		tdb_ver		2:1.2.12
 %define		ldb_ver		1.1.20
 %define		tevent_ver	0.9.24

@@ -8,11 +8,11 @@
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
-%define		talloc_ver	2:2.1.2
-%define		tdb_ver		2:1.2.12
 %define		ldb_ver		1.1.20
+%define		ntdb_ver	1.0
+%define		talloc_ver	2:2.1.2
+%define		tdb_ver		2:1.3.4
 %define		tevent_ver	0.9.24
-%define		ntdb_ver	0.9
 %endif
 
 %include	/usr/lib/rpm/macros.perl
@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.2.1
-Release:	0.2
+Version:	4.2.2
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	614b4c7b9bbc70cff4cb56956f565741
+# Source0-md5:	77f138cc0736549b03872279364766e0
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -48,9 +48,6 @@ Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
 Patch8:		%{name}-lib-tls-fix-build-with-gnutls-3.4.patch
-Patch9:		%{name}-dcerpc-multiplexed.patch
-Patch10:	%{name}-dcerpc-pending-call.patch
-Patch11:	%{name}-refactor-dcesrv_alter-function.patch
 URL:		http://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -66,11 +63,12 @@ BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	gettext-tools
 BuildRequires:	glusterfs-devel
-BuildRequires:	gnutls-devel >= 1.4.0
+BuildRequires:	gnutls-devel >= 3.0.0
 BuildRequires:	heimdal-devel >= 1.5.3-1
 BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libaio-devel
+BuildRequires:	libarchive-devel >= 3.1.2
 BuildRequires:	libcap-devel
 BuildRequires:	libcom_err-devel
 BuildRequires:	libmagic-devel
@@ -78,7 +76,7 @@ BuildRequires:	libnscd-devel
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
-BuildRequires:	nss_wrapper
+BuildRequires:	nss_wrapper >= 1.0.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	pam-devel >= 0.99.8.1
 BuildRequires:	perl-ExtUtils-MakeMaker
@@ -358,7 +356,7 @@ używanym w sieciach MS Windows.
 Summary:	Samba shared libraries
 Summary(pl.UTF-8):	Biblioteki współdzielone Samby
 Group:		Libraries
-Requires:	gnutls >= 1.4.0
+Requires:	gnutls >= 3.0.0
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
 Requires:	ntdb >= %{ntdb_ver}
@@ -513,9 +511,6 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
 
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

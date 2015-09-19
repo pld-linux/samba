@@ -11,8 +11,8 @@
 %define		ldb_ver		1.1.20
 %define		ntdb_ver	1.0
 %define		talloc_ver	2:2.1.2
-%define		tdb_ver		2:1.3.4
-%define		tevent_ver	0.9.24
+%define		tdb_ver		2:1.3.6
+%define		tevent_ver	0.9.25
 %endif
 
 %include	/usr/lib/rpm/macros.perl
@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.2.2
+Version:	4.2.4
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	77f138cc0736549b03872279364766e0
+# Source0-md5:	fc0375018c820b4b794e1b632d69a6d5
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -47,8 +47,7 @@ Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
-Patch8:		%{name}-lib-tls-fix-build-with-gnutls-3.4.patch
-URL:		http://www.samba.org/
+URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
 BuildRequires:	ceph-devel >= 0.73
@@ -510,7 +509,6 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

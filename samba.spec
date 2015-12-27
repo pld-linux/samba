@@ -8,7 +8,7 @@
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
-%define		ldb_ver		1.1.20
+%define		ldb_ver		1.1.24
 %define		ntdb_ver	1.0
 %define		talloc_ver	2:2.1.2
 %define		tdb_ver		2:1.3.6
@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.2.5
-Release:	2
+Version:	4.2.7
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	12b648d062f1fb96fb633f570bb2e496
+# Source0-md5:	1c3b1042086f5625303f2990e6ddd809
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -1469,6 +1469,7 @@ fi
 
 %files test
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/async_connect_send_test
 %attr(755,root,root) %{_bindir}/gentest
 %attr(755,root,root) %{_bindir}/locktest
 %attr(755,root,root) %{_bindir}/masktest

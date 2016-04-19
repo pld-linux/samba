@@ -8,11 +8,11 @@
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
-%define		ldb_ver		1.1.24
+%define		ldb_ver		1.1.26
 %define		ntdb_ver	1.0
-%define		talloc_ver	2:2.1.2
-%define		tdb_ver		2:1.3.6
-%define		tevent_ver	0.9.25
+%define		talloc_ver	2:2.1.6
+%define		tdb_ver		2:1.3.9
+%define		tevent_ver	0.9.28
 %endif
 
 %include	/usr/lib/rpm/macros.perl
@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.2.11
-Release:	1
+Version:	4.4.2
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	cb763e8d9cc16e1df3e1da351e1d1a77
+# Source0-md5:	03a65a3adf08ceb1636ad59d234d7f9d
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -320,23 +320,6 @@ to IP addresses.
 Biblioteka dzielona libnss_wins rozwiązująca nazwy NetBIOS na adresy
 IP.
 
-%package -n pam-pam_smbpass
-Summary:	PAM Samba Password Module
-Summary(pl.UTF-8):	Moduł PAM smbpass
-Group:		Base
-Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	pam_smbpass
-Obsoletes:	pam-pam_smbpass3
-
-%description -n pam-pam_smbpass
-PAM module which can be used on conforming systems to keep the
-smbpasswd (Samba password) database in sync with the Unix password
-file.
-
-%description -n pam-pam_smbpass -l pl.UTF-8
-Moduł PAM, który może być używany do trzymania pliku smbpasswd (hasła
-Samby) zsynchronizowanego z hasłami uniksowymi.
-
 %package -n smbget
 Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
@@ -548,14 +531,12 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-acl-support \
 	--with%{!?with_ads:out}-ads \
-	--with-aio-support \
 	--with-automount \
 	--with-dmapi \
 	--with-dnsupdate \
 	--with-iconv \
 	--with%{!?with_ldap:out}-ldap \
 	--with-pam \
-	--with-pam_smbpass \
 	--with-quotas \
 	--with-regedit \
 	--with-sendfile-support \
@@ -1110,11 +1091,6 @@ fi
 %files -n nss_wins
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/libnss_wins.so*
-
-%files -n pam-pam_smbpass
-%defattr(644,root,root,755)
-%doc source3/pam_smbpass/{CHAN*,README,TODO} source3/pam_smbpass/samples
-%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
 
 %files -n smbget
 %defattr(644,root,root,755)

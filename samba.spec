@@ -23,7 +23,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.2.11
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -86,6 +86,7 @@ BuildRequires:	popt-devel
 BuildRequires:	python-devel >= 1:2.5.0
 BuildRequires:	python-dns
 BuildRequires:	python-modules >= 1:2.5.0
+BuildRequires:	python-subunit
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-perlprov
@@ -1437,10 +1438,6 @@ fi
 %attr(755,root,root) %{py_sitedir}/samba/dcerpc/*.so
 %dir %{py_sitedir}/samba/external
 %{py_sitedir}/samba/external/*.py[co]
-%dir %{py_sitedir}/samba/external/subunit
-%{py_sitedir}/samba/external/subunit/*.py[co]
-%dir %{py_sitedir}/samba/external/subunit/tests
-%{py_sitedir}/samba/external/subunit/tests/*.py[co]
 %dir %{py_sitedir}/samba/netcmd
 %{py_sitedir}/samba/netcmd/*.py[co]
 %dir %{py_sitedir}/samba/provision

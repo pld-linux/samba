@@ -87,6 +87,7 @@ BuildRequires:	popt-devel
 BuildRequires:	python-devel >= 1:2.5.0
 BuildRequires:	python-dns
 BuildRequires:	python-modules >= 1:2.5.0
+BuildRequires:	python-subunit
 BuildRequires:	python-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-perlprov
@@ -94,6 +95,7 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
 BuildRequires:	socket_wrapper >= 1.1.2
+BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
 BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
@@ -529,7 +531,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--disable-rpath \
 	--disable-rpath-install \
 	--builtin-libraries=replace,ccan,samba-cluster-support \
-	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
+	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-cluster-support \
 	--with-acl-support \
@@ -1416,10 +1418,6 @@ fi
 %attr(755,root,root) %{py_sitedir}/samba/dcerpc/*.so
 %dir %{py_sitedir}/samba/external
 %{py_sitedir}/samba/external/*.py[co]
-%dir %{py_sitedir}/samba/external/subunit
-%{py_sitedir}/samba/external/subunit/*.py[co]
-%dir %{py_sitedir}/samba/external/subunit/tests
-%{py_sitedir}/samba/external/subunit/tests/*.py[co]
 %dir %{py_sitedir}/samba/netcmd
 %{py_sitedir}/samba/netcmd/*.py[co]
 %dir %{py_sitedir}/samba/provision
@@ -1455,7 +1453,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbtorture
 %attr(755,root,root) %{_libdir}/libtorture.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libtorture.so.0
-%attr(755,root,root) %{_libdir}/samba/libsubunit-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdlz-bind9-for-torture-samba4.so
 %{_mandir}/man1/gentest.1*
 %{_mandir}/man1/locktest.1*

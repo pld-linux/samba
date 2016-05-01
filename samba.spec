@@ -94,6 +94,7 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	sed >= 4.0
 BuildRequires:	socket_wrapper >= 1.1.2
+BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
 BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
@@ -545,7 +546,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--disable-rpath-install \
 	--builtin-libraries=replace,ccan \
-	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
+	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-acl-support \
 	--with%{!?with_ads:out}-ads \
@@ -1473,7 +1474,6 @@ fi
 %attr(755,root,root) %{_bindir}/smbtorture
 %attr(755,root,root) %{_libdir}/libtorture.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libtorture.so.0
-%attr(755,root,root) %{_libdir}/samba/libsubunit-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdlz-bind9-for-torture-samba4.so
 %{_mandir}/man1/gentest.1*
 %{_mandir}/man1/locktest.1*

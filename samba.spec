@@ -5,6 +5,7 @@
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
 %bcond_without	systemd		# systemd integration
+%bcond_with	system_heimdal	# Use system Heimdal libraries (broken in samba 4.4.x)
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 
 %if %{with system_libs}
@@ -63,7 +64,7 @@ BuildRequires:	gdbm-devel
 BuildRequires:	gettext-tools
 BuildRequires:	glusterfs-devel
 BuildRequires:	gnutls-devel >= 3.0.0
-BuildRequires:	heimdal-devel >= 1.5.3-1
+%{?with_system_heimdal:BuildRequires:	heimdal-devel >= 1.5.3-1}
 BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libaio-devel
@@ -253,7 +254,7 @@ Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
-Requires:	heimdal-libs >= 1.5.3-1
+%{?with_system_heimdal:Requires:	heimdal-libs >= 1.5.3-1}
 Suggests:	cifs-utils
 Obsoletes:	samba3-client
 Obsoletes:	samba4-client
@@ -484,12 +485,12 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 
 %prep
 %setup -q -n samba-%{version}
-%patch0 -p1
+%{?with_system_heimdal:%patch0 -p1}
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
+%{?with_system_heimdal:%patch5 -p1}
 %patch6 -p1
 %patch7 -p1
 
@@ -525,10 +526,12 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-pammodulesdir=/%{_lib}/security \
 	--with-lockdir=/var/lib/samba \
 	--with-privatedir=%{_sysconfdir}/samba \
+	--disable-rpath \
 	--disable-rpath-install \
-	--builtin-libraries=replace,ccan \
-	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util} \
+	--builtin-libraries=replace,ccan,samba-cluster-support \
+	--bundled-libraries=NONE,subunit,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
+	--with-cluster-support \
 	--with-acl-support \
 	--with%{!?with_ads:out}-ads \
 	--with-automount \
@@ -548,7 +551,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--enable-cups \
 	--enable-iprint
 
-%{__make}
+%{__make} V=1
 
 # Build PIDL for installation into vendor directories before
 # 'make proto' gets to it.

@@ -12,7 +12,7 @@
 %define		ntdb_ver	1.0
 %define		talloc_ver	2:2.1.2
 %define		tdb_ver		2:1.3.6
-%define		tevent_ver	0.9.25
+%define		tevent_ver	0.9.28
 %endif
 
 %include	/usr/lib/rpm/macros.perl
@@ -22,13 +22,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.2.11
-Release:	2
+Version:	4.2.12
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	cb763e8d9cc16e1df3e1da351e1d1a77
+# Source0-md5:	8a0ced1395efd62a4ff136f72e860a78
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -1106,7 +1106,9 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{cups_serverbin}/backend/smb
 %attr(755,root,root) %{_bindir}/smbspool
+%attr(744,root,root) %{_bindir}/smbspool_krb5_wrapper
 %{_mandir}/man8/smbspool.8*
+%{_mandir}/man8/smbspool_krb5_wrapper.8*
 %endif
 
 %files -n nss_wins

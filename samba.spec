@@ -26,7 +26,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.5.1
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -808,7 +808,6 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
 %attr(755,root,root) %{_sbindir}/smbd
-%attr(755,root,root) %{_libdir}/samba/libdnsserver-common-samba4.so
 %dir %{_libdir}/samba/bind9
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
@@ -1204,7 +1203,6 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/samba/libwind-samba4.so.0
 %attr(755,root,root) %{_libdir}/samba/libwind-samba4.so.0.0.0
 %endif
-
 %attr(755,root,root) %{_libdir}/samba/libaddns-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libads-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libasn1util-samba4.so
@@ -1228,6 +1226,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdfs-server-ad-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdnsserver-common-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdsdb-garbage-collect-tombstones-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libevents-samba4.so

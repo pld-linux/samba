@@ -7,6 +7,8 @@
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries (broken in samba 4.4.x)
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
+# turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
+%bcond_with	replace
 
 %if %{with system_libs}
 %define		ldb_ver		1.1.26
@@ -23,13 +25,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.4.4
-Release:	0.1
+Version:	4.5.1
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	b16919d43dfb5dd8c8ccf0af3a8e115b
+# Source0-md5:	f7a246f9deeaaf8e827d584e1924916d
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -545,7 +547,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--disable-rpath \
 	--disable-rpath-install \
-	--builtin-libraries=replace,ccan,samba-cluster-support \
+	--builtin-libraries=%{?with_replace:replace,}ccan,samba-cluster-support \
 	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-cluster-support \
@@ -602,7 +604,7 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 
 install -p source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
-install -p ctdb/config/ctdb.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/ctdb
+:> $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/ctdb
 
 install packaging/systemd/samba.conf.tmp $RPM_BUILD_ROOT%{systemdtmpfilesdir}/samba.conf
 echo "d /var/run/ctdb 755 root root" > $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ctdb.conf
@@ -820,6 +822,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/descriptor.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dirsync.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dns_notify.so
+%attr(755,root,root) %{_libdir}/samba/ldb/dsdb_notification.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_in.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_out.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_store.so
@@ -855,6 +858,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/subtree_rename.so
 %attr(755,root,root) %{_libdir}/samba/ldb/tombstone_reanimate.so
 %attr(755,root,root) %{_libdir}/samba/ldb/update_keytab.so
+%attr(755,root,root) %{_libdir}/samba/ldb/vlv.so
 %attr(755,root,root) %{_libdir}/samba/ldb/wins_ldb.so
 %dir %{_libdir}/samba/process_model
 %attr(755,root,root) %{_libdir}/samba/process_model/standard.so
@@ -1041,6 +1045,7 @@ fi
 %files client
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cifsdd
+%attr(755,root,root) %{_bindir}/findsmb
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
@@ -1054,6 +1059,7 @@ fi
 %{_mandir}/man1/smbcquotas.1*
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
+%{_mandir}/man8/cifsdd.8*
 
 %files winbind
 %defattr(644,root,root,755)
@@ -1102,8 +1108,10 @@ fi
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{cups_serverbin}/backend/smb
+%attr(755,root,root) %{_libdir}/samba/smbspool_krb5_wrapper
 %attr(755,root,root) %{_bindir}/smbspool
 %{_mandir}/man8/smbspool.8*
+%{_mandir}/man8/smbspool_krb5_wrapper.8*
 %endif
 
 %files -n nss_wins
@@ -1154,12 +1162,49 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamdb.so.0
 %attr(755,root,root) %{_libdir}/libtevent-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
-%attr(755,root,root) %{_libdir}/libtevent-unix-util.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libtevent-unix-util.so.0
 %attr(755,root,root) %{_libdir}/libnetapi.so.0
 %attr(755,root,root) %{_libdir}/libsmbconf.so.0
 %attr(755,root,root) %{_libdir}/libsmbldap.so.0
 %dir %{_libdir}/samba
+
+%if %{without replace}
+%attr(755,root,root) %{_libdir}/samba/libgenrand-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgensec-samba4.so
+%attr(755,root,root) %ghost %{_libdir}/samba/libheimntlm-samba4.so.1
+%attr(755,root,root) %{_libdir}/samba/libheimntlm-samba4.so.1.0.1
+%attr(755,root,root) %{_libdir}/samba/libiov-buf-samba4.so
+%attr(755,root,root) %ghost %{_libdir}/samba/libkdc-samba4.so.2
+%attr(755,root,root) %{_libdir}/samba/libkdc-samba4.so.2.0.0
+%attr(755,root,root) %{_libdir}/samba/libregistry-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libreplace-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libserver-id-db-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbclient-raw-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsys-rw-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtalloc-report-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtime-basic-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtorture-samba4.so
+%attr(755,root,root) %ghost %{_libdir}/samba/libasn1-samba4.so.8
+%attr(755,root,root) %{_libdir}/samba/libasn1-samba4.so.8.0.0
+%attr(755,root,root) %ghost %{_libdir}/samba/libcom_err-samba4.so.0
+%attr(755,root,root) %{_libdir}/samba/libcom_err-samba4.so.0.25
+%attr(755,root,root) %ghost %{_libdir}/samba/libgssapi-samba4.so.2
+%attr(755,root,root) %{_libdir}/samba/libgssapi-samba4.so.2.0.0
+%attr(755,root,root) %ghost %{_libdir}/samba/libhcrypto-samba4.so.5
+%attr(755,root,root) %{_libdir}/samba/libhcrypto-samba4.so.5.0.1
+%attr(755,root,root) %ghost %{_libdir}/samba/libhdb-samba4.so.11
+%attr(755,root,root) %{_libdir}/samba/libhdb-samba4.so.11.0.2
+%attr(755,root,root) %ghost %{_libdir}/samba/libheimbase-samba4.so.1
+%attr(755,root,root) %{_libdir}/samba/libheimbase-samba4.so.1.0.0
+%attr(755,root,root) %ghost %{_libdir}/samba/libhx509-samba4.so.5
+%attr(755,root,root) %{_libdir}/samba/libhx509-samba4.so.5.0.0
+%attr(755,root,root) %ghost %{_libdir}/samba/libkrb5-samba4.so.26
+%attr(755,root,root) %{_libdir}/samba/libkrb5-samba4.so.26.0.0
+%attr(755,root,root) %ghost %{_libdir}/samba/libroken-samba4.so.19
+%attr(755,root,root) %{_libdir}/samba/libroken-samba4.so.19.0.1
+%attr(755,root,root) %ghost %{_libdir}/samba/libwind-samba4.so.0
+%attr(755,root,root) %{_libdir}/samba/libwind-samba4.so.0.0.0
+%endif
+
 %attr(755,root,root) %{_libdir}/samba/libaddns-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libads-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libasn1util-samba4.so
@@ -1183,6 +1228,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdfs-server-ad-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdsdb-garbage-collect-tombstones-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libevents-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libflag-mapping-samba4.so
@@ -1198,6 +1244,9 @@ fi
 %attr(755,root,root) %{_libdir}/samba/liblibsmb-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libLIBWBCLIENT-OLD-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libMESSAGING-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libmessages-dgm-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libmessages-util-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libmsghdr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmsrpc3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba-samba4.so
@@ -1205,7 +1254,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libnet-keytab-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnon-posix-acls-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnpa-tstream-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libntvfs-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpac-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpopt-samba3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libposix-eadb-samba4.so
@@ -1284,6 +1332,7 @@ fi
 %{_includedir}/samba-4.0/ndr/ndr_dcerpc.h
 %{_includedir}/samba-4.0/ndr/ndr_drsblobs.h
 %{_includedir}/samba-4.0/ndr/ndr_drsuapi.h
+%{_includedir}/samba-4.0/ndr/ndr_krb5pac.h
 %{_includedir}/samba-4.0/ndr/ndr_nbt.h
 %{_includedir}/samba-4.0/ndr/ndr_svcctl.h
 %{_includedir}/samba-4.0/param.h
@@ -1481,6 +1530,7 @@ fi
 %{_sysconfdir}/ctdb/events.d/00.ctdb
 %{_sysconfdir}/ctdb/events.d/01.reclock
 %{_sysconfdir}/ctdb/events.d/05.system
+%{_sysconfdir}/ctdb/events.d/06.nfs
 %{_sysconfdir}/ctdb/events.d/10.external
 %{_sysconfdir}/ctdb/events.d/10.interface
 %{_sysconfdir}/ctdb/events.d/11.natgw
@@ -1510,10 +1560,14 @@ fi
 %{_bindir}/ltdbtool
 %{_bindir}/ctdb_diagnostics
 %{_bindir}/onnode
-%{_libexecdir}/ctdb/ctdb_lock_helper
-%{_libexecdir}/ctdb/ctdb_event_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_event_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_killtcp
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lock_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lvs
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
 
 %{_mandir}/man1/ctdb.1*
+%{_mandir}/man1/ctdb_diagnostics.1*
 %{_mandir}/man1/ctdbd.1*
 %{_mandir}/man1/onnode.1*
 %{_mandir}/man1/ltdbtool.1*

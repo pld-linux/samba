@@ -1167,21 +1167,20 @@ fi
 %dir %{_libdir}/samba
 
 %if %{without replace}
+%attr(755,root,root) %{_libdir}/samba/libreplace-samba4.so
+# TODO: verify if the following libs should be under this bcond
 %attr(755,root,root) %{_libdir}/samba/libgenrand-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgensec-samba4.so
-%attr(755,root,root) %ghost %{_libdir}/samba/libheimntlm-samba4.so.1
-%attr(755,root,root) %{_libdir}/samba/libheimntlm-samba4.so.1.0.1
 %attr(755,root,root) %{_libdir}/samba/libiov-buf-samba4.so
-%attr(755,root,root) %ghost %{_libdir}/samba/libkdc-samba4.so.2
-%attr(755,root,root) %{_libdir}/samba/libkdc-samba4.so.2.0.0
 %attr(755,root,root) %{_libdir}/samba/libregistry-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libreplace-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libserver-id-db-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbclient-raw-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsys-rw-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtalloc-report-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtime-basic-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtorture-samba4.so
+%endif
+%if %{without system_heimdal}
 %attr(755,root,root) %ghost %{_libdir}/samba/libasn1-samba4.so.8
 %attr(755,root,root) %{_libdir}/samba/libasn1-samba4.so.8.0.0
 %attr(755,root,root) %ghost %{_libdir}/samba/libcom_err-samba4.so.0
@@ -1194,8 +1193,12 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libhdb-samba4.so.11.0.2
 %attr(755,root,root) %ghost %{_libdir}/samba/libheimbase-samba4.so.1
 %attr(755,root,root) %{_libdir}/samba/libheimbase-samba4.so.1.0.0
+%attr(755,root,root) %ghost %{_libdir}/samba/libheimntlm-samba4.so.1
+%attr(755,root,root) %{_libdir}/samba/libheimntlm-samba4.so.1.0.1
 %attr(755,root,root) %ghost %{_libdir}/samba/libhx509-samba4.so.5
 %attr(755,root,root) %{_libdir}/samba/libhx509-samba4.so.5.0.0
+%attr(755,root,root) %ghost %{_libdir}/samba/libkdc-samba4.so.2
+%attr(755,root,root) %{_libdir}/samba/libkdc-samba4.so.2.0.0
 %attr(755,root,root) %ghost %{_libdir}/samba/libkrb5-samba4.so.26
 %attr(755,root,root) %{_libdir}/samba/libkrb5-samba4.so.26.0.0
 %attr(755,root,root) %ghost %{_libdir}/samba/libroken-samba4.so.19

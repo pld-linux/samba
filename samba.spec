@@ -334,6 +334,7 @@ Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
 %endif
+Obsoletes:	samba-vfs-notify_fam
 
 %description libs
 Samba shared libraries.
@@ -401,6 +402,8 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
 Obsoletes:	samba4-test
+Obsoletes:	samba4-test-devel
+Obsoletes:	samba-test-devel
 
 %description test
 samba-test provides testing tools for both the server and client
@@ -408,21 +411,6 @@ packages of Samba.
 
 %description test -l pl.UTF-8
 Narzędzia testowe dla serwerów i klientów Samby.
-
-%package test-devel
-Summary:	Testing development files for Samba servers and clients
-Summary(pl.UTF-8):	Pliki programistyczne narzędzi testowych dla serwerów i klientów Samby
-Group:		Applications/System
-Requires:	%{name}-test = %{epoch}:%{version}-%{release}
-Obsoletes:	samba4-test-devel
-
-%description test-devel
-samba-test-devel provides development files for the library used by
-testing tools for both the server and client packages of Samba.
-
-%description test-devel -l pl.UTF-8
-Ten pakiet zawiera pliki programistyczne biblioteki wykorzystywanej
-przez narzędzia testowe dla serwerów i klientów Samby.
 
 %package -n libsmbclient
 Summary:	libsmbclient and libwbclient - Samba client libraries
@@ -658,6 +646,11 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_gpfs.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_prealloc.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_tsmsm.8*
+
+# remove tests
+%{__rm} $RPM_BUILD_ROOT%{_bindir}/ctdb*_tests
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/ctdb/tests
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/ctdb-tests
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
@@ -1099,6 +1092,7 @@ fi
 %{_mandir}/man8/idmap_nss.8*
 %{_mandir}/man8/idmap_rfc2307.8*
 %{_mandir}/man8/idmap_rid.8*
+%{_mandir}/man8/idmap_script.8*
 %{_mandir}/man8/idmap_tdb2.8*
 %{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/pam_winbind.8*
@@ -1442,10 +1436,14 @@ fi
 %{py_sitedir}/samba/tests/*.py[co]
 %dir %{py_sitedir}/samba/tests/blackbox
 %{py_sitedir}/samba/tests/blackbox/*.py[co]
-%dir %{py_sitedir}/samba/tests/samba_tool
-%{py_sitedir}/samba/tests/samba_tool/*.py[co]
 %dir %{py_sitedir}/samba/tests/dcerpc
 %{py_sitedir}/samba/tests/dcerpc/*.py[co]
+%dir %{py_sitedir}/samba/tests/dns_forwarder_helpers
+%{py_sitedir}/samba/tests/dns_forwarder_helpers/*.py[co]
+%dir %{py_sitedir}/samba/tests/kcc
+%{py_sitedir}/samba/tests/kcc/*.py[co]
+%dir %{py_sitedir}/samba/tests/samba_tool
+%{py_sitedir}/samba/tests/samba_tool/*.py[co]
 %dir %{py_sitedir}/samba/third_party
 %{py_sitedir}/samba/third_party/*.py[co]
 %dir %{py_sitedir}/samba/third_party/iso8601

@@ -104,8 +104,8 @@ BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
 BuildRequires:	ntdb-devel >= %{ntdb_ver}
-BuildRequires:	python-ntdb >= %{ntdb_ver}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
+BuildRequires:	python-ntdb >= %{ntdb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
 BuildRequires:	talloc-devel >= %{talloc_ver}
@@ -118,9 +118,9 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 # for samba_{dnsupdate,kcc,spnupdate,upgradedns} scripts
-Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
+Requires:	python-samba = %{epoch}:%{version}-%{release}
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
@@ -129,17 +129,17 @@ Requires:	systemd-units >= 38
 Obsoletes:	samba-doc-html
 Obsoletes:	samba-doc-pdf
 Obsoletes:	samba-pdb-xml
-Obsoletes:	samba-vfs-block
 Obsoletes:	samba-vfs-audit
+Obsoletes:	samba-vfs-block
 Obsoletes:	samba-vfs-cap
 Obsoletes:	samba-vfs-catia
 Obsoletes:	samba-vfs-default_quota
 Obsoletes:	samba-vfs-expand_msdfs
 Obsoletes:	samba-vfs-fake_perms
 Obsoletes:	samba-vfs-netatalk
-Obsoletes:	samba-vfs-recycle
 Obsoletes:	samba-vfs-readahead
 Obsoletes:	samba-vfs-readonly
+Obsoletes:	samba-vfs-recycle
 Obsoletes:	samba-vfs-scannedonly
 Obsoletes:	samba-vfs-shadow_copy
 Obsoletes:	samba3
@@ -151,9 +151,9 @@ Obsoletes:	samba3-vfs-default_quota
 Obsoletes:	samba3-vfs-expand_msdfs
 Obsoletes:	samba3-vfs-fake_perms
 Obsoletes:	samba3-vfs-netatalk
-Obsoletes:	samba3-vfs-recycle
 Obsoletes:	samba3-vfs-readahead
 Obsoletes:	samba3-vfs-readonly
+Obsoletes:	samba3-vfs-recycle
 Obsoletes:	samba3-vfs-scannedonly
 Obsoletes:	samba3-vfs-shadow_copy
 Obsoletes:	samba4
@@ -195,7 +195,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 %description vfs-ceph
 VFS module to host shares on Ceph file system.
 
-This module only works with the libceph.so user-space client.  It is
+This module only works with the libceph.so user-space client. It is
 not needed if you are using the kernel client or the FUSE client.
 
 %description vfs-ceph -l pl.UTF-8
@@ -241,8 +241,8 @@ Summary(pl.UTF-8):	Klienci serwera Samba
 Group:		Applications/Networking
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 %{?with_system_heimdal:Requires:	heimdal-libs >= 1.5.3-1}
+Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Suggests:	cifs-utils
 Obsoletes:	samba3-client
 Obsoletes:	samba4-client
@@ -472,38 +472,38 @@ This package contains samba.schema for OpenLDAP.
 Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 
 %package -n ctdb
-Summary: A Clustered Database based on Samba's Trivial Database (TDB)
-Group: System Environment/Daemons
-Requires: %{name}-client-libs = %{samba_depver}
-Requires: coreutils
-Requires: fileutils
+Summary:	A Clustered Database based on Samba's Trivial Database (TDB)
+Group:		Daemons
+Requires:	%{name}-client-libs = %{samba_depver}
+Requires:	coreutils
+Requires:	fileutils
 # for ps and killall
-Requires: psmisc
-Requires: sed
-Requires: tdb-tools
-Requires: gawk
+Requires:	gawk
+Requires:	psmisc
+Requires:	sed
+Requires:	tdb-tools
 # for pkill and pidof:
-Requires: procps
+Requires:	procps
 # for netstat:
-Requires: net-tools
-Requires: ethtool
+Requires:	ethtool
+Requires:	net-tools
 # for ip:
-Requires: iproute
-Requires: iptables
+Requires:	iproute2
+Requires:	iptables
 # for flock, getopt, kill:
-Requires: util-linux
-Requires(post): systemd-units
-Requires(preun): systemd-units
-Requires(postun): systemd-units
+Requires:	util-linux
+Requires(post):	systemd-units
+Requires(preun):	systemd-units
+Requires(postun):	systemd-units
 
 %description -n ctdb
-CTDB is a cluster implementation of the TDB database used by Samba and other
-projects to store temporary data. If an application is already using TDB for
-temporary data it is very easy to convert that application to be cluster aware
-and use CTDB instead.
+CTDB is a cluster implementation of the TDB database used by Samba and
+other projects to store temporary data. If an application is already
+using TDB for temporary data it is very easy to convert that
+application to be cluster aware and use CTDB instead.
 
 %prep
-%setup -q -n samba-%{version}
+%setup -q
 %{?with_system_heimdal:%patch0 -p1}
 %patch1 -p1
 %patch2 -p1
@@ -606,13 +606,13 @@ install -p source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
 :> $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/ctdb
 
-install packaging/systemd/samba.conf.tmp $RPM_BUILD_ROOT%{systemdtmpfilesdir}/samba.conf
+cp -p packaging/systemd/samba.conf.tmp $RPM_BUILD_ROOT%{systemdtmpfilesdir}/samba.conf
 echo "d /var/run/ctdb 755 root root" > $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ctdb.conf
-install packaging/systemd/nmb.service $RPM_BUILD_ROOT%{systemdunitdir}
-install packaging/systemd/samba.service $RPM_BUILD_ROOT%{systemdunitdir}
-install packaging/systemd/smb.service $RPM_BUILD_ROOT%{systemdunitdir}
-install packaging/systemd/winbind.service $RPM_BUILD_ROOT%{systemdunitdir}
-install ctdb/config/ctdb.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p packaging/systemd/nmb.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p packaging/systemd/samba.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p packaging/systemd/smb.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p packaging/systemd/winbind.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p ctdb/config/ctdb.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
@@ -648,7 +648,7 @@ ln -s %{_bindir}/smbspool $RPM_BUILD_ROOT%{cups_serverbin}/backend/smb
 > $RPM_BUILD_ROOT/etc/security/blacklist.samba
 
 %if %{with ldap}
-install examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
+cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %endif
 
 # remove man pages for not installed commands
@@ -1499,9 +1499,9 @@ fi
 %endif
 
 %files -n ctdb
-%defattr(-,root,root)
+%defattr(644,root,root,755)
 %doc ctdb/README
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sysconfig/ctdb
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ctdb
 %{_sysconfdir}/ctdb/notify.sh
 %{_sysconfdir}/ctdb/debug-hung-script.sh
 %{_sysconfdir}/ctdb/ctdb-crash-cleanup.sh
@@ -1552,16 +1552,16 @@ fi
 %dir %{_sysconfdir}/ctdb/notify.d
 %{_sysconfdir}/ctdb/notify.d/README
 %{systemdtmpfilesdir}/ctdb.conf
-%{_sbindir}/ctdbd
-%{_sbindir}/ctdbd_wrapper
-%{_bindir}/ctdb
+%attr(755,root,root) %{_sbindir}/ctdbd
+%attr(755,root,root) %{_sbindir}/ctdbd_wrapper
+%attr(755,root,root) %{_bindir}/ctdb
 %{_libexecdir}/ctdb/ctdb_natgw
 %{_libexecdir}/ctdb/ctdb_recovery_helper
 %{_libexecdir}/ctdb/smnotify
-%{_bindir}/ping_pong
-%{_bindir}/ltdbtool
-%{_bindir}/ctdb_diagnostics
-%{_bindir}/onnode
+%attr(755,root,root) %{_bindir}/ping_pong
+%attr(755,root,root) %{_bindir}/ltdbtool
+%attr(755,root,root) %{_bindir}/ctdb_diagnostics
+%attr(755,root,root) %{_bindir}/onnode
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_event_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_killtcp
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lock_helper

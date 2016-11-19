@@ -7,6 +7,7 @@
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries (broken in samba 4.4.x)
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
+%bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
 %bcond_with	replace
 
@@ -80,6 +81,7 @@ BuildRequires:	ncurses-ext-devel >= 5.2
 BuildRequires:	nss_wrapper >= 1.0.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	pam-devel >= 0.99.8.1
+%{?with_ctdb_pcp:BuildRequires:	pcp-devel}
 BuildRequires:	perl-ExtUtils-MakeMaker
 BuildRequires:	perl-Parse-Yapp >= 1.05
 BuildRequires:	pkgconfig
@@ -491,6 +493,21 @@ other projects to store temporary data. If an application is already
 using TDB for temporary data it is very easy to convert that
 application to be cluster aware and use CTDB instead.
 
+%package -n pcp-ctdb
+Summary:	CTDB PMDA
+Summary(pl.UTF-8):	PMDA CTDB
+Group:		Applications/System
+Requires:	ctdb = %{epoch}:%{version}-%{release}
+Requires:	pcp
+
+%description -n pcp-ctdb
+This PMDA extracts metrics from the locally running ctdbd daemon for
+export to PMCD.
+
+%description -n pcp-ctdb -l pl.UTF-8
+Ten PMDA odczytuje pomiary z lokalnie działającego demona ctdbd w celu
+wyeksportowania do PMCD.
+
 %prep
 %setup -q
 %{?with_system_heimdal:%patch0 -p1}
@@ -542,6 +559,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-cluster-support \
 	--with-acl-support \
 	--with%{!?with_ads:out}-ads \
+	%{?with_ctdb_pcp:--enable-pmda} \
 	--with-automount \
 	--with-dmapi \
 	--with-dnsupdate \
@@ -1579,3 +1597,16 @@ fi
 %{_mandir}/man7/ctdb.7*
 %{_mandir}/man7/ctdb-tunables.7*
 %{_mandir}/man7/ctdb-statistics.7*
+
+%if %{with ctdb_pcp}
+%files -n pcp-ctdb
+%defattr(644,root,root,755)
+%dir /var/lib/pcp/pmdas/ctdb
+%doc /var/lib/pcp/pmdas/ctdb/README
+%attr(755,root,root) /var/lib/pcp/pmdas/ctdb/Install
+%attr(755,root,root) /var/lib/pcp/pmdas/ctdb/Remove
+%attr(755,root,root) /var/lib/pcp/pmdas/ctdb/pmdactdb
+/var/lib/pcp/pmdas/ctdb/domain.h
+/var/lib/pcp/pmdas/ctdb/help
+/var/lib/pcp/pmdas/ctdb/pmns
+%endif

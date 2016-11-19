@@ -474,14 +474,16 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 %package -n ctdb
 Summary:	A Clustered Database based on Samba's Trivial Database (TDB)
 Group:		Daemons
-Requires:	%{name}-client-libs = %{samba_depver}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	coreutils
 Requires:	fileutils
 # for ps and killall
 Requires:	gawk
 Requires:	psmisc
 Requires:	sed
-Requires:	tdb-tools
+%if %{with system_libs}
+Requires:	tdb >= %{tdb_ver}
+%endif
 # for pkill and pidof:
 Requires:	procps
 # for netstat:
@@ -1555,18 +1557,19 @@ fi
 %attr(755,root,root) %{_sbindir}/ctdbd
 %attr(755,root,root) %{_sbindir}/ctdbd_wrapper
 %attr(755,root,root) %{_bindir}/ctdb
-%{_libexecdir}/ctdb/ctdb_natgw
-%{_libexecdir}/ctdb/ctdb_recovery_helper
-%{_libexecdir}/ctdb/smnotify
 %attr(755,root,root) %{_bindir}/ping_pong
 %attr(755,root,root) %{_bindir}/ltdbtool
 %attr(755,root,root) %{_bindir}/ctdb_diagnostics
 %attr(755,root,root) %{_bindir}/onnode
-%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_event_helper
-%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_killtcp
-%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lock_helper
-%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lvs
-%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
+%dir %{_libdir}/ctdb
+%{_libdir}/ctdb/ctdb_natgw
+%{_libdir}/ctdb/ctdb_recovery_helper
+%{_libdir}/ctdb/smnotify
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_event_helper
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_killtcp
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_lock_helper
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_lvs
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_mutex_fcntl_helper
 
 %{_mandir}/man1/ctdb.1*
 %{_mandir}/man1/ctdb_diagnostics.1*

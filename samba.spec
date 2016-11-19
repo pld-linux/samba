@@ -54,7 +54,6 @@ URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
 BuildRequires:	ceph-devel >= 0.73
-BuildRequires:	ctdb-devel
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dbus-devel
@@ -1170,17 +1169,6 @@ fi
 
 %if %{without replace}
 %attr(755,root,root) %{_libdir}/samba/libreplace-samba4.so
-# TODO: verify if the following libs should be under this bcond
-%attr(755,root,root) %{_libdir}/samba/libgenrand-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libgensec-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libiov-buf-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libregistry-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libserver-id-db-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libsmbclient-raw-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libsys-rw-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libtalloc-report-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libtime-basic-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libtorture-samba4.so
 %endif
 %if %{without system_heimdal}
 %attr(755,root,root) %ghost %{_libdir}/samba/libasn1-samba4.so.8
@@ -1213,8 +1201,8 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libasn1util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauth4-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauthkrb5-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libauth-sam-reply-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauth-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libauth-sam-reply-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauth-unix-token-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libCHARSET3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcliauth-samba4.so
@@ -1236,20 +1224,23 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libdsdb-module-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libevents-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libflag-mapping-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgenrand-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgensec-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgpo-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgse-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libHDB-SAMBA4-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libhttp-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libinterfaces-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libiov-buf-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libkrb5samba-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libldbsamba-samba4.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli-lsa3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/liblibcli-netlogon3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/liblibsmb-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libLIBWBCLIENT-OLD-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libMESSAGING-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmessages-dgm-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmessages-util-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libMESSAGING-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmsghdr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmsrpc3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
@@ -1263,19 +1254,21 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libposix-eadb-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprinting-migrate-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprocess-model-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libregistry-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba3-util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-debug-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-net-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-python-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-security-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libsocket-blocking-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamdb-common-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsecrets3-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libserver-id-db-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libserver-role-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libservice-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libshares-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsmbclient-raw-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd-base-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd-conn-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd-shim-samba4.so
@@ -1283,7 +1276,11 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbregistry-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmb-transport-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsocket-blocking-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsys-rw-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtalloc-report-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtdb-wrap-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtime-basic-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtrusts-util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libutil-cmdline-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libutil-reg-samba4.so
@@ -1389,6 +1386,7 @@ fi
 %attr(755,root,root) %{_libdir}/libndr-standard.so
 %attr(755,root,root) %{_libdir}/libnetapi.so
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so
+%attr(755,root,root) %{_libdir}/libsamba-errors.so
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so
 %attr(755,root,root) %{_libdir}/libsamba-policy.so
@@ -1471,6 +1469,7 @@ fi
 %attr(755,root,root) %{_bindir}/ndrdump
 %attr(755,root,root) %{_bindir}/smbtorture
 %attr(755,root,root) %{_libdir}/samba/libdlz-bind9-for-torture-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libtorture-samba4.so
 %{_mandir}/man1/gentest.1*
 %{_mandir}/man1/locktest.1*
 %{_mandir}/man1/masktest.1*

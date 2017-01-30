@@ -26,13 +26,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.5.1
-Release:	3
+Version:	4.5.5
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	f7a246f9deeaaf8e827d584e1924916d
+# Source0-md5:	b6d784970333387cbafdd172d914bed2
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -668,7 +668,7 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 # remove tests
 %{__rm} $RPM_BUILD_ROOT%{_bindir}/ctdb*_tests
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/ctdb/tests
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/ctdb-tests
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/ctdb/tests
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
@@ -824,6 +824,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_10.so
+%attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_11.so
 %dir %{_libdir}/samba/gensec
 %attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
 %dir %{_libdir}/samba/ldb

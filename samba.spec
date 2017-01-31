@@ -4,6 +4,7 @@
 %bcond_without	cups		# CUPS support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
+%bcond_without	dmapi		# DMAPI support
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries (broken in samba 4.4.x)
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
@@ -19,6 +20,11 @@
 %define		tevent_ver	0.9.28
 %endif
 
+# dmapi-devel forces largefile/64bit stuff that isn't detected properly
+%ifarch %{ix86}
+%undefine	with_dmapi
+%endif
+
 %include	/usr/lib/rpm/macros.perl
 
 # NOTE: packages order is: server + additions, common, clients, libs+devel, ldap
@@ -27,7 +33,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.5.5
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -58,7 +64,7 @@ BuildRequires:	ceph-devel >= 0.73
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dbus-devel
-BuildRequires:	dmapi-devel
+%{?with_dmapi:BuildRequires:	dmapi-devel}
 BuildRequires:	docbook-style-xsl
 # just FAM API
 BuildRequires:	gamin-devel
@@ -561,7 +567,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with%{!?with_ads:out}-ads \
 	%{?with_ctdb_pcp:--enable-pmda} \
 	--with-automount \
-	--with-dmapi \
+	--with%{!?with_dmapi:out}-dmapi \
 	--with-dnsupdate \
 	--with-iconv \
 	--with%{!?with_ldap:out}-ldap \

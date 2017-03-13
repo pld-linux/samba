@@ -32,13 +32,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.5.5
-Release:	4
+Version:	4.5.6
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	b6d784970333387cbafdd172d914bed2
+# Source0-md5:	7ee18b7f5266e469df43756685009ce3
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -468,7 +468,11 @@ Ten pakiet zawiera schemat Samby (samba.schema) dla OpenLDAP-a.
 
 %package -n ctdb
 Summary:	A Clustered Database based on Samba's Trivial Database (TDB)
+Summary(pl.UTF-8):	Klastrowa baza danych oparta na bazie danych Trivial Database z Samby (TDB)
 Group:		Daemons
+URL:		http://ctdb.samba.org/
+Requires(post,preun,postun):	systemd-units
+Requires(post):	/usr/bin/systemd-tmpfiles
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	coreutils
 Requires:	fileutils
@@ -489,15 +493,18 @@ Requires:	iproute2
 Requires:	iptables
 # for flock, getopt, kill:
 Requires:	util-linux
-Requires(post):	systemd-units
-Requires(preun):	systemd-units
-Requires(postun):	systemd-units
 
 %description -n ctdb
 CTDB is a cluster implementation of the TDB database used by Samba and
 other projects to store temporary data. If an application is already
 using TDB for temporary data it is very easy to convert that
 application to be cluster aware and use CTDB instead.
+
+%description -l pl.UTF-8
+CTDB to klastrowa implementacja bazy danych TDB używanej w Sambie oraz
+innych projektach do przechowywania danych tymczasowych. Jeśli jakaś
+aplikacja już wykorzystuje TDB do trzymania danych tymczasowych,
+bardzo przerobić ją na klastrowalną, wykorzystującą CTDB.
 
 %package -n pcp-ctdb
 Summary:	CTDB PMDA
@@ -1532,7 +1539,7 @@ fi
 %{_sysconfdir}/ctdb/gcore_trace.sh
 %{_sysconfdir}/ctdb/functions
 %{_sysconfdir}/ctdb/debug_locks.sh
-%dir %{_localstatedir}/lib/ctdb/
+%dir %{_localstatedir}/lib/ctdb
 
 %{systemdunitdir}/ctdb.service
 

@@ -6,21 +6,22 @@
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
 %bcond_without	systemd		# systemd integration
-%bcond_with	system_heimdal	# Use system Heimdal libraries (broken in samba 4.4.x)
+%bcond_with	system_heimdal	# Use system Heimdal libraries [was broken in samba 4.4.x + heimdal 1.5.x]
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
 %bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.1.26
+%define		ldb_ver		1.1.27
 %define		ntdb_ver	1.0
-%define		talloc_ver	2:2.1.6
-%define		tdb_ver		2:1.3.9
-%define		tevent_ver	0.9.28
+%define		talloc_ver	2:2.1.8
+%define		tdb_ver		2:1.3.10
+%define		tevent_ver	0.9.29
 %endif
 
 # dmapi-devel forces largefile/64bit stuff that isn't detected properly
+# -- what is the exact problem? samba 4.5.6 builds with DMAPI on i686
 %ifarch %{ix86}
 %undefine	with_dmapi
 %endif
@@ -535,6 +536,10 @@ wyeksportowania do PMCD.
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
 
+%if %{with system_heimdal}
+%{__mv} source4/heimdal_build/krb5-types{,-smb}.h
+%endif
+
 %build
 LDFLAGS="${LDFLAGS:-%rpmldflags}" \
 CFLAGS="${CFLAGS:-%rpmcflags}" \
@@ -840,6 +845,10 @@ fi
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_11.so
 %dir %{_libdir}/samba/gensec
 %attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
+%if %{with system_heimdal}
+%dir %{_libdir}/samba/hdb
+%attr(755,root,root) %{_libdir}/samba/hdb/hdb_samba4.so
+%endif
 %dir %{_libdir}/samba/ldb
 %attr(755,root,root) %{_libdir}/samba/ldb/aclread.so
 %attr(755,root,root) %{_libdir}/samba/ldb/acl.so

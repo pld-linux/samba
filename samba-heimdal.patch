@@ -1,14 +1,39 @@
---- samba-4.2.0/source4/kdc/kdc.c.org	2015-03-25 20:54:14.299705890 +0100
-+++ samba-4.2.0/source4/kdc/kdc.c	2015-03-25 20:54:34.780191919 +0100
-@@ -967,9 +967,9 @@
+--- samba-4.5.6/source4/kdc/kdc-heimdal.c.orig	2017-03-13 17:48:51.591429490 +0100
++++ samba-4.5.6/source4/kdc/kdc-heimdal.c	2017-03-13 19:10:54.528039946 +0100
+@@ -373,9 +373,9 @@
  	 * The old behavior in the _kdc_get_preferred_key()
  	 * function is use_strongest_server_key=TRUE.
  	 */
--	kdc->config->as_use_strongest_session_key = false;
-+	kdc->config->tgt_use_strongest_session_key = false;
- 	kdc->config->preauth_use_strongest_session_key = false;
--	kdc->config->tgs_use_strongest_session_key = false;
-+	kdc->config->svc_use_strongest_session_key = false;
- 	kdc->config->use_strongest_server_key = true;
+-	kdc_config->as_use_strongest_session_key = false;
++	kdc_config->tgt_use_strongest_session_key = false;
+ 	kdc_config->preauth_use_strongest_session_key = false;
+-	kdc_config->tgs_use_strongest_session_key = false;
++	kdc_config->svc_use_strongest_session_key = false;
+ 	kdc_config->use_strongest_server_key = true;
  
  	/* Register hdb-samba4 hooks for use as a keytab */
+--- samba-4.5.6/source4/kdc/hdb-samba4-plugin.c.orig	2016-08-11 09:51:05.000000000 +0200
++++ samba-4.5.6/source4/kdc/hdb-samba4-plugin.c	2017-03-13 20:50:38.124638290 +0100
+@@ -72,7 +72,7 @@
+ 	return EINVAL;
+ }
+ 
+-#if (HDB_INTERFACE_VERSION != 8 && HDB_INTERFACE_VERSION != 7)
++#if (HDB_INTERFACE_VERSION < 8 || HDB_INTERFACE_VERSION > 9)
+ #error "Unsupported Heimdal HDB version"
+ #endif
+ 
+--- samba-4.5.6/source4/kdc/sdb_to_hdb.c.orig	2016-08-11 09:51:05.000000000 +0200
++++ samba-4.5.6/source4/kdc/sdb_to_hdb.c	2017-03-13 21:20:28.297951181 +0100
+@@ -51,7 +51,11 @@
+ 	h->allow_kerberos4 = s->allow_kerberos4;
+ 	h->allow_digest = s->allow_digest;
+ 	h->locked_out = s->locked_out;
++#if HDB_INTERFACE_VERSION < 9
+ 	h->_unused18 = s->_unused18;
++#else
++	h->require_pwchange = s->_unused18;
++#endif
+ 	h->_unused19 = s->_unused19;
+ 	h->_unused20 = s->_unused20;
+ 	h->_unused21 = s->_unused21;

@@ -34,7 +34,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.5.6
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -475,7 +475,7 @@ Summary(pl.UTF-8):	Klastrowa baza danych oparta na bazie danych Trivial Database
 Group:		Daemons
 URL:		http://ctdb.samba.org/
 Requires(post,preun,postun):	systemd-units
-Requires(post):	/usr/bin/systemd-tmpfiles
+Requires(post):	/bin/systemd-tmpfiles
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	coreutils
 Requires:	fileutils
@@ -801,7 +801,7 @@ fi
 %service -q ldap restart
 
 %post -n ctdb
-/usr/bin/systemd-tmpfiles --create %{systemdtmpfilesdir}/ctdb.conf
+/bin/systemd-tmpfiles --create %{systemdtmpfilesdir}/ctdb.conf
 %systemd_post ctdb.service
 
 %preun -n ctdb

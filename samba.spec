@@ -277,6 +277,8 @@ Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	systemd-units >= 38
 Obsoletes:	samba3-winbind
 Obsoletes:	samba4-winbind
+# pam_winbind is not complete replacement, but pam_smbpass has been removed (in samba 4.4)
+#Obsoletes:	pam-pam_smbpass
 
 %description winbind
 Provides the winbind daemon and testing tools to allow authentication

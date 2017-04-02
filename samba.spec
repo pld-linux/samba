@@ -33,13 +33,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.5.6
-Release:	2
+Version:	4.6.2
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	7ee18b7f5266e469df43756685009ce3
+# Source0-md5:	461def8190ffc651fd8458b24ca2a622
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -62,6 +62,7 @@ URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
 BuildRequires:	ceph-devel >= 0.73
+BuildRequires:	cmocka-devel >= 1.0.0
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dbus-devel
@@ -1028,7 +1029,7 @@ fi
 
 %files common
 %defattr(644,root,root,755)
-%doc README WHATSNEW.txt Roadmap
+%doc README WHATSNEW.txt
 %dir %{_sysconfdir}/samba
 %attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
@@ -1082,6 +1083,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cifsdd
 %attr(755,root,root) %{_bindir}/findsmb
+%attr(755,root,root) %{_bindir}/mvxattr
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/smbcacls
 %attr(755,root,root) %{_bindir}/smbclient
@@ -1089,6 +1091,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
 %{_mandir}/man1/findsmb.1*
+%{_mandir}/man1/mvxattr.1*
 %{_mandir}/man1/rpcclient.1*
 %{_mandir}/man1/smbcacls.1*
 %{_mandir}/man1/smbclient.1*
@@ -1311,7 +1314,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbd-shim-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbldaphelper-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libsmbregistry-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmb-transport-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsocket-blocking-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsys-rw-samba4.so
@@ -1404,7 +1406,6 @@ fi
 %{_includedir}/samba-4.0/util/tevent_unix.h
 %{_includedir}/samba-4.0/util/tevent_werror.h
 %{_includedir}/samba-4.0/util/time.h
-%{_includedir}/samba-4.0/util/xfile.h
 %{_includedir}/samba-4.0/util_ldb.h
 %{_includedir}/samba-4.0/lookup_sid.h
 %{_includedir}/samba-4.0/machine_sid.h
@@ -1605,11 +1606,13 @@ fi
 %{_libdir}/ctdb/ctdb_natgw
 %{_libdir}/ctdb/ctdb_recovery_helper
 %{_libdir}/ctdb/smnotify
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_event_helper
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_event
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_eventd
 %attr(755,root,root) %{_libdir}/ctdb/ctdb_killtcp
 %attr(755,root,root) %{_libdir}/ctdb/ctdb_lock_helper
 %attr(755,root,root) %{_libdir}/ctdb/ctdb_lvs
 %attr(755,root,root) %{_libdir}/ctdb/ctdb_mutex_fcntl_helper
+%attr(755,root,root) %{_libdir}/ctdb/ctdb_takeover_helper
 
 %{_mandir}/man1/ctdb.1*
 %{_mandir}/man1/ctdb_diagnostics.1*

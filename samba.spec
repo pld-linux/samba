@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
+%bcond_with	ceph		# Ceph (RADOS) storage support
 %bcond_without	cups		# CUPS support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
@@ -34,7 +35,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.6.2
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -61,7 +62,7 @@ Patch7:		%{name}-bug-9816.patch
 URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
-BuildRequires:	ceph-devel >= 0.73
+%{?with_ceph:BuildRequires:	ceph-devel >= 0.73}
 BuildRequires:	cmocka-devel >= 1.0.0
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	cyrus-sasl-devel >= 2
@@ -1017,10 +1018,12 @@ fi
 %attr(750,root,root) %dir /var/log/archive/samba
 %attr(1777,root,root) %dir /var/spool/samba
 
+%if %{with ceph}
 %files vfs-ceph
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
 %{_mandir}/man8/vfs_ceph.8*
+%endif
 
 %files vfs-glusterfs
 %defattr(644,root,root,755)

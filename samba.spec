@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
-%bcond_with	ceph		# Ceph (RADOS) storage support
+%bcond_without	ceph		# Ceph (RADOS) storage support
 %bcond_without	cups		# CUPS support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
@@ -35,7 +35,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.6.3
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons

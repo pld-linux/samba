@@ -8,21 +8,19 @@
 %bcond_without	dmapi		# DMAPI support
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries [was broken in samba 4.4.x + heimdal 1.5.x]
-%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb,ntdb)
+%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb)
 %bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.1.27
-%define		ntdb_ver	1.0
-%define		talloc_ver	2:2.1.8
-%define		tdb_ver		2:1.3.10
-%define		tevent_ver	0.9.29
+%define		ldb_ver		1.1.29
+%define		talloc_ver	2:2.1.9
+%define		tdb_ver		2:1.3.12
+%define		tevent_ver	0.9.31
 %endif
 
-# dmapi-devel forces largefile/64bit stuff that isn't detected properly
-# -- what is the exact problem? samba 4.5.6 builds with DMAPI on i686
+# dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
 %ifarch %{ix86}
 %undefine	with_dmapi
 %endif
@@ -34,13 +32,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.6.5
+Version:	4.6.6
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	2ae8ce2862d8bfa95e4681371ebb1623
+# Source0-md5:	04493bbe8d71e52393dffdbba301697d
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -113,9 +111,8 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ntdb-devel >= %{ntdb_ver}
+BuildRequires:	ldb-devel < 1.2
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
-BuildRequires:	python-ntdb >= %{ntdb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
 BuildRequires:	talloc-devel >= %{talloc_ver}
@@ -342,7 +339,6 @@ Group:		Libraries
 Requires:	gnutls >= 3.0.0
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
-Requires:	ntdb >= %{ntdb_ver}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
@@ -394,7 +390,6 @@ Requires:	python-dns
 Requires:	python-modules
 %if %{with system_libs}
 Requires:	python-ldb >= %{ldb_ver}
-Requires:	python-ntdb >= %{ntdb_ver}
 Requires:	python-talloc >= %{talloc_ver}
 Requires:	python-tevent >= %{tevent_ver}
 %endif
@@ -576,7 +571,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--disable-rpath \
 	--disable-rpath-install \
 	--builtin-libraries=%{?with_replace:replace,}ccan,samba-cluster-support \
-	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,ldb,ntdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
+	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-cluster-support \
 	--with-acl-support \
@@ -1063,20 +1058,11 @@ fi
 %{_mandir}/man8/samba-tool.8*
 
 %if %{without system_libs}
-%attr(755,root,root) %{_bindir}/ntdbbackup
-%attr(755,root,root) %{_bindir}/ntdbdump
-%attr(755,root,root) %{_bindir}/ntdbrestore
-%attr(755,root,root) %{_bindir}/ntdbtool
 %attr(755,root,root) %{_bindir}/tdbbackup
 %attr(755,root,root) %{_bindir}/tdbdump
 %attr(755,root,root) %{_bindir}/tdbtool
-%attr(755,root,root) %{_libdir}/samba/libntdb.so.*
 %attr(755,root,root) %{_libdir}/samba/libtalloc.so.*
 %attr(755,root,root) %{_libdir}/samba/libtdb.so.*
-%{_mandir}/man8/ntdbbackup.8*
-%{_mandir}/man8/ntdbdump.8*
-%{_mandir}/man8/ntdbrestore.8*
-%{_mandir}/man8/ntdbtool.8*
 %{_mandir}/man8/tdbbackup.8*
 %{_mandir}/man8/tdbdump.8*
 %{_mandir}/man8/tdbtool.8*
@@ -1449,9 +1435,6 @@ fi
 %{_pkgconfigdir}/samba-policy.pc
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
-%if %{without system_libs}
-%{_mandir}/man3/ntdb.3*
-%endif
 
 %files pidl
 %defattr(644,root,root,755)
@@ -1499,7 +1482,6 @@ fi
 %{py_sitedir}/samba/web_server/*.py[co]
 %if %{without system_libs}
 %attr(755,root,root) %{py_sitedir}/ldb.so
-%attr(755,root,root) %{py_sitedir}/ntdb.so
 %attr(755,root,root) %{py_sitedir}/talloc.so
 %attr(755,root,root) %{py_sitedir}/tdb.so
 %attr(755,root,root) %{py_sitedir}/_tevent.so

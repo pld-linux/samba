@@ -7,7 +7,7 @@
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
 %bcond_without	systemd		# systemd integration
-%bcond_with	system_heimdal	# Use system Heimdal libraries [was broken in samba 4.4.x + heimdal 1.5.x]
+%bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
 %bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb)
 %bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed

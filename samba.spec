@@ -14,7 +14,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.1.29
+%define		ldb_ver		1.2.2
 %define		talloc_ver	2:2.1.9
 %define		tdb_ver		2:1.3.12
 %define		tevent_ver	0.9.31
@@ -32,13 +32,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.6.6
+Version:	4.7.0
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	04493bbe8d71e52393dffdbba301697d
+# Source0-md5:	cf5eaf34f510e3d5643c0dcfd49fcc40
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -111,7 +111,7 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ldb-devel < 1.2
+BuildRequires:	ldb-devel < 1.3
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
@@ -1193,7 +1193,7 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
 %attr(755,root,root) %{_libdir}/libnetapi.so.0
 %attr(755,root,root) %{_libdir}/libsmbconf.so.0
-%attr(755,root,root) %{_libdir}/libsmbldap.so.0
+%attr(755,root,root) %{_libdir}/libsmbldap.so.2
 %dir %{_libdir}/samba
 
 %if %{without replace}
@@ -1231,7 +1231,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libauth4-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauthkrb5-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauth-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libauth-sam-reply-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauth-unix-token-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libCHARSET3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcliauth-samba4.so
@@ -1243,6 +1242,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libcli-spoolss-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcluster-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcmdline-credentials-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcommon-auth-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdb-glue-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdbwrap-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
@@ -1270,6 +1270,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libmessages-dgm-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmessages-util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libMESSAGING-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libMESSAGING-SEND-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmsghdr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmsrpc3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
@@ -1324,7 +1325,9 @@ fi
 %{_includedir}/samba-4.0/core/error.h
 %{_includedir}/samba-4.0/core/hresult.h
 %{_includedir}/samba-4.0/core/ntstatus.h
+%{_includedir}/samba-4.0/core/ntstatus_gen.h
 %{_includedir}/samba-4.0/core/werror.h
+%{_includedir}/samba-4.0/core/werror_gen.h
 %{_includedir}/samba-4.0/credentials.h
 %{_includedir}/samba-4.0/dcerpc.h
 %{_includedir}/samba-4.0/dcerpc_server.h
@@ -1394,6 +1397,7 @@ fi
 %{_includedir}/samba-4.0/util/tevent_ntstatus.h
 %{_includedir}/samba-4.0/util/tevent_unix.h
 %{_includedir}/samba-4.0/util/tevent_werror.h
+%{_includedir}/samba-4.0/util/tfork.h
 %{_includedir}/samba-4.0/util/time.h
 %{_includedir}/samba-4.0/util_ldb.h
 %{_includedir}/samba-4.0/lookup_sid.h

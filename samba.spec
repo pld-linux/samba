@@ -17,7 +17,7 @@
 %define		ldb_ver		1.2.2
 %define		talloc_ver	2:2.1.9
 %define		tdb_ver		2:1.3.12
-%define		tevent_ver	0.9.31
+%define		tevent_ver	0.9.34
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -32,13 +32,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.7.1
+Version:	4.7.2
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	b351ab3bddb767a3930d9e186139f95f
+# Source0-md5:	9044650a5ff173b9464fd3f6602f976a
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig

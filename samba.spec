@@ -14,9 +14,9 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.2.2
+%define		ldb_ver		1.2.3
 %define		talloc_ver	2:2.1.9
-%define		tdb_ver		2:1.3.12
+%define		tdb_ver		2:1.3.14
 %define		tevent_ver	0.9.34
 %endif
 
@@ -32,13 +32,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.7.2
+Version:	4.7.4
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	9044650a5ff173b9464fd3f6602f976a
+# Source0-md5:	427e7feb988603c51f01c97803305fed
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -66,7 +66,7 @@ BuildRequires:	cmocka-devel >= 1.0.0
 BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dbus-devel
 %{?with_dmapi:BuildRequires:	dmapi-devel}
-BuildRequires:	docbook-style-xsl
+BuildRequires:	docbook-style-xsl-nons
 # just FAM API
 BuildRequires:	gamin-devel
 BuildRequires:	gdbm-devel

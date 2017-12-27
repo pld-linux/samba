@@ -33,7 +33,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.7.4
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -96,6 +96,7 @@ BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	python-devel >= 1:2.5.0
 BuildRequires:	python-dns
+BuildRequires:	python-iso8601
 BuildRequires:	python-modules >= 1:2.5.0
 BuildRequires:	python-subunit
 BuildRequires:	python-testtools
@@ -387,6 +388,7 @@ Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	python
 Requires:	python-dns
+Requires:	python-iso8601
 Requires:	python-modules
 %if %{with system_libs}
 Requires:	python-ldb >= %{ldb_ver}
@@ -684,7 +686,7 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 
 # remove tests
 %{__rm} $RPM_BUILD_ROOT%{_bindir}/ctdb*_tests
-%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/ctdb/tests
+%{__rm} -r $RPM_BUILD_ROOT%{_libexecdir}/ctdb/tests
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/ctdb/tests
 
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
@@ -1137,7 +1139,10 @@ fi
 %files -n cups-backend-smb
 %defattr(644,root,root,755)
 %attr(755,root,root) %{cups_serverbin}/backend/smb
-%attr(755,root,root) %{_libdir}/samba/smbspool_krb5_wrapper
+%if "%{_libexecdir}" != "%{_libdir}"
+%dir %{_libexecdir}/samba
+%endif
+%attr(755,root,root) %{_libexecdir}/samba/smbspool_krb5_wrapper
 %attr(755,root,root) %{_bindir}/smbspool
 %{_mandir}/man8/smbspool.8*
 %{_mandir}/man8/smbspool_krb5_wrapper.8*
@@ -1480,8 +1485,6 @@ fi
 %{py_sitedir}/samba/tests/samba_tool/*.py[co]
 %dir %{py_sitedir}/samba/third_party
 %{py_sitedir}/samba/third_party/*.py[co]
-%dir %{py_sitedir}/samba/third_party/iso8601
-%{py_sitedir}/samba/third_party/iso8601/*.py[co]
 %dir %{py_sitedir}/samba/web_server
 %{py_sitedir}/samba/web_server/*.py[co]
 %if %{without system_libs}
@@ -1591,17 +1594,17 @@ fi
 %attr(755,root,root) %{_bindir}/ltdbtool
 %attr(755,root,root) %{_bindir}/ctdb_diagnostics
 %attr(755,root,root) %{_bindir}/onnode
-%dir %{_libdir}/ctdb
-%{_libdir}/ctdb/ctdb_natgw
-%{_libdir}/ctdb/ctdb_recovery_helper
-%{_libdir}/ctdb/smnotify
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_event
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_eventd
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_killtcp
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_lock_helper
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_lvs
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_mutex_fcntl_helper
-%attr(755,root,root) %{_libdir}/ctdb/ctdb_takeover_helper
+%dir %{_libexecdir}/ctdb
+%{_libexecdir}/ctdb/ctdb_natgw
+%{_libexecdir}/ctdb/ctdb_recovery_helper
+%{_libexecdir}/ctdb/smnotify
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_event
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_eventd
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_killtcp
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lock_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lvs
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_takeover_helper
 
 %{_mandir}/man1/ctdb.1*
 %{_mandir}/man1/ctdb_diagnostics.1*

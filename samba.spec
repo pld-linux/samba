@@ -8,7 +8,8 @@
 %bcond_without	dmapi		# DMAPI support
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
-%bcond_without	system_libs	# system libraries (talloc,tdb,tevent,ldb)
+%bcond_with	system_libbsd	# system libbsd for MD5 and strl* functions
+%bcond_without	system_libs	# system libraries from SAMBA project (talloc,tdb,tevent,ldb)
 %bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
 %bcond_with	replace
@@ -57,6 +58,7 @@ Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
+Patch8:		%{name}-no_libbsd.patch
 URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -78,6 +80,7 @@ BuildRequires:	iconv
 BuildRequires:	keyutils-devel
 BuildRequires:	libaio-devel
 BuildRequires:	libarchive-devel >= 3.1.2
+%{?with_system_libbsd:BuildRequires:	libbsd-devel}
 BuildRequires:	libcap-devel
 BuildRequires:	libcom_err-devel
 BuildRequires:	libmagic-devel
@@ -121,7 +124,6 @@ BuildRequires:	tdb-devel >= %{tdb_ver}
 BuildRequires:	tevent-devel >= %{tevent_ver}
 %endif
 BuildRequires:	uid_wrapper >= 1.1.0
-BuildConflicts:	libbsd-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
@@ -533,6 +535,7 @@ wyeksportowania do PMCD.
 %{?with_system_heimdal:%patch5 -p1}
 %patch6 -p1
 %patch7 -p1
+%{!?with_system_libbsd:%patch8 -p1}
 
 %{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 %{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

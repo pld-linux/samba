@@ -1,0 +1,35 @@
+--- samba-4.7.6/lib/replace/wscript.orig	2018-04-01 20:31:57.522637016 +0200
++++ samba-4.7.6/lib/replace/wscript	2018-04-01 23:00:11.129202131 +0200
+@@ -281,17 +281,6 @@
+ 
+     strlcpy_in_bsd = False
+ 
+-    # libbsd on some platforms provides strlcpy and strlcat
+-    if not conf.CHECK_FUNCS('strlcpy strlcat'):
+-        if conf.CHECK_FUNCS_IN('strlcpy strlcat', 'bsd', headers='bsd/string.h',
+-                               checklibc=True):
+-            strlcpy_in_bsd = True
+-    if not conf.CHECK_FUNCS('getpeereid'):
+-        conf.CHECK_FUNCS_IN('getpeereid', 'bsd', headers='sys/types.h bsd/unistd.h')
+-    conf.CHECK_FUNCS_IN('setproctitle', 'bsd', headers='sys/types.h bsd/unistd.h')
+-
+-    if not conf.CHECK_FUNCS('closefrom'):
+-        conf.CHECK_FUNCS_IN('closefrom', 'bsd', headers='bsd/unistd.h')
+ 
+     conf.CHECK_CODE('''
+                 struct ucred cred;
+--- samba-4.7.6/lib/crypto/wscript_configure.orig	2017-09-17 21:15:34.000000000 +0200
++++ samba-4.7.6/lib/crypto/wscript_configure	2018-04-01 23:00:39.302535142 +0200
+@@ -2,12 +2,6 @@
+ import Options
+ import Utils
+ 
+-if not conf.CHECK_FUNCS_IN('MD5Init', 'bsd', headers='bsd/md5.h',
+-    checklibc=True):
+-    conf.CHECK_FUNCS_IN('MD5Init', 'md5', headers='sys/md5.h',
+-                        checklibc=True)
+-    conf.CHECK_FUNCS_IN('MD5Init', 'md', headers='sys/md5.h',
+-                        checklibc=True)
+ conf.CHECK_FUNCS_IN('CC_MD5_Init', '', headers='CommonCrypto/CommonDigest.h',
+     checklibc=True)
+ 

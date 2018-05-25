@@ -53,14 +53,14 @@ index 37edb31..00abad8 100644
 
 --- a/lib/replace/wscript~	2014-09-08 11:26:14.000000000 +0200
 +++ b/lib/replace/wscript	2014-10-28 22:05:54.003836383 +0100
-@@ -251,8 +251,7 @@ def configure(conf):
-                 checklibc=True)
+@@ -311,8 +311,7 @@ def configure(conf):
+             strlcpy_in_bsd = True
      if not conf.CHECK_FUNCS('getpeereid'):
          conf.CHECK_FUNCS_IN('getpeereid', 'bsd', headers='sys/types.h bsd/unistd.h')
 -    if not conf.CHECK_FUNCS_IN('setproctitle', 'setproctitle', headers='setproctitle.h'):
 -        conf.CHECK_FUNCS_IN('setproctitle', 'bsd', headers='sys/types.h bsd/unistd.h')
 +    conf.CHECK_FUNCS_IN('setproctitle', 'bsd', headers='sys/types.h bsd/unistd.h')
+     if not conf.CHECK_FUNCS('setproctitle_init'):
+         conf.CHECK_FUNCS_IN('setproctitle_init', 'bsd', headers='sys/types.h bsd/unistd.h')
  
-     conf.CHECK_CODE('''
-                 struct ucred cred;
 

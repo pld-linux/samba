@@ -1,31 +1,31 @@
---- samba-4.7.4/packaging/systemd/smb.service.orig	2017-12-26 18:26:31.457609415 +0100
-+++ samba-4.7.4/packaging/systemd/smb.service	2017-12-26 18:27:11.460942304 +0100
+--- samba-4.7.4/packaging/systemd/smb.service.in.orig	2017-12-26 18:26:31.457609415 +0100
++++ samba-4.7.4/packaging/systemd/smb.service.in	2017-12-26 18:27:11.460942304 +0100
 @@ -8,6 +8,7 @@
- PIDFile=/run/samba/smbd.pid
+ PIDFile=@PIDDIR@/smbd.pid
  LimitNOFILE=16384
- EnvironmentFile=-/etc/sysconfig/samba
+ EnvironmentFile=-@SYSCONFDIR@/sysconfig/samba
 +ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -1`" != "active directory domain controller" ]'
- ExecStart=/usr/sbin/smbd --foreground --no-process-group $SMBDOPTIONS
+ ExecStart=@SBINDIR@/smbd --foreground --no-process-group $SMBDOPTIONS
  ExecReload=/usr/bin/kill -HUP $MAINPID
  LimitCORE=infinity
---- samba-4.7.4/packaging/systemd/nmb.service.orig	2017-12-26 18:26:31.457609415 +0100
-+++ samba-4.7.4/packaging/systemd/nmb.service	2017-12-26 18:27:32.350942051 +0100
+--- samba-4.7.4/packaging/systemd/nmb.service.in.orig	2017-12-26 18:26:31.457609415 +0100
++++ samba-4.7.4/packaging/systemd/nmb.service.in	2017-12-26 18:27:32.350942051 +0100
 @@ -7,6 +7,8 @@
  NotifyAccess=all
- PIDFile=/run/samba/nmbd.pid
- EnvironmentFile=-/etc/sysconfig/samba
+ PIDFile=@PIDDIR@/nmbd.pid
+ EnvironmentFile=-@SYSCONFDIR@/sysconfig/samba
 +ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -1`" != "active directory domain controller" ]'
 +ExecStartPre=/bin/sh -c '[ "`testparm -s --parameter-name="disable netbios" 2>/dev/null`" != "Yes" ]'
- ExecStart=/usr/sbin/nmbd --foreground --no-process-group $NMBDOPTIONS
+ ExecStart=@SBINDIR@/nmbd --foreground --no-process-group $NMBDOPTIONS
  ExecReload=/usr/bin/kill -HUP $MAINPID
  LimitCORE=infinity
---- samba-4.7.4/packaging/systemd/samba.service.orig	2017-12-26 18:26:31.457609415 +0100
-+++ samba-4.7.4/packaging/systemd/samba.service	2017-12-26 18:27:52.774275149 +0100
+--- samba-4.7.4/packaging/systemd/samba.service.in.orig	2017-12-26 18:26:31.457609415 +0100
++++ samba-4.7.4/packaging/systemd/samba.service.in	2017-12-26 18:27:52.774275149 +0100
 @@ -8,6 +8,7 @@
- PIDFile=/run/samba/samba.pid
+ PIDFile=@PIDDIR@/samba.pid
  LimitNOFILE=16384
- EnvironmentFile=-/etc/sysconfig/samba
+ EnvironmentFile=-@SYSCONFDIR@/sysconfig/samba
 +ExecStartPre=/bin/sh -c '[ "`samba-tool testparm --parameter-name="server role" 2>/dev/null | tail -1`" = "active directory domain controller" ]'
- ExecStart=/usr/sbin/samba --foreground --no-process-group $SAMBAOPTIONS
+ ExecStart=@SBINDIR@/samba --foreground --no-process-group $SAMBAOPTIONS
  ExecReload=/usr/bin/kill -HUP $MAINPID
  

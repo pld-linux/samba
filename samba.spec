@@ -15,7 +15,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.2.3
+%define		ldb_ver		1.3.3
 %define		talloc_ver	2:2.1.9
 %define		tdb_ver		2:1.3.14
 %define		tevent_ver	0.9.34
@@ -33,13 +33,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.7.6
-Release:	1
+Version:	4.8.2
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	0253021a45c479cec1e135b004a0177a
+# Source0-md5:	417c065455f8948d1de2be4edd074390
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -53,7 +53,7 @@ Source10:	https://bitbucket.org/fumiyas/samba-virusfilter/downloads/samba-virusf
 Patch0:		system-heimdal.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
-Patch3:		systemd-pid-dir.patch
+
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
@@ -115,7 +115,7 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ldb-devel < 1.3
+BuildRequires:	ldb-devel < 1.4
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
@@ -530,7 +530,7 @@ wyeksportowania do PMCD.
 %{?with_system_heimdal:%patch0 -p1}
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
+
 %patch4 -p1
 %{?with_system_heimdal:%patch5 -p1}
 %patch6 -p1
@@ -592,7 +592,13 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-regedit \
 	--with-sendfile-support \
 	--with-syslog \
-	%{!?with_systemd:--without-systemd} \
+%if %{with systemd}
+	--with-systemd \
+	--systemd-install-services \
+	--with-systemddir=%{systemdunitdir} \
+%else
+	--without-systemd \
+%endif
 	--with-utmp \
 	--with-winbind \
 	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \
@@ -637,10 +643,6 @@ install -p source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
 cp -p packaging/systemd/samba.conf.tmp $RPM_BUILD_ROOT%{systemdtmpfilesdir}/samba.conf
 echo "d /var/run/ctdb 755 root root" > $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ctdb.conf
-cp -p packaging/systemd/nmb.service $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p packaging/systemd/samba.service $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p packaging/systemd/smb.service $RPM_BUILD_ROOT%{systemdunitdir}
-cp -p packaging/systemd/winbind.service $RPM_BUILD_ROOT%{systemdunitdir}
 cp -p ctdb/config/ctdb.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
@@ -919,7 +921,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_tdb.so
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
-%attr(755,root,root) %{_libdir}/samba/vfs/aio_linux.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_pthread.so
 %attr(755,root,root) %{_libdir}/samba/vfs/audit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
@@ -971,7 +972,6 @@ fi
 %{_mandir}/man8/vfs_acl_tdb.8*
 %{_mandir}/man8/vfs_acl_xattr.8*
 %{_mandir}/man8/vfs_aio_fork.8*
-%{_mandir}/man8/vfs_aio_linux.8*
 %{_mandir}/man8/vfs_aio_pthread.8*
 %{_mandir}/man8/vfs_audit.8*
 %{_mandir}/man8/vfs_btrfs.8*
@@ -1263,7 +1263,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libflag-mapping-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgenrand-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgensec-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libgpo-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgpext-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgse-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libHDB-SAMBA4-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libhttp-samba4.so

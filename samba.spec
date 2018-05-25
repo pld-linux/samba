@@ -34,7 +34,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.8.2
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -840,6 +840,7 @@ fi
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/samba
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
+%attr(755,root,root) %{_sbindir}/samba_gpoupdate
 %attr(755,root,root) %{_sbindir}/samba_kcc
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
@@ -863,6 +864,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/dirsync.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dns_notify.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dsdb_notification.so
+%attr(755,root,root) %{_libdir}/samba/ldb/encrypted_secrets.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_in.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_out.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_store.so
@@ -897,10 +899,12 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/subtree_delete.so
 %attr(755,root,root) %{_libdir}/samba/ldb/subtree_rename.so
 %attr(755,root,root) %{_libdir}/samba/ldb/tombstone_reanimate.so
+%attr(755,root,root) %{_libdir}/samba/ldb/unique_object_sids.so
 %attr(755,root,root) %{_libdir}/samba/ldb/update_keytab.so
 %attr(755,root,root) %{_libdir}/samba/ldb/vlv.so
 %attr(755,root,root) %{_libdir}/samba/ldb/wins_ldb.so
 %dir %{_libdir}/samba/process_model
+%attr(755,root,root) %{_libdir}/samba/process_model/prefork.so
 %attr(755,root,root) %{_libdir}/samba/process_model/standard.so
 %dir %{_libdir}/samba/service
 %attr(755,root,root) %{_libdir}/samba/service/cldap.so
@@ -955,6 +959,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/syncops.so
 %attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/unityed_media.so
+%attr(755,root,root) %{_libdir}/samba/vfs/virusfilter.so
 %attr(755,root,root) %{_libdir}/samba/vfs/worm.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %{_datadir}/samba/setup
@@ -967,6 +972,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/samba.8*
+%{_mandir}/man8/samba_gpoupdate.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/vfs_acl_tdb.8*
@@ -1005,6 +1011,7 @@ fi
 %{_mandir}/man8/vfs_offline.8*
 %{_mandir}/man8/vfs_shell_snap.8*
 %{_mandir}/man8/vfs_unityed_media.8*
+%{_mandir}/man8/vfs_virusfilter.8*
 
 %dir %{_sambahome}
 %dir /var/lib/samba
@@ -1463,6 +1470,8 @@ fi
 %dir %{py_sitedir}/samba/dcerpc
 %{py_sitedir}/samba/dcerpc/*.py[co]
 %attr(755,root,root) %{py_sitedir}/samba/dcerpc/*.so
+%dir %{py_sitedir}/samba/emulate
+%{py_sitedir}/samba/emulate/*.py[co]
 %dir %{py_sitedir}/samba/kcc
 %{py_sitedir}/samba/kcc/*.py[co]
 %dir %{py_sitedir}/samba/netcmd
@@ -1486,6 +1495,8 @@ fi
 %{py_sitedir}/samba/tests/kcc/*.py[co]
 %dir %{py_sitedir}/samba/tests/samba_tool
 %{py_sitedir}/samba/tests/samba_tool/*.py[co]
+%dir %{py_sitedir}/samba/tests/emulate
+%{py_sitedir}/samba/tests/emulate/*.py[co]
 %dir %{py_sitedir}/samba/third_party
 %{py_sitedir}/samba/third_party/*.py[co]
 %dir %{py_sitedir}/samba/web_server

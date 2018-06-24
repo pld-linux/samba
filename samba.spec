@@ -16,9 +16,9 @@
 
 %if %{with system_libs}
 %define		ldb_ver		1.3.3
-%define		talloc_ver	2:2.1.9
-%define		tdb_ver		2:1.3.14
-%define		tevent_ver	0.9.34
+%define		talloc_ver	2:2.1.11
+%define		tdb_ver		2:1.3.15
+%define		tevent_ver	0.9.36
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -612,6 +612,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 cd pidl
 %{__perl} Makefile.PL \
 	INSTALLDIRS=vendor
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -684,6 +685,7 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 
 # remove man pages for not installed commands
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/log2pcap.1*
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/traffic_{learner,replay}.7*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_cacheprime.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_gpfs.8*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_prealloc.8*
@@ -995,6 +997,7 @@ fi
 %{_mandir}/man8/vfs_linux_xfs_sgid.8*
 %{_mandir}/man8/vfs_media_harmony.8*
 %{_mandir}/man8/vfs_netatalk.8*
+%{_mandir}/man8/vfs_nfs4acl_xattr.8*
 %{_mandir}/man8/vfs_preopen.8*
 %{_mandir}/man8/vfs_readahead.8*
 %{_mandir}/man8/vfs_readonly.8*

@@ -15,7 +15,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.3.5
+%define		ldb_ver		1.3.6
 %define		talloc_ver	2:2.1.11
 %define		tdb_ver		2:1.3.15
 %define		tevent_ver	0.9.36
@@ -33,13 +33,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.8.4
+Version:	4.8.5
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	ca5bfbebd8d9eb95506e16594b2bbee2
+# Source0-md5:	b3dc5d6fbe35dcfdc490a608704d572e
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -53,7 +53,7 @@ Source10:	https://bitbucket.org/fumiyas/samba-virusfilter/downloads/samba-virusf
 Patch0:		system-heimdal.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
-Patch3:		pcp.patch
+
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
@@ -530,7 +530,7 @@ wyeksportowania do PMCD.
 %{?with_system_heimdal:%patch0 -p1}
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
+
 %patch4 -p1
 %{?with_system_heimdal:%patch5 -p1}
 %patch6 -p1
@@ -1114,7 +1114,8 @@ fi
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) /%{_lib}/security/pam_winbind.so
 %attr(755,root,root) /%{_lib}/libnss_winbind.so*
-%attr(755,root,root) %{_libdir}/winbind_krb5_locator.so
+%dir %{_libdir}/samba/krb5
+%attr(755,root,root) %{_libdir}/samba/krb5/winbind_krb5_locator.so
 %attr(755,root,root) %{_libdir}/samba/libidmap-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnss-info-samba4.so
 %dir %{_libdir}/samba/idmap
@@ -1134,7 +1135,6 @@ fi
 %{_mandir}/man1/ntlm_auth.1*
 %{_mandir}/man1/wbinfo*.1*
 %{_mandir}/man5/pam_winbind.conf.5*
-%{_mandir}/man7/winbind_krb5_locator.7*
 %{_mandir}/man8/idmap_ad.8*
 %{_mandir}/man8/idmap_autorid.8*
 %{_mandir}/man8/idmap_hash.8*
@@ -1147,6 +1147,7 @@ fi
 %{_mandir}/man8/idmap_tdb.8*
 %{_mandir}/man8/pam_winbind.8*
 %{_mandir}/man8/winbindd*.8*
+%{_mandir}/man8/winbind_krb5_locator.8*
 
 %if %{with cups}
 %files -n cups-backend-smb

@@ -15,7 +15,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.3.6
+%define		ldb_ver		1.4.2
 %define		talloc_ver	2:2.1.11
 %define		tdb_ver		2:1.3.15
 %define		tevent_ver	0.9.36
@@ -33,13 +33,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.8.5
+Version:	4.9.0
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	b3dc5d6fbe35dcfdc490a608704d572e
+# Source0-md5:	7bb2202f9094786b88155db052e7a54d
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -115,7 +115,7 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ldb-devel < 1.4
+BuildRequires:	ldb-devel < 1.5
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
@@ -831,18 +831,18 @@ fi
 %{systemdunitdir}/smb.service
 %{systemdunitdir}/samba.service
 %{systemdtmpfilesdir}/samba.conf
-%attr(755,root,root) %{_bindir}/eventlogadm
 %attr(755,root,root) %{_bindir}/oLschema2ldif
 %attr(755,root,root) %{_bindir}/pdbedit
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/smbstatus
+%attr(755,root,root) %{_sbindir}/eventlogadm
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/samba
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
-%attr(755,root,root) %{_sbindir}/samba_gpoupdate
+%attr(755,root,root) %{_sbindir}/samba-gpupdate
 %attr(755,root,root) %{_sbindir}/samba_kcc
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
@@ -862,6 +862,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/aclread.so
 %attr(755,root,root) %{_libdir}/samba/ldb/acl.so
 %attr(755,root,root) %{_libdir}/samba/ldb/anr.so
+%attr(755,root,root) %{_libdir}/samba/ldb/audit_log.so
 %attr(755,root,root) %{_libdir}/samba/ldb/descriptor.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dirsync.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dns_notify.so
@@ -870,6 +871,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_in.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_out.so
 %attr(755,root,root) %{_libdir}/samba/ldb/extended_dn_store.so
+%attr(755,root,root) %{_libdir}/samba/ldb/group_audit_log.so
 %attr(755,root,root) %{_libdir}/samba/ldb/ildap.so
 %attr(755,root,root) %{_libdir}/samba/ldb/instancetype.so
 %attr(755,root,root) %{_libdir}/samba/ldb/lazy_commit.so
@@ -974,7 +976,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/samba.8*
-%{_mandir}/man8/samba_gpoupdate.8*
+%{_mandir}/man8/samba-gpupdate.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
 %{_mandir}/man8/vfs_acl_tdb.8*
@@ -1262,6 +1264,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libcluster-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcmdline-credentials-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcommon-auth-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libctdb-event-client-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdb-glue-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdbwrap-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
@@ -1312,6 +1315,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsamba-security-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamdb-common-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libscavenge-dns-records-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsecrets3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libserver-id-db-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libserver-role-samba4.so
@@ -1558,7 +1562,6 @@ fi
 %{_sysconfdir}/ctdb/notify.sh
 %{_sysconfdir}/ctdb/debug-hung-script.sh
 %{_sysconfdir}/ctdb/ctdb-crash-cleanup.sh
-%{_sysconfdir}/ctdb/gcore_trace.sh
 %{_sysconfdir}/ctdb/functions
 %{_sysconfdir}/ctdb/debug_locks.sh
 %dir %{_localstatedir}/lib/ctdb
@@ -1581,29 +1584,30 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sudoers.d/ctdb
 # CTDB scripts, no config files
 # script with executable bit means activated
-%dir %{_sysconfdir}/ctdb/events.d
-%{_sysconfdir}/ctdb/events.d/00.ctdb
-%{_sysconfdir}/ctdb/events.d/01.reclock
-%{_sysconfdir}/ctdb/events.d/05.system
-%{_sysconfdir}/ctdb/events.d/06.nfs
-%{_sysconfdir}/ctdb/events.d/10.external
-%{_sysconfdir}/ctdb/events.d/10.interface
-%{_sysconfdir}/ctdb/events.d/11.natgw
-%{_sysconfdir}/ctdb/events.d/11.routing
-%{_sysconfdir}/ctdb/events.d/13.per_ip_routing
-%{_sysconfdir}/ctdb/events.d/20.multipathd
-%{_sysconfdir}/ctdb/events.d/31.clamd
-%{_sysconfdir}/ctdb/events.d/40.vsftpd
-%{_sysconfdir}/ctdb/events.d/41.httpd
-%{_sysconfdir}/ctdb/events.d/49.winbind
-%{_sysconfdir}/ctdb/events.d/50.samba
-%{_sysconfdir}/ctdb/events.d/60.nfs
-%{_sysconfdir}/ctdb/events.d/70.iscsi
-%{_sysconfdir}/ctdb/events.d/91.lvs
-%{_sysconfdir}/ctdb/events.d/99.timeout
-%{_sysconfdir}/ctdb/events.d/README
-%dir %{_sysconfdir}/ctdb/notify.d
-%{_sysconfdir}/ctdb/notify.d/README
+%dir %{_sysconfdir}/ctdb/events
+%dir %{_sysconfdir}/ctdb/events/legacy
+%dir %{_sysconfdir}/ctdb/events/notification
+%{_sysconfdir}/ctdb/events/notification/README
+%dir %{_datadir}/ctdb
+%dir %{_datadir}/ctdb/events
+%dir %{_datadir}/ctdb/events/legacy
+%{_datadir}/ctdb/events/legacy/00.ctdb.script
+%{_datadir}/ctdb/events/legacy/01.reclock.script
+%{_datadir}/ctdb/events/legacy/05.system.script
+%{_datadir}/ctdb/events/legacy/06.nfs.script
+%{_datadir}/ctdb/events/legacy/10.interface.script
+%{_datadir}/ctdb/events/legacy/11.natgw.script
+%{_datadir}/ctdb/events/legacy/11.routing.script
+%{_datadir}/ctdb/events/legacy/13.per_ip_routing.script
+%{_datadir}/ctdb/events/legacy/20.multipathd.script
+%{_datadir}/ctdb/events/legacy/31.clamd.script
+%{_datadir}/ctdb/events/legacy/40.vsftpd.script
+%{_datadir}/ctdb/events/legacy/41.httpd.script
+%{_datadir}/ctdb/events/legacy/49.winbind.script
+%{_datadir}/ctdb/events/legacy/50.samba.script
+%{_datadir}/ctdb/events/legacy/60.nfs.script
+%{_datadir}/ctdb/events/legacy/70.iscsi.script
+%{_datadir}/ctdb/events/legacy/91.lvs.script
 %{systemdtmpfilesdir}/ctdb.conf
 %attr(755,root,root) %{_sbindir}/ctdbd
 %attr(755,root,root) %{_sbindir}/ctdbd_wrapper
@@ -1616,12 +1620,14 @@ fi
 %{_libexecdir}/ctdb/ctdb_natgw
 %{_libexecdir}/ctdb/ctdb_recovery_helper
 %{_libexecdir}/ctdb/smnotify
-%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_event
-%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_eventd
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb-config
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb-event
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb-eventd
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_killtcp
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lock_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lvs
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb-path
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_takeover_helper
 
 %{_mandir}/man1/ctdb.1*
@@ -1631,7 +1637,9 @@ fi
 %{_mandir}/man1/ltdbtool.1*
 %{_mandir}/man1/ping_pong.1*
 %{_mandir}/man1/ctdbd_wrapper.1*
-%{_mandir}/man5/ctdbd.conf.5*
+%{_mandir}/man5/ctdb-script.options.5*
+%{_mandir}/man5/ctdb.conf.5*
+%{_mandir}/man5/ctdb.sysconfig.5*
 %{_mandir}/man7/ctdb.7*
 %{_mandir}/man7/ctdb-tunables.7*
 %{_mandir}/man7/ctdb-statistics.7*

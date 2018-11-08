@@ -15,7 +15,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.4.2
+%define		ldb_ver		1.4.3
 %define		talloc_ver	2:2.1.11
 %define		tdb_ver		2:1.3.15
 %define		tevent_ver	0.9.36
@@ -33,13 +33,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.9.1
+Version:	4.9.2
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	22f9201d1a7033ada4302b4e82d36516
+# Source0-md5:	3a77705cc74feca697d2e434d7d2f0a6
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -1262,6 +1262,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libcli-smb-common-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcli-spoolss-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcluster-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcmdline-contexts-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcmdline-credentials-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcommon-auth-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libctdb-event-client-samba4.so
@@ -1302,6 +1303,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libnon-posix-acls-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnpa-tstream-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpac-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libpopt-samba3-cmdline-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpopt-samba3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libposix-eadb-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprinting-migrate-samba4.so

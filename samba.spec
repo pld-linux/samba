@@ -1,4 +1,9 @@
 #
+# Note:
+# - unpredictible build failures:
+#   fail: http://buildlogs.pld-linux.org//index.php?dist=th&arch=i686&ok=0&name=samba&id=8e631f35-f333-464e-b872-135db73f0a67&action=tail
+#   ok: http://buildlogs.pld-linux.org//index.php?dist=th&arch=i686&ok=1&name=samba&id=1188195b-4017-48c5-8c07-f1deb41b5800&action=tail 
+#
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
 %bcond_without	ceph		# Ceph (RADOS) storage support
@@ -34,7 +39,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.9.2
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons

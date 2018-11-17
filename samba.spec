@@ -21,9 +21,9 @@
 
 %if %{with system_libs}
 %define		ldb_ver		1.4.3
-%define		talloc_ver	2:2.1.11
-%define		tdb_ver		2:1.3.15
-%define		tevent_ver	0.9.36
+%define		talloc_ver	2:2.1.14
+%define		tdb_ver		2:1.3.16
+%define		tevent_ver	0.9.37
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly

@@ -39,7 +39,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.9.2
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -738,6 +738,9 @@ fi
 /sbin/chkconfig --add samba
 %service samba restart "Samba AD daemons"
 %systemd_post samba.service
+
+%triggerpostun -- samba < 1:4.9.2-3
+%{_bindir}/net groupmap add sid=S-1-5-32-546 unixgroup=nobody type=builtin || :
 
 %triggerpostun -- samba4 < 1:4.1.1-1
 # CVE-2013-4476

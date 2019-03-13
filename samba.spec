@@ -20,7 +20,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.4.3
+%define		ldb_ver		1.4.6
 %define		talloc_ver	2:2.1.14
 %define		tdb_ver		2:1.3.16
 %define		tevent_ver	0.9.37
@@ -38,13 +38,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.9.4
+Version:	4.9.5
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	5e94705ae741bc6e4c893cea7b5de0d5
+# Source0-md5:	e761ba58bdbcb903bd3692283d46103a
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -1048,7 +1048,9 @@ fi
 %files vfs-glusterfs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
+%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs_fuse.so
 %{_mandir}/man8/vfs_glusterfs.8*
+%{_mandir}/man8/vfs_glusterfs_fuse.8*
 
 %files common
 %defattr(644,root,root,755)

@@ -11,6 +11,7 @@
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
+%bcond_with	python3		# with Python3
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
 %bcond_with	system_libbsd	# system libbsd for MD5 and strl* functions
@@ -20,10 +21,10 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.4.6
-%define		talloc_ver	2:2.1.14
-%define		tdb_ver		2:1.3.16
-%define		tevent_ver	0.9.37
+%define		ldb_ver		1.5.4
+%define		talloc_ver	2:2.1.16
+%define		tdb_ver		2:1.3.18
+%define		tevent_ver	0.9.39
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -38,13 +39,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.9.5
-Release:	1
+Version:	4.10.0
+Release:	0.1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	e761ba58bdbcb903bd3692283d46103a
+# Source0-md5:	d6ed560c9f0b70b287e9eaf2f378697a
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -68,7 +69,7 @@ URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
 %{?with_ceph:BuildRequires:	ceph-devel >= 0.73}
-BuildRequires:	cmocka-devel >= 1.0.0
+BuildRequires:	cmocka-devel >= 1.1.3
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dbus-devel
@@ -120,10 +121,17 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ldb-devel < 1.5
+	%if %{without python3}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
+BuildRequires:	python-tdb >= %{tdb_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
+	%else
+BuildRequires:	python3-ldb-devel >= %{ldb_ver}
+BuildRequires:	python3-talloc-devel >= %{talloc_ver}
+BuildRequires:	python3-tdb >= %{tdb_ver}
+BuildRequires:	python3-tevent >= %{tevent_ver}
+	%endif
 BuildRequires:	talloc-devel >= %{talloc_ver}
 BuildRequires:	tdb-devel >= %{tdb_ver}
 BuildRequires:	tevent-devel >= %{tevent_ver}
@@ -556,6 +564,7 @@ CXXFLAGS="${CXXFLAGS:-%rpmcxxflags}" \
 FFLAGS="${FFLAGS:-%rpmcflags}" \
 FCFLAGS="${FCFLAGS:-%rpmcflags}" \
 CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
+%{!?without_python3:PYTHON=python2} \
 %{?__cc:CC="%{__cc}"} \
 %{?__cxx:CXX="%{__cxx}"} \
 ./configure \
@@ -610,7 +619,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--enable-cups \
 	--enable-iprint
 
-%{__make} V=1
+%{!?without_python3:PYTHON=python2} %{__make} V=1
 
 # Build PIDL for installation into vendor directories before
 # 'make proto' gets to it.
@@ -691,10 +700,10 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 # remove man pages for not installed commands
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/log2pcap.1*
 %{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/traffic_{learner,replay}.7*
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_cacheprime.8*
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_gpfs.8*
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_prealloc.8*
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_tsmsm.8*
+#%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_cacheprime.8*
+#%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_gpfs.8*
+#%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_prealloc.8*
+#%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_tsmsm.8*
 
 # remove tests
 %{__rm} $RPM_BUILD_ROOT%{_bindir}/ctdb*_tests
@@ -839,12 +848,14 @@ fi
 %{systemdunitdir}/smb.service
 %{systemdunitdir}/samba.service
 %{systemdtmpfilesdir}/samba.conf
+%attr(755,root,root) %{_bindir}/dumpmscat
 %attr(755,root,root) %{_bindir}/oLschema2ldif
 %attr(755,root,root) %{_bindir}/pdbedit
 %attr(755,root,root) %{_bindir}/profiles
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/smbstatus
+%attr(755,root,root) %{_bindir}/winexe
 %attr(755,root,root) %{_sbindir}/eventlogadm
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_sbindir}/nmbd
@@ -860,6 +871,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_10.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_11.so
+%attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_12.so
 %dir %{_libdir}/samba/gensec
 %attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
 %if %{with system_heimdal}
@@ -891,6 +903,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/objectclass.so
 %attr(755,root,root) %{_libdir}/samba/ldb/objectguid.so
 %attr(755,root,root) %{_libdir}/samba/ldb/operational.so
+%attr(755,root,root) %{_libdir}/samba/ldb/paged_results.so
 %attr(755,root,root) %{_libdir}/samba/ldb/partition.so
 %attr(755,root,root) %{_libdir}/samba/ldb/password_hash.so
 %attr(755,root,root) %{_libdir}/samba/ldb/ranged_results.so
@@ -1007,7 +1020,7 @@ fi
 %{_mandir}/man8/vfs_linux_xfs_sgid.8*
 %{_mandir}/man8/vfs_media_harmony.8*
 %{_mandir}/man8/vfs_netatalk.8*
-%{_mandir}/man8/vfs_nfs4acl_xattr.8*
+#%{_mandir}/man8/vfs_nfs4acl_xattr.8*
 %{_mandir}/man8/vfs_preopen.8*
 %{_mandir}/man8/vfs_readahead.8*
 %{_mandir}/man8/vfs_readonly.8*
@@ -1054,7 +1067,7 @@ fi
 
 %files common
 %defattr(644,root,root,755)
-%doc README WHATSNEW.txt
+%doc BUILD_SYSTEMS.txt PFIF.txt README.cifs-utils README.Coding README.contributing README.md WHATSNEW.txt
 %dir %{_sysconfdir}/samba
 %attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
@@ -1265,6 +1278,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libauth-unix-token-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libCHARSET3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcliauth-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libclidns-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcli-cldap-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcli-ldap-common-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcli-ldap-samba4.so
@@ -1304,6 +1318,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libmessages-util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libMESSAGING-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libMESSAGING-SEND-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libmscat-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmsghdr-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libmsrpc3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libndr-samba4.so
@@ -1419,16 +1434,17 @@ fi
 %{_includedir}/samba-4.0/util/byteorder.h
 %{_includedir}/samba-4.0/util/data_blob.h
 %{_includedir}/samba-4.0/util/debug.h
+%{_includedir}/samba-4.0/util/discard.h
 %{_includedir}/samba-4.0/util/fault.h
 %{_includedir}/samba-4.0/util/genrand.h
 %{_includedir}/samba-4.0/util/idtree.h
 %{_includedir}/samba-4.0/util/idtree_random.h
-%{_includedir}/samba-4.0/util/memory.h
-%{_includedir}/samba-4.0/util/safe_string.h
+#%{_includedir}/samba-4.0/util/memory.h
+#%{_includedir}/samba-4.0/util/safe_string.h
 %{_includedir}/samba-4.0/util/signal.h
 %{_includedir}/samba-4.0/util/string_wrappers.h
 %{_includedir}/samba-4.0/util/substitute.h
-%{_includedir}/samba-4.0/util/talloc_stack.h
+#%{_includedir}/samba-4.0/util/talloc_stack.h
 %{_includedir}/samba-4.0/util/tevent_ntstatus.h
 %{_includedir}/samba-4.0/util/tevent_unix.h
 %{_includedir}/samba-4.0/util/tevent_werror.h
@@ -1492,6 +1508,8 @@ fi
 %attr(755,root,root) %{py_sitedir}/samba/dcerpc/*.so
 %dir %{py_sitedir}/samba/emulate
 %{py_sitedir}/samba/emulate/*.py[co]
+%dir %{py_sitedir}/samba/gp_parse
+%{py_sitedir}/samba/gp_parse/*.py[co]
 %dir %{py_sitedir}/samba/kcc
 %{py_sitedir}/samba/kcc/*.py[co]
 %dir %{py_sitedir}/samba/netcmd
@@ -1519,6 +1537,8 @@ fi
 %{py_sitedir}/samba/tests/emulate/*.py[co]
 %dir %{py_sitedir}/samba/third_party
 %{py_sitedir}/samba/third_party/*.py[co]
+%dir %{py_sitedir}/samba/third_party/iso8601/
+%{py_sitedir}/samba/third_party/iso8601/*.py[co]
 %dir %{py_sitedir}/samba/web_server
 %{py_sitedir}/samba/web_server/*.py[co]
 %if %{without system_libs}
@@ -1624,6 +1644,7 @@ fi
 %attr(755,root,root) %{_sbindir}/ctdbd
 %attr(755,root,root) %{_sbindir}/ctdbd_wrapper
 %attr(755,root,root) %{_bindir}/ctdb
+%attr(755,root,root) %{_bindir}/ctdb_local_daemons
 %attr(755,root,root) %{_bindir}/ping_pong
 %attr(755,root,root) %{_bindir}/ltdbtool
 %attr(755,root,root) %{_bindir}/ctdb_diagnostics

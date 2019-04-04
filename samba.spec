@@ -11,7 +11,7 @@
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
-%bcond_with	python3		# with Python3
+%bcond_with	python2		# build against Python 2
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
 %bcond_with	system_libbsd	# system libbsd for MD5 and strl* functions
@@ -121,7 +121,7 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-	%if %{without python3}
+	%if %{with python2}
 BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tdb >= %{tdb_ver}
@@ -418,6 +418,28 @@ Samba modules for Python.
 %description -n python-samba -l pl.UTF-8
 Moduły Samby dla Pythona.
 
+%package -n python3-samba
+Summary:	Samba modules for Python 3
+Summary(pl.UTF-8):	Moduły Samby dla Pythona 3
+Group:		Development/Languages/Python
+Requires:	%{name}-common = %{epoch}:%{version}-%{release}
+Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
+Requires:	python3
+Requires:	python3-dns
+Requires:	python3-iso8601
+Requires:	python3-modules
+%if %{with system_libs}
+Requires:	python3-ldb >= %{ldb_ver}
+Requires:	python3-talloc >= %{talloc_ver}
+Requires:	python3-tevent >= %{tevent_ver}
+%endif
+
+%description -n python3-samba
+Samba modules for Python3.
+
+%description -n python3-samba -l pl.UTF-8
+Moduły Samby dla Pythona 3.
+
 %package test
 Summary:	Testing tools for Samba servers and clients
 Summary(pl.UTF-8):	Narzędzia testowe dla serwerów i klientów Samby
@@ -564,7 +586,7 @@ CXXFLAGS="${CXXFLAGS:-%rpmcxxflags}" \
 FFLAGS="${FFLAGS:-%rpmcflags}" \
 FCFLAGS="${FCFLAGS:-%rpmcflags}" \
 CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
-%{!?without_python3:PYTHON=python2} \
+%{?with_python2:PYTHON=python2} \
 %{?__cc:CC="%{__cc}"} \
 %{?__cxx:CXX="%{__cxx}"} \
 ./configure \
@@ -619,7 +641,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--enable-cups \
 	--enable-iprint
 
-%{!?without_python3:PYTHON=python2} %{__make} V=1
+%{?with_python2:PYTHON=python2} %{__make} V=1
 
 # Build PIDL for installation into vendor directories before
 # 'make proto' gets to it.
@@ -710,9 +732,14 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %{__rm} -r $RPM_BUILD_ROOT%{_libexecdir}/ctdb/tests
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/ctdb/tests
 
+%if %{with python2}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_postclean
+%else
+%py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
+%py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1227,8 +1254,13 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-passdb.so.0
+%if %{with python2}
 %attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
+%else
+%attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.cpython-3*.so.0
+%endif
 %attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
 %attr(755,root,root) %{_libdir}/libsamdb.so.*.*.*
@@ -1337,8 +1369,13 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsamba3-util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-debug-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules-samba4.so
+%if %{with python2}
 %attr(755,root,root) %{_libdir}/samba/libsamba-net-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-python-samba4.so
+%else
+%attr(755,root,root) %{_libdir}/samba/libsamba-net.cpython-3*-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-python.cpython-3*-samba4.so
+%endif
 %attr(755,root,root) %{_libdir}/samba/libsamba-security-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamdb-common-samba4.so
@@ -1471,7 +1508,11 @@ fi
 %attr(755,root,root) %{_libdir}/libsamba-errors.so
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so
+%if %{with python2}
 %attr(755,root,root) %{_libdir}/libsamba-policy.so
+%else
+%attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*.so
+%endif
 %attr(755,root,root) %{_libdir}/libsamba-util.so
 %attr(755,root,root) %{_libdir}/libsamdb.so
 %attr(755,root,root) %{_libdir}/libsmbconf.so
@@ -1487,7 +1528,11 @@ fi
 %{_pkgconfigdir}/netapi.pc
 %{_pkgconfigdir}/samba-credentials.pc
 %{_pkgconfigdir}/samba-hostconfig.pc
+%if %{with python2}
 %{_pkgconfigdir}/samba-policy.pc
+%else
+%{_pkgconfigdir}/samba-policy.cpython-3*.pc
+%endif
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
 
@@ -1498,6 +1543,7 @@ fi
 %{_mandir}/man3/Parse::Pidl*.3*
 %{perl_vendorlib}/Parse/Pidl*
 
+%if %{with python2}
 %files -n python-samba
 %defattr(644,root,root,755)
 %dir %{py_sitedir}/samba
@@ -1547,6 +1593,78 @@ fi
 %attr(755,root,root) %{py_sitedir}/tdb.so
 %attr(755,root,root) %{py_sitedir}/_tevent.so
 %{py_sitedir}/tevent.py[co]
+%endif
+%endif
+
+%if %{without python2}
+%files -n python3-samba
+%defattr(644,root,root,755)
+%dir %{py3_sitedir}/samba
+%{py3_sitedir}/samba/*.py
+%{py3_sitedir}/samba/__pycache__
+%attr(755,root,root) %{py3_sitedir}/samba/*.so
+%dir %{py3_sitedir}/samba/dcerpc
+%{py3_sitedir}/samba/dcerpc/*.py
+%{py3_sitedir}/samba/dcerpc/__pycache__
+%attr(755,root,root) %{py3_sitedir}/samba/dcerpc/*.so
+%dir %{py3_sitedir}/samba/emulate
+%{py3_sitedir}/samba/emulate/*.py
+%{py3_sitedir}/samba/emulate/__pycache__
+%dir %{py3_sitedir}/samba/gp_parse
+%{py3_sitedir}/samba/gp_parse/*.py
+%{py3_sitedir}/samba/gp_parse/__pycache__
+%dir %{py3_sitedir}/samba/kcc
+%{py3_sitedir}/samba/kcc/*.py
+%{py3_sitedir}/samba/kcc/__pycache__
+%dir %{py3_sitedir}/samba/netcmd
+%{py3_sitedir}/samba/netcmd/*.py
+%{py3_sitedir}/samba/netcmd/__pycache__
+%dir %{py3_sitedir}/samba/provision
+%{py3_sitedir}/samba/provision/*.py
+%{py3_sitedir}/samba/provision/__pycache__
+%dir %{py3_sitedir}/samba/samba3
+%{py3_sitedir}/samba/samba3/*.py
+%{py3_sitedir}/samba/samba3/__pycache__
+%attr(755,root,root) %{py3_sitedir}/samba/samba3/*.so
+%dir %{py3_sitedir}/samba/subunit
+%{py3_sitedir}/samba/subunit/*.py
+%{py3_sitedir}/samba/subunit/__pycache__
+%dir %{py3_sitedir}/samba/tests
+%{py3_sitedir}/samba/tests/*.py
+%{py3_sitedir}/samba/tests/__pycache__
+%dir %{py3_sitedir}/samba/tests/blackbox
+%{py3_sitedir}/samba/tests/blackbox/*.py
+%{py3_sitedir}/samba/tests/blackbox/__pycache__
+%dir %{py3_sitedir}/samba/tests/dcerpc
+%{py3_sitedir}/samba/tests/dcerpc/*.py
+%{py3_sitedir}/samba/tests/dcerpc/__pycache__
+%dir %{py3_sitedir}/samba/tests/dns_forwarder_helpers
+%{py3_sitedir}/samba/tests/dns_forwarder_helpers/*.py
+%{py3_sitedir}/samba/tests/dns_forwarder_helpers/__pycache__
+%dir %{py3_sitedir}/samba/tests/kcc
+%{py3_sitedir}/samba/tests/kcc/*.py
+%{py3_sitedir}/samba/tests/kcc/__pycache__
+%dir %{py3_sitedir}/samba/tests/samba_tool
+%{py3_sitedir}/samba/tests/samba_tool/*.py
+%{py3_sitedir}/samba/tests/samba_tool/__pycache__
+%dir %{py3_sitedir}/samba/tests/emulate
+%{py3_sitedir}/samba/tests/emulate/*.py
+%{py3_sitedir}/samba/tests/emulate/__pycache__
+%dir %{py3_sitedir}/samba/third_party
+%{py3_sitedir}/samba/third_party/*.py
+%{py3_sitedir}/samba/third_party/__pycache__
+%dir %{py3_sitedir}/samba/third_party/iso8601/
+%{py3_sitedir}/samba/third_party/iso8601/*.py
+%{py3_sitedir}/samba/third_party/iso8601/__pycache__
+%dir %{py3_sitedir}/samba/web_server
+%{py3_sitedir}/samba/web_server/*.py
+%{py3_sitedir}/samba/web_server/__pycache__
+%if %{without system_libs}
+%attr(755,root,root) %{py3_sitedir}/ldb.so
+%attr(755,root,root) %{py3_sitedir}/talloc.so
+%attr(755,root,root) %{py3_sitedir}/tdb.so
+%attr(755,root,root) %{py3_sitedir}/_tevent.so
+%endif
 %endif
 
 %files test

@@ -40,7 +40,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.10.2
-Release:	0.1
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -143,7 +143,11 @@ Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 # for samba_{dnsupdate,kcc,spnupdate,upgradedns} scripts
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
+%if %{with python2}
 Requires:	python-samba = %{epoch}:%{version}-%{release}
+%else
+Requires:	python3-samba = %{epoch}:%{version}-%{release}
+%endif
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
@@ -246,7 +250,11 @@ Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Group:		Networking/Daemons
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 # for samba-tool script
+%if %{with python2}
 Requires:	python-samba = %{epoch}:%{version}-%{release}
+%else
+Requires:	python3-samba = %{epoch}:%{version}-%{release}
+%endif
 Obsoletes:	samba3-common
 Obsoletes:	samba4-common
 

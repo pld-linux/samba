@@ -12,7 +12,7 @@
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
-%bcond_with	python2		# build against Python 2
+%bcond_without	python2		# without Python2 bindings
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
 %bcond_with	system_libbsd	# system libbsd for MD5 and strl* functions
@@ -41,7 +41,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.10.2
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -127,12 +127,11 @@ BuildRequires:	python-ldb-devel >= %{ldb_ver}
 BuildRequires:	python-talloc-devel >= %{talloc_ver}
 BuildRequires:	python-tdb >= %{tdb_ver}
 BuildRequires:	python-tevent >= %{tevent_ver}
-	%else
+	%endif
 BuildRequires:	python3-ldb-devel >= %{ldb_ver}
 BuildRequires:	python3-talloc-devel >= %{talloc_ver}
 BuildRequires:	python3-tdb >= %{tdb_ver}
 BuildRequires:	python3-tevent >= %{tevent_ver}
-	%endif
 BuildRequires:	talloc-devel >= %{talloc_ver}
 BuildRequires:	tdb-devel >= %{tdb_ver}
 BuildRequires:	tevent-devel >= %{tevent_ver}
@@ -144,11 +143,7 @@ Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 # for samba_{dnsupdate,kcc,spnupdate,upgradedns} scripts
 Requires:	logrotate >= 3.7-4
 Requires:	pam >= 0.99.8.1
-%if %{with python2}
-Requires:	python-samba = %{epoch}:%{version}-%{release}
-%else
 Requires:	python3-samba = %{epoch}:%{version}-%{release}
-%endif
 Requires:	rc-scripts >= 0.4.0.12
 Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
@@ -251,11 +246,7 @@ Summary(pl.UTF-8):	Pliki używane przez serwer i klientów Samby
 Group:		Networking/Daemons
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 # for samba-tool script
-%if %{with python2}
-Requires:	python-samba = %{epoch}:%{version}-%{release}
-%else
 Requires:	python3-samba = %{epoch}:%{version}-%{release}
-%endif
 Obsoletes:	samba3-common
 Obsoletes:	samba4-common
 
@@ -595,7 +586,6 @@ CXXFLAGS="${CXXFLAGS:-%rpmcxxflags}" \
 FFLAGS="${FFLAGS:-%rpmcflags}" \
 FCFLAGS="${FCFLAGS:-%rpmcflags}" \
 CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
-%{?with_python2:PYTHON=python2} \
 %{?__cc:CC="%{__cc}"} \
 %{?__cxx:CXX="%{__cxx}"} \
 ./configure \
@@ -630,6 +620,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-automount \
 	--with%{!?with_dmapi:out}-dmapi \
 	--with-dnsupdate \
+	%{?with_python2:--extra-python=/usr/bin/python2} \
 	--with-iconv \
 	--with%{!?with_ldap:out}-ldap \
 	--with-pam \
@@ -650,7 +641,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--enable-cups \
 	--enable-iprint
 
-%{?with_python2:PYTHON=python2} %{__make} V=1
+%{__make} V=1
 
 # Build PIDL for installation into vendor directories before
 # 'make proto' gets to it.
@@ -745,10 +736,9 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
 %py_comp $RPM_BUILD_ROOT%{py_sitedir}
 %py_postclean
-%else
+%endif
 %py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
 %py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1266,10 +1256,9 @@ fi
 %if %{with python2}
 %attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
-%else
+%endif
 %attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.cpython-3*.so.0
-%endif
 %attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
 %attr(755,root,root) %{_libdir}/libsamdb.so.*.*.*
@@ -1381,10 +1370,9 @@ fi
 %if %{with python2}
 %attr(755,root,root) %{_libdir}/samba/libsamba-net-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-python-samba4.so
-%else
+%endif
 %attr(755,root,root) %{_libdir}/samba/libsamba-net.cpython-3*-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-python.cpython-3*-samba4.so
-%endif
 %attr(755,root,root) %{_libdir}/samba/libsamba-security-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamdb-common-samba4.so
@@ -1519,9 +1507,8 @@ fi
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so
 %if %{with python2}
 %attr(755,root,root) %{_libdir}/libsamba-policy.so
-%else
-%attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*.so
 %endif
+%attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*.so
 %attr(755,root,root) %{_libdir}/libsamba-util.so
 %attr(755,root,root) %{_libdir}/libsamdb.so
 %attr(755,root,root) %{_libdir}/libsmbconf.so
@@ -1539,9 +1526,8 @@ fi
 %{_pkgconfigdir}/samba-hostconfig.pc
 %if %{with python2}
 %{_pkgconfigdir}/samba-policy.pc
-%else
-%{_pkgconfigdir}/samba-policy.cpython-3*.pc
 %endif
+%{_pkgconfigdir}/samba-policy.cpython-3*.pc
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
 
@@ -1590,10 +1576,6 @@ fi
 %{py_sitedir}/samba/tests/samba_tool/*.py[co]
 %dir %{py_sitedir}/samba/tests/emulate
 %{py_sitedir}/samba/tests/emulate/*.py[co]
-%dir %{py_sitedir}/samba/third_party
-%{py_sitedir}/samba/third_party/*.py[co]
-%dir %{py_sitedir}/samba/third_party/iso8601/
-%{py_sitedir}/samba/third_party/iso8601/*.py[co]
 %dir %{py_sitedir}/samba/web_server
 %{py_sitedir}/samba/web_server/*.py[co]
 %if %{without system_libs}
@@ -1605,7 +1587,6 @@ fi
 %endif
 %endif
 
-%if %{without python2}
 %files -n python3-samba
 %defattr(644,root,root,755)
 %dir %{py3_sitedir}/samba
@@ -1673,7 +1654,6 @@ fi
 %attr(755,root,root) %{py3_sitedir}/talloc.so
 %attr(755,root,root) %{py3_sitedir}/tdb.so
 %attr(755,root,root) %{py3_sitedir}/_tevent.so
-%endif
 %endif
 
 %files test

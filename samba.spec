@@ -1,3 +1,4 @@
+# TODO: tracker support (--enable-spotlight)?
 #
 # Note:
 # - unpredictible build failures:

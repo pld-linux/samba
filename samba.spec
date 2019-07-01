@@ -40,13 +40,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.10.2
-Release:	2
+Version:	4.10.3
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
-Source0:	https://www.samba.org/ftp/samba/samba-%{version}.tar.gz
-# Source0-md5:	44e4c144b512c52a71fdc6cd2670af62
+Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
+# Source0-md5:	9db9d1a9219caa1a6529c93e83e5e030
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -1643,9 +1643,9 @@ fi
 %dir %{py3_sitedir}/samba/third_party
 %{py3_sitedir}/samba/third_party/*.py
 %{py3_sitedir}/samba/third_party/__pycache__
-%dir %{py3_sitedir}/samba/third_party/iso8601/
-%{py3_sitedir}/samba/third_party/iso8601/*.py
-%{py3_sitedir}/samba/third_party/iso8601/__pycache__
+#%dir %{py3_sitedir}/samba/third_party/iso8601/
+#%{py3_sitedir}/samba/third_party/iso8601/*.py
+#%{py3_sitedir}/samba/third_party/iso8601/__pycache__
 %dir %{py3_sitedir}/samba/web_server
 %{py3_sitedir}/samba/web_server/*.py
 %{py3_sitedir}/samba/web_server/__pycache__

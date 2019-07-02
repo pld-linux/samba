@@ -104,12 +104,21 @@ BuildRequires:	perl-Parse-Yapp >= 1.05
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
+%if %{with python2}
 BuildRequires:	python-devel >= 1:2.5.0
 BuildRequires:	python-dns
 BuildRequires:	python-iso8601
 BuildRequires:	python-modules >= 1:2.5.0
 BuildRequires:	python-subunit
 BuildRequires:	python-testtools
+%else
+BuildRequires:	python3-devel >= 1:3.2
+BuildRequires:	python3-dns
+BuildRequires:	python3-iso8601
+BuildRequires:	python3-modules >= 1:3.2
+BuildRequires:	python3-subunit
+BuildRequires:	python3-testtools
+%endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
@@ -1046,7 +1055,6 @@ fi
 %{_mandir}/man8/vfs_linux_xfs_sgid.8*
 %{_mandir}/man8/vfs_media_harmony.8*
 %{_mandir}/man8/vfs_netatalk.8*
-#%{_mandir}/man8/vfs_nfs4acl_xattr.8*
 %{_mandir}/man8/vfs_preopen.8*
 %{_mandir}/man8/vfs_readahead.8*
 %{_mandir}/man8/vfs_readonly.8*
@@ -1473,12 +1481,9 @@ fi
 %{_includedir}/samba-4.0/util/genrand.h
 %{_includedir}/samba-4.0/util/idtree.h
 %{_includedir}/samba-4.0/util/idtree_random.h
-#%{_includedir}/samba-4.0/util/memory.h
-#%{_includedir}/samba-4.0/util/safe_string.h
 %{_includedir}/samba-4.0/util/signal.h
 %{_includedir}/samba-4.0/util/string_wrappers.h
 %{_includedir}/samba-4.0/util/substitute.h
-#%{_includedir}/samba-4.0/util/talloc_stack.h
 %{_includedir}/samba-4.0/util/tevent_ntstatus.h
 %{_includedir}/samba-4.0/util/tevent_unix.h
 %{_includedir}/samba-4.0/util/tevent_werror.h
@@ -1643,9 +1648,6 @@ fi
 %dir %{py3_sitedir}/samba/third_party
 %{py3_sitedir}/samba/third_party/*.py
 %{py3_sitedir}/samba/third_party/__pycache__
-#%dir %{py3_sitedir}/samba/third_party/iso8601/
-#%{py3_sitedir}/samba/third_party/iso8601/*.py
-#%{py3_sitedir}/samba/third_party/iso8601/__pycache__
 %dir %{py3_sitedir}/samba/web_server
 %{py3_sitedir}/samba/web_server/*.py
 %{py3_sitedir}/samba/web_server/__pycache__

@@ -22,7 +22,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.5.4
+%define		ldb_ver		1.5.5
 %define		talloc_ver	2:2.1.16
 %define		tdb_ver		2:1.3.18
 %define		tevent_ver	0.9.39
@@ -40,13 +40,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.10.6
-Release:	2
+Version:	4.10.8
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	9782cac8ef06049942be5f5c93b954be
+# Source0-md5:	f3c722bbcd903479008fa1b529f56365
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig

@@ -12,7 +12,6 @@
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
-%bcond_without	python2		# without Python2 bindings
 %bcond_without	systemd		# systemd integration
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
 %bcond_with	system_libbsd	# system libbsd for MD5 and strl* functions
@@ -22,10 +21,10 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		1.5.6
-%define		talloc_ver	2:2.1.16
-%define		tdb_ver		2:1.3.18
-%define		tevent_ver	0.9.39
+%define		ldb_ver		2.0.7
+%define		talloc_ver	2:2.3.0
+%define		tdb_ver		2:1.4.0
+%define		tevent_ver	0.10.0
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -40,13 +39,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.10.9
-Release:	2
+Version:	4.11.2
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	66a64e77a5a80b415b7bb5b937157fb6
+# Source0-md5:	8f4fb25c13be88f23b4eebe8715ba3c1
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -104,21 +103,12 @@ BuildRequires:	perl-Parse-Yapp >= 1.05
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
-%if %{with python2}
-BuildRequires:	python-devel >= 1:2.5.0
-BuildRequires:	python-dns
-BuildRequires:	python-iso8601
-BuildRequires:	python-modules >= 1:2.5.0
-BuildRequires:	python-subunit
-BuildRequires:	python-testtools
-%else
-BuildRequires:	python3-devel >= 1:3.2
+BuildRequires:	python3-devel >= 1:3.4
 BuildRequires:	python3-dns
 BuildRequires:	python3-iso8601
-BuildRequires:	python3-modules >= 1:3.2
+BuildRequires:	python3-modules >= 1:3.4
 BuildRequires:	python3-subunit
 BuildRequires:	python3-testtools
-%endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
@@ -131,12 +121,6 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-	%if %{with python2}
-BuildRequires:	python-ldb-devel >= %{ldb_ver}
-BuildRequires:	python-talloc-devel >= %{talloc_ver}
-BuildRequires:	python-tdb >= %{tdb_ver}
-BuildRequires:	python-tevent >= %{tevent_ver}
-	%endif
 BuildRequires:	python3-ldb-devel >= %{ldb_ver}
 BuildRequires:	python3-talloc-devel >= %{talloc_ver}
 BuildRequires:	python3-tdb >= %{tdb_ver}
@@ -433,10 +417,10 @@ Summary(pl.UTF-8):	Moduły Samby dla Pythona 3
 Group:		Development/Languages/Python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Requires:	python3
+Requires:	python3 >= 1:3.4
 Requires:	python3-dns
 Requires:	python3-iso8601
-Requires:	python3-modules
+Requires:	python3-modules >= 1:3.4
 %if %{with system_libs}
 Requires:	python3-ldb >= %{ldb_ver}
 Requires:	python3-talloc >= %{talloc_ver}
@@ -629,7 +613,6 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-automount \
 	--with%{!?with_dmapi:out}-dmapi \
 	--with-dnsupdate \
-	%{?with_python2:--extra-python=/usr/bin/python2} \
 	--with-iconv \
 	--with%{!?with_ldap:out}-ldap \
 	--with-pam \
@@ -671,15 +654,11 @@ install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig
 	DESTDIR=$RPM_BUILD_ROOT \
 	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba
 
-# Undo the PIDL install, we want to try again with the right options.
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/perl5
-
 # Install PIDL
 %{__make} -C pidl install \
 	PERL_INSTALL_ROOT=$RPM_BUILD_ROOT
 
 # Clean out crap left behind by the PIDL install
-%{__rm} $RPM_BUILD_ROOT%{perl_vendorlib}/wscript_build
 %{__rm} -r $RPM_BUILD_ROOT%{perl_vendorlib}/Parse/Yapp
 %{__rm} $RPM_BUILD_ROOT%{perl_vendorarch}/auto/Parse/Pidl/.packlist
 
@@ -741,11 +720,6 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %{__rm} -r $RPM_BUILD_ROOT%{_libexecdir}/ctdb/tests
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/ctdb/tests
 
-%if %{with python2}
-%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}
-%py_comp $RPM_BUILD_ROOT%{py_sitedir}
-%py_postclean
-%endif
 %py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
 %py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
 
@@ -890,12 +864,12 @@ fi
 %attr(755,root,root) %{_bindir}/sharesec
 %attr(755,root,root) %{_bindir}/smbcontrol
 %attr(755,root,root) %{_bindir}/smbstatus
-%attr(755,root,root) %{_bindir}/winexe
 %attr(755,root,root) %{_sbindir}/eventlogadm
 %attr(755,root,root) %{_sbindir}/mksmbpasswd.sh
 %attr(755,root,root) %{_sbindir}/nmbd
 %attr(755,root,root) %{_sbindir}/samba
 %attr(755,root,root) %{_sbindir}/samba_dnsupdate
+%attr(755,root,root) %{_sbindir}/samba_downgrade_db
 %attr(755,root,root) %{_sbindir}/samba-gpupdate
 %attr(755,root,root) %{_sbindir}/samba_kcc
 %attr(755,root,root) %{_sbindir}/samba_spnupdate
@@ -918,6 +892,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/acl.so
 %attr(755,root,root) %{_libdir}/samba/ldb/anr.so
 %attr(755,root,root) %{_libdir}/samba/ldb/audit_log.so
+%attr(755,root,root) %{_libdir}/samba/ldb/count_attrs.so
 %attr(755,root,root) %{_libdir}/samba/ldb/descriptor.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dirsync.so
 %attr(755,root,root) %{_libdir}/samba/ldb/dns_notify.so
@@ -978,7 +953,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/service/nbtd.so
 %attr(755,root,root) %{_libdir}/samba/service/ntp_signd.so
 %attr(755,root,root) %{_libdir}/samba/service/s3fs.so
-%attr(755,root,root) %{_libdir}/samba/service/web.so
 %attr(755,root,root) %{_libdir}/samba/service/winbindd.so
 %attr(755,root,root) %{_libdir}/samba/service/wrepl.so
 %dir %{_libdir}/samba/vfs
@@ -990,6 +964,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/cap.so
 %attr(755,root,root) %{_libdir}/samba/vfs/catia.so
+%{?with_ceph:%attr(755,root,root) %{_libdir}/samba/vfs/ceph_snapshots.so}
 %attr(755,root,root) %{_libdir}/samba/vfs/commit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/crossrename.so
 %attr(755,root,root) %{_libdir}/samba/vfs/default_quota.so
@@ -1001,6 +976,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/fileid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/fruit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/full_audit.so
+%attr(755,root,root) %{_libdir}/samba/vfs/gpfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/linux_xfs_sgid.so
 %attr(755,root,root) %{_libdir}/samba/vfs/media_harmony.so
 %attr(755,root,root) %{_libdir}/samba/vfs/netatalk.so
@@ -1032,6 +1008,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/samba.8*
+%{_mandir}/man8/samba_downgrade_db.8*
 %{_mandir}/man8/samba-gpupdate.8*
 %{_mandir}/man8/smbd.8*
 %{_mandir}/man8/smbpasswd.8*
@@ -1043,6 +1020,7 @@ fi
 %{_mandir}/man8/vfs_btrfs.8*
 %{_mandir}/man8/vfs_cap.8*
 %{_mandir}/man8/vfs_catia.8*
+%{?with_ceph:%{_mandir}/man8/vfs_ceph_snapshots.8*}
 %{_mandir}/man8/vfs_commit.8*
 %{_mandir}/man8/vfs_crossrename.8*
 %{_mandir}/man8/vfs_default_quota.8*
@@ -1052,6 +1030,7 @@ fi
 %{_mandir}/man8/vfs_fileid.8*
 %{_mandir}/man8/vfs_fruit.8*
 %{_mandir}/man8/vfs_full_audit.8*
+%{_mandir}/man8/vfs_gpfs.8*
 %{_mandir}/man8/vfs_linux_xfs_sgid.8*
 %{_mandir}/man8/vfs_media_harmony.8*
 %{_mandir}/man8/vfs_netatalk.8*
@@ -1261,10 +1240,6 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-passdb.so.0
-%if %{with python2}
-%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
-%endif
 %attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-policy.cpython-3*.so.0
 %attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
@@ -1341,6 +1316,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libgenrand-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgensec-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgpext-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgpo-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgse-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libHDB-SAMBA4-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libhttp-samba4.so
@@ -1363,22 +1339,18 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libndr-samba-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnetif-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnet-keytab-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libnon-posix-acls-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnpa-tstream-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpac-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpopt-samba3-cmdline-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpopt-samba3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libposix-eadb-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libprinter-driver-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprinting-migrate-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprocess-model-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libregistry-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba3-util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-debug-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules-samba4.so
-%if %{with python2}
-%attr(755,root,root) %{_libdir}/samba/libsamba-net-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-python-samba4.so
-%endif
 %attr(755,root,root) %{_libdir}/samba/libsamba-net.cpython-3*-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-python.cpython-3*-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-security-samba4.so
@@ -1510,9 +1482,6 @@ fi
 %attr(755,root,root) %{_libdir}/libsamba-errors.so
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so
-%if %{with python2}
-%attr(755,root,root) %{_libdir}/libsamba-policy.so
-%endif
 %attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*.so
 %attr(755,root,root) %{_libdir}/libsamba-util.so
 %attr(755,root,root) %{_libdir}/libsamdb.so
@@ -1529,9 +1498,6 @@ fi
 %{_pkgconfigdir}/netapi.pc
 %{_pkgconfigdir}/samba-credentials.pc
 %{_pkgconfigdir}/samba-hostconfig.pc
-%if %{with python2}
-%{_pkgconfigdir}/samba-policy.pc
-%endif
 %{_pkgconfigdir}/samba-policy.cpython-3*.pc
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
@@ -1542,55 +1508,6 @@ fi
 %{_mandir}/man1/pidl.1*
 %{_mandir}/man3/Parse::Pidl*.3*
 %{perl_vendorlib}/Parse/Pidl*
-
-%if %{with python2}
-%files -n python-samba
-%defattr(644,root,root,755)
-%dir %{py_sitedir}/samba
-%attr(755,root,root) %{py_sitedir}/samba/*.so
-%{py_sitedir}/samba/*.py[co]
-%dir %{py_sitedir}/samba/dcerpc
-%{py_sitedir}/samba/dcerpc/*.py[co]
-%attr(755,root,root) %{py_sitedir}/samba/dcerpc/*.so
-%dir %{py_sitedir}/samba/emulate
-%{py_sitedir}/samba/emulate/*.py[co]
-%dir %{py_sitedir}/samba/gp_parse
-%{py_sitedir}/samba/gp_parse/*.py[co]
-%dir %{py_sitedir}/samba/kcc
-%{py_sitedir}/samba/kcc/*.py[co]
-%dir %{py_sitedir}/samba/netcmd
-%{py_sitedir}/samba/netcmd/*.py[co]
-%dir %{py_sitedir}/samba/provision
-%{py_sitedir}/samba/provision/*.py[co]
-%dir %{py_sitedir}/samba/samba3
-%attr(755,root,root) %{py_sitedir}/samba/samba3/*.so
-%{py_sitedir}/samba/samba3/*.py[co]
-%dir %{py_sitedir}/samba/subunit
-%{py_sitedir}/samba/subunit/*.py[co]
-%dir %{py_sitedir}/samba/tests
-%{py_sitedir}/samba/tests/*.py[co]
-%dir %{py_sitedir}/samba/tests/blackbox
-%{py_sitedir}/samba/tests/blackbox/*.py[co]
-%dir %{py_sitedir}/samba/tests/dcerpc
-%{py_sitedir}/samba/tests/dcerpc/*.py[co]
-%dir %{py_sitedir}/samba/tests/dns_forwarder_helpers
-%{py_sitedir}/samba/tests/dns_forwarder_helpers/*.py[co]
-%dir %{py_sitedir}/samba/tests/kcc
-%{py_sitedir}/samba/tests/kcc/*.py[co]
-%dir %{py_sitedir}/samba/tests/samba_tool
-%{py_sitedir}/samba/tests/samba_tool/*.py[co]
-%dir %{py_sitedir}/samba/tests/emulate
-%{py_sitedir}/samba/tests/emulate/*.py[co]
-%dir %{py_sitedir}/samba/web_server
-%{py_sitedir}/samba/web_server/*.py[co]
-%if %{without system_libs}
-%attr(755,root,root) %{py_sitedir}/ldb.so
-%attr(755,root,root) %{py_sitedir}/talloc.so
-%attr(755,root,root) %{py_sitedir}/tdb.so
-%attr(755,root,root) %{py_sitedir}/_tevent.so
-%{py_sitedir}/tevent.py[co]
-%endif
-%endif
 
 %files -n python3-samba
 %defattr(644,root,root,755)
@@ -1648,9 +1565,6 @@ fi
 %dir %{py3_sitedir}/samba/third_party
 %{py3_sitedir}/samba/third_party/*.py
 %{py3_sitedir}/samba/third_party/__pycache__
-%dir %{py3_sitedir}/samba/web_server
-%{py3_sitedir}/samba/web_server/*.py
-%{py3_sitedir}/samba/web_server/__pycache__
 %if %{without system_libs}
 %attr(755,root,root) %{py3_sitedir}/ldb.so
 %attr(755,root,root) %{py3_sitedir}/talloc.so

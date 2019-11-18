@@ -40,7 +40,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.11.2
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -352,6 +352,8 @@ Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
 %endif
+# samba 4.11+ dropped support for python2
+Obsoletes:	python-samba < 1:4.11
 Obsoletes:	samba-vfs-notify_fam
 
 %description libs
@@ -387,29 +389,6 @@ and Wireshark to parse IDL and similar protocols.
 %description pidl -l pl.UTF-8
 Ten pakiet zawiera kompilator IDL napisany w Perlu, używany przez
 Sambę oraz Wiresharka to analizy IDL i podobnych protokołów.
-
-%package -n python-samba
-Summary:	Samba modules for Python
-Summary(pl.UTF-8):	Moduły Samby dla Pythona
-Group:		Development/Languages/Python
-Requires:	%{name}-common = %{epoch}:%{version}-%{release}
-Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Requires:	python
-Requires:	python-dns
-Requires:	python-iso8601
-Requires:	python-modules
-%if %{with system_libs}
-Requires:	python-ldb >= %{ldb_ver}
-Requires:	python-talloc >= %{talloc_ver}
-Requires:	python-tevent >= %{tevent_ver}
-%endif
-Obsoletes:	python-samba4
-
-%description -n python-samba
-Samba modules for Python.
-
-%description -n python-samba -l pl.UTF-8
-Moduły Samby dla Pythona.
 
 %package -n python3-samba
 Summary:	Samba modules for Python 3
@@ -810,9 +789,6 @@ fi
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
-%post	-n python-samba -p /sbin/ldconfig
-%postun	-n python-samba -p /sbin/ldconfig
-
 %post	-n libsmbclient -p /sbin/ldconfig
 %postun	-n libsmbclient -p /sbin/ldconfig
 
@@ -1132,6 +1108,7 @@ fi
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
+%attr(755,root,root) %{_bindir}/winexe
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/mvxattr.1*
 %{_mandir}/man1/rpcclient.1*

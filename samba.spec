@@ -13,6 +13,7 @@
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
 %bcond_without	systemd		# systemd integration
+%bcond_without	winexe		# winexe tool
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
 %bcond_with	system_libbsd	# system libbsd for MD5 and strl* functions
 %bcond_without	system_libs	# system libraries from SAMBA project (talloc,tdb,tevent,ldb)
@@ -23,7 +24,7 @@
 %if %{with system_libs}
 %define		ldb_ver		2.0.8
 %define		talloc_ver	2:2.3.0
-%define		tdb_ver		2:1.4.0
+%define		tdb_ver		2:1.4.2
 %define		tevent_ver	0.10.0
 %endif
 
@@ -39,13 +40,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.11.3
+Version:	4.11.4
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	c95331d6790f850eafc6d65e436ce508
+# Source0-md5:	96fb3a5db15b5604130649445335f326
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -70,6 +71,10 @@ BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
 %{?with_ceph:BuildRequires:	ceph-devel >= 0.73}
 BuildRequires:	cmocka-devel >= 1.1.3
+%if %{with winexe}
+BuildRequires:	crossmingw32-gcc
+BuildRequires:	crossmingw64-gcc
+%endif
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
 BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dbus-devel
@@ -1108,6 +1113,9 @@ fi
 %attr(755,root,root) %{_bindir}/smbcquotas
 %attr(755,root,root) %{_bindir}/smbtar
 %attr(755,root,root) %{_bindir}/smbtree
+%if %{with winexe}
+%attr(755,root,root) %{_bindir}/winexe
+%endif
 %{_mandir}/man1/findsmb.1*
 %{_mandir}/man1/mvxattr.1*
 %{_mandir}/man1/rpcclient.1*

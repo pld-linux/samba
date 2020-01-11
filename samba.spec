@@ -41,7 +41,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.11.4
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -549,8 +549,10 @@ wyeksportowania do PMCD.
 %patch7 -p1
 %{!?with_system_libbsd:%patch8 -p1}
 
-%{__sed} -i -e 's|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
-%{__sed} -i -e 's|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
+%{__sed} -i -e '1s|#!/usr/bin/env bash|#!/bin/bash|' ctdb/tools/onnode
+%{__sed} -i -e '1s|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
+%{__sed} -i -e '/sed_expr1/ s|/usr/bin/env perl|/usr/bin/perl|' source3/script/wscript_build
+%{__sed} -i -e '1s|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
 
 %if %{with system_heimdal}
 %{__mv} source4/heimdal_build/krb5-types{,-smb}.h

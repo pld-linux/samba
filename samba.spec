@@ -33,7 +33,6 @@
 %undefine	with_dmapi
 %endif
 
-%include	/usr/lib/rpm/macros.perl
 
 # NOTE: packages order is: server + additions, common, clients, libs+devel, ldap
 %define		virusfilter_version 0.1.4

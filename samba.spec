@@ -912,8 +912,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/schema_load.so
 %attr(755,root,root) %{_libdir}/samba/ldb/secrets_tdb_sync.so
 %attr(755,root,root) %{_libdir}/samba/ldb/show_deleted.so
-#%attr(755,root,root) %{_libdir}/samba/ldb/simple_dn.so
-#%attr(755,root,root) %{_libdir}/samba/ldb/simple_ldap_map.so
 %attr(755,root,root) %{_libdir}/samba/ldb/subtree_delete.so
 %attr(755,root,root) %{_libdir}/samba/ldb/subtree_rename.so
 %attr(755,root,root) %{_libdir}/samba/ldb/tombstone_reanimate.so

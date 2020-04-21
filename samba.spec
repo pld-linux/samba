@@ -1,6 +1,7 @@
 # TODO:
-# - tracker support (--enable-spotlight)?
+# - bcond/subpackage for Spotlight tracker backend (BR: glib2-devel tracker-devel >= 2.0)?
 # - ressurect ceph
+# - gpfs.h (nfs-ganesha?)
 #
 # Note:
 # - unpredictible build failures:
@@ -25,9 +26,9 @@
 
 %if %{with system_libs}
 %define		ldb_ver		2.1.1
-%define		talloc_ver	2:2.3.0
-%define		tdb_ver		2:1.4.2
-%define		tevent_ver	0.10.0
+%define		talloc_ver	2:2.3.1
+%define		tdb_ver		2:1.4.3
+%define		tevent_ver	0.10.2
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -41,13 +42,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.12.0
-Release:	2
+Version:	4.12.1
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	387dd6b03bd01ac17534e439562af3f5
+# Source0-md5:	f2c536d9e5488d8b9cdae971733acbc3
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -70,6 +71,7 @@ Patch8:		%{name}-no_libbsd.patch
 URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
+BuildRequires:	bison
 %{?with_ceph:BuildRequires:	ceph-devel >= 0.73}
 BuildRequires:	cmocka-devel >= 1.1.3
 %if %{with winexe}
@@ -81,28 +83,37 @@ BuildRequires:	cyrus-sasl-devel >= 2
 BuildRequires:	dbus-devel
 %{?with_dmapi:BuildRequires:	dmapi-devel}
 BuildRequires:	docbook-style-xsl-nons
+BuildRequires:	flex
 # just FAM API
 BuildRequires:	gamin-devel
-BuildRequires:	gdbm-devel
 BuildRequires:	gettext-tools
-BuildRequires:	glusterfs-devel
+BuildRequires:	glib2-devel >= 2.0
+BuildRequires:	glusterfs-devel >= 4
 BuildRequires:	gnutls-devel >= 3.4.7
+BuildRequires:	gpgme-devel
 %{?with_system_heimdal:BuildRequires:	heimdal-devel >= 1.5.3-1}
 BuildRequires:	iconv
+BuildRequires:	jansson-devel
 BuildRequires:	keyutils-devel
 BuildRequires:	libaio-devel
 BuildRequires:	libarchive-devel >= 3.1.2
 %{?with_system_libbsd:BuildRequires:	libbsd-devel}
 BuildRequires:	libcap-devel
 BuildRequires:	libcom_err-devel
+BuildRequires:	libicu-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
+BuildRequires:	libtasn1-devel >= 3.8
+BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
+BuildRequires:	lttng-ust-devel
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
 BuildRequires:	nss_wrapper >= 1.0.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
+# detected and used for linking, but dropped by -Wl,--as-needed
+#BuildRequires:	openssl-devel
 BuildRequires:	pam-devel >= 0.99.8.1
 %{?with_ctdb_pcp:BuildRequires:	pcp-devel}
 BuildRequires:	perl-ExtUtils-MakeMaker
@@ -119,15 +130,17 @@ BuildRequires:	python3-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.647
+BuildRequires:	rpmbuild(macros) >= 1.745
 BuildRequires:	sed >= 4.0
 BuildRequires:	socket_wrapper >= 1.1.2
 BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
+BuildRequires:	tracker-devel >= 2.0
 BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
+BuildRequires:	ldb-devel < 2.2
 BuildRequires:	python3-ldb-devel >= %{ldb_ver}
 BuildRequires:	python3-talloc-devel >= %{talloc_ver}
 BuildRequires:	python3-tdb >= %{tdb_ver}
@@ -979,6 +992,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/virusfilter.so
 %attr(755,root,root) %{_libdir}/samba/vfs/worm.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
+%{_datadir}/samba/mdssvc
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
 %{_mandir}/man1/profiles.1*
@@ -1574,6 +1588,7 @@ fi
 %{_mandir}/man1/masktest.1*
 %{_mandir}/man1/ndrdump.1*
 %{_mandir}/man1/smbtorture.1*
+%{_mandir}/man1/vfstest.1*
 
 %files -n libsmbclient
 %defattr(644,root,root,755)

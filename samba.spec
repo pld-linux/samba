@@ -1,6 +1,6 @@
 # TODO:
 # - bcond/subpackage for Spotlight tracker backend (BR: glib2-devel tracker-devel >= 2.0)?
-# - ressurect ceph
+# - ressurect ceph (requires ceph_statx)
 # - gpfs.h (nfs-ganesha?)
 #
 # Note:
@@ -25,7 +25,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.1.1
+%define		ldb_ver		2.1.3
 %define		talloc_ver	2:2.3.1
 %define		tdb_ver		2:1.4.3
 %define		tevent_ver	0.10.2
@@ -42,13 +42,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.12.1
+Version:	4.12.3
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	f2c536d9e5488d8b9cdae971733acbc3
+# Source0-md5:	fa4212704946bee91f760bf0d1ef6917
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig

@@ -1,6 +1,5 @@
 # TODO:
 # - bcond/subpackage for Spotlight tracker backend (BR: glib2-devel tracker-devel >= 2.0)?
-# - ressurect ceph (requires ceph_statx)
 # - gpfs.h (nfs-ganesha?)
 #
 # Note:
@@ -10,7 +9,7 @@
 #
 # Conditional build:
 %bcond_without	ads		# ActiveDirectory support
-%bcond_with	ceph		# Ceph (RADOS) storage support
+%bcond_without	ceph		# Ceph (RADOS) storage support
 %bcond_without	cups		# CUPS support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
@@ -72,7 +71,7 @@ URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
 BuildRequires:	bison
-%{?with_ceph:BuildRequires:	ceph-devel >= 0.73}
+%{?with_ceph:BuildRequires:	ceph-devel >= 11}
 BuildRequires:	cmocka-devel >= 1.1.3
 %if %{with winexe}
 BuildRequires:	crossmingw32-gcc
@@ -227,6 +226,7 @@ Summary:	VFS module to host shares on Ceph file system
 Summary(pl.UTF-8):	Moduł VFS do serwowania zasobów z systemu plików Ceph
 Group:		Networking/Daemons
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+Requires:	ceph-libs >= 11
 
 %description vfs-ceph
 VFS module to host shares on Ceph file system.

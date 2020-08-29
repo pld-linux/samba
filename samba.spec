@@ -42,7 +42,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.12.6
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -102,7 +102,9 @@ BuildRequires:	libcom_err-devel
 BuildRequires:	libicu-devel
 BuildRequires:	libmagic-devel
 BuildRequires:	libnscd-devel
+BuildRequires:	libnsl-devel
 BuildRequires:	libtasn1-devel >= 3.8
+BuildRequires:	libtirpc-devel
 BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
 BuildRequires:	lttng-ust-devel
@@ -487,7 +489,7 @@ Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
 Obsoletes:	openldap-schema-samba3
-%if "%{_rpmversion}" >= "5"
+%if "%{_rpmversion}" >= "4.6"
 BuildArch:	noarch
 %endif
 

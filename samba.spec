@@ -130,6 +130,7 @@ BuildRequires:	python3-modules >= 1:3.5
 BuildRequires:	python3-subunit
 BuildRequires:	python3-testtools
 BuildRequires:	readline-devel >= 4.2
+BuildRequires:	rpcsvc-proto
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.745

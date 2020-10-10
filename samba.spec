@@ -11,6 +11,7 @@
 %bcond_without	ads		# ActiveDirectory support
 %bcond_without	ceph		# Ceph (RADOS) storage support
 %bcond_without	cups		# CUPS support
+%bcond_without	glusterfs	# GlusterFS storage support
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
@@ -87,7 +88,7 @@ BuildRequires:	flex
 BuildRequires:	gamin-devel
 BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 2.0
-BuildRequires:	glusterfs-devel >= 4
+%{?with_glusterfs:BuildRequires:	glusterfs-devel >= 4}
 BuildRequires:	gnutls-devel >= 3.4.7
 BuildRequires:	gpgme-devel
 %{?with_system_heimdal:BuildRequires:	heimdal-devel >= 1.5.3-1}
@@ -634,6 +635,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-winbind \
 	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \
 	--enable-cups \
+	%{__enable_disable glusterfs} \
 	--enable-iprint
 
 %{__make} V=1
@@ -1070,9 +1072,11 @@ fi
 
 %files vfs-glusterfs
 %defattr(644,root,root,755)
+%if %{with glusterfs}
 %attr(755,root,root) %{_libdir}/samba/vfs/glusterfs.so
-%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs_fuse.so
 %{_mandir}/man8/vfs_glusterfs.8*
+%endif
+%attr(755,root,root) %{_libdir}/samba/vfs/glusterfs_fuse.so
 %{_mandir}/man8/vfs_glusterfs_fuse.8*
 
 %files common

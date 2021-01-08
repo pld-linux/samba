@@ -25,7 +25,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.1.3
+%define		ldb_ver		2.1.4
 %define		talloc_ver	2:2.3.1
 %define		tdb_ver		2:1.4.3
 %define		tevent_ver	0.10.2
@@ -42,13 +42,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.12.6
+Version:	4.12.10
 Release:	3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	0fa8bdd6826659c642bf1d255545d78d
+# Source0-md5:	0fe7c0b61f78b892ba9e15cf69a68f38
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -133,7 +133,7 @@ BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpcsvc-proto
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.745
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 BuildRequires:	socket_wrapper >= 1.1.2
 BuildRequires:	subunit-devel
@@ -491,9 +491,7 @@ Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
 Obsoletes:	openldap-schema-samba3
-%if "%{_rpmversion}" >= "4.6"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description -n openldap-schema-samba
 This package contains samba.schema for OpenLDAP.
@@ -882,6 +880,8 @@ fi
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_10.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_11.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_12.so
+%attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_14.so
+%attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_16.so
 %dir %{_libdir}/samba/gensec
 %attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
 %if %{with system_heimdal}
@@ -1144,6 +1144,9 @@ fi
 %{_mandir}/man1/smbcquotas.1*
 %{_mandir}/man1/smbtar.1*
 %{_mandir}/man1/smbtree.1*
+%if %{with winexe}
+%attr(755,root,root) %{_mandir}/man1/winexe.1*
+%endif
 %{_mandir}/man8/cifsdd.8*
 
 %files winbind

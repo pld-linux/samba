@@ -25,7 +25,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.1.4
+%define		ldb_ver		2.2.0
 %define		talloc_ver	2:2.3.1
 %define		tdb_ver		2:1.4.3
 %define		tevent_ver	0.10.2
@@ -42,13 +42,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.12.10
-Release:	3
+Version:	4.13.3
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	0fe7c0b61f78b892ba9e15cf69a68f38
+# Source0-md5:	8a412bc5b58f35cd4721fa6ec4629ce0
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -143,7 +143,7 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ldb-devel < 2.2
+BuildRequires:	ldb-devel < 2.3
 BuildRequires:	python3-ldb-devel >= %{ldb_ver}
 BuildRequires:	python3-talloc-devel >= %{talloc_ver}
 BuildRequires:	python3-tdb >= %{tdb_ver}
@@ -995,8 +995,12 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/time_audit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/unityed_media.so
 %attr(755,root,root) %{_libdir}/samba/vfs/virusfilter.so
+%attr(755,root,root) %{_libdir}/samba/vfs/widelinks.so
 %attr(755,root,root) %{_libdir}/samba/vfs/worm.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
+%dir %{_datadir}/samba/admx
+%{_datadir}/samba/admx/samba.admx
+%lang(en) %{_datadir}/samba/admx/en-US
 %{_datadir}/samba/mdssvc
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
@@ -1051,6 +1055,7 @@ fi
 %{_mandir}/man8/vfs_shell_snap.8*
 %{_mandir}/man8/vfs_unityed_media.8*
 %{_mandir}/man8/vfs_virusfilter.8*
+%{_mandir}/man8/vfs_widelinks.8*
 
 %dir %{_sambahome}
 %dir /var/lib/samba
@@ -1082,7 +1087,7 @@ fi
 
 %files common
 %defattr(644,root,root,755)
-%doc BUILD_SYSTEMS.txt PFIF.txt README.cifs-utils README.Coding README.contributing README.md WHATSNEW.txt
+%doc PFIF.txt README.cifs-utils README.md SECURITY.md WHATSNEW.txt
 %dir %{_sysconfdir}/samba
 %attr(664,root,fileshare) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/smb.conf
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/samba/lmhosts
@@ -1456,7 +1461,6 @@ fi
 %dir %{_includedir}/samba-4.0/util
 %{_includedir}/samba-4.0/util/attr.h
 %{_includedir}/samba-4.0/util/blocking.h
-%{_includedir}/samba-4.0/util/byteorder.h
 %{_includedir}/samba-4.0/util/data_blob.h
 %{_includedir}/samba-4.0/util/debug.h
 %{_includedir}/samba-4.0/util/discard.h
@@ -1568,6 +1572,9 @@ fi
 %dir %{py3_sitedir}/samba/tests/kcc
 %{py3_sitedir}/samba/tests/kcc/*.py
 %{py3_sitedir}/samba/tests/kcc/__pycache__
+%dir %{py3_sitedir}/samba/tests/krb5
+%{py3_sitedir}/samba/tests/krb5/*.py
+%{py3_sitedir}/samba/tests/krb5/__pycache__
 %dir %{py3_sitedir}/samba/tests/samba_tool
 %{py3_sitedir}/samba/tests/samba_tool/*.py
 %{py3_sitedir}/samba/tests/samba_tool/__pycache__
@@ -1671,6 +1678,7 @@ fi
 %{_datadir}/ctdb/events/legacy/31.clamd.script
 %{_datadir}/ctdb/events/legacy/40.vsftpd.script
 %{_datadir}/ctdb/events/legacy/41.httpd.script
+%{_datadir}/ctdb/events/legacy/48.netbios.script
 %{_datadir}/ctdb/events/legacy/49.winbind.script
 %{_datadir}/ctdb/events/legacy/50.samba.script
 %{_datadir}/ctdb/events/legacy/60.nfs.script

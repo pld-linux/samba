@@ -43,7 +43,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.13.3
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -62,7 +62,7 @@ Source10:	https://bitbucket.org/fumiyas/samba-virusfilter/downloads/samba-virusf
 Patch0:		system-heimdal.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
-
+Patch3:		samba-force-user.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
@@ -559,7 +559,7 @@ wyeksportowania do PMCD.
 %{?with_system_heimdal:%patch0 -p1}
 %patch1 -p1
 %patch2 -p1
-
+%patch3 -p1
 %patch4 -p1
 %{?with_system_heimdal:%patch5 -p1}
 %patch6 -p1

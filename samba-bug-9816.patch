@@ -28,7 +28,7 @@ index 37edb31..00abad8 100644
  #ifdef _WIN32
  #define mkdir(d,m) _mkdir(d)
  #endif
-@@ -898,5 +903,19 @@ int rep_usleep(useconds_t sec)
+@@ -898,6 +903,20 @@ int rep_usleep(useconds_t sec)
  #ifndef HAVE_SETPROCTITLE
  void rep_setproctitle(const char *fmt, ...)
  {
@@ -48,6 +48,7 @@ index 37edb31..00abad8 100644
 +#endif
  }
  #endif
+ #ifndef HAVE_SETPROCTITLE_INIT
 -- 
 1.7.10.4
 

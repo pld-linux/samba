@@ -10,8 +10,8 @@ Allow setting unicodePwd with NTHash vlue over LDAP
 -	{ DSDB_CONTROL_PASSWORD_HASH_VALUES_OID, NULL, NULL },
 +	{ DSDB_CONTROL_PASSWORD_HASH_VALUES_OID, decode_flag_request, encode_flag_request },
  	{ DSDB_CONTROL_PASSWORD_CHANGE_OID, NULL, NULL },
+ 	{ DSDB_CONTROL_PASSWORD_ACL_VALIDATION_OID, NULL, NULL },
  	{ DSDB_CONTROL_APPLY_LINKS, NULL, NULL },
- 	{ LDB_CONTROL_BYPASS_OPERATIONAL_OID, NULL, NULL },
 --- samba-4.0.7/source4/dsdb/samdb/ldb_modules/password_hash.c~	2013-07-02 20:01:42.731518064 +0200
 +++ samba-4.0.7/source4/dsdb/samdb/ldb_modules/password_hash.c	2013-07-02 20:39:24.909757777 +0200
 @@ -3386,10 +3386,29 @@

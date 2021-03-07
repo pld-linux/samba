@@ -491,7 +491,7 @@ Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
 Obsoletes:	openldap-schema-samba3
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n openldap-schema-samba
 This package contains samba.schema for OpenLDAP.

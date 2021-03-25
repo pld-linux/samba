@@ -25,7 +25,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.2.0
+%define		ldb_ver		2.2.1
 %define		talloc_ver	2:2.3.1
 %define		tdb_ver		2:1.4.3
 %define		tevent_ver	0.10.2
@@ -42,13 +42,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.13.3
-Release:	4
+Version:	4.13.7
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	8a412bc5b58f35cd4721fa6ec4629ce0
+# Source0-md5:	1a900f45d5251b53c9bd28887e588583
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -62,7 +62,6 @@ Source10:	https://bitbucket.org/fumiyas/samba-virusfilter/downloads/samba-virusf
 Patch0:		system-heimdal.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
-Patch3:		samba-force-user.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
@@ -131,6 +130,7 @@ BuildRequires:	python3-subunit
 BuildRequires:	python3-testtools
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpcsvc-proto
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.752
@@ -165,38 +165,38 @@ Requires:	setup >= 2.4.6-7
 Requires:	systemd-units >= 38
 # smbd links with libcups
 %{?with_cups:Requires:	cups-lib >= 1:1.2.0}
-Obsoletes:	samba-doc-html
-Obsoletes:	samba-doc-pdf
-Obsoletes:	samba-pdb-xml
-Obsoletes:	samba-vfs-audit
-Obsoletes:	samba-vfs-block
-Obsoletes:	samba-vfs-cap
-Obsoletes:	samba-vfs-catia
-Obsoletes:	samba-vfs-default_quota
-Obsoletes:	samba-vfs-expand_msdfs
-Obsoletes:	samba-vfs-fake_perms
-Obsoletes:	samba-vfs-netatalk
-Obsoletes:	samba-vfs-readahead
-Obsoletes:	samba-vfs-readonly
-Obsoletes:	samba-vfs-recycle
-Obsoletes:	samba-vfs-scannedonly
-Obsoletes:	samba-vfs-shadow_copy
-Obsoletes:	samba3
-Obsoletes:	samba3-server
-Obsoletes:	samba3-vfs-audit
-Obsoletes:	samba3-vfs-cap
-Obsoletes:	samba3-vfs-catia
-Obsoletes:	samba3-vfs-default_quota
-Obsoletes:	samba3-vfs-expand_msdfs
-Obsoletes:	samba3-vfs-fake_perms
-Obsoletes:	samba3-vfs-netatalk
-Obsoletes:	samba3-vfs-readahead
-Obsoletes:	samba3-vfs-readonly
-Obsoletes:	samba3-vfs-recycle
-Obsoletes:	samba3-vfs-scannedonly
-Obsoletes:	samba3-vfs-shadow_copy
-Obsoletes:	samba4
-Obsoletes:	samba4-common-server
+Obsoletes:	samba-doc-html < 1:4
+Obsoletes:	samba-doc-pdf < 1:4
+Obsoletes:	samba-pdb-xml < 3.0.23
+Obsoletes:	samba-vfs-audit < 1:4.1.4-3
+Obsoletes:	samba-vfs-block < 1:4.1.4-3
+Obsoletes:	samba-vfs-cap < 1:4.1.4-3
+Obsoletes:	samba-vfs-catia < 1:4.1.4-3
+Obsoletes:	samba-vfs-default_quota < 1:4.1.4-3
+Obsoletes:	samba-vfs-expand_msdfs < 1:4.1.4-3
+Obsoletes:	samba-vfs-fake_perms < 1:4.1.4-3
+Obsoletes:	samba-vfs-netatalk < 1:4.1.4-3
+Obsoletes:	samba-vfs-readahead < 1:4.1.4-3
+Obsoletes:	samba-vfs-readonly < 1:4.1.4-3
+Obsoletes:	samba-vfs-recycle < 1:4.1.4-3
+Obsoletes:	samba-vfs-scannedonly < 1:4.1.4-3
+Obsoletes:	samba-vfs-shadow_copy < 1:4.1.4-3
+Obsoletes:	samba3 < 1:4.1.4-3
+Obsoletes:	samba3-server < 1:4.1.4-3
+Obsoletes:	samba3-vfs-audit < 1:4.1.4-3
+Obsoletes:	samba3-vfs-cap < 1:4.1.4-3
+Obsoletes:	samba3-vfs-catia < 1:4.1.4-3
+Obsoletes:	samba3-vfs-default_quota < 1:4.1.4-3
+Obsoletes:	samba3-vfs-expand_msdfs < 1:4.1.4-3
+Obsoletes:	samba3-vfs-fake_perms < 1:4.1.4-3
+Obsoletes:	samba3-vfs-netatalk < 1:4.1.4-3
+Obsoletes:	samba3-vfs-readahead < 1:4.1.4-3
+Obsoletes:	samba3-vfs-readonly < 1:4.1.4-3
+Obsoletes:	samba3-vfs-recycle < 1:4.1.4-3
+Obsoletes:	samba3-vfs-scannedonly < 1:4.1.4-3
+Obsoletes:	samba3-vfs-shadow_copy < 1:4.1.4-3
+Obsoletes:	samba4 < 1:4.1.4-3
+Obsoletes:	samba4-common-server < 1:4.1.4-3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sambahome	/home/services/samba
@@ -264,8 +264,8 @@ Group:		Networking/Daemons
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 # for samba-tool script
 Requires:	python3-samba = %{epoch}:%{version}-%{release}
-Obsoletes:	samba3-common
-Obsoletes:	samba4-common
+Obsoletes:	samba3-common < 1:4.1.4-3
+Obsoletes:	samba4-common < 1:4.1.4-3
 
 %description common
 Samba-common provides files necessary for both the server and client
@@ -284,8 +284,8 @@ Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 %{?with_system_heimdal:Requires:	heimdal-libs >= 1.5.3-1}
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
 Suggests:	cifs-utils
-Obsoletes:	samba3-client
-Obsoletes:	samba4-client
+Obsoletes:	samba3-client < 1:4.1.4-3
+Obsoletes:	samba4-client < 1:4.1.4-3
 Obsoletes:	smbfs
 
 %description client
@@ -307,10 +307,10 @@ Requires(post,preun,postun):	systemd-units >= 38
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	systemd-units >= 38
-Obsoletes:	samba3-winbind
-Obsoletes:	samba4-winbind
+Obsoletes:	samba3-winbind < 1:4.1.4-3
+Obsoletes:	samba4-winbind < 1:4.1.4-3
 # pam_winbind is not complete replacement, but pam_smbpass has been removed (in samba 4.4)
-#Obsoletes:	pam-pam_smbpass
+#Obsoletes:	pam-pam_smbpass < 1:4.4
 
 %description winbind
 Provides the winbind daemon and testing tools to allow authentication
@@ -327,7 +327,7 @@ Summary(pl.UTF-8):	Backend CUPS-a drukujący na drukarkach SMB
 Group:		Applications/Printing
 Requires:	%{name}-client = %{epoch}:%{version}-%{release}
 Requires:	cups >= 1:1.2.0
-Obsoletes:	cups-backend-smb3
+Obsoletes:	cups-backend-smb3 < 1:4.1.4-3
 
 %description -n cups-backend-smb
 CUPS backend for printing to SMB printers.
@@ -341,7 +341,7 @@ Summary(pl.UTF-8):	Usługa Name Service Switch dla WINS
 Group:		Base
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	nss_wins3
+Obsoletes:	nss_wins3 < 1:4.1.4-3
 
 %description -n nss_wins
 Provides the libnss_wins shared library which resolves NetBIOS names
@@ -356,7 +356,7 @@ Summary:	A utility for retrieving files using the SMB protocol
 Summary(pl.UTF-8):	Narzędzie do pobierania plików protokołem SMB
 Group:		Applications/Networking
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	smbget3
+Obsoletes:	smbget3 < 1:4.1.4-3
 
 %description -n smbget
 wget-like utility for downloading files over SMB.
@@ -378,7 +378,7 @@ Requires:	tevent >= %{tevent_ver}
 %endif
 # samba 4.11+ dropped support for python2
 Obsoletes:	python-samba < 1:4.11
-Obsoletes:	samba-vfs-notify_fam
+Obsoletes:	samba-vfs-notify_fam < 1:4.4.4
 
 %description libs
 Samba shared libraries.
@@ -391,8 +391,8 @@ Summary:	Header files for Samba
 Summary(pl.UTF-8):	Pliki nagłówkowe Samby
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	samba3-devel
-Obsoletes:	samba4-devel
+Obsoletes:	samba3-devel < 1:4.1.4-3
+Obsoletes:	samba4-devel < 1:4.1.4-3
 
 %description devel
 Header files for Samba.
@@ -404,7 +404,7 @@ Pliki nagłówkowe Samby.
 Summary:	Perl IDL compiler
 Summary(pl.UTF-8):	Kompilator IDL w Perlu
 Group:		Development/Tools
-Obsoletes:	samba4-pidl
+Obsoletes:	samba4-pidl < 1:4.1.4-3
 
 %description pidl
 The samba-pidl package contains the Perl IDL compiler used by Samba
@@ -444,9 +444,9 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	%{name}-winbind = %{epoch}:%{version}-%{release}
-Obsoletes:	samba4-test
-Obsoletes:	samba4-test-devel
-Obsoletes:	samba-test-devel
+Obsoletes:	samba4-test < 1:4.1.4-3
+Obsoletes:	samba4-test-devel < 1:4.1.4-3
+Obsoletes:	samba-test-devel < 1:4.5.1-3
 
 %description test
 samba-test provides testing tools for both the server and client
@@ -460,7 +460,7 @@ Summary:	libsmbclient and libwbclient - Samba client libraries
 Summary(pl.UTF-8):	libsmbclient i libwbclient - biblioteki klienckie Samby
 Group:		Libraries
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Obsoletes:	samba3-libsmbclient
+Obsoletes:	samba3-libsmbclient < 1:4.1.4-3
 
 %description -n libsmbclient
 libsmbclient and libwbclient - libraries that allow to use Samba
@@ -475,8 +475,8 @@ Summary:	Development files for Samba client libraries
 Summary(pl.UTF-8):	Pliki programistyczne bibliotek klienta Samby
 Group:		Development/Libraries
 Requires:	libsmbclient = %{epoch}:%{version}-%{release}
-Obsoletes:	libsmbclient-static
-Obsoletes:	samba3-libsmbclient-devel
+Obsoletes:	libsmbclient-static < 1:4
+Obsoletes:	samba3-libsmbclient-devel < 1:4.1.4-3
 
 %description -n libsmbclient-devel
 Header files for libsmbclient and libwbclient libraries.
@@ -490,7 +490,7 @@ Summary(pl.UTF-8):	Schemat LDAP dla Samby
 Group:		Networking/Daemons
 Requires(post,postun):	sed >= 4.0
 Requires:	openldap-servers
-Obsoletes:	openldap-schema-samba3
+Obsoletes:	openldap-schema-samba3 < 1:4.1.4-3
 BuildArch:	noarch
 
 %description -n openldap-schema-samba
@@ -559,7 +559,6 @@ wyeksportowania do PMCD.
 %{?with_system_heimdal:%patch0 -p1}
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 %patch4 -p1
 %{?with_system_heimdal:%patch5 -p1}
 %patch6 -p1
@@ -1378,7 +1377,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libshares-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbclient-raw-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd-base-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libsmbd-conn-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbd-shim-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbldaphelper-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser-samba4.so

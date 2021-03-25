@@ -754,6 +754,19 @@ fi
 %systemd_post smb.service nmb.service
 
 %triggerpostun -- samba4
+### samba4 < 1:4.1.1-1
+# CVE-2013-4476
+if [ -e %{_sysconfdir}/samba/tls/key.pem ]; then
+	PERMS=$(stat -c %a %{_sysconfdir}/samba/tls/key.pem)
+	if [ "$PERMS" != "600" ]; then
+		chmod 600 %{_sysconfdir}/samba/tls/key.pem || :
+		echo "Fixed permissions of private key file %{_sysconfdir}/samba/tls/key.pem from $PERMS to 600"
+		echo "Consider regenerating TLS certificate"
+		echo "Removing all tls .pem files will cause an auto-regeneration with the correct permissions"
+	fi
+fi
+
+### any
 /sbin/chkconfig --add samba
 %service samba restart "Samba AD daemons"
 %systemd_post samba.service
@@ -762,15 +775,6 @@ fi
 %{_bindir}/net groupmap add sid=S-1-5-32-546 unixgroup=nobody type=builtin || :
 
 %triggerpostun -- samba4 < 1:4.1.1-1
-# CVE-2013-4476
-[ -e %{_sysconfdir}/samba/tls/key.pem ] || exit 0
-PERMS=$(stat -c %a %{_sysconfdir}/samba/tls/key.pem)
-if [ "$PERMS" != "600" ]; then
-	chmod 600 %{_sysconfdir}/samba/tls/key.pem || :
-	echo "Fixed permissions of private key file %{_sysconfdir}/samba/tls/key.pem from $PERMS to 600"
-	echo "Consider regenerating TLS certificate"
-	echo "Removing all tls .pem files will cause an auto-regeneration with the correct permissions"
-fi
 
 %triggerprein common -- samba4
 cp -a %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.samba4

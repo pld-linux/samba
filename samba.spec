@@ -42,13 +42,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.13.7
+Version:	4.13.8
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	1a900f45d5251b53c9bd28887e588583
+# Source0-md5:	d260ca47f3046f9a8cb37d7ad94a0ded
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig

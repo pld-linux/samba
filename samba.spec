@@ -42,13 +42,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.13.8
+Version:	4.13.9
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	d260ca47f3046f9a8cb37d7ad94a0ded
+# Source0-md5:	c2669e0699db6bae9fd7c51194a50d96
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -135,7 +135,7 @@ BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
-BuildRequires:	socket_wrapper >= 1.1.2
+BuildRequires:	socket_wrapper >= 1.3.3
 BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
 BuildRequires:	tracker-devel >= 2.0

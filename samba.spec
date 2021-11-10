@@ -25,10 +25,11 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.2.1
-%define		talloc_ver	2:2.3.1
+%define		ldb_ver		2.4.1
+%define		ldb_ver_below	2.5
+%define		talloc_ver	2:2.3.3
 %define		tdb_ver		2:1.4.3
-%define		tevent_ver	0.10.2
+%define		tevent_ver	0.11.0
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -42,13 +43,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.13.9
-Release:	2
+Version:	4.15.2
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	c2669e0699db6bae9fd7c51194a50d96
+# Source0-md5:	2245f5b1258b782702ad644c5e9d2857
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -75,6 +76,8 @@ BuildRequires:	bison
 BuildRequires:	cmocka-devel >= 1.1.3
 %if %{with winexe}
 BuildRequires:	crossmingw32-gcc
+# for string.h
+BuildRequires:	crossmingw32-runtime
 BuildRequires:	crossmingw64-gcc
 %endif
 %{?with_cups:BuildRequires:	cups-devel >= 1:1.2.0}
@@ -125,6 +128,7 @@ BuildRequires:	popt-devel
 BuildRequires:	python3-devel >= 1:3.5
 BuildRequires:	python3-dns
 BuildRequires:	python3-iso8601
+BuildRequires:	python3-markdown
 BuildRequires:	python3-modules >= 1:3.5
 BuildRequires:	python3-subunit
 BuildRequires:	python3-testtools
@@ -143,7 +147,7 @@ BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
 BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ldb-devel < 2.3
+BuildRequires:	ldb-devel < %{ldb_ver_below}
 BuildRequires:	python3-ldb-devel >= %{ldb_ver}
 BuildRequires:	python3-talloc-devel >= %{talloc_ver}
 BuildRequires:	python3-tdb >= %{tdb_ver}
@@ -533,7 +537,7 @@ other projects to store temporary data. If an application is already
 using TDB for temporary data it is very easy to convert that
 application to be cluster aware and use CTDB instead.
 
-%description -l pl.UTF-8
+%description -n ctdb -l pl.UTF-8
 CTDB to klastrowa implementacja bazy danych TDB używanej w Sambie oraz
 innych projektach do przechowywania danych tymczasowych. Jeśli jakaś
 aplikacja już wykorzystuje TDB do trzymania danych tymczasowych,
@@ -614,7 +618,6 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	%{?with_ctdb_pcp:--enable-pmda} \
 	--with-automount \
 	--with%{!?with_dmapi:out}-dmapi \
-	--with-dnsupdate \
 	--with-iconv \
 	--with%{!?with_ldap:out}-ldap \
 	--with-pam \
@@ -716,11 +719,6 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 #%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_prealloc.8*
 #%{__rm} $RPM_BUILD_ROOT%{_mandir}/man8/vfs_tsmsm.8*
 
-# remove tests
-%{__rm} $RPM_BUILD_ROOT%{_bindir}/ctdb*_tests
-%{__rm} -r $RPM_BUILD_ROOT%{_libexecdir}/ctdb/tests
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/ctdb/tests
-
 %py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
 %py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
 
@@ -773,8 +771,6 @@ fi
 
 %triggerpostun -- samba < 1:4.9.2-3
 %{_bindir}/net groupmap add sid=S-1-5-32-546 unixgroup=nobody type=builtin || :
-
-%triggerpostun -- samba4 < 1:4.1.1-1
 
 %triggerprein common -- samba4
 cp -a %{_sysconfdir}/samba/smb.conf %{_sysconfdir}/samba/smb.conf.samba4
@@ -878,8 +874,6 @@ fi
 %attr(755,root,root) %{_sbindir}/samba_upgradedns
 %attr(755,root,root) %{_sbindir}/smbd
 %dir %{_libdir}/samba/bind9
-%attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9.so
-%attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_9.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_10.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_11.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_12.so
@@ -891,6 +885,8 @@ fi
 %dir %{_libdir}/samba/hdb
 %attr(755,root,root) %{_libdir}/samba/hdb/hdb_samba4.so
 %endif
+%dir %{_libdir}/samba/krb5
+%attr(755,root,root) %{_libdir}/samba/krb5/async_dns_krb5_locator.so
 %dir %{_libdir}/samba/ldb
 %attr(755,root,root) %{_libdir}/samba/ldb/aclread.so
 %attr(755,root,root) %{_libdir}/samba/ldb/acl.so
@@ -1001,6 +997,8 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/widelinks.so
 %attr(755,root,root) %{_libdir}/samba/vfs/worm.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
+%dir %{_libexecdir}/samba
+%attr(755,root,root) %{_libexecdir}/samba/samba-bgqd
 %dir %{_datadir}/samba/admx
 %{_datadir}/samba/admx/samba.admx
 %lang(en) %{_datadir}/samba/admx/en-US
@@ -1015,6 +1013,7 @@ fi
 %{_mandir}/man8/nmbd.8*
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/samba.8*
+%{_mandir}/man8/samba-bgqd.8*
 %{_mandir}/man8/samba_downgrade_db.8*
 %{_mandir}/man8/samba-gpupdate.8*
 %{_mandir}/man8/smbd.8*
@@ -1131,8 +1130,7 @@ fi
 %files client
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cifsdd
-%attr(755,root,root) %{_bindir}/findsmb
-%attr(755,root,root) %{_bindir}/mdfind
+%attr(755,root,root) %{_bindir}/mdsearch
 %attr(755,root,root) %{_bindir}/mvxattr
 %attr(755,root,root) %{_bindir}/rpcclient
 %attr(755,root,root) %{_bindir}/smbcacls
@@ -1143,8 +1141,7 @@ fi
 %if %{with winexe}
 %attr(755,root,root) %{_bindir}/winexe
 %endif
-%{_mandir}/man1/findsmb.1*
-%{_mandir}/man1/mdfind.1*
+%{_mandir}/man1/mdsearch.1*
 %{_mandir}/man1/mvxattr.1*
 %{_mandir}/man1/rpcclient.1*
 %{_mandir}/man1/smbcacls.1*
@@ -1247,11 +1244,11 @@ fi
 %attr(755,root,root) %{_libdir}/libndr-nbt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-nbt.so.0
 %attr(755,root,root) %{_libdir}/libndr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr.so.1
+%attr(755,root,root) %ghost %{_libdir}/libndr.so.2
 %attr(755,root,root) %{_libdir}/libndr-standard.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-standard.so.0
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.0
+%attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.1
 %attr(755,root,root) %{_libdir}/libsamba-errors.so.1
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
@@ -1265,9 +1262,11 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamdb.so.0
 %attr(755,root,root) %{_libdir}/libtevent-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
-%attr(755,root,root) %{_libdir}/libnetapi.so.0
+%attr(755,root,root) %{_libdir}/libnetapi.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libnetapi.so.1
 %attr(755,root,root) %{_libdir}/libsmbconf.so.0
-%attr(755,root,root) %{_libdir}/libsmbldap.so.2
+%attr(755,root,root) %{_libdir}/libsmbldap.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsmbldap.so.2
 %dir %{_libdir}/samba
 
 %if %{without replace}
@@ -1317,10 +1316,11 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libcli-spoolss-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcluster-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcmdline-contexts-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libcmdline-credentials-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcmdline-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcommon-auth-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libctdb-event-client-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdb-glue-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libdcerpc-pkt-auth-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdbwrap-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libdcerpc-samba-samba4.so
@@ -1358,8 +1358,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libnet-keytab-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libnpa-tstream-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libpac-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libpopt-samba3-cmdline-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libpopt-samba3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libposix-eadb-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprinter-driver-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprinting-migrate-samba4.so
@@ -1392,7 +1390,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libtdb-wrap-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtime-basic-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtrusts-util-samba4.so
-%attr(755,root,root) %{_libdir}/samba/libutil-cmdline-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libutil-reg-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libutil-setid-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libutil-tdb-samba4.so
@@ -1471,7 +1468,6 @@ fi
 %{_includedir}/samba-4.0/util/idtree.h
 %{_includedir}/samba-4.0/util/idtree_random.h
 %{_includedir}/samba-4.0/util/signal.h
-%{_includedir}/samba-4.0/util/string_wrappers.h
 %{_includedir}/samba-4.0/util/substitute.h
 %{_includedir}/samba-4.0/util/tevent_ntstatus.h
 %{_includedir}/samba-4.0/util/tevent_unix.h
@@ -1583,9 +1579,6 @@ fi
 %dir %{py3_sitedir}/samba/tests/emulate
 %{py3_sitedir}/samba/tests/emulate/*.py
 %{py3_sitedir}/samba/tests/emulate/__pycache__
-%dir %{py3_sitedir}/samba/third_party
-%{py3_sitedir}/samba/third_party/*.py
-%{py3_sitedir}/samba/third_party/__pycache__
 %if %{without system_libs}
 %attr(755,root,root) %{py3_sitedir}/ldb.so
 %attr(755,root,root) %{py3_sitedir}/talloc.so
@@ -1690,7 +1683,6 @@ fi
 %attr(755,root,root) %{_sbindir}/ctdbd
 %attr(755,root,root) %{_sbindir}/ctdbd_wrapper
 %attr(755,root,root) %{_bindir}/ctdb
-%attr(755,root,root) %{_bindir}/ctdb_local_daemons
 %attr(755,root,root) %{_bindir}/ping_pong
 %attr(755,root,root) %{_bindir}/ltdbtool
 %attr(755,root,root) %{_bindir}/ctdb_diagnostics
@@ -1708,6 +1700,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb-path
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_takeover_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/tdb_mutex_check
 
 %{_mandir}/man1/ctdb.1*
 %{_mandir}/man1/ctdb_diagnostics.1*

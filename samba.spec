@@ -44,7 +44,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.15.2
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -811,8 +811,8 @@ fi
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
-%triggerpostun libs -- samba-libs < 1:4.15.2-2
-if [ ! -L %{_libdir}/libsmbldap.so.2 ];
+%triggerpostun libs -- samba-libs < 1:4.15.2-3
+if [ ! -L %{_libdir}/libsmbldap.so.2 ]; then
 	%{__rm} -f %{_libdir}/libsmbldap.so.2
 	/sbin/ldconfig
 fi

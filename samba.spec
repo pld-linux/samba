@@ -68,6 +68,7 @@ Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
 Patch8:		%{name}-no_libbsd.patch
+Patch9:		format-security.patch
 URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -568,6 +569,7 @@ wyeksportowania do PMCD.
 %patch6 -p1
 %patch7 -p1
 %{!?with_system_libbsd:%patch8 -p1}
+%patch9 -p1
 
 %{__sed} -i -e '1s|#!/usr/bin/env bash|#!/bin/bash|' ctdb/tools/onnode
 %{__sed} -i -e '1s|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

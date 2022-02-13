@@ -1,0 +1,11 @@
+--- samba-4.15.5/lib/util/debug.c~	2021-12-08 15:35:56.000000000 +0100
++++ samba-4.15.5/lib/util/debug.c	2022-02-13 18:13:26.956292670 +0100
+@@ -282,7 +282,7 @@
+ static void debug_lttng_log(int msg_level,
+ 			    const char *msg, const char *msg_no_nl)
+ {
+-	tracef(msg_no_nl);
++	tracef("%s", msg_no_nl);
+ }
+ #endif /* WITH_LTTNG_TRACEF */
+ 

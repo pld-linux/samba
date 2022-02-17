@@ -28,7 +28,7 @@
 %define		ldb_ver		2.4.1
 %define		ldb_ver_below	2.5
 %define		talloc_ver	2:2.3.3
-%define		tdb_ver		2:1.4.3
+%define		tdb_ver		2:1.4.4
 %define		tevent_ver	0.11.0
 %endif
 

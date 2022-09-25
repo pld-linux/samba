@@ -815,11 +815,14 @@ fi
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
-%triggerpostun libs -- samba-libs < 1:4.15.2-3
+%triggerpostun libs -- samba-libs < 1:4.15.9
+if [ ! -L %{_libdir}/libsmbconf.so.0 ]; then
+	%{__rm} -f %{_libdir}/libsmbconf.so.0
+fi
 if [ ! -L %{_libdir}/libsmbldap.so.2 ]; then
 	%{__rm} -f %{_libdir}/libsmbldap.so.2
-	/sbin/ldconfig
 fi
+/sbin/ldconfig
 
 %post	-n libsmbclient -p /sbin/ldconfig
 %postun	-n libsmbclient -p /sbin/ldconfig

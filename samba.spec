@@ -25,7 +25,7 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.4.1
+%define		ldb_ver		2.4.4
 %define		ldb_ver_below	2.5
 %define		talloc_ver	2:2.3.3
 %define		tdb_ver		2:1.4.4
@@ -43,13 +43,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.15.6
-Release:	4
+Version:	4.15.9
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	cd7023dc78bff281a57b219a48ddcca3
+# Source0-md5:	18809a49d08d4166b85cc874282eed2f
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -69,6 +69,7 @@ Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
 Patch8:		%{name}-no_libbsd.patch
 Patch9:		format-security.patch
+Patch10:	%{name}-linux-mount.patch
 URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -570,6 +571,7 @@ wyeksportowania do PMCD.
 %patch7 -p1
 %{!?with_system_libbsd:%patch8 -p1}
 %patch9 -p1
+%patch10 -p1
 
 %{__sed} -i -e '1s|#!/usr/bin/env bash|#!/bin/bash|' ctdb/tools/onnode
 %{__sed} -i -e '1s|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
@@ -887,6 +889,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_12.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_14.so
 %attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_16.so
+%attr(755,root,root) %{_libdir}/samba/bind9/dlz_bind9_18.so
 %dir %{_libdir}/samba/gensec
 %attr(755,root,root) %{_libdir}/samba/gensec/krb5.so
 %if %{with system_heimdal}
@@ -1272,7 +1275,8 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libtevent-util.so.0
 %attr(755,root,root) %{_libdir}/libnetapi.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libnetapi.so.1
-%attr(755,root,root) %{_libdir}/libsmbconf.so.0
+%attr(755,root,root) %{_libdir}/libsmbconf.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsmbconf.so.0
 %attr(755,root,root) %{_libdir}/libsmbldap.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsmbldap.so.2
 %dir %{_libdir}/samba

@@ -1,0 +1,10 @@
+--- samba-4.15.9/lib/replace/system/filesys.h.orig	2021-08-09 15:38:36.131378400 +0200
++++ samba-4.15.9/lib/replace/system/filesys.h	2022-09-25 16:07:34.057178798 +0200
+@@ -38,6 +38,7 @@
+ 
+ #ifdef HAVE_SYS_MOUNT_H
+ #include <sys/mount.h>
++#define _LINUX_MOUNT_H 1 /* conflicts with <linux/mount.h> */
+ #endif
+ 
+ #ifdef HAVE_MNTENT_H

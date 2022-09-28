@@ -25,10 +25,10 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.4.4
-%define		ldb_ver_below	2.5
+%define		ldb_ver		2.5.2
+%define		ldb_ver_below	2.6
 %define		talloc_ver	2:2.3.3
-%define		tdb_ver		2:1.4.4
+%define		tdb_ver		2:1.4.6
 %define		tevent_ver	0.11.0
 %endif
 
@@ -43,13 +43,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.15.9
+Version:	4.16.5
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	18809a49d08d4166b85cc874282eed2f
+# Source0-md5:	f7f4cc413fb2e072772098e5c5978212
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -69,7 +69,6 @@ Patch6:		server-role.patch
 Patch7:		%{name}-bug-9816.patch
 Patch8:		%{name}-no_libbsd.patch
 Patch9:		format-security.patch
-Patch10:	%{name}-linux-mount.patch
 URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -92,6 +91,7 @@ BuildRequires:	flex
 BuildRequires:	gamin-devel
 BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 2.0
+# new features up to 7.9
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 4}
 BuildRequires:	gnutls-devel >= 3.4.7
 BuildRequires:	gpgme-devel
@@ -112,6 +112,7 @@ BuildRequires:	libtasn1-devel >= 3.8
 BuildRequires:	libtirpc-devel
 BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
+BuildRequires:	libxslt-progs
 BuildRequires:	lttng-ust-devel
 BuildRequires:	make >= 3.81
 BuildRequires:	ncurses-devel >= 5.2
@@ -127,11 +128,11 @@ BuildRequires:	perl-Parse-Yapp >= 1.05
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
-BuildRequires:	python3-devel >= 1:3.5
+BuildRequires:	python3-devel >= 1:3.6
 BuildRequires:	python3-dns
 BuildRequires:	python3-iso8601
 BuildRequires:	python3-markdown
-BuildRequires:	python3-modules >= 1:3.5
+BuildRequires:	python3-modules >= 1:3.6
 BuildRequires:	python3-subunit
 BuildRequires:	python3-testtools
 BuildRequires:	readline-devel >= 4.2
@@ -426,7 +427,7 @@ Summary(pl.UTF-8):	Moduły Samby dla Pythona 3
 Group:		Development/Languages/Python
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
-Requires:	python3 >= 1:3.4
+Requires:	python3 >= 1:3.6
 Requires:	python3-dns
 Requires:	python3-iso8601
 Requires:	python3-modules >= 1:3.5
@@ -571,7 +572,6 @@ wyeksportowania do PMCD.
 %patch7 -p1
 %{!?with_system_libbsd:%patch8 -p1}
 %patch9 -p1
-%patch10 -p1
 
 %{__sed} -i -e '1s|#!/usr/bin/env bash|#!/bin/bash|' ctdb/tools/onnode
 %{__sed} -i -e '1s|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
@@ -613,7 +613,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-privatedir=%{_sysconfdir}/samba \
 	--disable-rpath \
 	--disable-rpath-install \
-	--builtin-libraries=%{?with_replace:replace,}ccan,samba-cluster-support \
+	--builtin-libraries=%{?with_replace:replace,}ccan%{?xxxx:,samba-cluster-support} \
 	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-cluster-support \
@@ -1012,7 +1012,16 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/worm.so
 %attr(755,root,root) %{_libdir}/samba/vfs/xattr_tdb.so
 %dir %{_libexecdir}/samba
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_classic
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_epmapper
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_fsrvp
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_lsad
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_mdssvc
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_rpcecho
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_spoolss
+%attr(755,root,root) %{_libexecdir}/samba/rpcd_winreg
 %attr(755,root,root) %{_libexecdir}/samba/samba-bgqd
+%attr(755,root,root) %{_libexecdir}/samba/samba-dcerpcd
 %dir %{_datadir}/samba/admx
 %{_datadir}/samba/admx/samba.admx
 %lang(en) %{_datadir}/samba/admx/en-US
@@ -1028,6 +1037,7 @@ fi
 %{_mandir}/man8/pdbedit.8*
 %{_mandir}/man8/samba.8*
 %{_mandir}/man8/samba-bgqd.8*
+%{_mandir}/man8/samba-dcerpcd.8*
 %{_mandir}/man8/samba_downgrade_db.8*
 %{_mandir}/man8/samba-gpupdate.8*
 %{_mandir}/man8/smbd.8*
@@ -1045,6 +1055,7 @@ fi
 %{_mandir}/man8/vfs_crossrename.8*
 %{_mandir}/man8/vfs_default_quota.8*
 %{_mandir}/man8/vfs_dirsort.8*
+%{_mandir}/man8/vfs_expand_msdfs.8*
 %{_mandir}/man8/vfs_extd_audit.8*
 %{_mandir}/man8/vfs_fake_perms.8*
 %{_mandir}/man8/vfs_fileid.8*
@@ -1288,30 +1299,18 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libreplace-samba4.so
 %endif
 %if %{without system_heimdal}
-%attr(755,root,root) %ghost %{_libdir}/samba/libasn1-samba4.so.8
-%attr(755,root,root) %{_libdir}/samba/libasn1-samba4.so.8.0.0
-%attr(755,root,root) %ghost %{_libdir}/samba/libcom_err-samba4.so.0
-%attr(755,root,root) %{_libdir}/samba/libcom_err-samba4.so.0.25
-%attr(755,root,root) %ghost %{_libdir}/samba/libgssapi-samba4.so.2
-%attr(755,root,root) %{_libdir}/samba/libgssapi-samba4.so.2.0.0
-%attr(755,root,root) %ghost %{_libdir}/samba/libhcrypto-samba4.so.5
-%attr(755,root,root) %{_libdir}/samba/libhcrypto-samba4.so.5.0.1
-%attr(755,root,root) %ghost %{_libdir}/samba/libhdb-samba4.so.11
-%attr(755,root,root) %{_libdir}/samba/libhdb-samba4.so.11.0.2
-%attr(755,root,root) %ghost %{_libdir}/samba/libheimbase-samba4.so.1
-%attr(755,root,root) %{_libdir}/samba/libheimbase-samba4.so.1.0.0
-%attr(755,root,root) %ghost %{_libdir}/samba/libheimntlm-samba4.so.1
-%attr(755,root,root) %{_libdir}/samba/libheimntlm-samba4.so.1.0.1
-%attr(755,root,root) %ghost %{_libdir}/samba/libhx509-samba4.so.5
-%attr(755,root,root) %{_libdir}/samba/libhx509-samba4.so.5.0.0
-%attr(755,root,root) %ghost %{_libdir}/samba/libkdc-samba4.so.2
-%attr(755,root,root) %{_libdir}/samba/libkdc-samba4.so.2.0.0
-%attr(755,root,root) %ghost %{_libdir}/samba/libkrb5-samba4.so.26
-%attr(755,root,root) %{_libdir}/samba/libkrb5-samba4.so.26.0.0
-%attr(755,root,root) %ghost %{_libdir}/samba/libroken-samba4.so.19
-%attr(755,root,root) %{_libdir}/samba/libroken-samba4.so.19.0.1
-%attr(755,root,root) %ghost %{_libdir}/samba/libwind-samba4.so.0
-%attr(755,root,root) %{_libdir}/samba/libwind-samba4.so.0.0.0
+%attr(755,root,root) %{_libdir}/samba/libasn1-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libcom-err-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgssapi-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libhcrypto-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libhdb-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libheimbase-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libheimntlm-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libhx509-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libkdc-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libkrb5-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libroken-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libwind-samba4.so
 %endif
 %attr(755,root,root) %{_libdir}/samba/libaddns-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libads-samba4.so
@@ -1350,6 +1349,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libgpext-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgpo-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libgse-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libgss-preauth-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libHDB-SAMBA4-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libhttp-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libinterfaces-samba4.so
@@ -1377,8 +1377,12 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libprinter-driver-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprinting-migrate-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libprocess-model-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libREG-FULL-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libregistry-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libRPC-SERVER-LOOP-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libRPC-WORKER-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba3-util-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-cluster-support-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-debug-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-net.cpython-3*-samba4.so
@@ -1615,13 +1619,11 @@ fi
 %{_mandir}/man1/masktest.1*
 %{_mandir}/man1/ndrdump.1*
 %{_mandir}/man1/smbtorture.1*
-%{_mandir}/man1/vfstest.1*
 
 %files -n libsmbclient
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libsmbclient.so.*
 %attr(755,root,root) %{_libdir}/libwbclient.so.*
-%attr(755,root,root) %{_libdir}/samba/libwinbind-client-samba4.so
 %{_mandir}/man7/libsmbclient.7*
 
 %files -n libsmbclient-devel

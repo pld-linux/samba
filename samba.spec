@@ -114,7 +114,7 @@ BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	lttng-ust-devel
-BuildRequires:	make >= 3.81
+BuildRequires:	make >= 1:3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
 BuildRequires:	nss_wrapper >= 1.0.2

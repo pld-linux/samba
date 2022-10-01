@@ -124,6 +124,7 @@ BuildRequires:	nss_wrapper >= 1.0.2
 BuildRequires:	pam-devel >= 0.99.8.1
 %{?with_ctdb_pcp:BuildRequires:	pcp-devel}
 BuildRequires:	perl-ExtUtils-MakeMaker
+%{!?with_system_heimdal:BuildRequires:	perl-JSON}
 BuildRequires:	perl-Parse-Yapp >= 1.05
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel

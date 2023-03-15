@@ -1,24 +1,28 @@
 --- samba-4.7.6/lib/replace/wscript.orig	2018-04-01 20:31:57.522637016 +0200
 +++ samba-4.7.6/lib/replace/wscript	2018-04-01 23:00:11.129202131 +0200
-@@ -304,20 +304,6 @@ def configure(conf):
- 
+@@ -437,19 +437,11 @@ def configure(conf):
      strlcpy_in_bsd = False
  
--    # libbsd on some platforms provides strlcpy and strlcat
+     # libbsd on some platforms provides strlcpy and strlcat
 -    if not conf.CHECK_FUNCS('strlcpy strlcat'):
 -        if conf.CHECK_FUNCS_IN('strlcpy strlcat', 'bsd', headers='bsd/string.h',
 -                               checklibc=True):
 -            strlcpy_in_bsd = True
 -    if not conf.CHECK_FUNCS('getpeereid'):
 -        conf.CHECK_FUNCS_IN('getpeereid', 'bsd', headers='sys/types.h bsd/unistd.h')
--    conf.CHECK_FUNCS_IN('setproctitle', 'bsd', headers='sys/types.h bsd/unistd.h')
+-    if not conf.CHECK_FUNCS_IN('setproctitle', 'setproctitle', headers='setproctitle.h'):
+-        conf.CHECK_FUNCS_IN('setproctitle', 'bsd', headers='sys/types.h bsd/unistd.h')
 -    if not conf.CHECK_FUNCS('setproctitle_init'):
 -        conf.CHECK_FUNCS_IN('setproctitle_init', 'bsd', headers='sys/types.h bsd/unistd.h')
 -
 -    if not conf.CHECK_FUNCS('closefrom'):
 -        conf.CHECK_FUNCS_IN('closefrom', 'bsd', headers='bsd/unistd.h')
--
++    conf.CHECK_FUNCS('strlcpy strlcat')
++    conf.CHECK_FUNCS('getpeereid')
++    conf.CHECK_FUNCS_IN('setproctitle', 'setproctitle', headers='setproctitle.h')
++    conf.CHECK_FUNCS('setproctitle_init')
++    conf.CHECK_FUNCS('closefrom')
+ 
      conf.CHECK_CODE('''
                  struct ucred cred;
-                 socklen_t cred_len;
 

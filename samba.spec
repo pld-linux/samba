@@ -18,18 +18,18 @@
 %bcond_without	systemd		# systemd integration
 %bcond_without	winexe		# winexe tool
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
-%bcond_with	system_libbsd	# system libbsd for MD5 and strl* functions
+%bcond_without	system_libbsd	# system libbsd for MD5, strl*, setproctitle, getpeeridfunctions
 %bcond_without	system_libs	# system libraries from SAMBA project (talloc,tdb,tevent,ldb)
 %bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.5.2
-%define		ldb_ver_below	2.6
-%define		talloc_ver	2:2.3.3
-%define		tdb_ver		2:1.4.6
-%define		tevent_ver	0.11.0
+%define		ldb_ver		2.7.1
+%define		ldb_ver_below	2.8
+%define		talloc_ver	2:2.4.0
+%define		tdb_ver		2:1.4.8
+%define		tevent_ver	0.14.1
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -43,13 +43,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.16.5
-Release:	3
+Version:	4.18.0
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	f7f4cc413fb2e072772098e5c5978212
+# Source0-md5:	a36cc7b01305bb8cba9846ac2fbd56d5
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -66,7 +66,6 @@ Patch2:		%{name}-lprng-no-dot-printers.patch
 Patch4:		unicodePwd-nthash-values-over-LDAP.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
-Patch7:		%{name}-bug-9816.patch
 Patch8:		%{name}-no_libbsd.patch
 Patch9:		format-security.patch
 URL:		https://www.samba.org/
@@ -570,7 +569,7 @@ wyeksportowania do PMCD.
 %patch4 -p1
 %{?with_system_heimdal:%patch5 -p1}
 %patch6 -p1
-%patch7 -p1
+
 %{!?with_system_libbsd:%patch8 -p1}
 %patch9 -p1
 
@@ -678,7 +677,7 @@ install -p source3/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_sbindir}
 
 cp -p packaging/systemd/samba.conf.tmp $RPM_BUILD_ROOT%{systemdtmpfilesdir}/samba.conf
 echo "d /var/run/ctdb 755 root root" > $RPM_BUILD_ROOT%{systemdtmpfilesdir}/ctdb.conf
-cp -p ctdb/config/ctdb.service $RPM_BUILD_ROOT%{systemdunitdir}
+cp -p bin/default/packaging/systemd/ctdb.service $RPM_BUILD_ROOT%{systemdunitdir}
 
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/smb
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/samba
@@ -1270,12 +1269,13 @@ fi
 %attr(755,root,root) %{_libdir}/libndr-nbt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-nbt.so.0
 %attr(755,root,root) %{_libdir}/libndr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr.so.2
+%attr(755,root,root) %ghost %{_libdir}/libndr.so.3
 %attr(755,root,root) %{_libdir}/libndr-standard.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-standard.so.0
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-credentials.so.1
-%attr(755,root,root) %{_libdir}/libsamba-errors.so.1
+%attr(755,root,root) %{_libdir}/libsamba-errors.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-errors.so.1
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so.*.*.*
@@ -1404,6 +1404,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsmb-transport-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsocket-blocking-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libstable-sort-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libsys-rw-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtalloc-report-printf-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libtalloc-report-samba4.so
@@ -1434,6 +1435,7 @@ fi
 %dir %{_includedir}/samba-4.0/gen_ndr
 %{_includedir}/samba-4.0/gen_ndr/atsvc.h
 %{_includedir}/samba-4.0/gen_ndr/auth.h
+%{_includedir}/samba-4.0/gen_ndr/claims.h
 %{_includedir}/samba-4.0/gen_ndr/dcerpc.h
 %{_includedir}/samba-4.0/gen_ndr/drsblobs.h
 %{_includedir}/samba-4.0/gen_ndr/drsuapi.h
@@ -1556,6 +1558,9 @@ fi
 %dir %{py3_sitedir}/samba/emulate
 %{py3_sitedir}/samba/emulate/*.py
 %{py3_sitedir}/samba/emulate/__pycache__
+%dir %{py3_sitedir}/samba/gp
+%{py3_sitedir}/samba/gp/*.py
+%{py3_sitedir}/samba/gp/__pycache__
 %dir %{py3_sitedir}/samba/gp_parse
 %{py3_sitedir}/samba/gp_parse/*.py
 %{py3_sitedir}/samba/gp_parse/__pycache__
@@ -1699,7 +1704,6 @@ fi
 %{_datadir}/ctdb/events/legacy/91.lvs.script
 %{systemdtmpfilesdir}/ctdb.conf
 %attr(755,root,root) %{_sbindir}/ctdbd
-%attr(755,root,root) %{_sbindir}/ctdbd_wrapper
 %attr(755,root,root) %{_bindir}/ctdb
 %attr(755,root,root) %{_bindir}/ping_pong
 %attr(755,root,root) %{_bindir}/ltdbtool
@@ -1726,7 +1730,6 @@ fi
 %{_mandir}/man1/onnode.1*
 %{_mandir}/man1/ltdbtool.1*
 %{_mandir}/man1/ping_pong.1*
-%{_mandir}/man1/ctdbd_wrapper.1*
 %{_mandir}/man5/ctdb-script.options.5*
 %{_mandir}/man5/ctdb.conf.5*
 %{_mandir}/man5/ctdb.sysconfig.5*

@@ -3,13 +3,13 @@ Allow setting unicodePwd with NTHash vlue over LDAP
 
 --- samba-4.0.7/source4/libcli/ldap/ldap_controls.c~	2013-07-02 20:19:37.554868793 +0200
 +++ samba-4.0.7/source4/libcli/ldap/ldap_controls.c	2013-07-02 21:00:47.595973713 +0200
-@@ -1293,7 +1293,7 @@
+@@ -1260,7 +1260,7 @@ static const struct ldap_control_handler
  	{ LDB_CONTROL_REVEAL_INTERNALS, NULL, NULL },
  	{ LDB_CONTROL_AS_SYSTEM_OID, NULL, NULL },
  	{ DSDB_CONTROL_PASSWORD_CHANGE_STATUS_OID, NULL, NULL },
 -	{ DSDB_CONTROL_PASSWORD_HASH_VALUES_OID, NULL, NULL },
-+	{ DSDB_CONTROL_PASSWORD_HASH_VALUES_OID, decode_flag_request, encode_flag_request },
- 	{ DSDB_CONTROL_PASSWORD_CHANGE_OID, NULL, NULL },
++        { DSDB_CONTROL_PASSWORD_HASH_VALUES_OID, decode_flag_request, encode_flag_request },
+ 	{ DSDB_CONTROL_PASSWORD_CHANGE_OLD_PW_CHECKED_OID, NULL, NULL },
  	{ DSDB_CONTROL_PASSWORD_ACL_VALIDATION_OID, NULL, NULL },
  	{ DSDB_CONTROL_APPLY_LINKS, NULL, NULL },
 --- samba-4.0.7/source4/dsdb/samdb/ldb_modules/password_hash.c~	2013-07-02 20:01:42.731518064 +0200

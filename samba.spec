@@ -116,7 +116,6 @@ BuildRequires:	lttng-ust-devel
 BuildRequires:	make >= 1:3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
-BuildRequires:	nss_wrapper >= 1.0.2
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 # detected and used for linking, but dropped by -Wl,--as-needed
 #BuildRequires:	openssl-devel
@@ -142,7 +141,6 @@ BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
-BuildRequires:	socket_wrapper >= 1.3.3
 BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
 BuildRequires:	tracker-devel >= 2.0
@@ -159,7 +157,6 @@ BuildRequires:	talloc-devel >= %{talloc_ver}
 BuildRequires:	tdb-devel >= %{tdb_ver}
 BuildRequires:	tevent-devel >= %{tevent_ver}
 %endif
-BuildRequires:	uid_wrapper >= 1.1.0
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}

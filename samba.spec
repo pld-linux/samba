@@ -1561,6 +1561,9 @@ fi
 %dir %{py3_sitedir}/samba/gp
 %{py3_sitedir}/samba/gp/*.py
 %{py3_sitedir}/samba/gp/__pycache__
+%dir %{py3_sitedir}/samba/gp/util
+%{py3_sitedir}/samba/gp/util/*.py
+%{py3_sitedir}/samba/gp/util/__pycache__
 %dir %{py3_sitedir}/samba/gp_parse
 %{py3_sitedir}/samba/gp_parse/*.py
 %{py3_sitedir}/samba/gp_parse/__pycache__

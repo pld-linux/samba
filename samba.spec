@@ -1023,8 +1023,10 @@ fi
 %attr(755,root,root) %{_libexecdir}/samba/samba-bgqd
 %attr(755,root,root) %{_libexecdir}/samba/samba-dcerpcd
 %dir %{_datadir}/samba/admx
+%{_datadir}/samba/admx/GNOME_Settings.admx
 %{_datadir}/samba/admx/samba.admx
 %lang(en) %{_datadir}/samba/admx/en-US
+%lang(ru) %{_datadir}/samba/admx/ru-RU
 %{_datadir}/samba/mdssvc
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*

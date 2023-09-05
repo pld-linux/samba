@@ -25,11 +25,11 @@
 %bcond_with	replace
 
 %if %{with system_libs}
-%define		ldb_ver		2.7.2
-%define		ldb_ver_below	2.8
-%define		talloc_ver	2:2.4.0
-%define		tdb_ver		2:1.4.8
-%define		tevent_ver	0.14.1
+%define		ldb_ver		2.8.0
+%define		ldb_ver_below	2.9
+%define		talloc_ver	2:2.4.1
+%define		tdb_ver		2:1.4.9
+%define		tevent_ver	0.15.0
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -43,13 +43,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.18.6
+Version:	4.19.0
 Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	d7e75ab3de1f48ea696c030c869c96f2
+# Source0-md5:	0bcbee83dc1918055873691bb6007838
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -92,7 +92,7 @@ BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 2.0
 # new features up to 7.9
 %{?with_glusterfs:BuildRequires:	glusterfs-devel >= 4}
-BuildRequires:	gnutls-devel >= 3.4.7
+BuildRequires:	gnutls-devel >= 3.6.13
 BuildRequires:	gpgme-devel
 %{?with_system_heimdal:BuildRequires:	heimdal-devel >= 1.5.3-1}
 BuildRequires:	iconv
@@ -373,7 +373,7 @@ używanym w sieciach MS Windows.
 Summary:	Samba shared libraries
 Summary(pl.UTF-8):	Biblioteki współdzielone Samby
 Group:		Libraries
-Requires:	gnutls >= 3.4.7
+Requires:	gnutls >= 3.6.13
 %if %{with system_libs}
 Requires:	ldb >= %{ldb_ver}
 Requires:	talloc >= %{talloc_ver}
@@ -574,6 +574,7 @@ wyeksportowania do PMCD.
 %{__sed} -i -e '1s|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl
 %{__sed} -i -e '/sed_expr1/ s|/usr/bin/env perl|/usr/bin/perl|' source3/script/wscript_build
 %{__sed} -i -e '1s|#!/usr/bin/env python|#!/usr/bin/python|' source4/scripting/bin/samba*
+%{__sed} -i -e '1s|#!/usr/bin/env python3|#!%{__python3}|' source3/script/samba-log-parser
 
 %if %{with system_heimdal}
 %{__mv} source4/heimdal_build/krb5-types{,-smb}.h
@@ -1187,6 +1188,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
 %{systemdunitdir}/winbind.service
 %attr(755,root,root) %{_bindir}/ntlm_auth
+%attr(755,root,root) %{_bindir}/samba-log-parser
 %attr(755,root,root) %{_bindir}/wbinfo
 %attr(755,root,root) %{_sbindir}/winbindd
 %attr(755,root,root) /%{_lib}/security/pam_winbind.so
@@ -1210,6 +1212,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/nss_info/sfu20.so
 %attr(755,root,root) %{_libdir}/samba/nss_info/sfu.so
 %{_mandir}/man1/ntlm_auth.1*
+%{_mandir}/man1/samba-log-parser.1*
 %{_mandir}/man1/wbinfo*.1*
 %{_mandir}/man5/pam_winbind.conf.5*
 %{_mandir}/man8/idmap_ad.8*
@@ -1247,7 +1250,6 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/smbget
 %{_mandir}/man1/smbget.1*
-%{_mandir}/man5/smbgetrc.5*
 
 %files libs
 %defattr(644,root,root,755)
@@ -1315,6 +1317,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libroken-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libwind-samba4.so
 %endif
+%attr(755,root,root) %{_libdir}/samba/libad-claims-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libaddns-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libads-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libasn1util-samba4.so
@@ -1322,6 +1325,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libauthkrb5-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauth-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libauth-unix-token-samba4.so
+%attr(755,root,root) %{_libdir}/samba/libauthn-policy-util-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libCHARSET3-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libcliauth-samba4.so
 %attr(755,root,root) %{_libdir}/samba/libclidns-samba4.so
@@ -1575,6 +1579,18 @@ fi
 %dir %{py3_sitedir}/samba/netcmd
 %{py3_sitedir}/samba/netcmd/*.py
 %{py3_sitedir}/samba/netcmd/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/domain
+%{py3_sitedir}/samba/netcmd/domain/*.py
+%{py3_sitedir}/samba/netcmd/domain/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/domain/auth
+%{py3_sitedir}/samba/netcmd/domain/auth/*.py
+%{py3_sitedir}/samba/netcmd/domain/auth/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/domain/claim
+%{py3_sitedir}/samba/netcmd/domain/claim/*.py
+%{py3_sitedir}/samba/netcmd/domain/claim/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/domain/models
+%{py3_sitedir}/samba/netcmd/domain/models/*.py
+%{py3_sitedir}/samba/netcmd/domain/models/__pycache__
 %dir %{py3_sitedir}/samba/provision
 %{py3_sitedir}/samba/provision/*.py
 %{py3_sitedir}/samba/provision/__pycache__

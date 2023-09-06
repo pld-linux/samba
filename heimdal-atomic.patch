@@ -1,0 +1,24 @@
+diff -ur samba-4.19.0.orig/third_party/heimdal_build/wscript_build samba-4.19.0/third_party/heimdal_build/wscript_build
+--- samba-4.19.0.orig/third_party/heimdal_build/wscript_build	2023-07-18 10:14:57.102107300 +0200
++++ samba-4.19.0/third_party/heimdal_build/wscript_build	2023-09-06 13:45:50.945430242 +0200
+@@ -733,7 +733,7 @@
+     HEIMDAL_LIBRARY('krb5', KRB5_SOURCE,
+         version_script='lib/krb5/version-script.map',
+                         includes='../heimdal/lib/krb5 ../heimdal/lib/asn1 ../heimdal/include',
+-                deps='roken wind asn1 hx509 HEIMDAL_KX509_ASN1 hcrypto com_err HEIMDAL_CONFIG heimbase execinfo samba_intl HEIMDAL_IPC_CLIENT KRB5_CRYPTO' + krb5_keyutils_dep,
++                deps='atomic roken wind asn1 hx509 HEIMDAL_KX509_ASN1 hcrypto com_err HEIMDAL_CONFIG heimbase execinfo samba_intl HEIMDAL_IPC_CLIENT KRB5_CRYPTO' + krb5_keyutils_dep,
+                 cflags=['-DLOCALSTATEDIR="/2"'] + bld.dynconfig_cflags(),
+                         )
+     KRB5_PROTO_SOURCE = KRB5_SOURCE + ['lib/krb5/expand_path.c', 'lib/krb5/plugin.c', 'lib/krb5/context.c', 'lib/krb5/crypto.c']
+diff -ur samba-4.19.0.orig/wscript samba-4.19.0/wscript
+--- samba-4.19.0.orig/wscript	2023-07-18 10:14:57.130107400 +0200
++++ samba-4.19.0/wscript	2023-09-06 13:44:51.950443107 +0200
+@@ -207,6 +207,8 @@
+                    mandatory=True)
+     conf.CHECK_FUNCS_IN('inflateInit2', 'z')
+ 
++    conf.CHECK_LIB('atomic')
++
+     if Options.options.enable_keyring != False:
+         conf.env['WITH_KERNEL_KEYRING'] = 'auto'
+         if Options.options.enable_keyring == True:

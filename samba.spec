@@ -68,6 +68,7 @@ Patch5:		%{name}-heimdal.patch
 Patch6:		server-role.patch
 Patch8:		%{name}-no_libbsd.patch
 Patch9:		format-security.patch
+Patch10:	heimdal-atomic.patch
 URL:		https://www.samba.org/
 BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
@@ -100,6 +101,11 @@ BuildRequires:	jansson-devel
 BuildRequires:	keyutils-devel
 BuildRequires:	libaio-devel
 BuildRequires:	libarchive-devel >= 3.1.2
+%if %{without system_heimdal}
+%ifnarch %arch_with_atomics64
+BuildRequires:	libatomic-devel
+%endif
+%endif
 %{?with_system_libbsd:BuildRequires:	libbsd-devel}
 BuildRequires:	libcap-devel
 BuildRequires:	libcom_err-devel
@@ -139,7 +145,7 @@ BuildRequires:	rpcsvc-proto
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.752
+BuildRequires:	rpmbuild(macros) >= 2.025
 BuildRequires:	sed >= 4.0
 BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
@@ -569,6 +575,11 @@ wyeksportowania do PMCD.
 
 %{!?with_system_libbsd:%patch8 -p1}
 %patch9 -p1
+%if %{without system_heimdal}
+%ifnarch %arch_with_atomics64
+%patch10 -p1
+%endif
+%endif
 
 %{__sed} -i -e '1s|#!/usr/bin/env bash|#!/bin/bash|' ctdb/tools/onnode
 %{__sed} -i -e '1s|#!/usr/bin/env perl|#!/usr/bin/perl|' pidl/pidl

@@ -44,7 +44,7 @@ Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
 Version:	4.19.2
-Release:	1.1
+Release:	1
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
@@ -601,7 +601,6 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 %{?__cc:CC="%{__cc}"} \
 %{?__cxx:CXX="%{__cxx}"} \
 ./configure \
-        --enable-developer \
 	--enable-fhs \
 	--prefix=%{_prefix} \
 	--exec-prefix=%{_exec_prefix} \

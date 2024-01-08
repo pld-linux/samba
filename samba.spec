@@ -15,6 +15,9 @@
 %bcond_without	ldap		# LDAP support
 %bcond_without	avahi		# Avahi support
 %bcond_without	dmapi		# DMAPI support
+%bcond_without	fam		# FAM support
+%bcond_without	lttng		# lttng-ust support
+%bcond_without	spotlight	# Spotlight tracker support
 %bcond_without	systemd		# systemd integration
 %bcond_without	winexe		# winexe tool
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
@@ -88,7 +91,7 @@ BuildRequires:	dbus-devel
 BuildRequires:	docbook-style-xsl-nons
 BuildRequires:	flex
 # just FAM API
-BuildRequires:	gamin-devel
+%{?with_fam:BuildRequires:	gamin-devel}
 BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 2.0
 # new features up to 7.9
@@ -118,7 +121,7 @@ BuildRequires:	libtirpc-devel
 BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
 BuildRequires:	libxslt-progs
-BuildRequires:	lttng-ust-devel
+%{?with_lttng:BuildRequires:	lttng-ust-devel}
 BuildRequires:	make >= 1:3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
@@ -149,7 +152,7 @@ BuildRequires:	rpmbuild(macros) >= 2.025
 BuildRequires:	sed >= 4.0
 BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
-BuildRequires:	tracker-devel >= 2.0
+%{?with_spotlight:BuildRequires:	tracker-devel >= 2.0}
 BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
@@ -631,8 +634,10 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	%{?with_ctdb_pcp:--enable-pmda} \
 	--with-automount \
 	--with%{!?with_dmapi:out}-dmapi \
+	--with%{!?with_fam:out}-fam \
 	--with-iconv \
 	--with%{!?with_ldap:out}-ldap \
+	--with%{!?with_lttng:out}-lttng \
 	--with-pam \
 	--with-quotas \
 	--with-regedit \
@@ -651,7 +656,8 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--%{?with_avahi:en}%{!?with_avahi:dis}able-avahi \
 	--enable-cups \
 	%{__enable_disable glusterfs} \
-	--enable-iprint
+	--enable-iprint \
+	%{__enable_disable spotlight}
 
 %{__make} V=1
 

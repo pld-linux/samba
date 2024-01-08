@@ -1,5 +1,4 @@
 # TODO:
-# - bcond/subpackage for Spotlight tracker backend (BR: glib2-devel tracker-devel >= 2.0)?
 # - gpfs.h (nfs-ganesha?)
 #
 # Note:

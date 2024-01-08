@@ -42,7 +42,6 @@
 
 
 # NOTE: packages order is: server + additions, common, clients, libs+devel, ldap
-%define		virusfilter_version 0.1.4
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
@@ -61,8 +60,6 @@ Source6:	smb.conf
 Source7:	winbind.init
 Source8:	winbind.sysconfig
 Source9:	samba.init
-Source10:	https://bitbucket.org/fumiyas/samba-virusfilter/downloads/samba-virusfilter-%{virusfilter_version}.tar.bz2
-# Source10-md5:	4bef017601d87f52f8c82819a3ff56ee
 Patch0:		system-heimdal.patch
 Patch1:		%{name}-c++-nofail.patch
 Patch2:		%{name}-lprng-no-dot-printers.patch
@@ -883,9 +880,11 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/env.d/LDB_MODULES_PATH
 %attr(754,root,root) /etc/rc.d/init.d/samba
 %attr(754,root,root) /etc/rc.d/init.d/smb
+%if %{with systemd}
 %{systemdunitdir}/nmb.service
 %{systemdunitdir}/smb.service
 %{systemdunitdir}/samba.service
+%endif
 %{systemdtmpfilesdir}/samba.conf
 %attr(755,root,root) %{_bindir}/dumpmscat
 %attr(755,root,root) %{_bindir}/oLschema2ldif
@@ -1045,7 +1044,9 @@ fi
 %{_datadir}/samba/admx/samba.admx
 %lang(en) %{_datadir}/samba/admx/en-US
 %lang(ru) %{_datadir}/samba/admx/ru-RU
+%if %{with spotlight}
 %{_datadir}/samba/mdssvc
+%endif
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
 %{_mandir}/man1/profiles.1*
@@ -1203,7 +1204,9 @@ fi
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
+%if %{with systemd}
 %{systemdunitdir}/winbind.service
+%endif
 %attr(755,root,root) %{_bindir}/ntlm_auth
 %attr(755,root,root) %{_bindir}/samba-log-parser
 %attr(755,root,root) %{_bindir}/wbinfo
@@ -1698,7 +1701,9 @@ fi
 %{_sysconfdir}/ctdb/debug_locks.sh
 %dir %{_localstatedir}/lib/ctdb
 
+%if %{with systemd}
 %{systemdunitdir}/ctdb.service
+%endif
 
 %dir %{_sysconfdir}/ctdb
 %{_sysconfdir}/ctdb/statd-callout

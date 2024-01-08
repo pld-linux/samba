@@ -666,7 +666,7 @@ cd pidl
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{logrotate.d,rc.d/init.d,pam.d,security,sysconfig/rc-inetd,ld.so.conf.d,env.d} \
 	$RPM_BUILD_ROOT{/var/{log/archive,spool}/samba,/var/lib/samba/printing} \
-	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd} \
+	$RPM_BUILD_ROOT/var/log/samba/cores/{smbd,nmbd,winbindd} \
 	$RPM_BUILD_ROOT{/sbin,/%{_lib}/security,%{_libdir},%{_libdir}/samba/vfs,%{_includedir},%{_sambahome},%{schemadir}} \
 	$RPM_BUILD_ROOT{%{systemdtmpfilesdir},%{systemdunitdir}}
 
@@ -1239,6 +1239,7 @@ fi
 %{_mandir}/man8/pam_winbind.8*
 %{_mandir}/man8/winbindd*.8*
 %{_mandir}/man8/winbind_krb5_locator.8*
+%attr(750,root,root) %dir /var/log/samba/cores/winbindd
 
 %if %{with cups}
 %files -n cups-backend-smb

@@ -19,6 +19,6 @@ diff -ur samba-4.19.0.orig/wscript samba-4.19.0/wscript
  
 +    conf.CHECK_LIB('atomic')
 +
-     if Options.options.enable_keyring != False:
+     if Options.options.enable_keyring is not False:
          conf.env['WITH_KERNEL_KEYRING'] = 'auto'
-         if Options.options.enable_keyring == True:
+         if Options.options.enable_keyring is True:

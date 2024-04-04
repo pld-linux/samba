@@ -73,8 +73,11 @@ stop() {
 	msg_stopping "Samba SMB/CIFS Server"
 	killproc --pidfile $smbd_pidfile smbd
 
-	msg_stopping "Samba NetBIOS Name Server"
-	killproc --pidfile $nmbd_pidfile nmbd
+	NMBD_DISABLED=`testparm -s --parameter-name='disable netbios' 2>/dev/null`
+	if [ "$NMBD_DISABLED" != Yes ]; then
+		msg_stopping "Samba NetBIOS Name Server"
+		killproc --pidfile $nmbd_pidfile nmbd
+	fi
 	rm -f /var/lock/subsys/$lockname >/dev/null 2>&1
 }
 
@@ -104,9 +107,12 @@ condrestart() {
 rc_status() {
 	status smbd
 	RETVAL=$?
-	status nmbd
-	RET=$?
-	[ $RETVAL -eq 0 ] && RETVAL=$RET
+	NMBD_DISABLED=`testparm -s --parameter-name='disable netbios' 2>/dev/null`
+	if [ "$NMBD_DISABLED" != Yes ]; then
+		status nmbd
+		RET=$?
+		[ $RETVAL -eq 0 ] && RETVAL=$RET
+	fi
 }
 
 RETVAL=0

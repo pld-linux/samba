@@ -35,3 +35,13 @@ diff -ur samba-3.0.26a/source3/param/loadparm.c samba-3.0.26a-lprng/source3/para
  		if ((p = strchr_m(pcap_line, ':')) != NULL)
  			*p = 0;
 
+--- samba-4.20.1/source3/param/loadparm.h.orig	2024-01-29 15:41:26.321078000 +0100
++++ samba-4.20.1/source3/param/loadparm.h	2024-05-08 18:54:11.498677032 +0200
+@@ -171,6 +171,7 @@
+ void lp_set_logfile(const char *name);
+ int lp_maxprintjobs(int snum);
+ const char *lp_printcapname(void);
++int lp_defaultprinting( void );
+ bool lp_disable_spoolss( void );
+ void lp_set_spoolss_state( uint32_t state );
+ uint32_t lp_get_spoolss_state( void );

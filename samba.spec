@@ -1120,7 +1120,9 @@ fi
 %files vfs-ceph
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/samba/vfs/ceph.so
+%attr(755,root,root) %{_libdir}/samba/vfs/ceph_new.so
 %{_mandir}/man8/vfs_ceph.8*
+%{_mandir}/man8/vfs_ceph_new.8*
 %endif
 
 %files vfs-glusterfs

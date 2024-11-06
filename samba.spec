@@ -25,6 +25,7 @@
 %bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
 %bcond_with	replace
+%bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
 %define		ver		4.21.1
 %define		rel		1
@@ -42,6 +43,10 @@
 %undefine	with_dmapi
 %endif
 
+%ifnarch %{x8664} aarch64 alpha mips64 ppc64 s390x sparc64
+# lmdb support requires 64-bit size_t
+%undefine	with_lmdb
+%endif
 
 # NOTE: packages order is: server + additions, common, clients, libs+devel, ldap
 Summary:	Samba Active Directory and SMB server
@@ -119,7 +124,7 @@ BuildRequires:	libtirpc-devel
 BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
 BuildRequires:	libxslt-progs
-BuildRequires:	lmdb-devel >= 0.9.16
+%{?with_lmdb:BuildRequires:	lmdb-devel >= 0.9.16}
 %{?with_lttng:BuildRequires:	lttng-ust-devel}
 BuildRequires:	make >= 1:3.81
 BuildRequires:	ncurses-devel >= 5.2
@@ -569,7 +574,7 @@ Summary(pl.UTF-8):	Wbudowana baza danych podobna do LDAP
 Version:	%{ldb_ver}
 Release:	%{ldb_rel}
 Group:		Libraries
-Requires:	lmdb-libs >= 0.9.16
+%{?with_lmdb:Requires:	lmdb-libs >= 0.9.16}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
@@ -1923,7 +1928,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libldb-key-value-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libldb-tdb-err-map-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libldb-tdb-int-private-samba.so
-%attr(755,root,root) %{_libdir}/samba/libldb-mdb-int-private-samba.so
+%{?with_lmdb:%attr(755,root,root) %{_libdir}/samba/libldb-mdb-int-private-samba.so}
 %dir %{_libdir}/samba/ldb
 %attr(755,root,root) %{_libdir}/samba/ldb/*.so
 

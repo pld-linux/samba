@@ -21,16 +21,19 @@
 %bcond_without	winexe		# winexe tool
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
 %bcond_without	system_libbsd	# system libbsd for MD5, strl*, setproctitle, getpeeridfunctions
-%bcond_without	system_libs	# system libraries from SAMBA project (talloc,tdb,tevent,ldb)
+%bcond_without	system_libs	# system libraries from SAMBA project (talloc,tdb,tevent)
 %bcond_without	ctdb_pcp	# Performance Co-Pilot support for CTDB
 # turn on when https://bugzilla.samba.org/show_bug.cgi?id=11764 is fixed
 %bcond_with	replace
 
+%define		ver		4.21.1
+%define		rel		1
+%define		ldb_ver		2.10.0
+%define		ldb_rel		%{ver}.%{rel}
+
 %if %{with system_libs}
-%define		ldb_ver		2.9.1
-%define		ldb_ver_below	2.10
 %define		talloc_ver	2:2.4.2
-%define		tdb_ver		2:1.4.10
+%define		tdb_ver		2:1.4.12
 %define		tevent_ver	0.16.1
 %endif
 
@@ -44,13 +47,13 @@
 Summary:	Samba Active Directory and SMB server
 Summary(pl.UTF-8):	Serwer Samba Active Directory i SMB
 Name:		samba
-Version:	4.20.5
-Release:	1
+Version:	%{ver}
+Release:	%{rel}
 Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	139f46e57c15c118429ee88ba60df81e
+# Source0-md5:	3d8e71c6c8c4e5212ea940f625b05e2a
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -116,6 +119,7 @@ BuildRequires:	libtirpc-devel
 BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
 BuildRequires:	libxslt-progs
+BuildRequires:	lmdb-devel >= 0.9.16
 %{?with_lttng:BuildRequires:	lttng-ust-devel}
 BuildRequires:	make >= 1:3.81
 BuildRequires:	ncurses-devel >= 5.2
@@ -129,7 +133,7 @@ BuildRequires:	perl-ExtUtils-MakeMaker
 %{!?with_system_heimdal:BuildRequires:	perl-modules}
 BuildRequires:	perl-Parse-Yapp >= 1.05
 BuildRequires:	pkgconfig
-BuildRequires:	popt-devel
+BuildRequires:	popt-devel >= 1.6
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	python3-devel >= 1:3.6
 BuildRequires:	python3-dns
@@ -151,9 +155,6 @@ BuildRequires:	subunit-devel
 BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
-BuildRequires:	ldb-devel >= %{ldb_ver}
-BuildRequires:	ldb-devel < %{ldb_ver_below}
-BuildRequires:	python3-ldb-devel >= %{ldb_ver}
 BuildRequires:	python3-talloc-devel >= %{talloc_ver}
 BuildRequires:	python3-tdb >= %{tdb_ver}
 BuildRequires:	python3-tevent >= %{tevent_ver}
@@ -378,8 +379,8 @@ Summary:	Samba shared libraries
 Summary(pl.UTF-8):	Biblioteki współdzielone Samby
 Group:		Libraries
 Requires:	gnutls >= 3.6.13
+Requires:	ldb = %{epoch}:%{ldb_ver}-%{ldb_rel}
 %if %{with system_libs}
-Requires:	ldb >= %{ldb_ver}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
 Requires:	tevent >= %{tevent_ver}
@@ -431,9 +432,9 @@ Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
 Requires:	python3 >= 1:3.6
 Requires:	python3-dns
 Requires:	python3-iso8601
+Requires:	python3-ldb = %{epoch}:%{ldb_ver}-%{ldb_rel}
 Requires:	python3-modules >= 1:3.5
 %if %{with system_libs}
-Requires:	python3-ldb >= %{ldb_ver}
 Requires:	python3-talloc >= %{talloc_ver}
 Requires:	python3-tevent >= %{tevent_ver}
 %endif
@@ -562,6 +563,84 @@ export to PMCD.
 Ten PMDA odczytuje pomiary z lokalnie działającego demona ctdbd w celu
 wyeksportowania do PMCD.
 
+%package -n ldb
+Summary:	LDAP-like embedded database
+Summary(pl.UTF-8):	Wbudowana baza danych podobna do LDAP
+Version:	%{ldb_ver}
+Release:	%{ldb_rel}
+Group:		Libraries
+Requires:	lmdb-libs >= 0.9.16
+Requires:	talloc >= %{talloc_ver}
+Requires:	tdb >= %{tdb_ver}
+Requires:	tevent >= %{tevent_ver}
+Requires:	popt >= 1.6
+Provides:	libldb = %{epoch}:%{version}-%{release}
+Obsoletes:	libldb < 1.1.0-3
+# ldb 1.6+ dropped python2 support
+Obsoletes:	python-ldb < 1.6
+Obsoletes:	python-ldb-devel < 1.6
+
+%description -n ldb
+An extensible library that implements an LDAP like API to access
+remote LDAP servers, or use local tdb databases.
+
+%description -n ldb -l pl.UTF-8
+Rozszerzalna biblioteka implementująca API podobne do LDAP pozwalające
+na dostęp do zdalnych serwerów LDAP lub wykorzystanie lokalnych baz
+danych tdb.
+
+%package -n ldb-tools
+Summary:	Tools to manage LDB files
+Summary(pl.UTF-8):	Narzędzia do zarządzania plikami LDB
+Version:	%{ldb_ver}
+Release:	%{ldb_rel}
+Group:		Applications/Databases
+Requires:	ldb = %{epoch}:%{ldb_ver}-%{ldb_rel}
+
+%description -n ldb-tools
+Tools to manage LDB files.
+
+%description -n ldb-tools -l pl.UTF-8
+Narzędzia do zarządzania plikami LDB.
+
+%package -n ldb-devel
+Summary:	Header files for the LDB library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki LDB
+Version:	%{ldb_ver}
+Release:	%{ldb_rel}
+Group:		Development/Libraries
+Requires:	ldb = %{epoch}:%{ldb_ver}-%{ldb_rel}
+Requires:	talloc-devel >= %{talloc_ver}
+Requires:	tdb-devel >= %{tdb_ver}
+Requires:	tevent-devel >= %{tevent_ver}
+Provides:	libldb-devel = %{epoch}:%{version}-%{release}
+Obsoletes:	libldb-devel < 1.1.0-3
+
+%description -n ldb-devel
+Header files needed to develop programs that link against the LDB
+library.
+
+%description -n ldb-devel -l pl.UTF-8
+Pliki nagłówkowe potrzebne do tworzenia programów wykorzystujących
+bibliotekę LDB.
+
+%package -n python3-ldb
+Summary:	Python 3 bindings for the LDB library
+Summary(pl.UTF-8):	Wiązania Pythona 3 do biblioteki LDB
+Version:	%{ldb_ver}
+Release:	%{ldb_rel}
+Group:		Libraries/Python
+Requires:	ldb = %{epoch}:%{ldb_ver}-%{ldb_rel}
+Requires:	python3-tdb >= %{tdb_ver}
+Obsoletes:	pyldb < 1.1.0-1
+Obsoletes:	python3-ldb-devel < 2.10.0
+
+%description -n python3-ldb
+Python 3 bindings for the LDB library.
+
+%description -n python3-ldb -l pl.UTF-8
+Wiązania Pythona 3 do biblioteki LDB.
+
 %prep
 %setup -q
 %{?with_system_heimdal:%patch0 -p1}
@@ -587,6 +666,8 @@ wyeksportowania do PMCD.
 %if %{with system_heimdal}
 %{__mv} source4/heimdal_build/krb5-types{,-smb}.h
 %endif
+
+grep -q 'LDB_VERSION[[:space:]]*=[[:space:]]*['"'"'"]%{ldb_ver}['"'"'"]' lib/ldb/wscript
 
 %build
 LDFLAGS="${LDFLAGS:-%rpmldflags}" \
@@ -620,7 +701,8 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--disable-rpath \
 	--disable-rpath-install \
 	--builtin-libraries=%{?with_replace:replace,}ccan%{?xxxx:,samba-cluster-support} \
-	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,ldb,tevent,pytalloc,pytalloc-util,pytdb,pytevent,pyldb,pyldb-util},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
+	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
+	--private-libraries='!ldb' \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-cluster-support \
 	--with-acl-support \
@@ -866,6 +948,12 @@ fi
 %postun -n ctdb
 %systemd_reload
 
+%post	-n ldb -p /sbin/ldconfig
+%postun	-n ldb -p /sbin/ldconfig
+
+%post	-n python3-ldb -p /sbin/ldconfig
+%postun	-n python3-ldb -p /sbin/ldconfig
+
 %files
 %defattr(644,root,root,755)
 %{?with_ldap:%doc examples/LDAP}
@@ -937,7 +1025,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/ldb/lazy_commit.so
 %attr(755,root,root) %{_libdir}/samba/ldb/ldbsamba_extensions.so
 %attr(755,root,root) %{_libdir}/samba/ldb/linked_attributes.so
-#%attr(755,root,root) %{_libdir}/samba/ldb/local_password.so
 %attr(755,root,root) %{_libdir}/samba/ldb/new_partition.so
 %attr(755,root,root) %{_libdir}/samba/ldb/objectclass_attrs.so
 %attr(755,root,root) %{_libdir}/samba/ldb/objectclass.so
@@ -1297,7 +1384,7 @@ fi
 %attr(755,root,root) %{_libdir}/libndr-nbt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-nbt.so.0
 %attr(755,root,root) %{_libdir}/libndr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr.so.4
+%attr(755,root,root) %ghost %{_libdir}/libndr.so.5
 %attr(755,root,root) %{_libdir}/libndr-standard.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-standard.so.0
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so.*.*.*
@@ -1308,8 +1395,8 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libsamba-hostconfig.so.0
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-passdb.so.0
-%attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.cpython-3*.so.0
+%attr(755,root,root) %{_libdir}/libsamba-policy.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libsamba-policy.so.0
 %attr(755,root,root) %{_libdir}/libsamba-util.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libsamba-util.so.0
 %attr(755,root,root) %{_libdir}/libsamdb.so.*.*.*
@@ -1416,7 +1503,8 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsamba-cluster-support-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-debug-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-modules-private-samba.so
-%attr(755,root,root) %{_libdir}/samba/libsamba-net.cpython-3*-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-net-join.cpython-3*-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-net-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-python.cpython-3*-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-security-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets-private-samba.so
@@ -1440,7 +1528,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libtalloc-report-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libtdb-wrap-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libtime-basic-private-samba.so
-%attr(755,root,root) %{_libdir}/samba/libtrusts-util-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libutil-reg-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libutil-setid-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libutil-tdb-private-samba.so
@@ -1549,7 +1636,7 @@ fi
 %attr(755,root,root) %{_libdir}/libsamba-errors.so
 %attr(755,root,root) %{_libdir}/libsamba-hostconfig.so
 %attr(755,root,root) %{_libdir}/libsamba-passdb.so
-%attr(755,root,root) %{_libdir}/libsamba-policy.cpython-3*.so
+%attr(755,root,root) %{_libdir}/libsamba-policy.so
 %attr(755,root,root) %{_libdir}/libsamba-util.so
 %attr(755,root,root) %{_libdir}/libsamdb.so
 %attr(755,root,root) %{_libdir}/libsmbconf.so
@@ -1565,7 +1652,7 @@ fi
 %{_pkgconfigdir}/netapi.pc
 %{_pkgconfigdir}/samba-credentials.pc
 %{_pkgconfigdir}/samba-hostconfig.pc
-%{_pkgconfigdir}/samba-policy.cpython-3*.pc
+%{_pkgconfigdir}/samba-policy.pc
 %{_pkgconfigdir}/samba-util.pc
 %{_pkgconfigdir}/samdb.pc
 
@@ -1586,6 +1673,12 @@ fi
 %{py3_sitedir}/samba/dcerpc/*.py
 %{py3_sitedir}/samba/dcerpc/__pycache__
 %attr(755,root,root) %{py3_sitedir}/samba/dcerpc/*.so
+%dir %{py3_sitedir}/samba/domain
+%{py3_sitedir}/samba/domain/*.py
+%{py3_sitedir}/samba/domain/__pycache__
+%dir %{py3_sitedir}/samba/domain/models
+%{py3_sitedir}/samba/domain/models/*.py
+%{py3_sitedir}/samba/domain/models/__pycache__
 %dir %{py3_sitedir}/samba/emulate
 %{py3_sitedir}/samba/emulate/*.py
 %{py3_sitedir}/samba/emulate/__pycache__
@@ -1610,12 +1703,21 @@ fi
 %dir %{py3_sitedir}/samba/netcmd/domain/auth
 %{py3_sitedir}/samba/netcmd/domain/auth/*.py
 %{py3_sitedir}/samba/netcmd/domain/auth/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/domain/auth/policy
+%{py3_sitedir}/samba/netcmd/domain/auth/policy/*.py
+%{py3_sitedir}/samba/netcmd/domain/auth/policy/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/domain/auth/silo
+%{py3_sitedir}/samba/netcmd/domain/auth/silo/*.py
+%{py3_sitedir}/samba/netcmd/domain/auth/silo/__pycache__
 %dir %{py3_sitedir}/samba/netcmd/domain/claim
 %{py3_sitedir}/samba/netcmd/domain/claim/*.py
 %{py3_sitedir}/samba/netcmd/domain/claim/__pycache__
-%dir %{py3_sitedir}/samba/netcmd/domain/models
-%{py3_sitedir}/samba/netcmd/domain/models/*.py
-%{py3_sitedir}/samba/netcmd/domain/models/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/domain/kds
+%{py3_sitedir}/samba/netcmd/domain/kds/*.py
+%{py3_sitedir}/samba/netcmd/domain/kds/__pycache__
+%dir %{py3_sitedir}/samba/netcmd/service_account
+%{py3_sitedir}/samba/netcmd/service_account/*.py
+%{py3_sitedir}/samba/netcmd/service_account/__pycache__
 %dir %{py3_sitedir}/samba/netcmd/user
 %{py3_sitedir}/samba/netcmd/user/*.py
 %{py3_sitedir}/samba/netcmd/user/__pycache__
@@ -1734,7 +1836,6 @@ fi
 %{_sysconfdir}/ctdb/nfs-checks.d/50.rquotad.check
 %{_sysconfdir}/ctdb/nfs-checks.d/README
 %{_sysconfdir}/ctdb/nfs-linux-kernel-callout
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sudoers.d/ctdb
 # CTDB scripts, no config files
 # script with executable bit means activated
 %dir %{_sysconfdir}/ctdb/events
@@ -1747,7 +1848,6 @@ fi
 %{_datadir}/ctdb/events/legacy/00.ctdb.script
 %{_datadir}/ctdb/events/legacy/01.reclock.script
 %{_datadir}/ctdb/events/legacy/05.system.script
-%{_datadir}/ctdb/events/legacy/06.nfs.script
 %{_datadir}/ctdb/events/legacy/10.interface.script
 %{_datadir}/ctdb/events/legacy/11.natgw.script
 %{_datadir}/ctdb/events/legacy/11.routing.script
@@ -1756,6 +1856,7 @@ fi
 %{_datadir}/ctdb/events/legacy/31.clamd.script
 %{_datadir}/ctdb/events/legacy/40.vsftpd.script
 %{_datadir}/ctdb/events/legacy/41.httpd.script
+%{_datadir}/ctdb/events/legacy/46.update-keytabs.script
 %{_datadir}/ctdb/events/legacy/47.samba-dcerpcd.script
 %{_datadir}/ctdb/events/legacy/48.netbios.script
 %{_datadir}/ctdb/events/legacy/49.winbind.script
@@ -1763,6 +1864,8 @@ fi
 %{_datadir}/ctdb/events/legacy/60.nfs.script
 %{_datadir}/ctdb/events/legacy/70.iscsi.script
 %{_datadir}/ctdb/events/legacy/91.lvs.script
+%dir %{_datadir}/ctdb/scripts
+%attr(755,root,root) %{_datadir}/ctdb/scripts/winbind_ctdb_updatekeytab.sh
 %{systemdtmpfilesdir}/ctdb.conf
 %attr(755,root,root) %{_sbindir}/ctdbd
 %attr(755,root,root) %{_bindir}/ctdb
@@ -1783,6 +1886,8 @@ fi
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb-path
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_takeover_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/statd_callout
+%attr(755,root,root) %{_libexecdir}/ctdb/statd_callout_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/tdb_mutex_check
 
 %{_mandir}/man1/ctdb.1*
@@ -1810,3 +1915,48 @@ fi
 /var/lib/pcp/pmdas/ctdb/help
 /var/lib/pcp/pmdas/ctdb/pmns
 %endif
+
+%files -n ldb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libldb.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libldb.so.2
+%attr(755,root,root) %{_libdir}/samba/libldb-key-value-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libldb-tdb-err-map-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libldb-tdb-int-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libldb-mdb-int-private-samba.so
+%dir %{_libdir}/samba/ldb
+%attr(755,root,root) %{_libdir}/samba/ldb/*.so
+
+%files -n ldb-tools
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/ldbadd
+%attr(755,root,root) %{_bindir}/ldbdel
+%attr(755,root,root) %{_bindir}/ldbedit
+%attr(755,root,root) %{_bindir}/ldbmodify
+%attr(755,root,root) %{_bindir}/ldbrename
+%attr(755,root,root) %{_bindir}/ldbsearch
+%attr(755,root,root) %{_libdir}/samba/libldb-cmdline-private-samba.so
+%{_mandir}/man1/ldbadd.1*
+%{_mandir}/man1/ldbdel.1*
+%{_mandir}/man1/ldbedit.1*
+%{_mandir}/man1/ldbmodify.1*
+%{_mandir}/man1/ldbrename.1*
+%{_mandir}/man1/ldbsearch.1*
+
+%files -n ldb-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libldb.so
+%{_includedir}/samba-4.0/ldb_module.h
+%{_includedir}/samba-4.0/ldb_handlers.h
+%{_includedir}/samba-4.0/ldb_errors.h
+%{_includedir}/samba-4.0/ldb_version.h
+%{_includedir}/samba-4.0/ldb.h
+%{_pkgconfigdir}/ldb.pc
+%{_mandir}/man3/ldb.3*
+
+%files -n python3-ldb
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/samba/libpyldb-util.cpython-3*-private-samba.so
+%attr(755,root,root) %{py3_sitedir}/ldb.cpython-*.so
+%{py3_sitedir}/_ldb_text.py
+%{py3_sitedir}/__pycache__/_ldb_text.cpython-*.py[co]

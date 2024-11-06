@@ -43,7 +43,7 @@
 %undefine	with_dmapi
 %endif
 
-%ifnarch %{x8664} aarch64 alpha mips64 ppc64 s390x sparc64
+%ifnarch %arch64
 # lmdb support requires 64-bit size_t
 %undefine	with_lmdb
 %endif

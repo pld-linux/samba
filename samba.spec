@@ -83,6 +83,7 @@ BuildRequires:	bison
 BuildRequires:	cmocka-devel >= 1.1.3
 %if %{with winexe}
 BuildRequires:	crossmingw32-gcc
+BuildRequires:	crossmingw32-pthreads-w32
 # for string.h
 BuildRequires:	crossmingw32-runtime
 BuildRequires:	crossmingw64-gcc

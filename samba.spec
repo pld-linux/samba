@@ -649,17 +649,17 @@ Wiązania Pythona 3 do biblioteki LDB.
 
 %prep
 %setup -q
-%{?with_system_heimdal:%patch0 -p1}
-%patch1 -p1
-%patch2 -p1
-%patch4 -p1
-%{?with_system_heimdal:%patch5 -p1}
-%patch6 -p1
+%{?with_system_heimdal:%patch -P0 -p1}
+%patch -P1 -p1
+%patch -P2 -p1
+%patch -P4 -p1
+%{?with_system_heimdal:%patch -P5 -p1}
+%patch -P6 -p1
 
-%{!?with_system_libbsd:%patch8 -p1}
+%{!?with_system_libbsd:%patch -P8 -p1}
 %if %{without system_heimdal}
 %ifnarch %arch_with_atomics64
-%patch9 -p1
+%patch -P9 -p1
 %endif
 %endif
 

@@ -27,8 +27,8 @@
 %bcond_with	replace
 %bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
-%define		ver		4.21.3
-%define		rel		2
+%define		ver		4.21.4
+%define		rel		1
 %define		ldb_ver		2.10.0
 %define		ldb_rel		%{ver}.%{rel}
 
@@ -58,7 +58,7 @@ Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	8ac48b021d559ba8ba4ba13862c59296
+# Source0-md5:	6d0b330364e05fed58cc63fbb43037fe
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -1534,6 +1534,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libtalloc-report-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libtdb-wrap-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libtime-basic-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libutil-crypt-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libutil-reg-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libutil-setid-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libutil-tdb-private-samba.so

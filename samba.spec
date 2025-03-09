@@ -27,15 +27,15 @@
 %bcond_with	replace
 %bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
-%define		ver		4.21.4
+%define		ver		4.22.0
 %define		rel		1
-%define		ldb_ver		2.10.0
+%define		ldb_ver		2.11.0
 %define		ldb_rel		%{ver}.%{rel}
 
 %if %{with system_libs}
-%define		talloc_ver	2:2.4.2
-%define		tdb_ver		2:1.4.12
-%define		tevent_ver	0.16.1
+%define		talloc_ver	2:2.4.3
+%define		tdb_ver		2:1.4.13
+%define		tevent_ver	0.16.2
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -58,7 +58,7 @@ Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	6d0b330364e05fed58cc63fbb43037fe
+# Source0-md5:	8a23038f1f061a2e3ee5112bbfdfa19c
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -1390,7 +1390,7 @@ fi
 %attr(755,root,root) %{_libdir}/libndr-nbt.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-nbt.so.0
 %attr(755,root,root) %{_libdir}/libndr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libndr.so.5
+%attr(755,root,root) %ghost %{_libdir}/libndr.so.6
 %attr(755,root,root) %{_libdir}/libndr-standard.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libndr-standard.so.0
 %attr(755,root,root) %{_libdir}/libsamba-credentials.so.*.*.*
@@ -1821,6 +1821,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/ctdb
 %{_sysconfdir}/ctdb/notify.sh
 %{_sysconfdir}/ctdb/debug-hung-script.sh
+%{_sysconfdir}/ctdb/ctdb-backup-persistent-tdbs.sh
 %{_sysconfdir}/ctdb/ctdb-crash-cleanup.sh
 %{_sysconfdir}/ctdb/functions
 %{_sysconfdir}/ctdb/debug_locks.sh
@@ -1871,6 +1872,7 @@ fi
 %{_datadir}/ctdb/events/legacy/60.nfs.script
 %{_datadir}/ctdb/events/legacy/70.iscsi.script
 %{_datadir}/ctdb/events/legacy/91.lvs.script
+%{_datadir}/ctdb/events/legacy/95.database.script
 %dir %{_datadir}/ctdb/scripts
 %attr(755,root,root) %{_datadir}/ctdb/scripts/winbind_ctdb_updatekeytab.sh
 %{systemdtmpfilesdir}/ctdb.conf
@@ -1883,7 +1885,6 @@ fi
 %dir %{_libexecdir}/ctdb
 %{_libexecdir}/ctdb/ctdb_natgw
 %{_libexecdir}/ctdb/ctdb_recovery_helper
-%{_libexecdir}/ctdb/smnotify
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb-config
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb-event
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb-eventd
@@ -1891,6 +1892,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lock_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_lvs
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_mutex_fcntl_helper
+%attr(755,root,root) %{_libexecdir}/ctdb/ctdb_smnotify_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb-path
 %attr(755,root,root) %{_libexecdir}/ctdb/ctdb_takeover_helper
 %attr(755,root,root) %{_libexecdir}/ctdb/statd_callout

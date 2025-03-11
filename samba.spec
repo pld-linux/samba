@@ -28,7 +28,7 @@
 %bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
 %define		ver		4.22.0
-%define		rel		2
+%define		rel		3
 %define		ldb_ver		2.11.0
 %define		ldb_rel		%{ver}.%{rel}
 

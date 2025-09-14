@@ -27,15 +27,15 @@
 %bcond_with	replace
 %bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
-%define		ver		4.22.4
+%define		ver		4.23.0
 %define		rel		1
 %define		ldb_ver		2.11.0
 %define		ldb_rel		%{ver}.%{rel}
 
 %if %{with system_libs}
 %define		talloc_ver	2:2.4.3
-%define		tdb_ver		2:1.4.13
-%define		tevent_ver	0.16.2
+%define		tdb_ver		2:1.4.14
+%define		tevent_ver	0.17.1
 %endif
 
 # dmapi-devel with xfsprogs-devel >= 4.11(?) needs largefile (64bit off_t) that isn't detected properly
@@ -58,7 +58,7 @@ Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	08cffdd420609c1b4933fe4f0a8d8496
+# Source0-md5:	4bced7e29e41cde9b8f90c1fbf84ba2e
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -130,6 +130,7 @@ BuildRequires:	libxslt-progs
 BuildRequires:	make >= 1:3.81
 BuildRequires:	ncurses-devel >= 5.2
 BuildRequires:	ncurses-ext-devel >= 5.2
+BuildRequires:	ngtcp2-crypto-gnutls-devel >= 1.12.0
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 # detected and used for linking, but dropped by -Wl,--as-needed
 #BuildRequires:	openssl-devel
@@ -386,6 +387,7 @@ Summary(pl.UTF-8):	Biblioteki współdzielone Samby
 Group:		Libraries
 Requires:	gnutls >= 3.6.13
 Requires:	ldb = %{epoch}:%{ldb_ver}-%{ldb_rel}
+Requires:	ngtcp2-crypto-gnutls >= 1.12.0
 %if %{with system_libs}
 Requires:	talloc >= %{talloc_ver}
 Requires:	tdb >= %{tdb_ver}
@@ -707,7 +709,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--disable-rpath \
 	--disable-rpath-install \
 	--builtin-libraries=%{?with_replace:replace,}ccan%{?xxxx:,samba-cluster-support} \
-	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile} \
+	--bundled-libraries=NONE,iniparser,%{!?with_system_libs:talloc,tdb,tevent,pytalloc,pytalloc-util,pytdb,pytevent},%{!?with_system_heimdal:roken,wind,hx509,asn1,heimbase,hcrypto,krb5,gssapi,heimntlm,hdb,kdc,com_err,compile_et,asn1_compile},libquic \
 	--private-libraries='!ldb' \
 	--with-shared-modules=idmap_ad,idmap_adex,idmap_hash,idmap_ldap,idmap_rid,idmap_tdb2,auth_samba4,vfs_dfs_samba4 \
 	--with-cluster-support \
@@ -823,6 +825,8 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 
 %py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
 %py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
+
+%find_lang pam_winbind
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1068,6 +1072,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/service/dns.so
 %attr(755,root,root) %{_libdir}/samba/service/dns_update.so
 %attr(755,root,root) %{_libdir}/samba/service/drepl.so
+%attr(755,root,root) %{_libdir}/samba/service/ft_scanner.so
 %attr(755,root,root) %{_libdir}/samba/service/kcc.so
 %attr(755,root,root) %{_libdir}/samba/service/kdc.so
 %attr(755,root,root) %{_libdir}/samba/service/ldap.so
@@ -1296,7 +1301,7 @@ fi
 %{_mandir}/man1/wspsearch.1*
 %{_mandir}/man8/cifsdd.8*
 
-%files winbind
+%files winbind -f pam_winbind.lang
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/winbind
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/winbind
@@ -1501,6 +1506,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libprinter-driver-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libprinting-migrate-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libprocess-model-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libquic-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libREG-FULL-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libregistry-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libRPC-SERVER-LOOP-private-samba.so
@@ -1513,6 +1519,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsamba-net-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-python.cpython-3*-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-security-private-samba.so
+%attr(755,root,root) %{_libdir}/samba/libsamba-security-trusts-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamba-sockets-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsamdb-common-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libscavenge-dns-records-private-samba.so
@@ -1526,7 +1533,6 @@ fi
 %attr(755,root,root) %{_libdir}/samba/libsmbd-shim-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsmbldaphelper-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsmbpasswdparser-private-samba.so
-%attr(755,root,root) %{_libdir}/samba/libsmb-transport-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsocket-blocking-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libstable-sort-private-samba.so
 %attr(755,root,root) %{_libdir}/samba/libsys-rw-private-samba.so
@@ -1771,6 +1777,10 @@ fi
 %dir %{py3_sitedir}/samba/tests/ndr
 %{py3_sitedir}/samba/tests/ndr/*.py
 %{py3_sitedir}/samba/tests/ndr/__pycache__
+%{py3_sitedir}/samba/tests/nss/*.py
+%{py3_sitedir}/samba/tests/nss/__pycache__
+%{py3_sitedir}/samba/tests/varlink/*.py
+%{py3_sitedir}/samba/tests/varlink/__pycache__
 %if %{without system_libs}
 %attr(755,root,root) %{py3_sitedir}/ldb.so
 %attr(755,root,root) %{py3_sitedir}/talloc.so

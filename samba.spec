@@ -28,7 +28,7 @@
 %bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
 %define		ver		4.23.1
-%define		rel		1
+%define		rel		2
 %define		ldb_ver		2.11.0
 %define		ldb_rel		%{ver}.%{rel}
 
@@ -1777,8 +1777,10 @@ fi
 %dir %{py3_sitedir}/samba/tests/ndr
 %{py3_sitedir}/samba/tests/ndr/*.py
 %{py3_sitedir}/samba/tests/ndr/__pycache__
+%dir %{py3_sitedir}/samba/tests/nss
 %{py3_sitedir}/samba/tests/nss/*.py
 %{py3_sitedir}/samba/tests/nss/__pycache__
+%dir %{py3_sitedir}/samba/tests/varlink
 %{py3_sitedir}/samba/tests/varlink/*.py
 %{py3_sitedir}/samba/tests/varlink/__pycache__
 %if %{without system_libs}

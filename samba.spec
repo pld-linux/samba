@@ -135,7 +135,7 @@ BuildRequires:	ngtcp2-crypto-gnutls-devel >= 1.12.0
 # detected and used for linking, but dropped by -Wl,--as-needed
 #BuildRequires:	openssl-devel
 BuildRequires:	pam-devel >= 0.99.8.1
-%{?with_ctdb_pcp:BuildRequires:	pcp-devel}
+%{?with_ctdb_pcp:BuildRequires:	pcp-devel >= 4}
 BuildRequires:	perl-ExtUtils-MakeMaker
 %{!?with_system_heimdal:BuildRequires:	perl-modules}
 BuildRequires:	perl-Parse-Yapp >= 1.05
@@ -561,7 +561,7 @@ Summary:	CTDB PMDA
 Summary(pl.UTF-8):	PMDA CTDB
 Group:		Applications/System
 Requires:	ctdb = %{epoch}:%{version}-%{release}
-Requires:	pcp
+Requires:	pcp >= 4
 
 %description -n pcp-ctdb
 This PMDA extracts metrics from the locally running ctdbd daemon for

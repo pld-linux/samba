@@ -16,7 +16,6 @@
 %bcond_without	dmapi		# DMAPI support
 %bcond_without	fam		# FAM support
 %bcond_without	lttng		# lttng-ust support
-%bcond_without	spotlight	# Spotlight tracker support
 %bcond_without	systemd		# systemd integration
 %bcond_without	winexe		# winexe tool
 %bcond_with	system_heimdal	# Use system Heimdal libraries [since samba 4.4.x build fails with heimdal 1.5.x/7.x]
@@ -27,14 +26,14 @@
 %bcond_with	replace
 %bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
-%define		ver		4.23.6
+%define		ver		4.24.0
 %define		rel		1
 %define		ldb_ver		2.11.0
 %define		ldb_rel		%{ver}.%{rel}
 
 %if %{with system_libs}
-%define		talloc_ver	2:2.4.3
-%define		tdb_ver		2:1.4.14
+%define		talloc_ver	2:2.4.4
+%define		tdb_ver		2:1.4.15
 %define		tevent_ver	0.17.1
 %endif
 
@@ -58,7 +57,7 @@ Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	0e3fa5f6fe1f7fa93e4f3b10f8d09ceb
+# Source0-md5:	70fbbd0189ee6e9dc92b5a2cb2fcfb1d
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
@@ -80,7 +79,7 @@ BuildRequires:	acl-devel
 %{?with_avahi:BuildRequires:	avahi-devel}
 BuildRequires:	bison
 %{?with_ceph:BuildRequires:	ceph-devel >= 11}
-BuildRequires:	cmocka-devel >= 1.1.3
+BuildRequires:	cmocka-devel >= 1.1.8
 %if %{with winexe}
 BuildRequires:	crossmingw32-gcc
 BuildRequires:	crossmingw32-pthreads-w32
@@ -124,6 +123,7 @@ BuildRequires:	libtasn1-devel >= 3.8
 BuildRequires:	libtirpc-devel
 BuildRequires:	libunwind-devel
 BuildRequires:	liburing-devel
+BuildRequires:	libvarlink-devel >= 24
 BuildRequires:	libxslt-progs
 %{?with_lmdb:BuildRequires:	lmdb-devel >= 0.9.16}
 %{?with_lttng:BuildRequires:	lttng-ust-devel}
@@ -158,7 +158,6 @@ BuildRequires:	rpmbuild(macros) >= 2.025
 BuildRequires:	sed >= 4.0
 BuildRequires:	subunit-devel
 %{?with_systemd:BuildRequires:	systemd-devel}
-%{?with_spotlight:BuildRequires:	tracker-devel >= 2.0}
 BuildRequires:	xfsprogs-devel
 BuildRequires:	zlib-devel >= 1.2.3
 %if %{with system_libs}
@@ -169,6 +168,9 @@ BuildRequires:	talloc-devel >= %{talloc_ver}
 BuildRequires:	tdb-devel >= %{tdb_ver}
 BuildRequires:	tevent-devel >= %{tevent_ver}
 %endif
+# libbsd-devel and setproctitle-devel both declare setproctitle() with
+# incompatible prototypes; bundled lib/replace/replace.h includes both headers
+BuildConflicts:	setproctitle-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	%{name}-common = %{epoch}:%{version}-%{release}
 Requires:	%{name}-libs = %{epoch}:%{version}-%{release}
@@ -731,6 +733,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--with-systemd \
 	--systemd-install-services \
 	--with-systemddir=%{systemdunitdir} \
+	--with-systemd-userdb \
 %else
 	--without-systemd \
 %endif
@@ -741,7 +744,7 @@ CPPFLAGS="${CPPFLAGS:-%rpmcppflags}" \
 	--enable-cups \
 	%{__enable_disable glusterfs} \
 	--enable-iprint \
-	%{__enable_disable spotlight}
+	--enable-spotlight
 
 %{__make} V=1
 
@@ -827,6 +830,7 @@ cp -p examples/LDAP/samba.schema $RPM_BUILD_ROOT%{schemadir}
 %py3_ocomp $RPM_BUILD_ROOT%{py3_sitedir}
 
 %find_lang pam_winbind
+%find_lang net
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1086,6 +1090,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/acl_xattr.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_fork.so
 %attr(755,root,root) %{_libdir}/samba/vfs/aio_pthread.so
+%attr(755,root,root) %{_libdir}/samba/vfs/aio_ratelimit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/audit.so
 %attr(755,root,root) %{_libdir}/samba/vfs/btrfs.so
 %attr(755,root,root) %{_libdir}/samba/vfs/cap.so
@@ -1141,9 +1146,7 @@ fi
 %{_datadir}/samba/admx/samba.admx
 %lang(en) %{_datadir}/samba/admx/en-US
 %lang(ru) %{_datadir}/samba/admx/ru-RU
-%if %{with spotlight}
 %{_datadir}/samba/mdssvc
-%endif
 %{_datadir}/samba/setup
 %{_mandir}/man1/oLschema2ldif.1*
 %{_mandir}/man1/profiles.1*
@@ -1164,6 +1167,7 @@ fi
 %{_mandir}/man8/vfs_acl_xattr.8*
 %{_mandir}/man8/vfs_aio_fork.8*
 %{_mandir}/man8/vfs_aio_pthread.8*
+%{_mandir}/man8/vfs_aio_ratelimit.8*
 %{_mandir}/man8/vfs_audit.8*
 %{_mandir}/man8/vfs_btrfs.8*
 %{_mandir}/man8/vfs_cap.8*
@@ -1232,7 +1236,7 @@ fi
 %attr(755,root,root) %{_libdir}/samba/vfs/glusterfs_fuse.so
 %{_mandir}/man8/vfs_glusterfs_fuse.8*
 
-%files common
+%files common -f net.lang
 %defattr(644,root,root,755)
 %doc PFIF.txt README.cifs-utils README.md SECURITY.md WHATSNEW.txt
 %dir %{_sysconfdir}/samba
@@ -1621,6 +1625,7 @@ fi
 %{_includedir}/samba-4.0/util/idtree_random.h
 %{_includedir}/samba-4.0/util/signal.h
 %{_includedir}/samba-4.0/util/substitute.h
+%{_includedir}/samba-4.0/util/talloc_keep_secret.h
 %{_includedir}/samba-4.0/util/tevent_ntstatus.h
 %{_includedir}/samba-4.0/util/tevent_unix.h
 %{_includedir}/samba-4.0/util/tevent_werror.h

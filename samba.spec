@@ -26,7 +26,7 @@
 %bcond_with	replace
 %bcond_without	lmdb		# LMDB module in ldb (64-bit only)
 
-%define		ver		4.24.7
+%define		ver		4.24.8
 %define		rel		1
 %define		ldb_ver		2.11.0
 %define		ldb_rel		%{ver}.%{rel}
@@ -57,7 +57,7 @@ Epoch:		1
 License:	GPL v3
 Group:		Networking/Daemons
 Source0:	https://download.samba.org/pub/samba/stable/%{name}-%{version}.tar.gz
-# Source0-md5:	6f19051884437e8c765ae9e70ce69d8a
+# Source0-md5:	44a2def993fc0afa206e12c2f10b60e8
 Source1:	smb.init
 Source2:	samba.pamd
 Source4:	samba.sysconfig
